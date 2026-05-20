@@ -36,6 +36,9 @@ SmolLM2-134(base)/results/lm_eval/
 *.swp
 *.swo
 
+# Claude Code state (skills, settings, scheduled tasks, session caches)
+.claude/
+
 # OS
 .DS_Store
 Thumbs.db
