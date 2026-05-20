@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmolLM2-135M — Architecture Walkthrough</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161922;
+    --panel-2: #1c2030;
+    --ink: #e6e8ee;
+    --dim: #9aa3b2;
+    --muted: #6b7280;
+    --rule: #2a2f3d;
+    --accent: #f5a524;
+    --accent-2: #7dd3fc;
+    --green: #86efac;
+    --pink: #f9a8d4;
+    --code-bg: #0b0d12;
+    --code-border: #232838;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #fafaf7;
+      --panel: #ffffff;
+      --panel-2: #f4f4ee;
+      --ink: #1a1a1a;
+      --dim: #4b5563;
+      --muted: #6b7280;
+      --rule: #e5e7eb;
+      --accent: #b45309;
+      --accent-2: #0369a1;
+      --green: #166534;
+      --pink: #9d174d;
+      --code-bg: #f6f6f1;
+      --code-border: #e5e7eb;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 56px 28px 96px;
+  }
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 22px;
+    margin-bottom: 32px;
+  }
+  header .eyebrow {
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 32px;
+    line-height: 1.2;
+    margin: 0 0 10px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header .sub {
+    color: var(--dim);
+    font-size: 15px;
+  }
+  h2 {
+    font-size: 22px;
+    line-height: 1.3;
+    margin: 48px 0 14px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    border-top: 1px solid var(--rule);
+    padding-top: 28px;
+  }
+  h2 .num {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    margin-right: 10px;
+  }
+  h3 {
+    font-size: 17px;
+    margin: 28px 0 8px;
+    font-weight: 600;
+  }
+  p { margin: 12px 0; }
+  ul, ol { margin: 12px 0; padding-left: 22px; }
+  li { margin: 6px 0; }
+  strong { color: var(--ink); font-weight: 700; }
+  em { color: var(--dim); }
+  a { color: var(--accent-2); text-decoration: none; border-bottom: 1px dashed var(--accent-2); }
+  a:hover { border-bottom-style: solid; }
+
+  code, .mono {
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13.5px;
+  }
+  :not(pre) > code {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--accent-2);
+    font-size: 13px;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    margin: 14px 0;
+    line-height: 1.55;
+  }
+  pre code {
+    color: var(--ink);
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+  }
+  .kw   { color: #c084fc; }
+  .str  { color: var(--green); }
+  .num2 { color: var(--accent); }
+  .com  { color: var(--muted); font-style: italic; }
+  .fn   { color: var(--accent-2); }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 16px 0;
+  }
+  .panel.tight { padding: 12px 14px; }
+  .panel .label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 18px;
+    row-gap: 4px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+  }
+  .grid .k { color: var(--accent); }
+  .grid .v { color: var(--ink); }
+  .grid .c { color: var(--muted); }
+
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--panel-2);
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  .callout .tag {
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+
+  table.params {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+    margin: 14px 0;
+  }
+  table.params td {
+    padding: 4px 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  table.params td:last-child {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  table.params tr.total td {
+    border-top: 2px solid var(--rule);
+    border-bottom: none;
+    padding-top: 8px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  table.params tr.section td {
+    color: var(--dim);
+    font-style: italic;
+    border-bottom: 1px dashed var(--rule);
+  }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .toc {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 0 0 32px;
+    font-size: 14px;
+  }
+  .toc .label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc li { margin: 2px 0; }
+  .toc a { border: none; color: var(--ink); }
+  .toc a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">From-scratch reproduction · educational walkthrough</div>
+  <h1>SmolLM2-135M — Architecture, line by line</h1>
+  <div class="sub">A guided tour of <code>model.py</code> in <span class="mono">BuildFromScratch/SmolLM2-134(base)/</span>. Every cited number was verified against the file or a live model instantiation.</div>
+</header>
+
+<nav class="toc">
+  <div class="label">Contents</div>
+  <ol>
+    <li><a href="#shape">The shape of the model — <code>Config</code></a></li>
+    <li><a href="#rmsnorm">RMSNorm</a></li>
+    <li><a href="#rope">RoPE — rotary position embeddings</a></li>
+    <li><a href="#attn">Attention with Grouped-Query Attention</a></li>
+    <li><a href="#mlp">SwiGLU MLP</a></li>
+    <li><a href="#block">The block — pre-norm residual</a></li>
+    <li><a href="#wiring">Wiring it all together — <code>SmolLM2</code></a></li>
+    <li><a href="#params">Parameter accounting — 134,515,008</a></li>
+    <li><a href="#forward">Forward pass and training loss</a></li>
+    <li><a href="#gen">Sampling — <code>generate</code></a></li>
+  </ol>
+</nav>
+
+<h2 id="shape"><span class="num">1.</span>The shape of the model — <code>Config</code></h2>
+<p>Lines 22–37 of <code>model.py</code>. These are the published Llama-3-style hyperparameters shipped under <code>HuggingFaceTB/SmolLM2-135M</code>:</p>
+
+<div class="panel tight">
+<div class="grid">
+  <div class="k">vocab_size</div>             <div class="v">49,152</div>
+  <div class="k">hidden_size</div>            <div class="v">576          <span class="c">— d_model</span></div>
+  <div class="k">intermediate_size</div>      <div class="v">1,536        <span class="c">— SwiGLU inner width ≈ 8/3 × d_model</span></div>
+  <div class="k">num_hidden_layers</div>      <div class="v">30</div>
+  <div class="k">num_attention_heads</div>    <div class="v">9            <span class="c">— query heads</span></div>
+  <div class="k">num_key_value_heads</div>    <div class="v">3            <span class="c">— GQA: 3 Q heads share 1 KV head</span></div>
+  <div class="k">max_position_embeddings</div><div class="v">8,192</div>
+  <div class="k">rope_theta</div>             <div class="v">100,000</div>
+  <div class="k">rms_norm_eps</div>           <div class="v">1e-5</div>
+  <div class="k">tie_word_embeddings</div>    <div class="v">True</div>
+  <div class="k">head_dim</div>               <div class="v">hidden_size // num_attention_heads = 64</div>
+</div>
+</div>
+
+<p>Two non-obvious choices:</p>
+<ul>
+  <li><strong><code>head_dim = 64</code> falls out of <code>576 / 9</code>.</strong> Divisibility is the constraint that forced 9 heads — not the other way around.</li>
+  <li><strong><code>intermediate_size ≈ 8/3 × hidden_size</code>.</strong> SwiGLU has <em>two</em> up-projections (gate + up), so the inner width is shrunk from the usual 4× of a vanilla MLP to keep total parameter count comparable.</li>
+</ul>
+
+<h2 id="rmsnorm"><span class="num">2.</span>RMSNorm <span class="mono" style="color:var(--muted);font-size:13px;font-weight:400;">(lines 40–50)</span></h2>
+<pre><code><span class="kw">t</span> = x.<span class="fn">float</span>()
+<span class="kw">y</span> = self.weight * t * torch.<span class="fn">rsqrt</span>(t.<span class="fn">pow</span>(<span class="num2">2</span>).<span class="fn">mean</span>(-<span class="num2">1</span>, keepdim=<span class="kw">True</span>) + self.eps)
+</code></pre>
+<p>LayerNorm subtracts the mean <em>and</em> divides by std. RMSNorm drops the mean subtraction: <span class="mono">y = γ · x / √(mean(x²) + ε)</span>. Cheaper, and Zhang &amp; Sennrich (2019) showed the centering does no useful work in transformers.</p>
+
+<p>Two implementation details worth noting:</p>
+<ul>
+  <li><strong>fp32 reduction.</strong> Even when activations are bf16, the squared sum is computed in fp32 (<code>x.float()</code>). 576 squared bf16 numbers summed in bf16 lose enough mantissa bits to drift; the inline comment on line 47 is doing real work — it's the kind of thing that silently breaks bit-exact parity with HF.</li>
+  <li><strong>Bias-free, gain only.</strong> Modern Llama-family norms have only the multiplicative <code>weight</code>. No additive bias. Initial value is 1 (line 43) so the norm starts as identity.</li>
+</ul>
+
+<h2 id="rope"><span class="num">3.</span>RoPE — <code>_rope</code>, <code>_rot</code>, <code>_apply</code> <span class="mono" style="color:var(--muted);font-size:13px;font-weight:400;">(lines 53–67)</span></h2>
+<p>Rotary Position Embeddings encode position by rotating each <span class="mono">(q, k)</span> pair in 2D subspaces. Two equivalent formulations exist; this file uses the <strong>"duplicated" layout</strong> that matches HF's <code>rotate_half</code>, not the interleaved one in the original RoPE paper.</p>
+
+<pre><code><span class="kw">inv</span> = <span class="num2">1.0</span> / (theta ** (arange(<span class="num2">0</span>, dim, <span class="num2">2</span>) / dim))   <span class="com"># 32 frequencies for head_dim=64</span>
+<span class="kw">f</span>   = <span class="fn">outer</span>(arange(seq), inv)                       <span class="com"># (seq, 32) — angle per (pos, freq)</span>
+<span class="kw">e</span>   = <span class="fn">cat</span>([f, f], dim=-<span class="num2">1</span>)                           <span class="com"># duplicate to (seq, 64)</span>
+<span class="kw">return</span> e.<span class="fn">cos</span>(), e.<span class="fn">sin</span>()
+</code></pre>
+
+<p><code>_rot</code> splits the head dim in half and swaps with a sign flip:</p>
+<pre><code>a, b = x.<span class="fn">chunk</span>(<span class="num2">2</span>, dim=-<span class="num2">1</span>)
+<span class="kw">return</span> <span class="fn">cat</span>([-b, a], dim=-<span class="num2">1</span>)
+</code></pre>
+
+<p><code>_apply</code> finishes the rotation: <span class="mono">q' = q·cos + rot(q)·sin</span>. Mathematically this is a complex multiplication <span class="mono">q · e^(iθ)</span> over each frequency pair, but expressed entirely in real tensors so the GPU never sees complex dtypes.</p>
+
+<div class="callout">
+<span class="tag">Why θ = 100,000?</span>
+The base controls the wavelength of the slowest frequency, which sets how far positions can be reliably distinguished. The Llama-1 default was 10,000; bumping to 100,000 stretches the usable context — necessary for the 8,192-token window.
+</div>
+
+<p>The cos/sin tables are <strong>precomputed once and registered as non-persistent buffers</strong> (lines 136–138). <code>persistent=False</code> means they're rebuilt from config on load instead of being saved in the state dict — which is why <code>from_hf</code> works with no key remapping.</p>
+
+<h2 id="attn"><span class="num">4.</span>Attention with GQA <span class="mono" style="color:var(--muted);font-size:13px;font-weight:400;">(lines 70–90)</span></h2>
+<pre><code>self.nh, self.nkv, self.hd = <span class="num2">9</span>, <span class="num2">3</span>, <span class="num2">64</span>
+self.rep = self.nh // self.nkv  <span class="com"># = 3</span>
+self.q_proj = <span class="fn">Linear</span>(<span class="num2">576</span>, <span class="num2">9</span>*<span class="num2">64</span> = <span class="num2">576</span>)
+self.k_proj = <span class="fn">Linear</span>(<span class="num2">576</span>, <span class="num2">3</span>*<span class="num2">64</span> = <span class="num2">192</span>)   <span class="com"># 1/3 the KV</span>
+self.v_proj = <span class="fn">Linear</span>(<span class="num2">576</span>, <span class="num2">3</span>*<span class="num2">64</span> = <span class="num2">192</span>)
+self.o_proj = <span class="fn">Linear</span>(<span class="num2">576</span>, <span class="num2">576</span>)
+</code></pre>
+
+<p><strong>GQA (Grouped-Query Attention)</strong> is the middle ground between MHA (<code>nkv = nh</code>) and MQA (<code>nkv = 1</code>). The 9 query heads partition into 3 groups; each group shares one K and one V head. The savings are entirely in <strong>KV-cache memory at inference</strong> — for a long context, KV cache dominates, and shrinking it 3× is the difference between fitting on a single GPU or not. Ablations in the Llama-2 paper showed it's near-lossless at this ratio.</p>
+
+<p>The forward path:</p>
+<ol>
+  <li>Project, reshape to <code>(B, T, n_heads, head_dim)</code>, transpose to <code>(B, n_heads, T, head_dim)</code>.</li>
+  <li>Apply RoPE to <strong>Q and K only</strong> — V is position-free.</li>
+  <li><code>repeat_interleave(rep, dim=1)</code> materializes K and V back up to 9 heads. (At inference time you'd skip this and let SDPA broadcast; clarity over speed here.)</li>
+  <li><code>F.scaled_dot_product_attention(..., is_causal=True)</code> — PyTorch picks the best fused kernel (FlashAttention on Ampere+, mem-efficient elsewhere). The causal mask is free.</li>
+  <li>Transpose back, flatten heads, project out.</li>
+</ol>
+<p>No explicit <span class="mono">/√d_k</span> scaling appears because SDPA does it internally.</p>
+
+<h2 id="mlp"><span class="num">5.</span>SwiGLU MLP <span class="mono" style="color:var(--muted);font-size:13px;font-weight:400;">(lines 93–101)</span></h2>
+<pre><code><span class="kw">return</span> self.down_proj(F.<span class="fn">silu</span>(self.gate_proj(x)) * self.up_proj(x))
+</code></pre>
+<p>A gated linear unit with SiLU (a.k.a. Swish) as the gate's activation. In equation form:</p>
+<div class="panel tight" style="text-align:center;font-family:'JetBrains Mono',monospace;">
+down( silu(W_gate · x) ⊙ (W_up · x) )
+</div>
+<p>Two input projections (gate, up) and one output (down) — that's why the inner width is 1536 instead of the ~4×576 = 2304 you'd expect from a vanilla ReLU MLP: total params stay roughly matched.</p>
+
+<div class="callout">
+<span class="tag">Why SwiGLU beats gelu(W·x)?</span>
+Empirically. Shazeer's "GLU Variants Improve Transformer" (2020) ablated it; SwiGLU has been the default in PaLM, Llama, Gemma ever since.
+</div>
+
+<h2 id="block"><span class="num">6.</span>The block — pre-norm residual <span class="mono" style="color:var(--muted);font-size:13px;font-weight:400;">(lines 104–115)</span></h2>
+<pre><code>x = x + self.<span class="fn">self_attn</span>(self.<span class="fn">input_layernorm</span>(x), cos, sin)
+x = x + self.<span class="fn">mlp</span>(self.<span class="fn">post_attention_layernorm</span>(x))
+</code></pre>
+<p><strong>Pre-norm</strong> (norm goes inside the residual branch, not after) is what makes deep transformers trainable without warm-up gymnastics. The residual path <span class="mono">x → x → x</span> is a clean identity highway; the normalized branch is what gets learned.</p>
+<p>The two norms per block are independent: <code>input_layernorm</code> for attention input, <code>post_attention_layernorm</code> for MLP input. The HF name is slightly misleading — it sits <em>before</em> the MLP, not after attention's output.</p>
+
+<h2 id="wiring"><span class="num">7.</span>Wiring it all together — <code>SmolLM2</code> <span class="mono" style="color:var(--muted);font-size:13px;font-weight:400;">(lines 127–157)</span></h2>
+<pre><code>self.model = <span class="fn">_Stack</span>(c)            <span class="com"># .embed_tokens, .layers, .norm</span>
+self.lm_head = <span class="fn">Linear</span>(<span class="num2">576</span>, <span class="num2">49152</span>, bias=<span class="kw">False</span>)
+<span class="kw">if</span> c.tie_word_embeddings:
+    self.lm_head.weight = self.model.embed_tokens.weight   <span class="com"># SAME tensor</span>
+</code></pre>
+
+<p><strong>Weight tying</strong> (line 135): <code>lm_head</code> and <code>embed_tokens</code> share the <em>same</em> <code>nn.Parameter</code> object — not a copy. <code>data_ptr()</code> confirms a single 28.3M-parameter tensor backs both. This saves 28,311,552 params and is information-theoretically motivated: the mapping <span class="mono">token → vector</span> and <span class="mono">vector → token</span> should be inverses.</p>
+
+<div class="callout">
+<span class="tag">The HF compatibility trick</span>
+Module names — <code>model.embed_tokens</code>, <code>model.layers.{i}.self_attn.q_proj</code>, <code>model.norm</code>, <code>lm_head</code> — are intentionally identical to <code>transformers.LlamaForCausalLM</code>. HF's safetensors load via <code>load_state_dict</code> with zero key remapping. The one wart: HF omits <code>lm_head.weight</code> from the state dict when tying is on; <code>from_hf</code> (lines 176–187) filters that key from <code>missing</code> before the assert.
+</div>
+
+<p><strong>Initialization</strong> (lines 139–142): <span class="mono">std = 1/√hidden_size ≈ 0.0417</span> for every Linear and Embedding. This is the <code>initializer_range</code> from HF's <code>config.json</code>, copied literally so a from-scratch init matches what HF would produce.</p>
+
+<h2 id="params"><span class="num">8.</span>Parameter accounting — the 134,515,008 target</h2>
+<p>I just instantiated the model and pulled per-tensor counts. Here's the arithmetic:</p>
+<table class="params">
+  <tr><td>Embedding (also lm_head, tied) &nbsp; <span style="color:var(--muted)">49,152 × 576</span></td><td>28,311,552</td></tr>
+  <tr class="section"><td>Per block</td><td></td></tr>
+  <tr><td>&nbsp;&nbsp;input_layernorm</td><td>576</td></tr>
+  <tr><td>&nbsp;&nbsp;q_proj &nbsp; <span style="color:var(--muted)">576 × 576</span></td><td>331,776</td></tr>
+  <tr><td>&nbsp;&nbsp;k_proj &nbsp; <span style="color:var(--muted)">192 × 576</span></td><td>110,592</td></tr>
+  <tr><td>&nbsp;&nbsp;v_proj &nbsp; <span style="color:var(--muted)">192 × 576</span></td><td>110,592</td></tr>
+  <tr><td>&nbsp;&nbsp;o_proj &nbsp; <span style="color:var(--muted)">576 × 576</span></td><td>331,776</td></tr>
+  <tr><td>&nbsp;&nbsp;post_attention_layernorm</td><td>576</td></tr>
+  <tr><td>&nbsp;&nbsp;gate_proj &nbsp; <span style="color:var(--muted)">1536 × 576</span></td><td>884,736</td></tr>
+  <tr><td>&nbsp;&nbsp;up_proj &nbsp; <span style="color:var(--muted)">1536 × 576</span></td><td>884,736</td></tr>
+  <tr><td>&nbsp;&nbsp;down_proj &nbsp; <span style="color:var(--muted)">576 × 1536</span></td><td>884,736</td></tr>
+  <tr><td>&nbsp;&nbsp;<strong>one block</strong></td><td><strong>3,540,096</strong></td></tr>
+  <tr><td>30 blocks &nbsp; <span style="color:var(--muted)">3,540,096 × 30</span></td><td>106,202,880</td></tr>
+  <tr><td>final norm</td><td>576</td></tr>
+  <tr class="total"><td>TOTAL ✓</td><td>134,515,008</td></tr>
+</table>
+<p>That's exactly the value <code>proof.ipynb</code> gates against, and the <code>__main__</code> block (line 197) prints it for sanity.</p>
+
+<h2 id="forward"><span class="num">9.</span>Forward pass and training loss <span class="mono" style="color:var(--muted);font-size:13px;font-weight:400;">(lines 144–157)</span></h2>
+<pre><code>x = <span class="fn">embed_tokens</span>(ids)
+cos = rope_cos[:T]; sin = rope_sin[:T]      <span class="com"># slice precomputed table</span>
+<span class="kw">for</span> blk <span class="kw">in</span> layers: x = <span class="fn">blk</span>(x, cos, sin)
+logits = <span class="fn">lm_head</span>(<span class="fn">norm</span>(x))
+</code></pre>
+
+<p>When <code>labels</code> is passed, it computes <strong>next-token CE loss with a one-position shift</strong>:</p>
+<pre><code>loss = <span class="fn">cross_entropy</span>(logits[..., :-<span class="num2">1</span>, :], labels[..., <span class="num2">1</span>:])
+</code></pre>
+<p>The last logit has no target; the first token has no prediction. Standard causal-LM convention.</p>
+
+<h2 id="gen"><span class="num">10.</span>Sampling — <code>generate</code> <span class="mono" style="color:var(--muted);font-size:13px;font-weight:400;">(lines 159–174)</span></h2>
+<p>A minimal sampler. For each step:</p>
+<ol>
+  <li>Slice the context to <code>max_position_embeddings</code> (8,192).</li>
+  <li>Take logits at the last position.</li>
+  <li>If <code>temperature ≤ 0</code>, argmax (greedy). Else divide by <code>T</code>, top-k truncate, softmax, <code>multinomial</code>.</li>
+  <li>Append, repeat.</li>
+</ol>
+<p>No KV cache — every step recomputes the full attention. Fine for verification (the project's purpose) and bad for production; <code>model_full.py</code> likely has the cached version.</p>
+
+<footer>
+  <p><strong>What to read next in the repo</strong></p>
+  <ul>
+    <li><code>proof.ipynb</code> — bit-exact parity gate against HF (the &lt;1e-3 max-error hard gate).</li>
+    <li><code>compare_with_hf.py</code> — layer-by-layer activation diffs; where a wrong RoPE layout or norm precision gets caught.</li>
+    <li><code>verify.py</code> — quick "does it load and forward" smoke test.</li>
+    <li><code>train.py</code> / <code>train_tinystories.py</code> — from-scratch training driver.</li>
+  </ul>
+  <p style="margin-top:18px;">Source: <code>SmolLM2-134(base)/model.py</code> · verified against a live model instantiation on 2026-05-19.</p>
+</footer>
+
+</div>
+</body>
+</html>

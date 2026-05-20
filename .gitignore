@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.python-version
+
+# Virtual envs
+venv/
+.venv/
+env/
+.env
+
+# Checkpoints (270MB+ each; not for version control — use HF Hub or git-lfs)
+*.pt
+*.pth
+*.safetensors
+*.bin
+*.ckpt
+
+# Exported HF model dirs (re-generate from checkpoints with scripts/export_to_hf.py)
+hf_export/
+SmolLM2-134(base)/results/lm_eval/
+
+# Jupyter intermediates (keep the canonical .ipynb, drop autosaves & checkpoints)
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# HuggingFace local cache (some setups place it inside the repo)
+.cache/
+huggingface_cache/

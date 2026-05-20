@@ -1,0 +1,49 @@
+# Concrete pins, matching the working environment that produced
+# max|Δlogits|=0.0 against HuggingFaceTB/SmolLM2-135M.
+#
+# To freeze a true lockfile (recommended for reproducibility):
+#     uv pip compile pyproject.toml -o requirements.lock
+# or:
+#     pip install pip-tools && pip-compile pyproject.toml -o requirements.lock
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smollm2-from-scratch"
+version = "0.1.0"
+description = "Single-file PyTorch reproduction of SmolLM2-135M, bit-exact against the official HF weights."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    # Pinned to the versions that verified parity in this repo.
+    "torch==2.11.0",
+    "transformers==5.8.0",
+    "datasets==4.8.5",
+    "safetensors==0.7.0",
+    "accelerate==1.13.0",
+    "numpy==2.4.4",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==9.0.3",
+]
+notebook = [
+    "nbformat==5.10.4",
+    "matplotlib>=3.7",
+    "seaborn>=0.13",
+]
+eval = [
+    # Pin a known-good lm-evaluation-harness release; check
+    # https://github.com/EleutherAI/lm-evaluation-harness/releases for newer.
+    "lm-eval>=0.4.4",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]

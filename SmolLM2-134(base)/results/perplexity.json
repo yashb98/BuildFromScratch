@@ -1,0 +1,8 @@
+{
+  "ours_ppl": 15.370989092449635,
+  "hf_ppl": 15.370989964425396,
+  "tokens": 62403,
+  "dataset": "wikitext-2-raw-v1 validation",
+  "seq_len": 1024,
+  "stride": 512
+}

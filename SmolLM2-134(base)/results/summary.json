@@ -1,0 +1,13 @@
+{
+  "Architecture": "LlamaForCausalLM, 30 layers, 576 hidden, 9Q/3KV GQA, head_dim 64",
+  "Param count (unique)": "134,515,008   (target 134,515,008  \u2713)",
+  "lm_head tied": "True",
+  "RoPE \u03b8": "100,000  (split-halves layout)",
+  "Tokenizer": "BPE, vocab 49,152",
+  "max |\u0394logits| vs HF": "0.000e+00",
+  "Argmax for \"France is\"": "' the'",
+  "PPL wikitext-2 val (ours)": "15.371",
+  "PPL wikitext-2 val (HF)": "15.371",
+  "Demo-run final loss": "6.288  (start 11.254,  baseline ln(V)=10.803)",
+  "Demo-run steps": "150  (warmup 20, decay 20%)"
+}

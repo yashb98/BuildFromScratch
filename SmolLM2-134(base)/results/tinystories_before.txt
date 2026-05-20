@@ -1,0 +1,16 @@
+# Baseline SmolLM2-135M on TinyStories
+Validation PPL: 6.8945  (199,485 target tokens)
+
+PROMPT: Once upon a time, there was a little
+OUTPUT: Once upon a time, there was a little girl named Lily. Lily loved to play and sing with her friends. One day, she heard that she could become a doctor and help people who were sick. But she didn't know much about medicine or how to take care of herself.
+
+Lily asked her mom, "Mommy, what does it mean to be a doctor?" Her mom replied, "Being a doctor means learning all about
+
+PROMPT: The brave little mouse
+OUTPUT: The brave little mouse that runs the way I have been told to run, and who is always at the ready, to get me out of trouble, and give me back my hat and coat, to make me happy and to help me to live like a man, and to make me understand that I am safe and happy and comfortable in my new home, and that I shall have plenty of plenty of plenty of plenty of
+
+PROMPT: In a faraway forest,
+OUTPUT: In a faraway forest, a wise old owl named Ollie looked out of his tree and saw a young girl who seemed lost and sad.
+
+Ollie asked the owl why she was so sad. The owl replied, "We are all different, my dear, and some are good, while others are bad. This is what we call 'mental health.' Mental health is how we feel, think, and
+

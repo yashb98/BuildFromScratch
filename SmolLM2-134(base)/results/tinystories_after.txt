@@ -1,0 +1,19 @@
+# SmolLM2-135M after 100,000,000 tokens of TinyStories
+Validation PPL: 3.7900  (199,485 target tokens)
+BEFORE→AFTER PPL: 6.8945 → 3.7900
+
+PROMPT: Once upon a time, there was a little
+OUTPUT: Once upon a time, there was a little boy named Timmy. Timmy loved to go on adventures with his family. One day, they went on a walk in the woods. Timmy saw a big tree and he asked his family, "Can I climb the tree?" His parents said, "No, it's too high. But we can climb it together."
+
+Timmy was very happy and wanted to climb the tree. He started to climb
+
+PROMPT: The brave little mouse
+OUTPUT: The brave little mouse was so excited that he couldn't wait to find out what the old man was up to.Once upon a time, there was a big, big bear. He was very strong and brave. He lived in a forest with lots of trees. One day, the bear decided to go for a walk. He walked and walked until he came to a river. The river was big and made lots
+
+PROMPT: In a faraway forest,
+OUTPUT: In a faraway forest, there was a small, beautiful bird who loved to whistle. One day, she was whistling in the forest when she heard a noise coming from a nearby tree.
+
+The bird knew she had to be brave and follow the noise. She flew down to the tree and pecked at the trunk. She heard a voice coming from the trunk.
+
+"Hello. What are you doing
+

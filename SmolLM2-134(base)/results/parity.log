@@ -1,0 +1,11 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading official HuggingFaceTB/SmolLM2-135M ...
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 4478.21it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Building our model and copying weights ...
+max |Δlogits| = 0.000e+00
+relative      = 0.000e+00
+HF next token : ' the'
+Ours next     : ' the'
+
+✓ Architecture parity verified.

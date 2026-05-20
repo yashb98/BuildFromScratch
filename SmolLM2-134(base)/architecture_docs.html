@@ -1,0 +1,3224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SmolLM2-135M — Interactive Documentation</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-light.min.css" />
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+
+<!-- Geist + Geist Mono via Google Fonts. Inter is intentionally NOT used. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<!--
+  Design system: Stitch Design Taste.
+    Creativity 8  ·  Density 4  ·  Variance 8  ·  Motion 6
+  Atmosphere: gallery-airy editorial surface; the dark cinema embedded in it
+  reads like a piece of artwork on a clean wall. Single accent: Amber Warmth
+  (#F59E0B) — coordinates with the cinema's gold flow arrow.
+
+  Tailwind's built-in `amber-*`, `emerald-*`, `sky-*`, `rose-*` ramps and the
+  legacy custom `peach-*` / `mint-*` / `sky2-*` / `rose2-*` ramps are remapped
+  to a single neutral + amber system, so existing markup inherits the new
+  theme without per-element edits. Section visual differentiation is driven
+  by typography weight and structural rhythm, not by warm/cool tinting.
+-->
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        // Semantic tokens
+        canvas:  '#F9FAFB',
+        surface: '#FFFFFF',
+        ink:     '#18181B',
+        steel:   '#71717A',
+        slate2:  '#94A3B8',
+        whisper: 'rgba(226,232,240,0.5)',
+        accent:  '#F59E0B',
+        accentHi:'#D97706',
+
+        // Legacy ramps remapped to the neutral+amber system (kept so all
+        // existing utility classes keep working with the new colors)
+        peach:   { 50:'#F9FAFB', 100:'#F3F4F6', 200:'#FEF3C7', 300:'#FCD34D', 400:'#F59E0B' },
+        mint:    { 50:'#F9FAFB', 100:'#F3F4F6', 200:'#E5E7EB', 300:'#D1D5DB', 400:'#94A3B8' },
+        cream:   { 50:'#FFFFFF', 100:'#F9FAFB' },
+        sky2:    { 50:'#F9FAFB', 100:'#F3F4F6', 200:'#E5E7EB' },
+        rose2:   { 50:'#F9FAFB', 100:'#F3F4F6' },
+
+        // Tailwind built-ins overridden — same rationale: collapse the
+        // four-color section tinting into one neutral + amber system.
+        amber:   { 50:'#F9FAFB', 100:'#F3F4F6', 200:'#FEF3C7', 300:'#FCD34D', 400:'#F59E0B', 500:'#F59E0B', 600:'#D97706', 700:'#71717A', 800:'#52525B', 900:'#18181B' },
+        emerald: { 50:'#F9FAFB', 100:'#F3F4F6', 200:'#E5E7EB', 700:'#71717A', 800:'#52525B', 900:'#18181B' },
+        sky:     { 50:'#F9FAFB', 100:'#F3F4F6', 200:'#E5E7EB', 700:'#71717A', 800:'#52525B', 900:'#18181B' },
+        rose:    { 50:'#F9FAFB', 100:'#F3F4F6', 200:'#FEF3C7', 700:'#71717A', 800:'#52525B', 900:'#18181B' },
+
+        ink2:    '#18181B',
+      },
+      fontFamily: {
+        sans: ['Geist','Outfit','Cabinet Grotesk','Satoshi','ui-sans-serif','system-ui','sans-serif'],
+        mono: ['"Geist Mono"','"JetBrains Mono"','ui-monospace','SFMono-Regular','monospace']
+      },
+      letterSpacing: {
+        tightish: '-0.02em',
+        tighter2: '-0.025em',
+      },
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.5rem',
+      },
+      boxShadow: {
+        // Diffused, wide-spreading, almost-not-there shadows
+        soft: '0 20px 40px -15px rgba(0, 0, 0, 0.05)',
+        mint: '0 20px 40px -15px rgba(0, 0, 0, 0.05)',
+        whisper: '0 1px 2px rgba(24, 24, 27, 0.04), 0 8px 24px -12px rgba(24, 24, 27, 0.05)',
+      }
+    }
+  }
+}
+</script>
+
+<style>
+  /* ============================================================
+     Tokens — Stitch Design Taste
+     ============================================================ */
+  :root {
+    --canvas:    #F9FAFB;
+    --surface:   #FFFFFF;
+    --ink:       #18181B;
+    --steel:     #71717A;
+    --slate:     #94A3B8;
+    --whisper:   rgba(226, 232, 240, 0.5);
+    --accent:    #F59E0B;
+    --accent-hi: #D97706;
+    --accent-tint: #FEF3C7;
+
+    --shadow-whisper: 0 1px 2px rgba(24,24,27,.04), 0 8px 24px -12px rgba(24,24,27,.05);
+    --shadow-card:    0 20px 40px -15px rgba(0,0,0,.05);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: 'Geist','Outfit','Cabinet Grotesk','Satoshi',ui-sans-serif,system-ui,sans-serif;
+    font-feature-settings: 'ss01' on, 'cv11' on;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Typography defaults */
+  h1, h2, h3, h4 {
+    color: var(--ink);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+  p, li { color: var(--steel); line-height: 1.65; }
+  code, pre, .font-mono { font-family: 'Geist Mono','JetBrains Mono',ui-monospace,SFMono-Regular,monospace; }
+
+  /* Links default to ink with accent underline on hover */
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--accent-hi); }
+
+  /* ============================================================
+     Component helpers
+     ============================================================ */
+
+  /* Glass — a near-invisible translucent surface, not the heavy old peach blur */
+  .glass {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+  }
+
+  /* Whisper border — the structural 1px line used on cards */
+  .ring-soft { box-shadow: inset 0 0 0 1px var(--whisper); }
+
+  /* Legacy gradient names kept but flattened to a single canvas-tone surface */
+  .grad-peach,
+  .grad-mint,
+  .grad-cream { background: var(--surface); }
+
+  /* Cards — generously rounded, whisper border, diffused shadow */
+  .surface-card {
+    background: var(--surface);
+    border-radius: 2rem;
+    box-shadow: var(--shadow-whisper);
+    border: 1px solid var(--whisper);
+  }
+
+  /* Buttons — flat, tactile push on active. No outer glow. */
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.625rem 1.125rem;
+    font-size: 0.9375rem; font-weight: 500;
+    border-radius: 0.875rem;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--whisper);
+    transition: transform .12s ease, background .15s ease, color .15s ease;
+  }
+  .btn:hover { background: #F3F4F6; }
+  .btn:active { transform: translateY(-1px) scale(0.985); }
+  .btn-primary {
+    background: var(--ink); color: var(--surface); border-color: var(--ink);
+  }
+  .btn-primary:hover { background: var(--accent-hi); color: var(--surface); border-color: var(--accent-hi); }
+  .btn-accent {
+    background: var(--accent); color: var(--surface); border-color: var(--accent);
+  }
+  .btn-accent:hover { background: var(--accent-hi); border-color: var(--accent-hi); }
+  .btn-ghost {
+    background: transparent; color: var(--steel); border-color: transparent;
+  }
+  .btn-ghost:hover { color: var(--ink); background: #F3F4F6; }
+
+  /* Pills — tiny metadata tags, monospace, neutral */
+  .pill {
+    display: inline-flex; align-items: center;
+    font-family: 'Geist Mono','JetBrains Mono',ui-monospace,monospace;
+    font-size: 0.6875rem; font-weight: 500;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.5rem;
+    color: var(--steel);
+    background: #F3F4F6;
+    border: 1px solid var(--whisper);
+    letter-spacing: 0.02em;
+  }
+  .pill-accent { color: var(--accent-hi); background: var(--accent-tint); border-color: var(--accent-tint); }
+  .pill-peach,
+  .pill-mint,
+  .pill-sky,
+  .pill-rose {
+    color: var(--steel);
+    background: #F3F4F6;
+    border-color: var(--whisper);
+  }
+
+  /* Numbered code list */
+  pre.code { counter-reset: line; background: var(--surface); }
+  pre.code code { display: block; }
+  pre.code .ln {
+    display: inline-block; min-width: 2.6rem; text-align: right; padding-right: 0.85rem;
+    color: var(--slate); user-select: none;
+  }
+  pre.code .row { padding: 0.05rem 0.5rem; border-radius: 0.35rem; transition: background .12s ease; }
+  pre.code .row:hover { background: #F3F4F6; }
+  pre.code .row.hl { background: var(--accent-tint) !important; }
+
+  /* Annotation cards — subtle hover lift */
+  .ann { transition: transform .2s ease; }
+  .ann:hover { transform: translateY(-1px); }
+
+  /* Cinema scene container */
+  .scene-wrap { position: relative; border-radius: 1.25rem; overflow: hidden; }
+  .scene-wrap canvas { display: block; }
+  .scene-overlay {
+    position: absolute; inset: auto 0 0 0; padding: 0.7rem 1rem;
+    background: linear-gradient(180deg, rgba(249,250,251,0) 0%, rgba(249,250,251,0.92) 100%);
+    font-size: 0.8125rem; color: var(--steel);
+  }
+
+  /* Cinema caption + chips */
+  #ci-caption { will-change: opacity, transform; }
+  #ci-cap-narr { max-width: 64ch; margin-left: auto; margin-right: auto; }
+  #ci-shape-badge::before { content: 'shape · '; color: var(--slate); }
+
+  /* Cinema stage = dark pedestal that the page surrounds. The video itself
+     stays dark per cinema_v2.js; this background is just the matte if the
+     canvas ever doesn't cover it. */
+  #cinema-stage {
+    background: #0A0F1F;
+    border-radius: 1.25rem;
+  }
+  #cinema-stage:fullscreen,
+  #cinema-stage:-webkit-full-screen {
+    width: 100vw !important; height: 100vh !important; border-radius: 0;
+  }
+
+  .legend-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 9999px;
+    margin-right: 0.4rem; vertical-align: middle;
+  }
+
+  /* Sticky TOC */
+  .toc a { display: block; padding: 0.3rem 0.7rem; border-radius: 0.5rem; color: var(--steel); font-size: 0.875rem; }
+  .toc a:hover { background: #F3F4F6; color: var(--ink); }
+  .toc .active { background: var(--accent-tint); color: var(--accent-hi); font-weight: 600; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+
+  .hl-bullet {
+    width: 6px; height: 6px; border-radius: 9999px;
+    background: var(--accent); display: inline-block;
+    margin-right: 0.5rem; vertical-align: middle;
+  }
+
+  /* ============================================================
+     Motion — Spring-physics feel via cubic-bezier approximation
+     ============================================================ */
+  @keyframes floaty { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-3px) } }
+  .floaty { animation: floaty 6s cubic-bezier(.4,0,.2,1) infinite; }
+
+  /* Subtle pulse — restrained, no neon glow. Borders only. */
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(245,158,11,.35); }
+    70%  { box-shadow: 0 0 0 10px rgba(245,158,11,0); }
+    100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+  }
+  .pulse-ring { animation: pulse-ring 2.4s cubic-bezier(.4,0,.2,1) infinite; border-radius: 9999px; }
+
+  /* Skeletal shimmer (for any future loading state) */
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer {
+    background: linear-gradient(90deg, #F3F4F6 0%, #FFFFFF 50%, #F3F4F6 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+
+  /* Step card — subtle lift with whisper shadow on hover */
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--whisper);
+    border-radius: 1.25rem;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .step-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: rgba(245, 158, 11, 0.35);
+  }
+
+  .tab-active { background: var(--accent-tint); color: var(--accent-hi); }
+
+  ::selection { background: var(--accent-tint); color: var(--ink); }
+
+  /* Container max-width per spec */
+  .max-w-7xl { max-width: 1400px; }
+
+  /* Responsive: ensure no horizontal overflow on small screens */
+  @media (max-width: 768px) {
+    .scene-wrap { border-radius: 1rem; }
+    .step-card  { border-radius: 1rem; }
+  }
+
+  /* Inline icon SVGs are sized via CSS; no emojis used in UI chrome */
+  .icon { width: 1rem; height: 1rem; flex: none; display: inline-block; }
+  .icon-lg { width: 1.125rem; height: 1.125rem; }
+</style>
+</head>
+<body class="font-sans">
+
+<!-- ============================== TOP NAV ============================== -->
+<header class="sticky top-0 z-40 glass" style="border-bottom: 1px solid var(--whisper);">
+  <div class="max-w-7xl mx-auto px-6 lg:px-16 py-4 flex items-center gap-6">
+    <a href="#overview" class="flex items-baseline gap-3">
+      <span class="font-mono text-[11px] tracking-widest uppercase" style="color: var(--steel);">SmolLM2</span>
+      <span class="text-[15px] font-semibold tracking-tightish" style="color: var(--ink);">/ 135M reproduction</span>
+    </a>
+    <nav class="ml-auto hidden md:flex items-center gap-0 text-[14px]" style="color: var(--steel);">
+      <a class="btn btn-ghost" href="#overview">Overview</a>
+      <a class="btn btn-ghost" href="#arch3d">Architecture</a>
+      <a class="btn btn-ghost" href="#cinema" style="color: var(--ink); font-weight: 600;">Cinema</a>
+      <a class="btn btn-ghost" href="#flow">Forward pass</a>
+      <a class="btn btn-ghost font-mono text-[13px]" href="#file-model">model.py</a>
+      <a class="btn btn-ghost font-mono text-[13px]" href="#file-train">train.py</a>
+      <a class="btn btn-ghost font-mono text-[13px]" href="#file-verify">verify.py</a>
+      <a class="btn btn-ghost font-mono text-[13px]" href="#file-generate">generate.py</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============================== HERO ============================== -->
+<!--
+  Asymmetric 7/5 split. No centered headline. No "scroll to explore". One
+  primary CTA only. Display type uses Geist at fluid clamp scale, weight 800,
+  track tight. Param chips collapse into a single mono row beneath the body.
+-->
+<section id="overview" class="max-w-7xl mx-auto px-6 lg:px-16 pt-20 pb-12">
+  <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+    <div class="lg:col-span-7">
+      <div class="flex items-center gap-3">
+        <span class="pill">single-file pytorch reproduction</span>
+        <span class="font-mono text-[11px] tracking-widest uppercase" style="color: var(--slate);">v0.1 · MIT</span>
+      </div>
+      <h1 class="mt-6 font-semibold tracking-tighter2"
+          style="font-size: clamp(2.75rem, 6vw, 4.75rem); line-height: 1.02; color: var(--ink); font-weight: 800;">
+        SmolLM2-135M,<br/>
+        <span style="color: var(--steel); font-weight: 600;">line by line.</span>
+      </h1>
+      <p class="mt-7 text-[1.0625rem] max-w-[60ch]" style="color: var(--steel); line-height: 1.7;">
+        A hand-built reproduction of HuggingFace's SmolLM2-135M — Llama-style decoder, RMSNorm,
+        RoPE, grouped-query attention, SwiGLU MLP, WSD-scheduled training, exact-parity loading
+        of the official safetensors, and a sampling loop. Every file is annotated, and every
+        operation is shown step by step inside one transformer block in the cinema below.
+      </p>
+      <div class="mt-7 flex flex-wrap gap-2">
+        <span class="pill">30 layers</span>
+        <span class="pill">hidden 576</span>
+        <span class="pill">9 Q · 3 KV heads</span>
+        <span class="pill">RoPE θ 100k</span>
+        <span class="pill">vocab 49,152</span>
+        <span class="pill">tied embeddings</span>
+        <span class="pill pill-accent">134,515,008 params</span>
+      </div>
+      <div class="mt-9">
+        <a href="#cinema" class="btn btn-primary">
+          Open the cinema
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5">
+      <div class="surface-card p-3 relative">
+        <div id="hero-scene" class="scene-wrap" style="height:420px;"></div>
+        <div class="px-4 pt-3 pb-1 flex flex-wrap gap-x-4 gap-y-1.5 text-[12px]" style="color: var(--steel);">
+          <span><span class="legend-dot" style="background:#F59E0B"></span>Embedding</span>
+          <span><span class="legend-dot" style="background:#10B981"></span>Attention</span>
+          <span><span class="legend-dot" style="background:#6366F1"></span>MLP</span>
+          <span><span class="legend-dot" style="background:#FCD34D"></span>RMSNorm</span>
+          <span><span class="legend-dot" style="background:#18181B"></span>LM head</span>
+        </div>
+        <div class="px-4 pb-3 font-mono text-[11px]" style="color: var(--slate);">
+          drag · scroll · click a layer
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    File matrix — Bento layout. model.py is the featured card (full width).
+    Below, a 2-column zig-zag of the four supporting files. Replaces the
+    banned 5-equal-cards pattern.
+  -->
+  <div class="mt-16 grid grid-cols-1 gap-4">
+    <a href="#file-model" class="step-card p-7 lg:p-9">
+      <div class="grid lg:grid-cols-12 gap-6 items-baseline">
+        <div class="lg:col-span-3">
+          <div class="font-mono text-[11px] tracking-widest uppercase" style="color: var(--slate);">317 lines · python</div>
+          <div class="mt-2 text-2xl font-semibold tracking-tightish font-mono" style="color: var(--ink);">model.py</div>
+        </div>
+        <div class="lg:col-span-7">
+          <p class="text-[15px]" style="color: var(--steel); line-height: 1.65;">
+            The whole architecture in one file. Config, RMSNorm, RoPE, grouped-query attention,
+            SwiGLU MLP, decoder Block, full Model, and the causal-LM wrapper. Drop-in name
+            compatibility with HuggingFace Llama so the official weights load with no remapping.
+          </p>
+        </div>
+        <div class="lg:col-span-2 lg:text-right">
+          <span class="pill pill-accent">featured</span>
+        </div>
+      </div>
+    </a>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <a href="#file-train" class="step-card p-6">
+        <div class="font-mono text-[11px] tracking-widest uppercase" style="color: var(--slate);">194 lines · python</div>
+        <div class="mt-2 text-lg font-semibold font-mono" style="color: var(--ink);">train.py</div>
+        <p class="mt-2 text-[14px]" style="color: var(--steel); line-height: 1.6;">
+          WSD scheduler, packed wikitext loader, AdamW with gradient accumulation.
+        </p>
+      </a>
+      <a href="#file-verify" class="step-card p-6 md:translate-y-6">
+        <div class="font-mono text-[11px] tracking-widest uppercase" style="color: var(--slate);">89 lines · python</div>
+        <div class="mt-2 text-lg font-semibold font-mono" style="color: var(--ink);">verify.py</div>
+        <p class="mt-2 text-[14px]" style="color: var(--steel); line-height: 1.6;">
+          Drop-in load of HF safetensors, logit-parity gate against the official model.
+        </p>
+      </a>
+      <a href="#file-generate" class="step-card p-6">
+        <div class="font-mono text-[11px] tracking-widest uppercase" style="color: var(--slate);">30 lines · python</div>
+        <div class="mt-2 text-lg font-semibold font-mono" style="color: var(--ink);">generate.py</div>
+        <p class="mt-2 text-[14px]" style="color: var(--steel); line-height: 1.6;">
+          CLI prompt to top-k sampling on the loaded official weights.
+        </p>
+      </a>
+      <a href="#file-req" class="step-card p-6 md:translate-y-6">
+        <div class="font-mono text-[11px] tracking-widest uppercase" style="color: var(--slate);">5 lines · text</div>
+        <div class="mt-2 text-lg font-semibold font-mono" style="color: var(--ink);">requirements.txt</div>
+        <p class="mt-2 text-[14px]" style="color: var(--steel); line-height: 1.6;">
+          torch, transformers, safetensors, accelerate, datasets.
+        </p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 3D ARCHITECTURE ============================== -->
+<section id="arch3d" class="max-w-7xl mx-auto px-5 pt-8 pb-2">
+  <div class="flex items-end justify-between flex-wrap gap-2">
+    <div>
+      <h2 class="text-2xl font-semibold text-amber-900">3D Architecture</h2>
+      <p class="text-sm text-amber-900/80">
+        The full Llama-style stack rendered as a tower of 30 transformer blocks.
+        Each layer = pre-norm → grouped-query attention → residual → pre-norm → SwiGLU MLP → residual.
+      </p>
+    </div>
+    <div class="flex items-center gap-2 text-sm">
+      <button id="btn-flow" class="btn">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <span>Token flow</span>
+      </button>
+      <button id="btn-spin" class="btn">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7M21 4v5h-5"/></svg>
+        <span>Auto-rotate</span>
+      </button>
+      <button id="btn-explode" class="btn">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+        <span>Explode</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-12 gap-4 mt-4">
+    <div class="lg:col-span-8 rounded-3xl p-3 bg-white ring-soft shadow-soft">
+      <div id="arch-scene" class="scene-wrap" style="height:560px;"></div>
+      <div class="px-3 py-2 text-[12px] text-amber-900/80">
+        Click a sub-block to read its docs. Hover to see shapes flowing through it.
+      </div>
+    </div>
+    <aside class="lg:col-span-4 rounded-3xl p-5 bg-white ring-soft">
+      <div class="text-xs uppercase tracking-wider text-amber-700">Selected component</div>
+      <div id="sel-name" class="mt-1 text-lg font-semibold text-amber-900">Embedding</div>
+      <div id="sel-shape" class="mt-1 text-xs font-mono text-emerald-800">(B, T) → (B, T, 576)</div>
+      <p id="sel-desc" class="mt-3 text-sm text-amber-900/80">
+        Token IDs are looked up in a learned table of size <code>49,152 × 576</code>. The same
+        weight matrix is reused as the <em>lm_head</em> when projecting back to vocabulary at
+        the top of the network (weight tying).
+      </p>
+      <div class="mt-4 grid grid-cols-3 gap-2 text-center text-[11px]">
+        <div class="rounded-xl bg-peach-50 p-2"><div class="text-amber-900 font-semibold" id="sel-params">28.3M</div><div class="text-amber-700/80">params</div></div>
+        <div class="rounded-xl bg-mint-50 p-2"><div class="text-emerald-900 font-semibold" id="sel-flops">·</div><div class="text-emerald-700/80">notes</div></div>
+        <div class="rounded-xl bg-sky2-50 p-2"><div class="text-sky-900 font-semibold" id="sel-ref">cfg</div><div class="text-sky-700/80">refers</div></div>
+      </div>
+      <div class="mt-5 text-xs uppercase tracking-wider text-amber-700">Per-layer composition</div>
+      <ul class="mt-2 text-sm text-amber-900/90 space-y-1">
+        <li><span class="hl-bullet"></span>RMSNorm (input)</li>
+        <li><span class="hl-bullet" style="background:#7fd6a0"></span>Self-Attn (GQA, 9Q/3KV)</li>
+        <li><span class="hl-bullet"></span>Residual</li>
+        <li><span class="hl-bullet" style="background:#bcdef7"></span>RMSNorm (post-attn)</li>
+        <li><span class="hl-bullet" style="background:#bcdef7"></span>SwiGLU MLP (576 → 1536 → 576)</li>
+        <li><span class="hl-bullet"></span>Residual</li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<!-- ============================== CINEMA ============================== -->
+<section id="cinema" class="max-w-7xl mx-auto px-6 lg:px-16 pt-24">
+  <div class="grid lg:grid-cols-12 gap-6 items-end mb-8">
+    <div class="lg:col-span-9">
+      <div class="flex items-center gap-3">
+        <span class="pill">live forward pass</span>
+        <span class="font-mono text-[11px] tracking-widest uppercase" style="color: var(--slate);">block 0 · &quot;Hello, my name is&quot;</span>
+      </div>
+      <h2 class="mt-4 font-semibold tracking-tighter2"
+          style="font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.05; color: var(--ink); font-weight: 700;">
+        One transformer block,<br/>
+        <span style="color: var(--steel); font-weight: 600;">walked end to end.</span>
+      </h2>
+      <p class="mt-5 text-[1rem] max-w-[64ch]" style="color: var(--steel); line-height: 1.7;">
+        A real (B&nbsp;=&nbsp;1, T&nbsp;=&nbsp;5, 576) hidden state climbs through every component of one
+        decoder block. The flow arrow shows where the data is right now; the camera follows it.
+        Every per-token RMS in the side panel was captured from a real forward pass on the
+        official SmolLM2-135M weights.
+      </p>
+    </div>
+    <div class="lg:col-span-3 lg:text-right font-mono text-[12px]" style="color: var(--slate);">
+      16 scenes &nbsp;·&nbsp; ~2 min<br/>verified against model.py
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-12 gap-6 mt-4">
+    <!-- Stage -->
+    <div class="lg:col-span-8 surface-card p-3">
+      <div class="relative">
+        <div id="cinema-stage" class="scene-wrap" style="height:820px;"></div>
+
+        <!-- chapter chip top-left — translucent dark over the dark cinema -->
+        <div id="ci-chapter" class="absolute top-3 left-3 px-3 py-1.5 rounded-lg pointer-events-none font-mono text-[11px]"
+             style="background: rgba(15,23,42,0.75); color: #F9FAFB; backdrop-filter: blur(8px); border: 1px solid rgba(245,158,11,0.35);">
+          <span id="ci-chapter-num" style="color: #FCD34D;">scene 1/16</span>
+          <span class="mx-1.5" style="color: rgba(249,250,251,0.45);">·</span>
+          <span id="ci-chapter-title" class="font-semibold" style="color: #F9FAFB;">x_in</span>
+        </div>
+
+        <!-- shape badge top-right -->
+        <div id="ci-shape-badge" class="absolute top-3 right-3 px-3 py-1.5 rounded-lg pointer-events-none max-w-[55%] truncate text-right font-mono text-[11px]"
+             style="background: rgba(15,23,42,0.75); color: #FCD34D; backdrop-filter: blur(8px); border: 1px solid rgba(245,158,11,0.25);"></div>
+
+        <!-- caption strip (subtitles) bottom — dark translucent for the dark cinema -->
+        <div id="ci-caption" class="absolute left-1/2 -translate-x-1/2 bottom-5 max-w-[92%] px-6 py-4 rounded-2xl text-center pointer-events-none"
+             style="background: rgba(15,23,42,0.85); border: 1px solid rgba(245,158,11,0.25); backdrop-filter: blur(10px);">
+          <div id="ci-cap-title" class="font-semibold text-base leading-tight" style="color: #F9FAFB;">x_in arrives</div>
+          <div id="ci-cap-narr" class="text-[13.5px] leading-snug mt-1.5" style="color: rgba(249,250,251,0.78);"></div>
+          <div id="ci-cap-shape" class="text-[11px] font-mono mt-2" style="color: #FCD34D;"></div>
+        </div>
+
+        <!-- timecode pill -->
+        <div id="ci-timecode" class="absolute bottom-3 right-3 px-2.5 py-1 rounded-md pointer-events-none font-mono text-[11px]"
+             style="background: rgba(15,23,42,0.75); color: #F9FAFB; border: 1px solid rgba(245,158,11,0.25);">0:00.0</div>
+      </div>
+
+      <!-- transport controls -->
+      <div class="px-4 pt-4 pb-3 flex items-center gap-2 flex-wrap" style="border-top: 1px solid var(--whisper);">
+        <button id="ci-prev" class="btn btn-ghost" title="Previous scene" aria-label="Previous scene">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20L9 12l10-8v16zM5 19V5"/></svg>
+        </button>
+        <button id="ci-play" class="btn btn-primary" title="Play / Pause">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span>Play</span>
+        </button>
+        <button id="ci-next" class="btn btn-ghost" title="Next scene" aria-label="Next scene">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4l10 8-10 8V4zM19 5v14"/></svg>
+        </button>
+        <span id="ci-time" class="font-mono text-[12px] ml-2" style="color: var(--steel);">0:00 / 1:15</span>
+        <input id="ci-scrub" type="range" min="0" max="75" step="0.05" value="0"
+               class="flex-1 mx-2" style="accent-color: var(--accent);" />
+        <label class="font-mono text-[12px] inline-flex items-center gap-1.5" style="color: var(--steel);">
+          <span class="uppercase tracking-widest text-[10px]">speed</span>
+          <select id="ci-speed" class="rounded-md px-2 py-1 text-[12px] font-mono"
+                  style="background: var(--canvas); border: 1px solid var(--whisper); color: var(--ink);">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2">2×</option>
+          </select>
+        </label>
+        <button id="ci-4k" class="btn" title="Toggle fullscreen (press F)">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></svg>
+          <span>Fullscreen</span>
+        </button>
+      </div>
+
+      <!-- progress bar with scene markers -->
+      <div id="ci-progress" class="relative mx-4 mb-4 h-1.5 rounded-full overflow-hidden" style="background: #F3F4F6;">
+        <div id="ci-progress-fill" class="absolute inset-y-0 left-0" style="width:0%; background: var(--accent);"></div>
+        <div id="ci-progress-markers" class="absolute inset-0"></div>
+      </div>
+    </div>
+
+    <!-- Scene panel -->
+    <aside class="lg:col-span-4 surface-card p-6 flex flex-col">
+      <div class="flex items-center justify-between">
+        <span class="pill pill-accent" id="ci-scene-num">scene 1 / 16</span>
+        <span class="font-mono text-[11px]" id="ci-scene-time" style="color: var(--slate);">0.0–2.0s</span>
+      </div>
+      <div id="ci-title" class="mt-2 text-lg font-semibold text-amber-900 leading-snug">
+        Prompt → tokens
+      </div>
+      <div id="ci-shape" class="mt-1 text-xs font-mono text-emerald-800">
+        "The capital of France is" → input_ids of shape (1, 6)
+      </div>
+      <p id="ci-narr" class="mt-3 text-sm text-amber-900/85">
+        The official SmolLM2 BPE tokenizer breaks the prompt into 6 subword IDs from a
+        vocabulary of 49,152.
+      </p>
+
+      <div class="mt-4">
+        <div class="text-[11px] uppercase tracking-wider text-amber-700">Source links</div>
+        <div id="ci-links" class="mt-1 flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <div class="mt-4 grid grid-cols-3 gap-2 text-center text-[11px]">
+        <div class="rounded-xl bg-peach-50 p-2"><div id="ci-stat-a" class="text-amber-900 font-semibold">·</div><div class="text-amber-700/80" id="ci-stat-a-l">layer</div></div>
+        <div class="rounded-xl bg-mint-50  p-2"><div id="ci-stat-b" class="text-emerald-900 font-semibold">·</div><div class="text-emerald-700/80" id="ci-stat-b-l">module</div></div>
+        <div class="rounded-xl bg-sky2-50  p-2"><div id="ci-stat-c" class="text-sky-900 font-semibold">·</div><div class="text-sky-700/80" id="ci-stat-c-l">cost</div></div>
+      </div>
+
+      <div class="mt-4 flex-1 overflow-y-auto pr-1" style="max-height:200px">
+        <div class="text-[11px] uppercase tracking-wider text-amber-700 mb-1">Scene list</div>
+        <ol id="ci-list" class="text-[12px] space-y-0.5"></ol>
+      </div>
+    </aside>
+  </div>
+
+  <div class="mt-3 text-[11px] text-amber-700/80">
+    Camera and animation are interpolated; pause anytime and drag in the canvas to free-look.
+    Every scene's tensor shape, parameter count, and code line range is cross-checked against
+    the actual files served from this same origin (open the browser devtools network tab to verify).
+  </div>
+</section>
+
+<!-- ============================== INLINE 3D WIDGETS ============================== -->
+<section class="max-w-7xl mx-auto px-5 pt-10">
+  <h2 class="text-2xl font-semibold text-amber-900">Concept widgets</h2>
+  <p class="text-sm text-amber-900/80">Three small interactive 3D scenes that animate the trickier ideas in the model.</p>
+  <div class="grid md:grid-cols-3 gap-4 mt-4">
+    <div class="rounded-3xl bg-white ring-soft p-3">
+      <div class="px-2 pt-1 pb-2">
+        <div class="text-amber-900 font-semibold">RMSNorm</div>
+        <div class="text-xs text-amber-900/70">Vector projected onto a unit sphere, then scaled by learned weights.</div>
+      </div>
+      <div id="rms-scene" class="scene-wrap" style="height:240px;"></div>
+    </div>
+    <div class="rounded-3xl bg-white ring-soft p-3">
+      <div class="px-2 pt-1 pb-2">
+        <div class="text-amber-900 font-semibold">RoPE rotation</div>
+        <div class="text-xs text-amber-900/70">Each (x₁,x₂) pair in the head dim is rotated by an angle that depends on position.</div>
+      </div>
+      <div id="rope-scene" class="scene-wrap" style="height:240px;"></div>
+    </div>
+    <div class="rounded-3xl bg-white ring-soft p-3">
+      <div class="px-2 pt-1 pb-2">
+        <div class="text-amber-900 font-semibold">Grouped-Query Attention</div>
+        <div class="text-xs text-amber-900/70">9 query heads share 3 key/value heads — each KV serves 3 Qs.</div>
+      </div>
+      <div id="gqa-scene" class="scene-wrap" style="height:240px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== FORWARD PASS WALKTHROUGH ============================== -->
+<section id="flow" class="max-w-7xl mx-auto px-5 pt-12">
+  <h2 class="text-2xl font-semibold text-amber-900">Step-by-step forward pass</h2>
+  <p class="text-sm text-amber-900/80">From token IDs to logits, with the exact tensor shape at every hop.</p>
+
+  <ol class="mt-5 grid md:grid-cols-2 gap-4">
+    <li class="step-card rounded-2xl p-5 bg-peach-50 ring-soft">
+      <div class="text-xs font-mono text-amber-700">step 1</div>
+      <div class="font-semibold text-amber-900">Token IDs → embeddings</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">(B, T) → (B, T, 576)</div>
+      <p class="text-sm text-amber-900/85 mt-2">
+        <code>embed_tokens</code> is an <code>nn.Embedding(49152, 576)</code> lookup. The same
+        matrix is later transposed into <code>lm_head</code>.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-mint-50 ring-soft">
+      <div class="text-xs font-mono text-emerald-700">step 2</div>
+      <div class="font-semibold text-emerald-900">Build RoPE cos/sin</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">(T, 64)  ·  (T, 64)</div>
+      <p class="text-sm text-emerald-900/85 mt-2">
+        Precomputed at model init for <code>max_position_embeddings = 8192</code>;
+        sliced to length T per call. <code>theta = 100,000</code>.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-sky2-50 ring-soft">
+      <div class="text-xs font-mono text-sky-700">step 3</div>
+      <div class="font-semibold text-sky-900">Per layer — pre-norm</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">(B, T, 576) → (B, T, 576)</div>
+      <p class="text-sm text-sky-900/85 mt-2">
+        <code>RMSNorm</code> in fp32, then cast back. <em>Pre-norm</em> means the norm sits inside
+        the residual branch, never on the residual itself.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-rose2-50 ring-soft">
+      <div class="text-xs font-mono text-rose-700">step 4</div>
+      <div class="font-semibold text-rose-900">Project to Q, K, V</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">Q (B, 9, T, 64), K/V (B, 3, T, 64)</div>
+      <p class="text-sm text-rose-900/85 mt-2">
+        Asymmetric: 9 query heads vs 3 KV heads — the GQA compression. No biases.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-peach-50 ring-soft">
+      <div class="text-xs font-mono text-amber-700">step 5</div>
+      <div class="font-semibold text-amber-900">Apply RoPE to Q, K</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">same shapes</div>
+      <p class="text-sm text-amber-900/85 mt-2">
+        <code>q*cos + rotate_half(q)*sin</code> — encodes position by <em>rotating</em> halves of
+        the head dim, not by adding a positional vector.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-mint-50 ring-soft">
+      <div class="text-xs font-mono text-emerald-700">step 6</div>
+      <div class="font-semibold text-emerald-900">Repeat KV → 9 heads</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">(B, 3, T, 64) → (B, 9, T, 64)</div>
+      <p class="text-sm text-emerald-900/85 mt-2">
+        <code>repeat_interleave(3, dim=1)</code> so SDPA can pair every Q head with a K/V head.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-sky2-50 ring-soft">
+      <div class="text-xs font-mono text-sky-700">step 7</div>
+      <div class="font-semibold text-sky-900">Causal SDPA</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">(B, 9, T, 64)</div>
+      <p class="text-sm text-sky-900/85 mt-2">
+        <code>F.scaled_dot_product_attention(..., is_causal=True)</code> — uses Flash Attention
+        on supported GPUs.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-rose2-50 ring-soft">
+      <div class="text-xs font-mono text-rose-700">step 8</div>
+      <div class="font-semibold text-rose-900">Output proj + residual</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">(B, T, 576)</div>
+      <p class="text-sm text-rose-900/85 mt-2">
+        <code>o_proj</code> mixes heads back into <code>hidden_size</code>; result added to the
+        residual stream.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-peach-50 ring-soft">
+      <div class="text-xs font-mono text-amber-700">step 9</div>
+      <div class="font-semibold text-amber-900">Post-attn norm + SwiGLU MLP</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">(B, T, 576) ↔ (B, T, 1536)</div>
+      <p class="text-sm text-amber-900/85 mt-2">
+        <code>down(silu(gate(x)) * up(x))</code>. Two parallel up-projections fused via SiLU gating.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-mint-50 ring-soft">
+      <div class="text-xs font-mono text-emerald-700">step 10</div>
+      <div class="font-semibold text-emerald-900">Repeat ×30, final norm</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">(B, T, 576)</div>
+      <p class="text-sm text-emerald-900/85 mt-2">
+        After 30 blocks, one final RMSNorm before projecting to logits.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-sky2-50 ring-soft">
+      <div class="text-xs font-mono text-sky-700">step 11</div>
+      <div class="font-semibold text-sky-900">lm_head → vocab logits</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">(B, T, 576) → (B, T, 49152)</div>
+      <p class="text-sm text-sky-900/85 mt-2">
+        Tied with <code>embed_tokens.weight</code> — same tensor, no extra parameters.
+      </p>
+    </li>
+
+    <li class="step-card rounded-2xl p-5 bg-rose2-50 ring-soft">
+      <div class="text-xs font-mono text-rose-700">step 12</div>
+      <div class="font-semibold text-rose-900">Cross-entropy (training only)</div>
+      <div class="text-xs font-mono text-emerald-800 mt-1">scalar</div>
+      <p class="text-sm text-rose-900/85 mt-2">
+        Shift labels by 1; predict token <em>t+1</em> from positions ≤ t.
+        <code>ignore_index=-100</code> for padding.
+      </p>
+    </li>
+  </ol>
+</section>
+
+<!-- ====================================================================== -->
+<!-- ============================== model.py ============================== -->
+<!-- ====================================================================== -->
+<section id="file-model" class="max-w-7xl mx-auto px-5 pt-14">
+  <div class="flex items-end justify-between flex-wrap gap-2">
+    <div>
+      <span class="pill pill-peach">file</span>
+      <h2 class="text-2xl font-semibold text-amber-900 mt-1">model.py — the full architecture</h2>
+      <p class="text-sm text-amber-900/80 max-w-3xl">
+        Single-file PyTorch implementation of <code>LlamaForCausalLM</code>-shaped SmolLM2-135M.
+        Parameter naming mirrors HuggingFace exactly so the official safetensors
+        load via <code>load_state_dict</code> with no key remapping.
+      </p>
+    </div>
+    <div class="text-xs text-amber-700">317 lines · 8 components</div>
+  </div>
+
+  <!-- TOC for model.py -->
+  <div class="mt-4 grid md:grid-cols-4 gap-3 text-sm">
+    <a href="#m-config"   class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-peach-50">① <span class="font-medium text-amber-900">SmolLM2Config</span></a>
+    <a href="#m-rmsnorm"  class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-peach-50">② <span class="font-medium text-amber-900">RMSNorm</span></a>
+    <a href="#m-rope"     class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-peach-50">③ <span class="font-medium text-amber-900">RoPE helpers</span></a>
+    <a href="#m-attn"     class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-peach-50">④ <span class="font-medium text-amber-900">Attention (GQA)</span></a>
+    <a href="#m-mlp"      class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-peach-50">⑤ <span class="font-medium text-amber-900">MLP (SwiGLU)</span></a>
+    <a href="#m-block"    class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-peach-50">⑥ <span class="font-medium text-amber-900">Block</span></a>
+    <a href="#m-model"    class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-peach-50">⑦ <span class="font-medium text-amber-900">SmolLM2Model</span></a>
+    <a href="#m-causal"   class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-peach-50">⑧ <span class="font-medium text-amber-900">SmolLM2ForCausalLM</span></a>
+  </div>
+
+  <!-- ============= COMPONENT TEMPLATE ============= -->
+  <!-- ① Config -->
+  <article id="m-config" class="mt-8 rounded-3xl bg-white ring-soft shadow-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-peach ring-soft flex items-center justify-center text-amber-900 font-semibold">①</div>
+      <div>
+        <h3 class="text-xl font-semibold text-amber-900">SmolLM2Config</h3>
+        <div class="text-xs text-amber-700/80">lines 28–49 · <code>@dataclass</code></div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-amber-900/85 max-w-3xl">
+      Frozen, dataclass-shaped mirror of <code>config.json</code> from the HuggingFace repo.
+      Every default is annotated inline with the corresponding config field. Acts as the single
+      source of truth that every other module reads from.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-4 mt-4">
+      <pre class="code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="28">@dataclass</span>
+<span class="row" data-l="29">class SmolLM2Config:</span>
+<span class="row" data-l="30">    vocab_size: int = 49152</span>
+<span class="row" data-l="31">    hidden_size: int = 576</span>
+<span class="row" data-l="32">    intermediate_size: int = 1536</span>
+<span class="row" data-l="33">    num_hidden_layers: int = 30</span>
+<span class="row" data-l="34">    num_attention_heads: int = 9</span>
+<span class="row" data-l="35">    num_key_value_heads: int = 3</span>
+<span class="row" data-l="36">    max_position_embeddings: int = 8192</span>
+<span class="row" data-l="37">    rope_theta: float = 100_000.0</span>
+<span class="row" data-l="38">    rms_norm_eps: float = 1e-5</span>
+<span class="row" data-l="39">    initializer_range: float = 1.0 / math.sqrt(576)</span>
+<span class="row" data-l="40">    tie_word_embeddings: bool = True</span>
+<span class="row" data-l="41">    attention_bias: bool = False</span>
+<span class="row" data-l="42">    attention_dropout: float = 0.0</span>
+<span class="row" data-l="45">    @property</span>
+<span class="row" data-l="46">    def head_dim(self) -&gt; int:</span>
+<span class="row" data-l="49">        return self.hidden_size // self.num_attention_heads</span></code></pre>
+
+      <ul class="space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L30</span> <b>vocab_size = 49152</b> — output of the BPE tokenizer; sets both <code>embed_tokens</code> and tied <code>lm_head</code>.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L31–32</span> <b>hidden_size 576 / intermediate 1536</b> — residual width and SwiGLU inner width (~2.67×).</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L33</span> <b>30 layers</b> — depth of the transformer stack rendered in the 3D tower above.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L34–35</span> <b>9 Q heads, 3 KV heads</b> — Grouped-Query Attention, ratio 3.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L36</span> <b>max_position_embeddings 8192</b> — RoPE table size built once at init.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L37</span> <b>rope_theta 100k</b> — SmolLM2-v2 uses 100k (v1 used 10k); higher base = longer effective context.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L38</span> <b>rms_norm_eps 1e-5</b> — numerical floor inside <code>1/√(var+ε)</code>.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L39</span> <b>init_range = 1/√576 ≈ 0.0417</b> — μP-flavored Llama init.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L40</span> <b>tie_word_embeddings True</b> — <code>lm_head.weight</code> aliases <code>embed_tokens.weight</code>.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L41–42</span> <b>no attention bias, no dropout</b> — Llama convention; matches HF defaults.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L45–49</span> <b>head_dim property</b> = <code>576 / 9 = 64</code>; consumed by RoPE and projections.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- ② RMSNorm -->
+  <article id="m-rmsnorm" class="mt-6 rounded-3xl bg-white ring-soft shadow-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-peach ring-soft flex items-center justify-center text-amber-900 font-semibold">②</div>
+      <div>
+        <h3 class="text-xl font-semibold text-amber-900">RMSNorm</h3>
+        <div class="text-xs text-amber-700/80">lines 59–70 · <code>nn.Module</code></div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-amber-900/85 max-w-3xl">
+      Root-Mean-Square LayerNorm (Zhang & Sennrich, 2019). Unlike LayerNorm it has no
+      mean-subtraction and no bias — just rescale by the inverse RMS, then multiply by a learned
+      gain. Computed in fp32 for stability, then cast back to the input dtype.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="59">class RMSNorm(nn.Module):</span>
+<span class="row" data-l="60">    def __init__(self, hidden_size: int, eps: float):</span>
+<span class="row" data-l="61">        super().__init__()</span>
+<span class="row" data-l="62">        self.weight = nn.Parameter(torch.ones(hidden_size))</span>
+<span class="row" data-l="63">        self.eps = eps</span>
+
+<span class="row" data-l="65">    def forward(self, x: torch.Tensor) -&gt; torch.Tensor:</span>
+<span class="row" data-l="66">        dtype = x.dtype</span>
+<span class="row" data-l="67">        x = x.to(torch.float32)</span>
+<span class="row" data-l="68">        var = x.pow(2).mean(-1, keepdim=True)</span>
+<span class="row" data-l="69">        x = x * torch.rsqrt(var + self.eps)</span>
+<span class="row" data-l="70">        return (self.weight * x).to(dtype)</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L62</span> Learned gain initialized to <b>ones</b>; one parameter per channel.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L66–67</span> Capture incoming dtype, promote to fp32 for the math.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L68</span> Mean of squares <em>over the last dim</em>: this is the RMS² per token.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L69</span> <code>rsqrt</code> avoids a divide; ε prevents divide-by-zero on degenerate vectors.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L70</span> Apply per-channel gain and cast back to bf16/fp16/fp32 — preserves caller dtype.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- ③ RoPE -->
+  <article id="m-rope" class="mt-6 rounded-3xl bg-white ring-soft shadow-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-peach ring-soft flex items-center justify-center text-amber-900 font-semibold">③</div>
+      <div>
+        <h3 class="text-xl font-semibold text-amber-900">Rotary Position Embeddings</h3>
+        <div class="text-xs text-amber-700/80">lines 84–106 · three helper functions</div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-amber-900/85 max-w-3xl">
+      RoPE encodes absolute position by <em>rotating</em> 2D pairs inside each attention head,
+      so dot products between Q and K naturally encode relative position. SmolLM2 uses the
+      "non-interleaved" layout (split last dim in half, rotate halves), matching HuggingFace.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="84">def _build_rope_cache(seq_len, head_dim, theta, device, dtype):</span>
+<span class="row" data-l="86">    inv_freq = 1.0 / (theta ** (torch.arange(0, head_dim, 2, ...) / head_dim))</span>
+<span class="row" data-l="87">    t = torch.arange(seq_len, device=device, dtype=torch.float32)</span>
+<span class="row" data-l="88">    freqs = torch.outer(t, inv_freq)</span>
+<span class="row" data-l="89">    emb = torch.cat([freqs, freqs], dim=-1)</span>
+<span class="row" data-l="90">    return emb.cos().to(dtype), emb.sin().to(dtype)</span>
+
+<span class="row" data-l="93">def _rotate_half(x):</span>
+<span class="row" data-l="95">    x1, x2 = x.chunk(2, dim=-1)</span>
+<span class="row" data-l="96">    return torch.cat([-x2, x1], dim=-1)</span>
+
+<span class="row" data-l="99">def _apply_rope(q, k, cos, sin):</span>
+<span class="row" data-l="102">    cos = cos.unsqueeze(0).unsqueeze(0)</span>
+<span class="row" data-l="103">    sin = sin.unsqueeze(0).unsqueeze(0)</span>
+<span class="row" data-l="104">    q_out = (q * cos) + (_rotate_half(q) * sin)</span>
+<span class="row" data-l="105">    k_out = (k * cos) + (_rotate_half(k) * sin)</span>
+<span class="row" data-l="106">    return q_out, k_out</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L86</span> <code>inv_freq</code> = 32 frequencies (head_dim/2). Lower index = faster rotation = shorter wavelength.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L87–88</span> Outer product of positions × frequencies → angle table of shape <code>(seq_len, 32)</code>.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L89</span> Duplicate (concat with itself) so the cos/sin lines up with the half-split rotation in <code>_rotate_half</code>.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L95–96</span> "Rotate-half": pair channel <em>i</em> with channel <em>i+32</em>; this is the HF convention.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L102–103</span> Add batch + head dims via <code>unsqueeze</code> for broadcast over <code>(B, H, T, D)</code>.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L104–105</span> The rotation: <code>x' = x·cos + rotate_half(x)·sin</code>. Note <b>only Q and K are rotated</b>, not V.</li>
+      </ul>
+    </div>
+    <div class="mt-4 p-4 rounded-2xl bg-rose2-50 text-rose-900 text-sm">
+      <b>Why this matters:</b> using the wrong RoPE convention (interleaved vs split-half) is the
+      most common cause of "weights load fine but generations are gibberish". The
+      <a class="underline" href="#file-verify">verify.py</a> parity test exists primarily to catch
+      exactly this class of bug.
+    </div>
+  </article>
+
+  <!-- ④ Attention -->
+  <article id="m-attn" class="mt-6 rounded-3xl bg-white ring-soft shadow-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-peach ring-soft flex items-center justify-center text-amber-900 font-semibold">④</div>
+      <div>
+        <h3 class="text-xl font-semibold text-amber-900">Attention — Grouped-Query, Causal, RoPE'd</h3>
+        <div class="text-xs text-amber-700/80">lines 116–163 · <code>nn.Module</code></div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-amber-900/85 max-w-3xl">
+      The compute-heaviest module. Asymmetric Q vs KV projections (9 vs 3 heads),
+      RoPE applied to Q and K only, KV repeated to match Q, then dispatched to PyTorch's
+      fused <code>scaled_dot_product_attention</code> with a causal mask.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="116">class Attention(nn.Module):</span>
+<span class="row" data-l="117">    def __init__(self, cfg):</span>
+<span class="row" data-l="120">        self.n_heads     = cfg.num_attention_heads     # 9</span>
+<span class="row" data-l="121">        self.n_kv_heads  = cfg.num_key_value_heads     # 3</span>
+<span class="row" data-l="122">        self.head_dim    = cfg.head_dim                # 64</span>
+<span class="row" data-l="123">        self.n_rep       = self.n_heads // self.n_kv_heads  # 3</span>
+
+<span class="row" data-l="130">        self.q_proj = nn.Linear(576, 9*64, bias=False)</span>
+<span class="row" data-l="131">        self.k_proj = nn.Linear(576, 3*64, bias=False)</span>
+<span class="row" data-l="132">        self.v_proj = nn.Linear(576, 3*64, bias=False)</span>
+<span class="row" data-l="133">        self.o_proj = nn.Linear(9*64, 576, bias=False)</span>
+
+<span class="row" data-l="135">    def forward(self, x, cos, sin, attention_mask=None):</span>
+<span class="row" data-l="137">        B, T, _ = x.shape</span>
+<span class="row" data-l="139">        q = self.q_proj(x).view(B, T, 9, 64).transpose(1, 2)</span>
+<span class="row" data-l="140">        k = self.k_proj(x).view(B, T, 3, 64).transpose(1, 2)</span>
+<span class="row" data-l="141">        v = self.v_proj(x).view(B, T, 3, 64).transpose(1, 2)</span>
+
+<span class="row" data-l="144">        q, k = _apply_rope(q, k, cos, sin)</span>
+
+<span class="row" data-l="149">        if self.n_rep &gt; 1:</span>
+<span class="row" data-l="150">            k = k.repeat_interleave(self.n_rep, dim=1)</span>
+<span class="row" data-l="151">            v = v.repeat_interleave(self.n_rep, dim=1)</span>
+
+<span class="row" data-l="156">        out = F.scaled_dot_product_attention(</span>
+<span class="row" data-l="157">            q, k, v,</span>
+<span class="row" data-l="158">            attn_mask=attention_mask,</span>
+<span class="row" data-l="159">            dropout_p=0.0,</span>
+<span class="row" data-l="160">            is_causal=(attention_mask is None),</span>
+<span class="row" data-l="161">        )</span>
+<span class="row" data-l="162">        out = out.transpose(1, 2).contiguous().view(B, T, 9*64)</span>
+<span class="row" data-l="163">        return self.o_proj(out)</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L120–123</span> Cache shape constants once for readability.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L130–133</span> Four <code>nn.Linear</code> projections, all bias-free per <code>attention_bias=false</code>.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L139–141</span> Reshape to <code>(B, H, T, D)</code> via view + transpose so the head dim is contiguous for SDPA.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L144</span> Rotate Q and K only — V doesn't carry positional info.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L149–151</span> Materialise the GQA repeat: each KV head broadcast to 3 Q heads. Modern PyTorch can do this implicitly with <code>enable_gqa=True</code>; explicit repeat keeps it version-agnostic.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L156–161</span> Single fused kernel — Flash Attention picks the path on supported GPUs. <code>is_causal=True</code> only when no explicit mask is provided.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L162–163</span> Reverse the head transpose, flatten heads, project back to <code>hidden_size</code>.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- ⑤ MLP -->
+  <article id="m-mlp" class="mt-6 rounded-3xl bg-white ring-soft shadow-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-peach ring-soft flex items-center justify-center text-amber-900 font-semibold">⑤</div>
+      <div>
+        <h3 class="text-xl font-semibold text-amber-900">SwiGLU MLP</h3>
+        <div class="text-xs text-amber-700/80">lines 172–180 · <code>nn.Module</code></div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-amber-900/85 max-w-3xl">
+      Shazeer-2020 SwiGLU: two parallel up-projections (<code>gate</code> and <code>up</code>),
+      one element-wise SiLU gate, then a single down-projection. No biases.
+      Mathematically: <code>down( silu(gate(x)) ⊙ up(x) )</code>.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="172">class MLP(nn.Module):</span>
+<span class="row" data-l="173">    def __init__(self, cfg):</span>
+<span class="row" data-l="175">        self.gate_proj = nn.Linear(576, 1536, bias=False)</span>
+<span class="row" data-l="176">        self.up_proj   = nn.Linear(576, 1536, bias=False)</span>
+<span class="row" data-l="177">        self.down_proj = nn.Linear(1536, 576, bias=False)</span>
+
+<span class="row" data-l="179">    def forward(self, x):</span>
+<span class="row" data-l="180">        return self.down_proj(F.silu(self.gate_proj(x)) * self.up_proj(x))</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L175–176</span> <b>Two</b> up-projections — that's the "GLU" part. They share input but have independent weights.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L177</span> Down-projection back to residual width.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L180</span> <code>silu(g) * u</code> = the gated activation. SiLU = <code>x · σ(x)</code>, smooth and self-gating.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">params</span> ≈ <b>2.65M / layer</b> (3 × 576 × 1536), summed over 30 layers ≈ 79.7M — by far the biggest chunk of the model.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- ⑥ Block -->
+  <article id="m-block" class="mt-6 rounded-3xl bg-white ring-soft shadow-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-peach ring-soft flex items-center justify-center text-amber-900 font-semibold">⑥</div>
+      <div>
+        <h3 class="text-xl font-semibold text-amber-900">Block — pre-norm transformer layer</h3>
+        <div class="text-xs text-amber-700/80">lines 188–199</div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-amber-900/85 max-w-3xl">
+      Standard pre-norm Llama block: norm → attn → residual → norm → MLP → residual.
+      Module names (<code>input_layernorm</code>, <code>self_attn</code>,
+      <code>post_attention_layernorm</code>, <code>mlp</code>) match HF exactly so safetensors
+      keys align without remapping.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="188">class Block(nn.Module):</span>
+<span class="row" data-l="189">    def __init__(self, cfg):</span>
+<span class="row" data-l="191">        self.input_layernorm           = RMSNorm(576, eps)</span>
+<span class="row" data-l="192">        self.self_attn                 = Attention(cfg)</span>
+<span class="row" data-l="193">        self.post_attention_layernorm  = RMSNorm(576, eps)</span>
+<span class="row" data-l="194">        self.mlp                       = MLP(cfg)</span>
+
+<span class="row" data-l="196">    def forward(self, x, cos, sin, attention_mask=None):</span>
+<span class="row" data-l="197">        x = x + self.self_attn(self.input_layernorm(x), cos, sin, attention_mask)</span>
+<span class="row" data-l="198">        x = x + self.mlp(self.post_attention_layernorm(x))</span>
+<span class="row" data-l="199">        return x</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L191–194</span> Two norms + one attn + one MLP per block — total <b>120 norms</b> in the full 30-layer stack.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L197</span> Pre-norm pattern: norm sits <em>inside</em> the residual branch, so the residual is never normalized. This is what makes very deep stacks trainable.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L198</span> Same again with the MLP. Every block is a "compute, scale, add" unit.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- ⑦ SmolLM2Model -->
+  <article id="m-model" class="mt-6 rounded-3xl bg-white ring-soft shadow-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-peach ring-soft flex items-center justify-center text-amber-900 font-semibold">⑦</div>
+      <div>
+        <h3 class="text-xl font-semibold text-amber-900">SmolLM2Model — embedding + stack + final norm</h3>
+        <div class="text-xs text-amber-700/80">lines 212–235</div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-amber-900/85 max-w-3xl">
+      Mirrors <code>LlamaModel</code>: one token embedding, a <code>ModuleList</code> of 30 blocks,
+      one final RMSNorm. RoPE tables are precomputed once and registered as
+      <code>persistent=False</code> buffers so they don't pollute <code>state_dict</code>.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="212">class SmolLM2Model(nn.Module):</span>
+<span class="row" data-l="213">    def __init__(self, cfg):</span>
+<span class="row" data-l="216">        self.embed_tokens = nn.Embedding(49152, 576)</span>
+<span class="row" data-l="217">        self.layers = nn.ModuleList([Block(cfg) for _ in range(30)])</span>
+<span class="row" data-l="218">        self.norm = RMSNorm(576, cfg.rms_norm_eps)</span>
+
+<span class="row" data-l="223">        cos, sin = _build_rope_cache(8192, 64, 100_000.0, 'cpu', float32)</span>
+<span class="row" data-l="225">        self.register_buffer('rope_cos', cos, persistent=False)</span>
+<span class="row" data-l="226">        self.register_buffer('rope_sin', sin, persistent=False)</span>
+
+<span class="row" data-l="228">    def forward(self, input_ids, attention_mask=None):</span>
+<span class="row" data-l="229">        T = input_ids.shape[1]</span>
+<span class="row" data-l="230">        x = self.embed_tokens(input_ids)</span>
+<span class="row" data-l="231">        cos = self.rope_cos[:T].to(x.dtype)</span>
+<span class="row" data-l="232">        sin = self.rope_sin[:T].to(x.dtype)</span>
+<span class="row" data-l="233">        for layer in self.layers:</span>
+<span class="row" data-l="234">            x = layer(x, cos, sin, attention_mask)</span>
+<span class="row" data-l="235">        return self.norm(x)</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L216</span> The embedding table — shared with the LM head via weight tying.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L217</span> 30 identical blocks in a list comprehension — each gets its own parameters.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L223</span> Build cos/sin once at <code>max_position_embeddings = 8192</code>; sliced per call.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L225–226</span> <code>persistent=False</code> keeps these out of <code>state_dict</code>, so HF's safetensors (which ship no RoPE tables) load cleanly.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L231–232</span> Cast cos/sin to the activation dtype each call — supports bf16 training without losing the fp32 cache.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L233–235</span> The 30 layers run sequentially; final norm applied <em>once</em> after the last residual.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- ⑧ ForCausalLM -->
+  <article id="m-causal" class="mt-6 rounded-3xl bg-white ring-soft shadow-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-peach ring-soft flex items-center justify-center text-amber-900 font-semibold">⑧</div>
+      <div>
+        <h3 class="text-xl font-semibold text-amber-900">SmolLM2ForCausalLM — head, init, loss, generate</h3>
+        <div class="text-xs text-amber-700/80">lines 238–301</div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-amber-900/85 max-w-3xl">
+      Wraps the model with the LM head, the cross-entropy loss, the weight-init recipe,
+      and a minimal greedy/top-k generator. Mirrors <code>LlamaForCausalLM</code>'s public
+      surface so loaders, generators, and HF tooling can use it as a drop-in.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="238">class SmolLM2ForCausalLM(nn.Module):</span>
+<span class="row" data-l="239">    def __init__(self, cfg):</span>
+<span class="row" data-l="242">        self.model = SmolLM2Model(cfg)</span>
+<span class="row" data-l="243">        self.lm_head = nn.Linear(576, 49152, bias=False)</span>
+<span class="row" data-l="244">        if cfg.tie_word_embeddings:</span>
+<span class="row" data-l="247">            self.lm_head.weight = self.model.embed_tokens.weight</span>
+<span class="row" data-l="248">        self.apply(self._init_weights)</span>
+
+<span class="row" data-l="250">    def _init_weights(self, module):</span>
+<span class="row" data-l="254">        std = self.cfg.initializer_range</span>
+<span class="row" data-l="255">        if isinstance(module, nn.Linear):</span>
+<span class="row" data-l="256">            nn.init.normal_(module.weight, mean=0.0, std=std)</span>
+<span class="row" data-l="257">            if module.bias is not None:</span>
+<span class="row" data-l="258">                nn.init.zeros_(module.bias)</span>
+<span class="row" data-l="259">        elif isinstance(module, nn.Embedding):</span>
+<span class="row" data-l="260">            nn.init.normal_(module.weight, mean=0.0, std=std)</span>
+
+<span class="row" data-l="263">    def forward(self, input_ids, labels=None, attention_mask=None):</span>
+<span class="row" data-l="266">        hidden = self.model(input_ids, attention_mask)</span>
+<span class="row" data-l="267">        logits = self.lm_head(hidden)</span>
+<span class="row" data-l="270">        if labels is not None:</span>
+<span class="row" data-l="272">            shift_logits = logits[..., :-1, :].contiguous()</span>
+<span class="row" data-l="273">            shift_labels = labels[..., 1:].contiguous()</span>
+<span class="row" data-l="274">            loss = F.cross_entropy(</span>
+<span class="row" data-l="275">                shift_logits.view(-1, shift_logits.size(-1)),</span>
+<span class="row" data-l="276">                shift_labels.view(-1),</span>
+<span class="row" data-l="277">                ignore_index=-100,</span>
+<span class="row" data-l="278">            )</span>
+<span class="row" data-l="279">        return {"logits": logits, "loss": loss}
+
+<span class="row" data-l="281">    @torch.no_grad()</span>
+<span class="row" data-l="282">    def generate(self, input_ids, max_new_tokens=64, temperature=0.8, top_k=50):</span>
+<span class="row" data-l="287">        for _ in range(max_new_tokens):</span>
+<span class="row" data-l="289">            ctx = input_ids[:, -self.cfg.max_position_embeddings:]</span>
+<span class="row" data-l="290">            logits = self.forward(ctx)["logits"][:, -1, :]</span>
+<span class="row" data-l="291">            if temperature &lt;= 0:</span>
+<span class="row" data-l="292">                next_token = logits.argmax(dim=-1, keepdim=True)</span>
+<span class="row" data-l="293">            else:</span>
+<span class="row" data-l="294">                logits = logits / temperature</span>
+<span class="row" data-l="295">                if top_k is not None:</span>
+<span class="row" data-l="296">                    v, _ = torch.topk(logits, top_k)</span>
+<span class="row" data-l="297">                    logits[logits &lt; v[:, [-1]]] = -float('inf')</span>
+<span class="row" data-l="298">                probs = F.softmax(logits, dim=-1)</span>
+<span class="row" data-l="299">                next_token = torch.multinomial(probs, num_samples=1)</span>
+<span class="row" data-l="300">            input_ids = torch.cat([input_ids, next_token], dim=1)</span>
+<span class="row" data-l="301">        return input_ids</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L242–243</span> Compose the backbone + LM head. <code>lm_head</code> projects 576 → 49,152.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L244–247</span> Weight tying — assigning the parameter aliases the storage; it's not a copy.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L248</span> Recursive init, walks every submodule.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L255–260</span> Linear and Embedding both init to <code>N(0, 1/√576)</code>; biases (if any) zero. RMSNorm gain stays at 1 (set in its own <code>__init__</code>).</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L266–267</span> Forward path: backbone → LM head → vocab logits.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L272–278</span> Causal shift: predict <em>t+1</em> from positions ≤ <em>t</em>; flatten over (batch, time) for CE.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L281–282</span> Inference-only generator; no KV cache (recomputes prefix each step) — fine for the educational starter.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L289</span> Truncate context to model's max position to avoid out-of-range RoPE.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L294–299</span> Top-k sampling: divide by T, mask all but top k, softmax, multinomial.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L300–301</span> Append the new token and loop.</li>
+      </ul>
+    </div>
+  </article>
+</section>
+
+<!-- ====================================================================== -->
+<!-- ============================== train.py ============================== -->
+<!-- ====================================================================== -->
+<section id="file-train" class="max-w-7xl mx-auto px-5 pt-14">
+  <div class="flex items-end justify-between flex-wrap gap-2">
+    <div>
+      <span class="pill pill-mint">file</span>
+      <h2 class="text-2xl font-semibold text-emerald-900 mt-1">train.py — minimal end-to-end training loop</h2>
+      <p class="text-sm text-emerald-900/85 max-w-3xl">
+        Faithful single-GPU implementation of the SmolLM2 recipe: AdamW with paper betas,
+        WSD scheduler with 20% decay, bf16 mixed precision, gradient clipping, gradient
+        accumulation, packed-text loader. Deliberately small dataset so it runs anywhere.
+      </p>
+    </div>
+    <div class="text-xs text-emerald-700">194 lines · 4 components</div>
+  </div>
+
+  <div class="mt-4 grid md:grid-cols-4 gap-3 text-sm">
+    <a href="#t-wsd"     class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-mint-50">① <span class="font-medium text-emerald-900">make_wsd_scheduler</span></a>
+    <a href="#t-dataset" class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-mint-50">② <span class="font-medium text-emerald-900">PackedTextDataset</span></a>
+    <a href="#t-build"   class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-mint-50">③ <span class="font-medium text-emerald-900">build_dataset</span></a>
+    <a href="#t-main"    class="px-3 py-2 rounded-xl bg-white ring-soft hover:bg-mint-50">④ <span class="font-medium text-emerald-900">main (training loop)</span></a>
+  </div>
+
+  <!-- ① WSD scheduler -->
+  <article id="t-wsd" class="mt-8 rounded-3xl bg-white ring-soft shadow-mint p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-mint ring-soft flex items-center justify-center text-emerald-900 font-semibold">①</div>
+      <div>
+        <h3 class="text-xl font-semibold text-emerald-900">make_wsd_scheduler</h3>
+        <div class="text-xs text-emerald-700/80">lines 47–59 · Warmup-Stable-Decay</div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-emerald-900/85 max-w-3xl">
+      Three-phase LR schedule used by SmolLM2: linear warmup, long stable plateau at peak LR,
+      then linear decay-to-zero across the last <code>decay_frac</code> of training. The decay
+      window is what produces the final low-loss "annealing" phase.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="47">def make_wsd_scheduler(optimizer, warmup_steps, total_steps, decay_frac=0.2):</span>
+<span class="row" data-l="48">    decay_start = int(total_steps * (1.0 - decay_frac))</span>
+
+<span class="row" data-l="50">    def lr_lambda(step):</span>
+<span class="row" data-l="51">        if step &lt; warmup_steps:</span>
+<span class="row" data-l="52">            return step / max(1, warmup_steps)</span>
+<span class="row" data-l="53">        if step &lt; decay_start:</span>
+<span class="row" data-l="54">            return 1.0</span>
+<span class="row" data-l="56">        decay_progress = (step - decay_start) / max(1, total_steps - decay_start)</span>
+<span class="row" data-l="57">        return max(0.0, 1.0 - decay_progress)</span>
+
+<span class="row" data-l="59">    return LambdaLR(optimizer, lr_lambda)</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L48</span> First 80% = warmup + stable; final 20% = decay.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L51–52</span> Linear warmup ramp from 0 → 1.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L53–54</span> Hold at peak across the stable window.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L56–57</span> Linear decay to 0 across the last <em>decay_frac</em> fraction.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L59</span> Wrap with <code>LambdaLR</code> — multiplier applied to the optimizer's base LR (3e-3).</li>
+      </ul>
+    </div>
+
+    <!-- WSD curve illustration -->
+    <div class="mt-5 rounded-2xl bg-mint-50 p-4">
+      <svg viewBox="0 0 600 100" class="w-full h-24">
+        <defs>
+          <linearGradient id="wsd-grad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ffa973"/><stop offset="50%" stop-color="#7fd6a0"/><stop offset="100%" stop-color="#bcdef7"/>
+          </linearGradient>
+        </defs>
+        <polyline fill="none" stroke="url(#wsd-grad)" stroke-width="3" points="0,90 60,15 480,15 600,90"/>
+        <line x1="60"  y1="15" x2="60"  y2="95" stroke="#ffd6b3" stroke-dasharray="3 3"/>
+        <line x1="480" y1="15" x2="480" y2="95" stroke="#bcdef7" stroke-dasharray="3 3"/>
+        <text x="20" y="95" font-size="10" fill="#7a5640">warmup</text>
+        <text x="240" y="95" font-size="10" fill="#1f6b3f">stable peak (LR = 3e-3)</text>
+        <text x="500" y="95" font-size="10" fill="#1e4a73">decay → 0</text>
+      </svg>
+    </div>
+  </article>
+
+  <!-- ② PackedTextDataset -->
+  <article id="t-dataset" class="mt-6 rounded-3xl bg-white ring-soft shadow-mint p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-mint ring-soft flex items-center justify-center text-emerald-900 font-semibold">②</div>
+      <div>
+        <h3 class="text-xl font-semibold text-emerald-900">PackedTextDataset</h3>
+        <div class="text-xs text-emerald-700/80">lines 67–80 · <code>torch.utils.data.Dataset</code></div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-emerald-900/85 max-w-3xl">
+      Tokens are pre-tokenized into one long 1-D tensor and re-served as fixed-length windows.
+      Each sample yields aligned <code>(input_ids, labels)</code> with labels shifted by one — a
+      standard "next-token-prediction" packing.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="67">class PackedTextDataset(torch.utils.data.Dataset):</span>
+<span class="row" data-l="68">    def __init__(self, token_ids, seq_len):</span>
+<span class="row" data-l="69">        self.tokens = token_ids</span>
+<span class="row" data-l="70">        self.seq_len = seq_len</span>
+<span class="row" data-l="71">        self.n_windows = (len(token_ids) - 1) // seq_len</span>
+
+<span class="row" data-l="73">    def __len__(self):</span>
+<span class="row" data-l="74">        return self.n_windows</span>
+
+<span class="row" data-l="76">    def __getitem__(self, idx):</span>
+<span class="row" data-l="77">        start = idx * self.seq_len</span>
+<span class="row" data-l="79">        chunk = self.tokens[start:start + self.seq_len + 1]</span>
+<span class="row" data-l="80">        return chunk[:-1], chunk[1:]</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L71</span> <code>(N - 1) // L</code>: leave one extra token so the last window has a label.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L79</span> Slice <code>L+1</code> tokens — input and label share <code>L-1</code> tokens of overlap, shifted by one.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L80</span> Returns <code>(inputs, labels)</code> already aligned — no further shift in the train loop.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">caveat</span> No cross-document attention masking — fine for a tiny demo, replace with a real packer for serious runs.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- ③ build_dataset -->
+  <article id="t-build" class="mt-6 rounded-3xl bg-white ring-soft shadow-mint p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-mint ring-soft flex items-center justify-center text-emerald-900 font-semibold">③</div>
+      <div>
+        <h3 class="text-xl font-semibold text-emerald-900">build_dataset</h3>
+        <div class="text-xs text-emerald-700/80">lines 83–98</div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-emerald-900/85 max-w-3xl">
+      Streams wikitext-103-raw, tokenizes everything once with the official SmolLM2 BPE,
+      separates documents with EOS, and hands the resulting 1-D tensor to <code>PackedTextDataset</code>.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="83">def build_dataset(tokenizer, seq_len):</span>
+<span class="row" data-l="85">    from datasets import load_dataset</span>
+<span class="row" data-l="86">    ds = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1", split="train")</span>
+<span class="row" data-l="88">    eos = tokenizer.eos_token_id</span>
+<span class="row" data-l="89">    all_ids = []</span>
+<span class="row" data-l="90">    for ex in ds:</span>
+<span class="row" data-l="91">        text = ex["text"]</span>
+<span class="row" data-l="92">        if not text.strip():</span>
+<span class="row" data-l="93">            continue</span>
+<span class="row" data-l="94">        all_ids.extend(tokenizer.encode(text, add_special_tokens=False))</span>
+<span class="row" data-l="95">        all_ids.append(eos)</span>
+<span class="row" data-l="96">    tokens = torch.tensor(all_ids, dtype=torch.long)</span>
+<span class="row" data-l="97">    print(f"Packed {len(tokens):,} tokens into windows of {seq_len}.")</span>
+<span class="row" data-l="98">    return PackedTextDataset(tokens, seq_len)</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L86</span> Single-call dataset load — HF caches under <code>~/.cache/huggingface</code>.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L92–93</span> Skip empty rows in wikitext (common artifact).</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L94–95</span> Extend then append EOS = simple document separator.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L96</span> One large <code>int64</code> tensor → cheap O(1) slicing in <code>__getitem__</code>.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- ④ main -->
+  <article id="t-main" class="mt-6 rounded-3xl bg-white ring-soft shadow-mint p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl grad-mint ring-soft flex items-center justify-center text-emerald-900 font-semibold">④</div>
+      <div>
+        <h3 class="text-xl font-semibold text-emerald-900">main — argparse, optimizer, training loop</h3>
+        <div class="text-xs text-emerald-700/80">lines 101–190</div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-emerald-900/85 max-w-3xl">
+      The actual entry point. Parses CLI flags, builds tokenizer + dataset + loader,
+      initialises the model in bf16, splits parameters into decay/no-decay groups,
+      runs the loop with gradient accumulation and clipping, then saves a checkpoint.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="102">    ap = argparse.ArgumentParser()</span>
+<span class="row" data-l="103">    ap.add_argument("--steps", type=int, default=200)</span>
+<span class="row" data-l="105">    ap.add_argument("--batch_size", type=int, default=2)</span>
+<span class="row" data-l="106">    ap.add_argument("--grad_accum", type=int, default=8)</span>
+<span class="row" data-l="107">    ap.add_argument("--lr", type=float, default=3.0e-3)</span>
+<span class="row" data-l="108">    ap.add_argument("--warmup_steps", type=int, default=20)</span>
+<span class="row" data-l="109">    ap.add_argument("--weight_decay", type=float, default=0.1)</span>
+<span class="row" data-l="110">    ap.add_argument("--grad_clip", type=float, default=1.0)</span>
+<span class="row" data-l="116">    torch.manual_seed(0)</span>
+
+<span class="row" data-l="121">    from transformers import AutoTokenizer</span>
+<span class="row" data-l="122">    tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-135M")</span>
+
+<span class="row" data-l="125">    dataset = build_dataset(tokenizer, args.seq_len)</span>
+<span class="row" data-l="126">    loader = DataLoader(dataset, batch_size=..., shuffle=True, drop_last=True)</span>
+
+<span class="row" data-l="129">    cfg = SmolLM2Config()</span>
+<span class="row" data-l="130">    model = SmolLM2ForCausalLM(cfg).to(device=device, dtype=dtype)</span>
+<span class="row" data-l="131">    model.train()</span>
+
+<span class="row" data-l="135">    decay, no_decay = [], []</span>
+<span class="row" data-l="136">    for n, p in model.named_parameters():</span>
+<span class="row" data-l="137">        if p.requires_grad:</span>
+<span class="row" data-l="138">            (no_decay if p.dim() &lt; 2 else decay).append(p)</span>
+<span class="row" data-l="139">    optim = AdamW(</span>
+<span class="row" data-l="140">        [{"params": decay,    "weight_decay": args.weight_decay},</span>
+<span class="row" data-l="141">         {"params": no_decay, "weight_decay": 0.0}],</span>
+<span class="row" data-l="142">        lr=args.lr, betas=(0.9, 0.95), eps=1e-8,</span>
+<span class="row" data-l="143">    )</span>
+<span class="row" data-l="144">    sched = make_wsd_scheduler(optim, args.warmup_steps, args.steps, decay_frac=0.2)</span>
+
+<span class="row" data-l="150">    while step &lt; args.steps:</span>
+<span class="row" data-l="151">        for inputs, labels in loader:</span>
+<span class="row" data-l="159">            logits = model(input_ids=inputs)["logits"]</span>
+<span class="row" data-l="160">            loss = F.cross_entropy(logits.reshape(-1, V), labels.reshape(-1))</span>
+<span class="row" data-l="164">            (loss / args.grad_accum).backward()</span>
+<span class="row" data-l="165">            accum += 1</span>
+
+<span class="row" data-l="167">            if accum == args.grad_accum:</span>
+<span class="row" data-l="168">                torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)</span>
+<span class="row" data-l="169">                optim.step()</span>
+<span class="row" data-l="170">                sched.step()</span>
+<span class="row" data-l="171">                optim.zero_grad(set_to_none=True)</span>
+<span class="row" data-l="172">                accum = 0</span>
+<span class="row" data-l="173">                step += 1</span>
+
+<span class="row" data-l="186">    torch.save({"model": model.state_dict(), ...}, "checkpoint.pt")</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L102–110</span> Hyperparameters mirror paper §6: peak LR 3e-3, betas (0.9, 0.95), wd 0.1, clip 1.0.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L116</span> Fixed seed for reproducibility of the demo loss curve.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L122</span> Use the official BPE — vocab and special tokens must match the model.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L130</span> Single <code>.to()</code> moves <em>and</em> casts to bf16 in one call.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L135–138</span> Param groups: weights decay, biases/norms don't (standard practice in Llama / nanotron).</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L139–143</span> AdamW with paper β=(0.9, 0.95). β₂ lower than the GPT-3 default for more responsive second-moment estimates.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L159–160</span> Use the model's logits directly + manual CE because the dataset already produced shifted labels.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L164</span> Divide by accumulation count <em>before</em> backward — keeps the magnitude correct after the K micro-batches sum into <code>.grad</code>.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L168</span> Global-norm clip at 1.0 — hard cap on per-step parameter movement.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L169–171</span> Optimizer step → scheduler step → zero grads, in that order.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L186</span> Save model + config + step counter; small enough to fit in a single <code>.pt</code>.</li>
+      </ul>
+    </div>
+  </article>
+</section>
+
+<!-- ====================================================================== -->
+<!-- ============================== verify.py ============================ -->
+<!-- ====================================================================== -->
+<section id="file-verify" class="max-w-7xl mx-auto px-5 pt-14">
+  <div class="flex items-end justify-between flex-wrap gap-2">
+    <div>
+      <span class="pill pill-sky">file</span>
+      <h2 class="text-2xl font-semibold text-sky-900 mt-1">verify.py — architecture parity gate</h2>
+      <p class="text-sm text-sky-900/85 max-w-3xl">
+        Loads the official SmolLM2-135M safetensors into our reproduction and checks that
+        logits agree with HuggingFace's <code>LlamaForCausalLM</code> on the same input. If this
+        passes, you can safely move on to training.
+      </p>
+    </div>
+    <div class="text-xs text-sky-700">89 lines · 2 functions</div>
+  </div>
+
+  <article class="mt-6 rounded-3xl bg-white ring-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl bg-sky2-100 ring-soft flex items-center justify-center text-sky-900 font-semibold">①</div>
+      <div>
+        <h3 class="text-xl font-semibold text-sky-900">load_official_weights_into_ours</h3>
+        <div class="text-xs text-sky-700/80">lines 22–46</div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-sky-900/85 max-w-3xl">
+      Calls <code>load_state_dict(strict=False)</code> because tied <code>lm_head.weight</code>
+      is intentionally absent from HF's saved state dict. We allow that one missing key and
+      reject everything else.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="22">def load_official_weights_into_ours(ours, hf_state_dict):</span>
+<span class="row" data-l="40">    missing, unexpected = ours.load_state_dict(hf_state_dict, strict=False)</span>
+<span class="row" data-l="42">    missing = [k for k in missing if k != "lm_head.weight"]</span>
+<span class="row" data-l="43">    if missing:</span>
+<span class="row" data-l="44">        raise RuntimeError(f"Unexpected missing keys: {missing}")</span>
+<span class="row" data-l="45">    if unexpected:</span>
+<span class="row" data-l="46">        raise RuntimeError(f"Unexpected keys: {unexpected}")</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L40</span> <code>strict=False</code> — required because of weight tying. Returns the diff lists.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L42</span> Whitelist exactly one missing key.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L43–46</span> Anything else missing or unexpected is a bug — refuse to continue.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="mt-6 rounded-3xl bg-white ring-soft p-6">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl bg-sky2-100 ring-soft flex items-center justify-center text-sky-900 font-semibold">②</div>
+      <div>
+        <h3 class="text-xl font-semibold text-sky-900">main — logit-parity assertion</h3>
+        <div class="text-xs text-sky-700/80">lines 49–85</div>
+      </div>
+    </div>
+    <p class="mt-3 text-sm text-sky-900/85 max-w-3xl">
+      Runs both implementations on "<em>The capital of France is</em>" and asserts that
+      max absolute logit difference is below 1e-3. As a softer check, also asserts the
+      argmax next-token agrees.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-4 mt-4">
+      <pre class="md:col-span-3 code text-[12px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="49">@torch.no_grad()</span>
+<span class="row" data-l="50">def main():</span>
+<span class="row" data-l="52">    tokenizer = AutoTokenizer.from_pretrained(REPO)</span>
+<span class="row" data-l="53">    hf_model = AutoModelForCausalLM.from_pretrained(REPO, torch_dtype=torch.float32)</span>
+<span class="row" data-l="54">    hf_model.eval()</span>
+
+<span class="row" data-l="57">    ours = SmolLM2ForCausalLM(SmolLM2Config())</span>
+<span class="row" data-l="58">    load_official_weights_into_ours(ours, hf_model.state_dict())</span>
+<span class="row" data-l="59">    ours.eval()</span>
+
+<span class="row" data-l="62">    text = "The capital of France is"</span>
+<span class="row" data-l="63">    input_ids = tokenizer(text, return_tensors="pt").input_ids</span>
+
+<span class="row" data-l="65">    hf_out  = hf_model(input_ids).logits</span>
+<span class="row" data-l="66">    our_out = ours(input_ids)["logits"]</span>
+
+<span class="row" data-l="68">    max_abs = (hf_out - our_out).abs().max().item()</span>
+<span class="row" data-l="69">    rel     = max_abs / hf_out.abs().max().item()</span>
+
+<span class="row" data-l="76">    assert max_abs &lt; 1e-3, f"Outputs diverge: {max_abs}. Architecture mismatch."</span>
+
+<span class="row" data-l="79">    hf_next  = hf_out[0, -1].argmax().item()</span>
+<span class="row" data-l="80">    our_next = our_out[0, -1].argmax().item()</span>
+<span class="row" data-l="83">    assert hf_next == our_next, "Next-token disagreement"</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L49–54</span> No grad, eval mode, fp32 weights both sides — eliminates non-determinism sources.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L57–58</span> Build our model and stuff HF's weights into it.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L65–66</span> Same input → both forward passes → compare logits.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L68–69</span> Max absolute diff and relative diff — the headline numbers.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L76</span> Hard threshold 1e-3. Anything larger usually means RoPE convention or norm placement is off.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L79–83</span> Argmax sanity — even if logits are slightly off in scale, top token must match.</li>
+      </ul>
+    </div>
+    <div class="mt-4 p-4 rounded-2xl bg-mint-50 text-emerald-900 text-sm">
+      <b>The "architecture is correct" gate.</b> Per the project's rules, do not start training
+      until this script passes — otherwise you'll burn compute on a model that subtly differs
+      from the published one.
+    </div>
+  </article>
+</section>
+
+<!-- ====================================================================== -->
+<!-- ============================ generate.py ============================ -->
+<!-- ====================================================================== -->
+<section id="file-generate" class="max-w-7xl mx-auto px-5 pt-14">
+  <div class="flex items-end justify-between flex-wrap gap-2">
+    <div>
+      <span class="pill pill-rose">file</span>
+      <h2 class="text-2xl font-semibold text-rose-900 mt-1">generate.py — sample from official weights</h2>
+      <p class="text-sm text-rose-900/85 max-w-3xl">
+        Smallest file in the repo. Loads the HF model, copies weights into our class, then
+        calls our <code>generate</code> for top-k sampling. Used as a smoke test: if outputs
+        look sensible, the whole stack works.
+      </p>
+    </div>
+    <div class="text-xs text-rose-700">30 lines · 1 function</div>
+  </div>
+
+  <article class="mt-6 rounded-3xl bg-white ring-soft p-6">
+    <div class="grid md:grid-cols-5 gap-4">
+      <pre class="md:col-span-3 code text-[12.5px] leading-relaxed bg-cream-100 rounded-2xl p-4 overflow-x-auto"><code class="language-python"><span class="row" data-l="14">def main(prompt, max_new_tokens=64):</span>
+<span class="row" data-l="15">    tokenizer = AutoTokenizer.from_pretrained(REPO)</span>
+<span class="row" data-l="16">    hf = AutoModelForCausalLM.from_pretrained(REPO, torch_dtype=torch.float32)</span>
+
+<span class="row" data-l="18">    model = SmolLM2ForCausalLM(SmolLM2Config())</span>
+<span class="row" data-l="19">    load_official_weights_into_ours(model, hf.state_dict())</span>
+<span class="row" data-l="20">    del hf</span>
+<span class="row" data-l="21">    model.eval()</span>
+
+<span class="row" data-l="23">    input_ids = tokenizer(prompt, return_tensors="pt").input_ids</span>
+<span class="row" data-l="24">    out = model.generate(input_ids, max_new_tokens, temperature=0.8, top_k=50)</span>
+<span class="row" data-l="25">    print(tokenizer.decode(out[0], skip_special_tokens=True))
+
+<span class="row" data-l="28">if __name__ == "__main__":</span>
+<span class="row" data-l="29">    prompt = sys.argv[1] if len(sys.argv) &gt; 1 else "Gravity is"</span>
+<span class="row" data-l="30">    main(prompt)</span></code></pre>
+      <ul class="md:col-span-2 space-y-2 text-sm">
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L15–16</span> Pull tokenizer + HF model.</li>
+        <li class="ann p-3 rounded-xl bg-rose2-50"><span class="pill pill-rose">L18–19</span> Build our model, load weights through the same loader used by <code>verify.py</code>.</li>
+        <li class="ann p-3 rounded-xl bg-mint-50"><span class="pill pill-mint">L20</span> <code>del hf</code> — free a few hundred MB of duplicated weights as soon as we've copied them.</li>
+        <li class="ann p-3 rounded-xl bg-sky2-50"><span class="pill pill-sky">L23–25</span> Tokenize, sample, decode. Default sampling: T=0.8, top-k=50.</li>
+        <li class="ann p-3 rounded-xl bg-peach-50"><span class="pill pill-peach">L29</span> CLI sugar: first arg is the prompt, otherwise <code>"Gravity is"</code>.</li>
+      </ul>
+    </div>
+  </article>
+</section>
+
+<!-- ====================================================================== -->
+<!-- ============================ requirements ============================ -->
+<!-- ====================================================================== -->
+<section id="file-req" class="max-w-7xl mx-auto px-5 pt-14 pb-20">
+  <div class="flex items-end justify-between flex-wrap gap-2">
+    <div>
+      <span class="pill pill-peach">file</span>
+      <h2 class="text-2xl font-semibold text-amber-900 mt-1">requirements.txt</h2>
+    </div>
+    <div class="text-xs text-amber-700">5 lines</div>
+  </div>
+
+  <div class="mt-4 grid md:grid-cols-5 gap-3">
+    <div class="rounded-2xl bg-white ring-soft p-4">
+      <div class="text-amber-900 font-semibold">torch ≥ 2.4</div>
+      <div class="text-xs text-amber-900/70 mt-1">Brings <code>scaled_dot_product_attention</code> and Flash kernels.</div>
+    </div>
+    <div class="rounded-2xl bg-white ring-soft p-4">
+      <div class="text-amber-900 font-semibold">transformers ≥ 4.40</div>
+      <div class="text-xs text-amber-900/70 mt-1">Source of truth for HF Llama, used by verify/generate.</div>
+    </div>
+    <div class="rounded-2xl bg-white ring-soft p-4">
+      <div class="text-amber-900 font-semibold">safetensors</div>
+      <div class="text-xs text-amber-900/70 mt-1">Backend that loads SmolLM2's <code>.safetensors</code> weights.</div>
+    </div>
+    <div class="rounded-2xl bg-white ring-soft p-4">
+      <div class="text-amber-900 font-semibold">accelerate</div>
+      <div class="text-xs text-amber-900/70 mt-1">Pulled by transformers for device placement.</div>
+    </div>
+    <div class="rounded-2xl bg-white ring-soft p-4">
+      <div class="text-amber-900 font-semibold">datasets</div>
+      <div class="text-xs text-amber-900/70 mt-1">Streams wikitext-103 inside <code>build_dataset</code>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SOURCE VIEWER MODAL ============================== -->
+<div id="src-modal" class="fixed inset-0 z-50 hidden">
+  <div id="src-backdrop" class="absolute inset-0 bg-amber-900/30 backdrop-blur-sm"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="w-full max-w-5xl h-[85vh] rounded-3xl bg-white ring-soft shadow-soft flex flex-col overflow-hidden">
+      <!-- header -->
+      <div class="flex items-center gap-3 px-5 py-3 border-b border-peach-100 grad-cream">
+        <span class="pill pill-peach">source</span>
+        <div class="text-amber-900 font-semibold" id="src-filename">model.py</div>
+        <div class="text-xs text-amber-700/80" id="src-range">lines —</div>
+        <div class="ml-auto flex items-center gap-1 text-xs">
+          <button class="src-tab px-2.5 py-1 rounded-lg hover:bg-peach-50" data-file="model.py">model.py</button>
+          <button class="src-tab px-2.5 py-1 rounded-lg hover:bg-peach-50" data-file="train.py">train.py</button>
+          <button class="src-tab px-2.5 py-1 rounded-lg hover:bg-peach-50" data-file="verify.py">verify.py</button>
+          <button class="src-tab px-2.5 py-1 rounded-lg hover:bg-peach-50" data-file="generate.py">generate.py</button>
+          <button class="src-tab px-2.5 py-1 rounded-lg hover:bg-peach-50" data-file="requirements.txt">requirements.txt</button>
+          <button id="src-close" class="ml-2 px-2.5 py-1 rounded-lg bg-peach-100 hover:bg-peach-200 text-amber-900">✕</button>
+        </div>
+      </div>
+
+      <!-- jump bar -->
+      <div class="flex items-center gap-2 px-5 py-2 border-b border-peach-100 text-xs text-amber-800">
+        Jump to:
+        <input id="src-jump" type="text" placeholder="e.g. 116-163"
+               class="px-2 py-0.5 rounded-md bg-cream-100 ring-soft outline-none w-32 text-[12px] font-mono"/>
+        <button id="src-jump-go" class="px-2 py-0.5 rounded-md bg-mint-100 hover:bg-mint-200 text-emerald-900">go</button>
+        <span class="ml-3 text-amber-700/80" id="src-status">fetched live from this origin · verifiable in devtools network tab</span>
+      </div>
+
+      <!-- code area -->
+      <div id="src-body" class="flex-1 overflow-auto bg-cream-100">
+        <pre id="src-pre" class="text-[12.5px] leading-relaxed font-mono"><code id="src-code"></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== CINEMA v2 (replaces in-page cinema IIFE) ============================== -->
+<script type="module" src="cinema_v2.js"></script>
+
+<footer class="border-t border-peach-100 py-6 text-center text-xs text-amber-700/80">
+  Built with Tailwind + three.js · light peach / mint / cream palette · interactive 3D · single self-contained HTML file
+</footer>
+
+<!-- ============================== SCRIPTS ============================== -->
+<script>
+  // syntax highlight
+  document.querySelectorAll('pre.code code').forEach(el => {
+    try { hljs.highlightElement(el); } catch(e){}
+  });
+
+  // map each component's anchor id → source filename
+  const ARTICLE_FILE = {
+    'm-config':'model.py','m-rmsnorm':'model.py','m-rope':'model.py','m-attn':'model.py',
+    'm-mlp':'model.py','m-block':'model.py','m-model':'model.py','m-causal':'model.py',
+    't-wsd':'train.py','t-dataset':'train.py','t-build':'train.py','t-main':'train.py',
+  };
+  // verify.py and generate.py articles don't have ids; detect by enclosing section.
+  function fileForArticle(article) {
+    if (!article) return null;
+    if (article.id && ARTICLE_FILE[article.id]) return ARTICLE_FILE[article.id];
+    const sec = article.closest('section');
+    if (!sec) return null;
+    if (sec.id === 'file-verify') return 'verify.py';
+    if (sec.id === 'file-generate') return 'generate.py';
+    if (sec.id === 'file-train') return 'train.py';
+    if (sec.id === 'file-model') return 'model.py';
+    return null;
+  }
+
+  // line hover/highlight + click-to-open-source: when hovering an annotation
+  // pill (e.g. "L120–123") we highlight matching lines; when clicking, we open
+  // the source viewer at that exact range.
+  document.querySelectorAll('.ann').forEach(li => {
+    const pill = li.querySelector('.pill');
+    if (!pill) return;
+    const txt = pill.textContent.trim();
+    const nums = [];
+    let range = null;
+    const single = txt.match(/^L(\d+)$/);
+    const multi  = txt.match(/^L(\d+)[–-](\d+)$/);
+    if (single) { nums.push(parseInt(single[1])); range = `${single[1]}`; }
+    else if (multi) {
+      const a = parseInt(multi[1]), b = parseInt(multi[2]);
+      for (let i=a; i<=b; i++) nums.push(i);
+      range = `${a}-${b}`;
+    }
+    if (!nums.length) return;
+    const article = li.closest('article');
+    const file = fileForArticle(article);
+    const rows = article ? Array.from(article.querySelectorAll('pre.code .row')) : [];
+    li.addEventListener('mouseenter', () => {
+      rows.forEach(r => { if (nums.includes(parseInt(r.dataset.l))) r.classList.add('hl'); });
+    });
+    li.addEventListener('mouseleave', () => {
+      rows.forEach(r => r.classList.remove('hl'));
+    });
+    if (file && range) {
+      li.style.cursor = 'pointer';
+      li.title = `Open ${file} at lines ${range}`;
+      pill.classList.add('underline','decoration-dotted','underline-offset-2');
+      li.addEventListener('click', (ev) => {
+        // ignore clicks on actual links inside
+        if (ev.target.tagName === 'A') return;
+        window.openSource(file, range);
+      });
+    }
+  });
+
+  // also wire each component header to a "📖 source" link spanning its range
+  const HEADER_RANGES = {
+    'm-config':'28-49','m-rmsnorm':'59-70','m-rope':'84-106','m-attn':'116-163',
+    'm-mlp':'172-180','m-block':'188-199','m-model':'212-235','m-causal':'238-301',
+    't-wsd':'47-59','t-dataset':'67-80','t-build':'83-98','t-main':'101-190',
+  };
+  Object.entries(HEADER_RANGES).forEach(([id, range]) => {
+    const article = document.getElementById(id);
+    if (!article) return;
+    const file = ARTICLE_FILE[id];
+    const header = article.querySelector('h3');
+    if (!header) return;
+    const btn = document.createElement('button');
+    btn.className = 'ml-3 align-middle px-2 py-0.5 rounded-md bg-mint-100 hover:bg-mint-200 text-emerald-900 text-[11px] font-medium';
+    btn.textContent = `📖 ${file} : ${range}`;
+    btn.addEventListener('click', () => window.openSource(file, range));
+    header.appendChild(btn);
+  });
+
+  // prepend line numbers in code blocks
+  document.querySelectorAll('pre.code .row').forEach(r => {
+    const ln = document.createElement('span');
+    ln.className = 'ln';
+    ln.textContent = r.dataset.l;
+    r.prepend(ln);
+  });
+</script>
+
+<!-- ============================== SOURCE VIEWER ============================== -->
+<script>
+(() => {
+  const FILES = ['model.py','train.py','verify.py','generate.py','requirements.txt'];
+  const cache = {};
+  const modal   = document.getElementById('src-modal');
+  const fileEl  = document.getElementById('src-filename');
+  const rngEl   = document.getElementById('src-range');
+  const codeEl  = document.getElementById('src-code');
+  const bodyEl  = document.getElementById('src-body');
+  const stEl    = document.getElementById('src-status');
+  const jumpEl  = document.getElementById('src-jump');
+  let currentFile = null;
+  let currentRange = null;
+
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function parseRange(r) {
+    if (!r) return null;
+    const m = String(r).trim().match(/^(\d+)(?:[-–](\d+))?$/);
+    if (!m) return null;
+    const a = parseInt(m[1]), b = parseInt(m[2] || m[1]);
+    return [Math.min(a,b), Math.max(a,b)];
+  }
+  async function loadFile(name) {
+    if (cache[name]) return cache[name];
+    stEl.textContent = `fetching ${name} …`;
+    try {
+      const r = await fetch(name, { cache: 'no-store' });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const t = await r.text();
+      cache[name] = t;
+      stEl.textContent = `live from ${location.origin}/${name} · ${t.split('\n').length} lines`;
+      return t;
+    } catch (e) {
+      stEl.textContent = `error fetching ${name}: ${e.message} (open via http://localhost — file:// won't work)`;
+      return `# Could not fetch ${name}: ${e.message}\n# Open via the local HTTP server, not file://`;
+    }
+  }
+  function render(text, range) {
+    const lines = text.split('\n');
+    let html = '';
+    const [a, b] = range || [0, 0];
+    for (let i=0; i<lines.length; i++) {
+      const n = i + 1;
+      const inR = range && n >= a && n <= b;
+      const cls = inR ? 'src-line src-hl' : 'src-line';
+      html += `<span class="${cls}" id="src-l-${n}"><span class="src-ln">${String(n).padStart(4,' ')}</span><span class="src-txt">${escapeHtml(lines[i]) || ' '}</span></span>\n`;
+    }
+    codeEl.innerHTML = html;
+  }
+  function scrollTo(range) {
+    if (!range) return;
+    const target = document.getElementById(`src-l-${range[0]}`);
+    if (target) {
+      // place a few lines above center
+      const top = target.offsetTop - bodyEl.clientHeight * 0.25;
+      bodyEl.scrollTo({ top, behavior: 'smooth' });
+    }
+  }
+  function setActiveTab(name) {
+    document.querySelectorAll('.src-tab').forEach(b => {
+      if (b.dataset.file === name) b.classList.add('tab-active');
+      else b.classList.remove('tab-active');
+    });
+  }
+
+  window.openSource = async function(file, range) {
+    if (!FILES.includes(file)) return;
+    currentFile = file;
+    currentRange = parseRange(range);
+    fileEl.textContent = file;
+    rngEl.textContent = currentRange ? `lines ${currentRange[0]}–${currentRange[1]}` : 'lines —';
+    setActiveTab(file);
+    modal.classList.remove('hidden');
+    const text = await loadFile(file);
+    render(text, currentRange);
+    requestAnimationFrame(() => scrollTo(currentRange));
+  };
+
+  document.getElementById('src-close').addEventListener('click', () => modal.classList.add('hidden'));
+  document.getElementById('src-backdrop').addEventListener('click', () => modal.classList.add('hidden'));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.add('hidden'); });
+
+  document.querySelectorAll('.src-tab').forEach(btn => {
+    btn.addEventListener('click', () => window.openSource(btn.dataset.file, null));
+  });
+  document.getElementById('src-jump-go').addEventListener('click', () => {
+    const r = parseRange(jumpEl.value);
+    if (r && currentFile) window.openSource(currentFile, jumpEl.value);
+  });
+  jumpEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('src-jump-go').click();
+  });
+})();
+</script>
+
+<style>
+  .src-line { display:block; padding: 0 0.6rem; border-radius: 0.25rem; }
+  .src-line:hover { background: #fff7f0; }
+  .src-hl  { background: #ffe9d6 !important; box-shadow: inset 3px 0 0 #ffa973; }
+  .src-ln  { display:inline-block; width:3.4rem; text-align:right; padding-right:0.85rem; color:#bfa48a; user-select:none; }
+  .src-txt { white-space: pre; }
+  .tab-active { background:#ffe9d6 !important; color:#9a4a14 !important; font-weight:600; }
+</style>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const PALETTE = {
+  bg:        0xfff7f0,
+  embed:     0xffa973,
+  norm:      0xffd6b3,
+  attn:      0xa3e6bb,
+  mlp:       0xbcdef7,
+  resid:     0xfff3f5,
+  head:      0xc2691a,
+  edge:      0xc2691a,
+  ground:    0xfffdf7,
+};
+
+function makeRenderer(container) {
+  const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+  return renderer;
+}
+
+function setupResize(renderer, camera, container) {
+  const onResize = () => {
+    const w = container.clientWidth, h = container.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  };
+  new ResizeObserver(onResize).observe(container);
+}
+
+function softLights(scene) {
+  const amb = new THREE.AmbientLight(0xffffff, 0.85);
+  scene.add(amb);
+  const key = new THREE.DirectionalLight(0xffe9d6, 0.85);
+  key.position.set(4, 6, 5);
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0xc4f1d4, 0.55);
+  fill.position.set(-5, 3, -3);
+  scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xbcdef7, 0.45);
+  rim.position.set(0, 4, -6);
+  scene.add(rim);
+}
+
+function softBlock(width, height, depth, color) {
+  const geo = new THREE.BoxGeometry(width, height, depth, 1, 1, 1);
+  const mat = new THREE.MeshStandardMaterial({
+    color, roughness:0.55, metalness:0.05, transparent:true, opacity:0.92,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  // soft outline as wireframe overlay
+  const edges = new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({ color:0xc2691a, transparent:true, opacity:0.25 })
+  );
+  mesh.add(edges);
+  return mesh;
+}
+
+// =================== HERO SCENE ===================
+(function buildHero(){
+  const container = document.getElementById('hero-scene');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth/container.clientHeight, 0.1, 200);
+  camera.position.set(6, 4, 8);
+  const renderer = makeRenderer(container);
+  setupResize(renderer, camera, container);
+  softLights(scene);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.8;
+  controls.target.set(0, 1.5, 0);
+
+  // Tower of 30 mini blocks (each block = single thin slab tinted by depth)
+  const tower = new THREE.Group();
+  const N = 30;
+  for (let i=0;i<N;i++) {
+    const t = i/(N-1);
+    const color = new THREE.Color().lerpColors(
+      new THREE.Color(0xffd6b3), new THREE.Color(0xa3e6bb), t
+    );
+    const m = softBlock(2.4, 0.18, 1.2, color.getHex());
+    m.position.y = i*0.22 + 0.4;
+    tower.add(m);
+  }
+  // embedding plate (bottom)
+  const emb = softBlock(2.6, 0.22, 1.4, PALETTE.embed);
+  emb.position.y = 0.05;
+  tower.add(emb);
+  // lm head (top)
+  const head = softBlock(2.6, 0.22, 1.4, 0xffc090);
+  head.position.y = N*0.22 + 0.55;
+  tower.add(head);
+
+  scene.add(tower);
+
+  // floor disc
+  const floor = new THREE.Mesh(
+    new THREE.CircleGeometry(5.5, 64),
+    new THREE.MeshStandardMaterial({ color:0xfffdf7, roughness:0.9 })
+  );
+  floor.rotation.x = -Math.PI/2;
+  floor.position.y = -0.05;
+  scene.add(floor);
+
+  // particle stream of "tokens" climbing the tower
+  const pcount = 80;
+  const pgeo = new THREE.BufferGeometry();
+  const positions = new Float32Array(pcount*3);
+  for (let i=0;i<pcount;i++) {
+    positions[i*3+0] = (Math.random()-0.5)*1.6;
+    positions[i*3+1] = Math.random() * (N*0.22 + 0.6);
+    positions[i*3+2] = (Math.random()-0.5)*0.8;
+  }
+  pgeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const pmat = new THREE.PointsMaterial({ color:0xc2691a, size:0.07, transparent:true, opacity:0.6 });
+  const points = new THREE.Points(pgeo, pmat);
+  scene.add(points);
+
+  function animate(){
+    const pos = pgeo.attributes.position.array;
+    for (let i=0;i<pcount;i++) {
+      pos[i*3+1] += 0.012;
+      if (pos[i*3+1] > N*0.22 + 0.7) {
+        pos[i*3+1] = 0;
+        pos[i*3+0] = (Math.random()-0.5)*1.6;
+        pos[i*3+2] = (Math.random()-0.5)*0.8;
+      }
+    }
+    pgeo.attributes.position.needsUpdate = true;
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// =================== MAIN ARCHITECTURE SCENE ===================
+const archState = {
+  spin: true,
+  flow: true,
+  exploded: false,
+  selected: null,
+};
+
+(function buildArch(){
+  const container = document.getElementById('arch-scene');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, container.clientWidth/container.clientHeight, 0.1, 200);
+  camera.position.set(8, 6, 12);
+  const renderer = makeRenderer(container);
+  setupResize(renderer, camera, container);
+  softLights(scene);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.target.set(0, 4, 0);
+  controls.autoRotate = archState.spin;
+  controls.autoRotateSpeed = 0.5;
+
+  // Build a representative "block" group: input_norm, attn, post_norm, mlp.
+  // Then stack 30 of them, plus embed at bottom and lm_head at top.
+  const blocks = [];
+  const root = new THREE.Group();
+
+  function buildBlockGroup(idx) {
+    const g = new THREE.Group();
+    // input norm — small slab
+    const n1 = softBlock(2.2, 0.12, 1.0, PALETTE.norm); n1.position.y = 0.0; g.add(n1); n1.userData = { name:'input_layernorm', desc:'RMSNorm before attention. fp32 math, gain initialized to ones.', shape:'(B, T, 576) → (B, T, 576)', params:'576', refers:'RMSNorm', flops:'O(BTd)' };
+    // attn block — taller, mint
+    const a  = softBlock(2.2, 0.32, 1.0, PALETTE.attn); a.position.y  = 0.32; g.add(a);  a.userData  = { name:'self_attn (GQA)', desc:'9 Q heads, 3 KV heads (ratio 3), RoPE on Q/K, fused causal SDPA.', shape:'(B, T, 576) → (B, T, 576)', params:'~590k / layer', refers:'Attention', flops:'O(BT²·64·9)' };
+    // post norm
+    const n2 = softBlock(2.2, 0.12, 1.0, PALETTE.norm); n2.position.y = 0.6;  g.add(n2); n2.userData = { name:'post_attention_layernorm', desc:'RMSNorm before MLP, same recipe as input norm.', shape:'(B, T, 576) → (B, T, 576)', params:'576', refers:'RMSNorm', flops:'O(BTd)' };
+    // mlp
+    const m  = softBlock(2.2, 0.36, 1.0, PALETTE.mlp); m.position.y  = 0.95; g.add(m);  m.userData  = { name:'mlp (SwiGLU)', desc:'down(silu(gate(x)) * up(x)). 576 → 1536 → 576. No biases.', shape:'(B, T, 576) ↔ (B, T, 1536)', params:'~2.65M / layer', refers:'MLP', flops:'O(BTd·d_ff)' };
+    g.userData.layerIdx = idx;
+    return g;
+  }
+
+  const gap = 1.6;
+  for (let i=0;i<30;i++) {
+    const g = buildBlockGroup(i);
+    g.position.y = 0.6 + i*gap*0.15 + 0.02*i;
+    g.userData.baseY = g.position.y;
+    blocks.push(g);
+    root.add(g);
+  }
+
+  // embed
+  const embed = softBlock(2.6, 0.22, 1.2, PALETTE.embed);
+  embed.position.y = 0.0;
+  embed.userData = { name:'embed_tokens', desc:'nn.Embedding(49152, 576). Tied with lm_head — one shared parameter table.', shape:'(B, T) → (B, T, 576)', params:'28.3M', refers:'cfg', flops:'lookup' };
+  root.add(embed);
+
+  // final norm slab + lm head
+  const finalNorm = softBlock(2.4, 0.14, 1.1, PALETTE.norm);
+  finalNorm.position.y = blocks[blocks.length-1].position.y + 1.2;
+  finalNorm.userData = { name:'final norm', desc:'One last RMSNorm before projecting to vocab logits.', shape:'(B, T, 576) → (B, T, 576)', params:'576', refers:'RMSNorm', flops:'O(BTd)' };
+  root.add(finalNorm);
+
+  const lmHead = softBlock(2.8, 0.24, 1.3, 0xffc090);
+  lmHead.position.y = finalNorm.position.y + 0.4;
+  lmHead.userData = { name:'lm_head', desc:'Linear 576 → 49152 (no bias). Weight tied with embed_tokens — same storage.', shape:'(B, T, 576) → (B, T, 49152)', params:'(tied)', refers:'cfg', flops:'O(BTdV)' };
+  root.add(lmHead);
+
+  scene.add(root);
+
+  // ground disc
+  const floor = new THREE.Mesh(
+    new THREE.CircleGeometry(7, 64),
+    new THREE.MeshStandardMaterial({ color:0xfffdf7, roughness:0.9 })
+  );
+  floor.rotation.x = -Math.PI/2;
+  floor.position.y = -0.4;
+  scene.add(floor);
+
+  // tokens flowing up the residual path
+  const pcount = 220;
+  const pgeo = new THREE.BufferGeometry();
+  const positions = new Float32Array(pcount*3);
+  const speeds = new Float32Array(pcount);
+  const yMax = lmHead.position.y + 0.4;
+  for (let i=0;i<pcount;i++) {
+    positions[i*3+0] = (Math.random()-0.5)*1.6;
+    positions[i*3+1] = Math.random() * yMax;
+    positions[i*3+2] = (Math.random()-0.5)*0.7;
+    speeds[i] = 0.018 + Math.random()*0.025;
+  }
+  pgeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const pmat = new THREE.PointsMaterial({
+    color:0xc2691a, size:0.07, transparent:true, opacity:0.55,
+    sizeAttenuation:true,
+  });
+  const points = new THREE.Points(pgeo, pmat);
+  scene.add(points);
+
+  // --- selection / hover ---
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  const sel = {
+    name: document.getElementById('sel-name'),
+    desc: document.getElementById('sel-desc'),
+    shape: document.getElementById('sel-shape'),
+    params: document.getElementById('sel-params'),
+    flops: document.getElementById('sel-flops'),
+    ref: document.getElementById('sel-ref'),
+  };
+  let hovered = null;
+
+  function pickable() {
+    const out = [embed, finalNorm, lmHead];
+    blocks.forEach(g => g.children.forEach(c => out.push(c)));
+    return out;
+  }
+  function setSelection(d) {
+    sel.name.textContent = d.name || '—';
+    sel.desc.textContent = d.desc || '';
+    sel.shape.textContent = d.shape || '';
+    sel.params.textContent = d.params || '·';
+    sel.flops.textContent = d.flops || '·';
+    sel.ref.textContent = d.refers || '·';
+  }
+
+  renderer.domElement.addEventListener('pointermove', (ev) => {
+    const r = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((ev.clientX - r.left) / r.width)*2 - 1;
+    mouse.y = -((ev.clientY - r.top) / r.height)*2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const hits = raycaster.intersectObjects(pickable(), false);
+    // restore previously hovered
+    if (hovered && (!hits.length || hits[0].object !== hovered)) {
+      hovered.material.emissive = new THREE.Color(0x000000);
+      hovered = null;
+      renderer.domElement.style.cursor = 'default';
+    }
+    if (hits.length) {
+      const o = hits[0].object;
+      if (o.userData && o.userData.name) {
+        if (hovered !== o) {
+          hovered = o;
+          o.material.emissive = new THREE.Color(0xffe9d6);
+          renderer.domElement.style.cursor = 'pointer';
+        }
+      }
+    }
+  });
+  renderer.domElement.addEventListener('click', () => {
+    if (hovered && hovered.userData && hovered.userData.name) {
+      setSelection(hovered.userData);
+    }
+  });
+
+  // --- buttons ---
+  document.getElementById('btn-spin').addEventListener('click', () => {
+    archState.spin = !archState.spin;
+    controls.autoRotate = archState.spin;
+  });
+  document.getElementById('btn-flow').addEventListener('click', () => {
+    archState.flow = !archState.flow;
+    points.visible = archState.flow;
+  });
+  document.getElementById('btn-explode').addEventListener('click', () => {
+    archState.exploded = !archState.exploded;
+  });
+
+  function animate(){
+    if (archState.flow) {
+      const pos = pgeo.attributes.position.array;
+      for (let i=0;i<pcount;i++) {
+        pos[i*3+1] += speeds[i];
+        if (pos[i*3+1] > yMax) {
+          pos[i*3+1] = 0;
+          pos[i*3+0] = (Math.random()-0.5)*1.6;
+          pos[i*3+2] = (Math.random()-0.5)*0.7;
+        }
+      }
+      pgeo.attributes.position.needsUpdate = true;
+    }
+    // smooth explode/relax
+    blocks.forEach((g, i) => {
+      const target = archState.exploded ? g.userData.baseY + i*0.22 : g.userData.baseY;
+      g.position.y += (target - g.position.y) * 0.06;
+    });
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// =================== RMSNORM WIDGET ===================
+(function rms(){
+  const c = document.getElementById('rms-scene');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, c.clientWidth/c.clientHeight, 0.1, 100);
+  camera.position.set(2.5, 1.6, 3);
+  const renderer = makeRenderer(c);
+  setupResize(renderer, camera, c);
+  softLights(scene);
+  const ctrl = new OrbitControls(camera, renderer.domElement);
+  ctrl.enableDamping = true; ctrl.autoRotate = true; ctrl.autoRotateSpeed = 0.8;
+
+  // unit sphere (faint)
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 32, 24),
+    new THREE.MeshStandardMaterial({ color:0xc4f1d4, transparent:true, opacity:0.25, roughness:0.9 })
+  );
+  scene.add(sphere);
+
+  // raw vector + normalised vector (animated)
+  const vRaw = new THREE.ArrowHelper(new THREE.Vector3(1,0.4,0.2).normalize(), new THREE.Vector3(0,0,0), 1.6, 0xffa973, 0.18, 0.1);
+  const vNorm = new THREE.ArrowHelper(new THREE.Vector3(1,0.4,0.2).normalize(), new THREE.Vector3(0,0,0), 1.0, 0x7fd6a0, 0.16, 0.09);
+  scene.add(vRaw); scene.add(vNorm);
+
+  function animate(t){
+    t = (performance.now()/1000);
+    const len = 0.9 + 0.7*Math.sin(t*0.9);
+    const dir = new THREE.Vector3(Math.cos(t*0.4), 0.5+Math.sin(t*0.6)*0.3, Math.sin(t*0.4)).normalize();
+    vRaw.setDirection(dir);
+    vRaw.setLength(Math.abs(len)+0.4, 0.18, 0.1);
+    vNorm.setDirection(dir);
+    vNorm.setLength(1.0, 0.16, 0.09);
+    ctrl.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// =================== ROPE WIDGET ===================
+(function rope(){
+  const c = document.getElementById('rope-scene');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, c.clientWidth/c.clientHeight, 0.1, 100);
+  camera.position.set(0, 1.6, 4.4);
+  const renderer = makeRenderer(c);
+  setupResize(renderer, camera, c);
+  softLights(scene);
+  const ctrl = new OrbitControls(camera, renderer.domElement);
+  ctrl.enableDamping = true; ctrl.autoRotate = true; ctrl.autoRotateSpeed = 0.8;
+
+  // a row of 8 rotating "pair" disks at different frequencies
+  const group = new THREE.Group();
+  const N = 8;
+  const disks = [];
+  for (let i=0;i<N;i++) {
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(0.32, 0.025, 12, 64),
+      new THREE.MeshStandardMaterial({ color:0xffe9d6, roughness:0.6 })
+    );
+    ring.position.x = (i - (N-1)/2)*0.85;
+    const arrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(0,0,0), 0.32, 0xc2691a, 0.07, 0.05);
+    arrow.position.copy(ring.position);
+    group.add(ring); group.add(arrow);
+    disks.push({ arrow, freq: 1.0 / Math.pow(10000, (2*i)/16) });
+  }
+  scene.add(group);
+
+  function animate(){
+    const t = performance.now()/1000;
+    disks.forEach((d, i) => {
+      const ang = t * (0.5 + d.freq * 6);
+      d.arrow.setDirection(new THREE.Vector3(Math.cos(ang), Math.sin(ang), 0));
+    });
+    ctrl.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// =================== CINEMA — full forward pass ===================
+import { Vector3 as V3 } from 'three';
+
+(function cinema(){
+  // [DISABLED — replaced by cinema_v2.js loaded below as a separate module]
+  // The new cinema renders the entire SmolLM2 architecture persistently
+  // and uses 9 scenes × 15+ atomic non-overlapping frames each.
+  return;
+  const container = document.getElementById('cinema-stage');
+  const scene = new THREE.Scene();
+  // Wider FOV (50°) + farther default position so the whole scene fits comfortably.
+  const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 200);
+  camera.position.set(11, 7, 17);
+  const renderer = makeRenderer(container);
+  setupResize(renderer, camera, container);
+  softLights(scene);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.target.set(0, 2, 0);
+
+  // ground disc
+  const floor = new THREE.Mesh(
+    new THREE.CircleGeometry(8, 64),
+    new THREE.MeshStandardMaterial({ color:0xfffdf7, roughness:0.9 })
+  );
+  floor.rotation.x = -Math.PI/2;
+  floor.position.y = -0.5;
+  scene.add(floor);
+
+  // ---------- helpers ----------
+  function spriteLabel(text, opts={}) {
+    const c = document.createElement('canvas');
+    const ctx = c.getContext('2d');
+    const fs = opts.fontSize || 56;
+    ctx.font = `${opts.weight||'bold'} ${fs}px Inter, system-ui, sans-serif`;
+    const w = Math.max(64, ctx.measureText(text).width + 60);
+    c.width = w; c.height = fs + 36;
+    const ctx2 = c.getContext('2d');
+    ctx2.fillStyle = opts.bg || 'rgba(255,255,255,0.92)';
+    if (ctx2.roundRect) { ctx2.beginPath(); ctx2.roundRect(0,0,c.width,c.height,c.height/2); ctx2.fill(); }
+    else { ctx2.fillRect(0,0,c.width,c.height); }
+    ctx2.fillStyle = opts.color || '#9a4a14';
+    ctx2.font = `${opts.weight||'bold'} ${fs}px Inter, system-ui, sans-serif`;
+    ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle';
+    ctx2.fillText(text, c.width/2, c.height/2);
+    const tex = new THREE.CanvasTexture(c); tex.anisotropy = 4;
+    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite:false });
+    const s = new THREE.Sprite(mat);
+    const scale = opts.scale || 1.0;
+    s.scale.set((c.width/c.height) * 0.6 * scale, 0.6 * scale, 1);
+    return s;
+  }
+  function softMat(color, opacity=0.92) {
+    return new THREE.MeshStandardMaterial({ color, roughness:0.55, metalness:0.05, transparent:true, opacity });
+  }
+  function softBox(w,h,d,color) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), softMat(color));
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry),
+      new THREE.LineBasicMaterial({ color: 0xc2691a, transparent:true, opacity:0.22 }));
+    m.add(e);
+    return m;
+  }
+  function emissive(mesh, on, color=0xffe9d6) {
+    if (mesh.material && mesh.material.emissive) {
+      mesh.material.emissive = new THREE.Color(on ? color : 0x000000);
+    }
+  }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+
+  // ---------- LAYERS (named groups) ----------
+  const L = {};
+  function layer(name) {
+    const g = new THREE.Group();
+    g.visible = false;
+    L[name] = g;
+    scene.add(g);
+    return g;
+  }
+
+  // --- prompt label ---
+  {
+    const g = layer('prompt');
+    const s = spriteLabel('"The capital of France is"', { fontSize: 64, color:'#9a4a14' });
+    s.position.set(0, 4.4, 0); s.scale.multiplyScalar(2.4);
+    g.add(s);
+  }
+
+  // --- token chips ---
+  // ↓ verified by running the actual SmolLM2-135M tokenizer on this exact prompt.
+  // python -c "from transformers import AutoTokenizer; t=AutoTokenizer.from_pretrained('HuggingFaceTB/SmolLM2-135M'); print(t('The capital of France is').input_ids)"
+  // → [504, 3575, 282, 4649, 314]
+  const TOKEN_TEXTS = ['The', ' capital', ' of', ' France', ' is'];
+  const TOKEN_IDS   = ['504', '3575', '282', '4649', '314'];
+  {
+    const g = layer('tokens');
+    const N = TOKEN_TEXTS.length;
+    g.userData.chips = [];
+    g.userData.ids = [];
+    for (let i=0;i<N;i++) {
+      const x = (i - (N-1)/2) * 1.4;
+      const cube = softBox(1.1, 0.55, 0.55, 0xffd6b3);
+      cube.position.set(x, 1.6, 0);
+      const lab = spriteLabel(TOKEN_TEXTS[i], { fontSize: 58, color:'#9a4a14', scale: 0.9 });
+      lab.position.set(x, 1.6, 0.45);
+      const idl = spriteLabel(TOKEN_IDS[i], { fontSize: 44, color:'#1f6b3f', bg:'rgba(195,241,212,0.95)', scale: 0.7 });
+      idl.position.set(x, 0.95, 0.45); idl.visible = false;
+      g.add(cube); g.add(lab); g.add(idl);
+      g.userData.chips.push(cube);
+      g.userData.ids.push(idl);
+    }
+  }
+
+  // --- embedding grid ---
+  {
+    const g = layer('emb-grid');
+    // Big plane representing the embedding table (49152 × 576).
+    // Visual shrink: 64 rows × 24 cols pixels, faint.
+    const tex = (() => {
+      const W = 96, H = 144;  // canvas px
+      const c = document.createElement('canvas'); c.width = W; c.height = H;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#fffdf7'; ctx.fillRect(0,0,W,H);
+      for (let y=0;y<H;y++) for (let x=0;x<W;x++) {
+        const v = 0.78 + 0.22*Math.sin(x*0.7 + y*0.3 + Math.cos(x*0.13 + y*0.21));
+        const r = Math.round(255 * v), gC = Math.round(217 * v), b = Math.round(179 * v);
+        ctx.fillStyle = `rgb(${r},${gC},${b})`;
+        ctx.fillRect(x,y,1,1);
+      }
+      // grid hairlines
+      ctx.strokeStyle = 'rgba(194,105,26,0.18)';
+      for (let y=0;y<H;y+=12){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+      const t = new THREE.CanvasTexture(c); t.minFilter = THREE.LinearFilter; t.magFilter = THREE.NearestFilter;
+      return t;
+    })();
+    const plane = new THREE.Mesh(
+      new THREE.PlaneGeometry(3.0, 4.5),
+      new THREE.MeshBasicMaterial({ map: tex, transparent:true, opacity:0.95 })
+    );
+    plane.position.set(-3.5, 2.0, 0); plane.rotation.y = 0.18;
+    g.add(plane);
+    const cap = spriteLabel('embed_tokens  49,152 × 576', { fontSize: 38, color:'#9a4a14', bg:'rgba(255,247,240,0.95)', scale: 0.55 });
+    cap.position.set(-3.5, 4.6, 0);
+    g.add(cap);
+
+    // 5 highlighted rows (one per token chip), animate sliding right
+    g.userData.rows = [];
+    for (let i=0;i<5;i++) {
+      const row = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.05, 0.18),
+        new THREE.MeshBasicMaterial({ color: 0xffa973, transparent:true, opacity:0.85 })
+      );
+      const yLocal = 1.7 - i*0.35;
+      row.position.set(-3.5, yLocal, 0.02); row.rotation.y = 0.18;
+      row.userData.startY = yLocal;
+      row.userData.targetX = (i - 2) * 1.4;  // align with chips on x
+      g.add(row);
+      g.userData.rows.push(row);
+    }
+  }
+
+  // --- hidden bar (B,T,576) shown as a flat bar ---
+  {
+    const g = layer('hidden-bar');
+    const bar = softBox(7.0, 0.32, 0.8, 0xffd6b3);
+    bar.position.set(0, 2.4, 0);
+    g.add(bar);
+    const cap = spriteLabel('(B, T, 576)', { fontSize: 42, color:'#9a4a14', scale:0.55 });
+    cap.position.set(0, 3.0, 0);
+    g.add(cap);
+    g.userData.bar = bar;
+    g.userData.cap = cap;
+  }
+
+  // --- RoPE wave ---
+  {
+    const g = layer('rope');
+    // grid of 64 cols × 12 rows of small disks rotating
+    const cols = 16, rows = 6;
+    g.userData.disks = [];
+    for (let r=0;r<rows;r++){
+      for (let c=0;c<cols;c++){
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(0.10, 0.012, 8, 24),
+          new THREE.MeshStandardMaterial({ color: 0xffe9d6, roughness:0.6 })
+        );
+        const x = (c - (cols-1)/2) * 0.32;
+        const y = 2.0 + (r - (rows-1)/2) * 0.32;
+        ring.position.set(x, y, 0);
+        const arrow = new THREE.ArrowHelper(new V3(1,0,0), new V3(x,y,0), 0.10, 0xc2691a, 0.04, 0.03);
+        const freq = 1.0 / Math.pow(10000, (2*c)/(cols*2));
+        g.add(ring); g.add(arrow);
+        g.userData.disks.push({ arrow, freq, row: r });
+      }
+    }
+    const cap = spriteLabel('cos/sin tables  ·  (T, 64)', { fontSize: 38, color:'#9a4a14', scale:0.55 });
+    cap.position.set(0, 4.0, 0);
+    g.add(cap);
+  }
+
+  // --- Q/K/V heads fan ---
+  {
+    const g = layer('qkv');
+    const Q = 9, KV = 3;
+    const qNodes = [], kNodes = [], vNodes = [];
+    for (let i=0;i<Q;i++) {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(0.18, 20, 16), softMat(0xffa973));
+      m.position.set((i - (Q-1)/2)*0.45, 1.4, 1.4);
+      g.add(m); qNodes.push(m);
+    }
+    for (let i=0;i<KV;i++) {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(0.24, 22, 16), softMat(0xa3e6bb));
+      m.position.set((i-1)*1.4, 2.6, -0.2);
+      g.add(m); kNodes.push(m);
+    }
+    for (let i=0;i<KV;i++) {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(0.24, 22, 16), softMat(0xbcdef7));
+      m.position.set((i-1)*1.4, 2.6, -1.4);
+      g.add(m); vNodes.push(m);
+    }
+    g.userData.q = qNodes; g.userData.k = kNodes; g.userData.v = vNodes;
+
+    // edges from Q → KV
+    const lines = [];
+    qNodes.forEach((q, i) => {
+      const kv = kNodes[Math.floor(i/3)];
+      const geo = new THREE.BufferGeometry().setFromPoints([q.position, kv.position]);
+      const ln = new THREE.Line(geo, new THREE.LineBasicMaterial({ color:0xffd6b3, transparent:true, opacity:0.7 }));
+      g.add(ln); lines.push(ln);
+    });
+    g.userData.lines = lines;
+
+    const labQ = spriteLabel('Q  9 heads × 64',   { fontSize: 36, color:'#9a4a14', bg:'rgba(255,233,214,0.95)', scale:0.5 });
+    labQ.position.set(0, 0.7, 1.4); g.add(labQ);
+    const labK = spriteLabel('K  3 heads × 64',   { fontSize: 36, color:'#1f6b3f', bg:'rgba(196,241,212,0.95)', scale:0.5 });
+    labK.position.set(0, 3.4, -0.2); g.add(labK);
+    const labV = spriteLabel('V  3 heads × 64',   { fontSize: 36, color:'#1e4a73', bg:'rgba(220,238,251,0.95)', scale:0.5 });
+    labV.position.set(0, 3.4, -1.4); g.add(labV);
+  }
+
+  // --- attention matrix (T x T) ---
+  {
+    const g = layer('attn-mat');
+    const T = 5;
+    const cells = [];
+    for (let r=0;r<T;r++) for (let c=0;c<T;c++) {
+      const cell = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.46, 0.46),
+        new THREE.MeshBasicMaterial({ color: 0xfff7f0, transparent:true, opacity:0.95 })
+      );
+      cell.position.set((c - (T-1)/2)*0.5, 2.3 + (r - (T-1)/2)*-0.5, 0);
+      g.add(cell); cells.push({ mesh:cell, r, c });
+    }
+    g.userData.cells = cells;
+    g.userData.T = T;
+    const cap = spriteLabel('attention scores  ·  (T, T)', { fontSize: 36, color:'#9a4a14', scale:0.5 });
+    cap.position.set(0, 4.4, 0); g.add(cap);
+  }
+
+  // --- MLP pipe (variable width) ---
+  {
+    const g = layer('mlp');
+    const inBar  = softBox(4.0, 0.3, 0.7, 0xffd6b3);  inBar.position.set(-3.2, 2.4, 0);
+    const gate   = softBox(0.4, 0.3, 0.7, 0xa3e6bb); gate.position.set(-1.6, 2.95, 0);
+    const upBar  = softBox(0.4, 0.3, 0.7, 0xbcdef7); upBar.position.set(-1.6, 1.85, 0);
+    const wide   = softBox(5.5, 0.3, 0.7, 0xffe4ea); wide.position.set(0, 2.4, 0); wide.visible = false;
+    const outBar = softBox(4.0, 0.3, 0.7, 0xffd6b3); outBar.position.set(3.2, 2.4, 0); outBar.visible = false;
+    g.add(inBar); g.add(gate); g.add(upBar); g.add(wide); g.add(outBar);
+    g.userData = { inBar, gate, upBar, wide, outBar };
+    const lab1 = spriteLabel('576', { fontSize: 36, color:'#9a4a14', scale:0.5 }); lab1.position.set(-3.2, 1.8, 0);
+    const lab2 = spriteLabel('1536 (gate ⊙ up)', { fontSize: 36, color:'#1f6b3f', scale:0.5 }); lab2.position.set(0, 1.6, 0);
+    const lab3 = spriteLabel('576', { fontSize: 36, color:'#9a4a14', scale:0.5 }); lab3.position.set(3.2, 1.8, 0);
+    g.add(lab1); g.add(lab2); g.add(lab3);
+  }
+
+  // --- 30-layer tower (mini, lights up) ---
+  {
+    const g = layer('tower');
+    g.userData.blocks = [];
+    const N = 30;
+    for (let i=0;i<N;i++) {
+      const slab = softBox(2.4, 0.20, 1.2, 0xffe9d6);
+      slab.position.set(0, 0.5 + i*0.26, 0);
+      slab.material.opacity = 0.55;
+      g.add(slab);
+      g.userData.blocks.push(slab);
+    }
+    const emb = softBox(2.6, 0.22, 1.3, 0xffa973);  emb.position.set(0, 0.18, 0); g.add(emb);
+    const head = softBox(2.6, 0.22, 1.3, 0xffc090); head.position.set(0, 0.5 + N*0.26 + 0.2, 0); g.add(head);
+    g.userData.embed = emb; g.userData.head = head;
+  }
+
+  // --- LM-head bar chart (REAL top-8 from official SmolLM2-135M on this prompt) ---
+  // Verified by running the actual model: see browser network tab for the script.
+  // python: m=AutoModelForCausalLM.from_pretrained("HuggingFaceTB/SmolLM2-135M");
+  //         out = m(ids).logits[0,-1]; topk(out,8)
+  // → top-8 logits (rounded):
+  {
+    const g = layer('lmhead');
+    const labels = [' the',' Paris',' located',' called',' a',' situated',' in',' '];
+    const logits = [14.023, 12.997, 12.747, 12.237, 12.125, 12.036, 11.243, 10.928];
+    const lo = Math.min(...logits), hi = Math.max(...logits);
+    const TOP = labels.length;
+    g.userData.bars = [];
+    for (let i=0;i<TOP;i++) {
+      const norm = (logits[i] - lo) / (hi - lo);            // 0..1
+      const h = 0.4 + norm * 2.8;                            // bar height
+      const isArgmax = i === 0;
+      const isParis  = i === 1;
+      const color = isArgmax ? 0xa3e6bb : (isParis ? 0xffd6b3 : 0xffe9d6);
+      const bar = softBox(0.5, h, 0.5, color);
+      bar.position.set((i - (TOP-1)/2)*0.72, 1.0 + h/2, 0);
+      bar.userData.target = h;
+      bar.scale.y = 0.05 / h;
+      g.add(bar);
+      const lab = spriteLabel(labels[i].replace(/^ /,'·'), {
+        fontSize: 34, color: isArgmax ? '#1f6b3f' : '#9a4a14', scale:0.45,
+      });
+      lab.position.set((i - (TOP-1)/2)*0.72, 0.55, 0); g.add(lab);
+      const val = spriteLabel(logits[i].toFixed(2), {
+        fontSize: 30, color:'#7a5640', bg:'rgba(255,253,247,0.9)', scale:0.4,
+      });
+      val.position.set((i - (TOP-1)/2)*0.72, 0.25, 0); g.add(val);
+      g.userData.bars.push(bar);
+    }
+    const title = spriteLabel('lm_head logits  ·  real top-8 (vocab = 49,152)', { fontSize: 34, color:'#9a4a14', scale:0.55 });
+    title.position.set(0, 4.6, 0); g.add(title);
+  }
+
+  // --- next token glow ---
+  // The deterministic argmax for "The capital of France is" on the real
+  // SmolLM2-135M model is " the" (logit 14.023). " Paris" is #2 (12.997).
+  // With top-k=50 + T=0.8 sampling, " Paris" frequently wins instead.
+  {
+    const g = layer('next-tok');
+    const lab = spriteLabel('the   (argmax)', { fontSize: 72, color:'#1f6b3f', bg:'rgba(196,241,212,0.95)', scale:1.4 });
+    lab.position.set(0, 2.6, 0);
+    g.add(lab);
+    const sub = spriteLabel('with sampling: " Paris" often wins (#2 in logits)', {
+      fontSize: 30, color:'#9a4a14', bg:'rgba(255,233,214,0.95)', scale:0.65,
+    });
+    sub.position.set(0, 1.6, 0);
+    g.add(sub);
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(1.2, 0.05, 16, 96),
+      new THREE.MeshBasicMaterial({ color:0x7fd6a0, transparent:true, opacity:0.9 })
+    );
+    ring.position.set(0, 2.6, 0); ring.rotation.x = Math.PI/2;
+    g.add(ring);
+    g.userData.ring = ring; g.userData.lab = lab;
+  }
+  // --- camera target tween ---
+  let camTarget = { pos: new V3(11, 7, 17), look: new V3(0, 2, 0) };
+  // Pull every scene's camera back by this factor so the whole composition is
+  // comfortably visible without manual zooming.
+  const CAM_PULLBACK = 1.55;
+  function setCam(pos, look) {
+    camTarget.pos.set(pos[0]*CAM_PULLBACK, pos[1]*CAM_PULLBACK, pos[2]*CAM_PULLBACK);
+    camTarget.look.set(look[0], look[1], look[2]);
+  }
+
+  // ============== SCENES ==============
+  // Each scene: { t, dur, title, shape, narr, links[], show[], cam, update(t01), stats }
+  const SCENES = [
+    { t:0, dur:3, title:'Prompt enters', show:['prompt'], cam:{pos:[0,2.5,8], look:[0,3.0,0]},
+      shape:'"The capital of France is"  →  raw text',
+      narr:'A user prompt arrives. Before any tensor work, the BPE tokenizer must turn this string into integer IDs from a vocabulary of 49,152.',
+      stats:['—','tokenizer','O(len)'],
+      links:[{file:'verify.py', range:'62-63', label:'verify.py L62–63'},
+             {file:'generate.py', range:'23', label:'generate.py L23'}],
+      update:(t)=>{} },
+
+    { t:3, dur:3, title:'BPE tokenization', show:['prompt','tokens'], cam:{pos:[0,3.0,7], look:[0,2.0,0]},
+      shape:'text  →  input_ids of shape (1, 5)',
+      narr:'AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-135M") splits the string into subword pieces. Each piece becomes a 32-bit int — those are the IDs we feed the model.',
+      stats:['—','tokenizer','vocab 49152'],
+      links:[{file:'train.py', range:'121-122', label:'train.py L121–122'},
+             {file:'verify.py', range:'52', label:'verify.py L52'}],
+      update:(t)=>{
+        L.tokens.userData.chips.forEach((c,i)=>{
+          const k = Math.max(0, Math.min(1, t*5 - i*0.2));
+          c.scale.setScalar(0.2 + 0.8*k);
+        });
+      } },
+
+    { t:6, dur:3, title:'Show numeric IDs', show:['tokens'], cam:{pos:[0,2.4,6], look:[0,1.5,0]},
+      shape:'input_ids  ·  dtype=int64  ·  (1, 5)',
+      narr:'Each chip\'s integer ID appears below it. These integers are the ONLY thing the network ever sees — words, subwords, punctuation are all just indices into the embedding table.',
+      stats:['—','int64','5 ints'],
+      links:[{file:'model.py', range:'228-229', label:'model.py L228–229'}],
+      update:(t)=>{
+        L.tokens.userData.ids.forEach((id, i)=>{
+          id.visible = t > i*0.15;
+          id.material.opacity = Math.min(1, (t - i*0.15)*4);
+        });
+      } },
+
+    { t:9, dur:4, title:'Embedding lookup', show:['tokens','emb-grid','hidden-bar'],
+      cam:{pos:[-2,3.5,9], look:[-1,2.5,0]},
+      shape:'(1, 5)  →  (1, 5, 576)',
+      narr:'embed_tokens is an nn.Embedding(49152, 576). Each ID indexes one ROW of that table — for 5 tokens we pull 5 rows of 576 floats each. The same matrix will be reused at the very top as lm_head (weight tying).',
+      stats:['28.3M','embedding','vocab × 576'],
+      links:[{file:'model.py', range:'216', label:'embed_tokens decl L216'},
+             {file:'model.py', range:'230', label:'lookup call L230'},
+             {file:'model.py', range:'244-247', label:'tying L244–247'}],
+      update:(t)=>{
+        L['emb-grid'].userData.rows.forEach((row, i)=>{
+          const k = Math.max(0, Math.min(1, t*1.4 - i*0.1));
+          row.position.x = lerp(-3.5, row.userData.targetX, k);
+          row.position.y = lerp(row.userData.startY, 2.4, k);
+          row.material.opacity = lerp(0.85, 0.55, k);
+          row.scale.x = lerp(1.0, 0.40, k);
+        });
+        const bar = L['hidden-bar'].userData.bar;
+        bar.scale.x = Math.min(1, t*1.5);
+      } },
+
+    { t:13, dur:3, title:'RoPE precompute', show:['rope'], cam:{pos:[0,2.5,5], look:[0,2.4,0]},
+      shape:'cos, sin  ·  (T, 64)',
+      narr:'Once at model __init__, _build_rope_cache fills cos and sin tables up to max_position_embeddings = 8192. Lower-index pairs rotate fast (short wavelength), higher-index pairs rotate slowly. theta = 100,000 sets the base.',
+      stats:['T × 64','RoPE','θ = 100,000'],
+      links:[{file:'model.py', range:'84-90', label:'_build_rope_cache L84–90'},
+             {file:'model.py', range:'223-226', label:'register_buffer L223–226'}],
+      update:(t)=>{
+        L.rope.userData.disks.forEach(d => {
+          const ang = (performance.now()/1000) * (0.4 + d.freq * 6) + d.row;
+          d.arrow.setDirection(new V3(Math.cos(ang), Math.sin(ang), 0));
+        });
+      } },
+
+    { t:16, dur:3, title:'Layer 1 — input RMSNorm', show:['hidden-bar'],
+      cam:{pos:[0,3.0,6], look:[0,2.4,0]},
+      shape:'(B, T, 576)  →  (B, T, 576)',
+      narr:'Each token vector is divided by its own RMS (computed in fp32 for stability), then multiplied by a learned per-channel gain. This is the "pre-norm" — it sits inside the residual branch, the residual stream itself is never normalized.',
+      stats:['576','RMSNorm','per-token'],
+      links:[{file:'model.py', range:'59-70', label:'RMSNorm class L59–70'},
+             {file:'model.py', range:'191', label:'input_layernorm decl L191'},
+             {file:'model.py', range:'197', label:'used here L197'}],
+      update:(t)=>{
+        const bar = L['hidden-bar'].userData.bar;
+        const sq = 0.32 * (1 - 0.5 * Math.sin(t*Math.PI));
+        bar.scale.y = sq / 0.32;
+        bar.material.color.setHex(0xffd6b3);
+      } },
+
+    { t:19, dur:4, title:'Project to Q, K, V', show:['hidden-bar','qkv'],
+      cam:{pos:[0,3.6,6.5], look:[0,2.0,0]},
+      shape:'Q (B, 9, T, 64) · K (B, 3, T, 64) · V (B, 3, T, 64)',
+      narr:'Three Linear projections (no bias). Q gets 9 heads × 64 dims = 576 out. K and V each get only 3 heads × 64 = 192 out — that is the GQA compression: 3× fewer K/V parameters than Q.',
+      stats:['884k','Q+K+V+O / layer','no bias'],
+      links:[{file:'model.py', range:'130-133', label:'projections L130–133'},
+             {file:'model.py', range:'139-141', label:'view+transpose L139–141'}],
+      update:(t)=>{
+        L.qkv.userData.q.forEach((m,i)=>{ m.scale.setScalar(0.4 + 0.6*Math.min(1, t*4 - i*0.05)); });
+        L.qkv.userData.k.forEach((m,i)=>{ m.scale.setScalar(0.4 + 0.6*Math.min(1, t*4 - 0.6 - i*0.1)); });
+        L.qkv.userData.v.forEach((m,i)=>{ m.scale.setScalar(0.4 + 0.6*Math.min(1, t*4 - 0.9 - i*0.1)); });
+      } },
+
+    { t:23, dur:3, title:'Apply RoPE on Q & K', show:['qkv','rope'],
+      cam:{pos:[0,3.5,7], look:[0,2.2,0]},
+      shape:'same shapes — only positional encoding mixed in',
+      narr:'For each token position t and each (x_i, x_{i+32}) pair inside a head, we compute x·cos + rotate_half(x)·sin. Q and K are rotated by the same angle, so their dot product naturally encodes RELATIVE position. V is NOT rotated.',
+      stats:['—','RoPE on Q,K','dim 64 → 32 pairs'],
+      links:[{file:'model.py', range:'93-96', label:'_rotate_half L93–96'},
+             {file:'model.py', range:'99-106', label:'_apply_rope L99–106'},
+             {file:'model.py', range:'144', label:'called from attn L144'}],
+      update:(t)=>{
+        L.rope.userData.disks.forEach(d => {
+          const ang = (performance.now()/1000) * (0.5 + d.freq * 7);
+          d.arrow.setDirection(new V3(Math.cos(ang), Math.sin(ang), 0));
+        });
+      } },
+
+    { t:26, dur:3, title:'Repeat KV ×3 (GQA)', show:['qkv'],
+      cam:{pos:[0,3.6,6.5], look:[0,2.0,0]},
+      shape:'(B, 3, T, 64)  →  (B, 9, T, 64)  via repeat_interleave(3, dim=1)',
+      narr:'PyTorch SDPA needs Q-head count == K/V-head count. We materialize the broadcast: KV head 0 serves Q heads 0,1,2; KV head 1 serves 3,4,5; KV head 2 serves 6,7,8.',
+      stats:['n_rep = 3','GQA','no extra params'],
+      links:[{file:'model.py', range:'149-151', label:'repeat_interleave L149–151'},
+             {file:'model.py', range:'123', label:'n_rep computed L123'}],
+      update:(t)=>{
+        L.qkv.userData.lines.forEach((ln, i)=>{
+          ln.material.opacity = 0.3 + 0.5*Math.abs(Math.sin(t*Math.PI + i*0.3));
+        });
+      } },
+
+    { t:29, dur:4, title:'Q · Kᵀ → attention scores', show:['attn-mat'],
+      cam:{pos:[0,2.4,4.5], look:[0,2.4,0]},
+      shape:'(B, 9, T, 64) × (B, 9, 64, T)  →  (B, 9, T, T)',
+      narr:'Inside scaled_dot_product_attention: scaled dot product between every query and every key. The matrix grows row-by-row as queries are processed; cells brighten in proportion to similarity.',
+      stats:['T × T','SDPA','/√head_dim'],
+      links:[{file:'model.py', range:'156-161', label:'F.scaled_dot_product_attention L156–161'}],
+      update:(t)=>{
+        const T = L['attn-mat'].userData.T;
+        L['attn-mat'].userData.cells.forEach(({mesh,r,c}) => {
+          const appear = (r*T + c) / (T*T);
+          const k = Math.max(0, Math.min(1, t*1.5 - appear));
+          const v = (Math.sin((r+1)*(c+1)*0.7) + 1)/2 * 0.7 + 0.2;
+          mesh.material.color.setHSL(0.08, 0.55, 1 - 0.45*v*k);
+        });
+      } },
+
+    { t:33, dur:3, title:'Causal mask', show:['attn-mat'], cam:{pos:[0,2.4,4.5], look:[0,2.4,0]},
+      shape:'upper triangle  →  -∞',
+      narr:'is_causal=True applies a triangular mask: token t may attend to positions ≤ t only. Future tokens are zeroed out before softmax. is_causal is set automatically when no explicit attention_mask is passed.',
+      stats:['lower △','causal','is_causal=True'],
+      links:[{file:'model.py', range:'160', label:'is_causal L160'},
+             {file:'model.py', range:'153-155', label:'comment on padding L153–155'}],
+      update:(t)=>{
+        const T = L['attn-mat'].userData.T;
+        L['attn-mat'].userData.cells.forEach(({mesh,r,c}) => {
+          if (c > r) {
+            const k = Math.min(1, t*2);
+            mesh.material.color.setHSL(0.08, 0.2, 1 - 0.05*k);
+            mesh.material.opacity = 1 - 0.85*k;
+          }
+        });
+      } },
+
+    { t:36, dur:3, title:'Row-wise softmax', show:['attn-mat'], cam:{pos:[0,2.4,4.5], look:[0,2.4,0]},
+      shape:'rows sum to 1',
+      narr:'Each row is normalized to a probability distribution over the (allowed) keys. The "winner" cell of each row dominates; the rest decay smoothly.',
+      stats:['probs','softmax','row-wise'],
+      links:[{file:'model.py', range:'156-161', label:'fused inside SDPA L156–161'}],
+      update:(t)=>{
+        const T = L['attn-mat'].userData.T;
+        const cells = L['attn-mat'].userData.cells;
+        for (let r=0;r<T;r++){
+          let max = -1, maxC = 0;
+          for (let c=0;c<=r;c++){
+            const v = (Math.sin((r+1)*(c+1)*0.7)+1)/2;
+            if (v > max){ max = v; maxC = c; }
+          }
+          for (let c=0;c<=r;c++){
+            const cell = cells[r*T + c].mesh;
+            const isMax = c === maxC;
+            const target = isMax ? 0xa3e6bb : 0xffe9d6;
+            cell.material.color.lerp(new THREE.Color(target), Math.min(1, t*2));
+          }
+        }
+      } },
+
+    { t:39, dur:3, title:'Attend V & merge heads', show:['hidden-bar'],
+      cam:{pos:[0,3.0,6], look:[0,2.4,0]},
+      shape:'(B, 9, T, 64)  →  (B, T, 576)  via transpose+contiguous+view',
+      narr:'Multiply softmax(QKᵀ) by V, transpose heads back, flatten the head dim into hidden_size. The Linear o_proj (576 → 576) then mixes heads.',
+      stats:['331k','o_proj','head merge'],
+      links:[{file:'model.py', range:'162-163', label:'merge + o_proj L162–163'}],
+      update:(t)=>{
+        const bar = L['hidden-bar'].userData.bar;
+        bar.material.color.setHex(0xffe4ea);
+        bar.scale.x = Math.min(1, t*2);
+      } },
+
+    { t:42, dur:2, title:'Residual ⊕ (post-attn)', show:['hidden-bar'],
+      cam:{pos:[0,3.0,6], look:[0,2.4,0]},
+      shape:'(B, T, 576) + (B, T, 576)',
+      narr:'x = x + self_attn(input_layernorm(x), …). The attention output is added back to the residual stream — that\'s the only "highway" connecting all 30 layers.',
+      stats:['—','residual','no params'],
+      links:[{file:'model.py', range:'197', label:'first residual L197'}],
+      update:(t)=>{
+        const bar = L['hidden-bar'].userData.bar;
+        bar.scale.y = 1 + 0.4*Math.sin(t*Math.PI);
+      } },
+
+    { t:44, dur:2, title:'Post-attn RMSNorm', show:['hidden-bar'],
+      cam:{pos:[0,3.0,6], look:[0,2.4,0]},
+      shape:'(B, T, 576)  →  (B, T, 576)',
+      narr:'A second RMSNorm before the MLP. Same recipe as the first norm — independent learned gain per channel.',
+      stats:['576','post_attention_layernorm','per-token'],
+      links:[{file:'model.py', range:'193', label:'declared L193'},
+             {file:'model.py', range:'198', label:'used here L198'}],
+      update:(t)=>{
+        const bar = L['hidden-bar'].userData.bar;
+        bar.scale.y = 1 + 0.15*Math.cos(t*Math.PI);
+        bar.material.color.setHex(0xffd6b3);
+      } },
+
+    { t:46, dur:4, title:'SwiGLU MLP — up phase', show:['mlp'],
+      cam:{pos:[0,3.4,7], look:[0,2.4,0]},
+      shape:'(B, T, 576)  →  two parallel (B, T, 1536)',
+      narr:'Two Linears project 576 → 1536: gate_proj and up_proj run in parallel on the same input. SiLU is then applied to gate_proj(x); the result is multiplied element-wise by up_proj(x).',
+      stats:['2.65M / layer','SwiGLU','no bias'],
+      links:[{file:'model.py', range:'175-176', label:'gate, up declarations L175–176'},
+             {file:'model.py', range:'180', label:'fused expression L180'}],
+      update:(t)=>{
+        const m = L.mlp.userData;
+        const k = Math.min(1, t*1.5);
+        m.gate.scale.x = 1 + 7*k; m.upBar.scale.x = 1 + 7*k;
+        m.wide.visible = k > 0.4;
+        if (m.wide.visible) m.wide.material.opacity = 0.3 + 0.6*(k-0.4)/0.6;
+      } },
+
+    { t:50, dur:3, title:'SwiGLU MLP — down phase', show:['mlp'],
+      cam:{pos:[0,3.4,7], look:[0,2.4,0]},
+      shape:'(B, T, 1536)  →  (B, T, 576)',
+      narr:'down_proj(1536 → 576) collapses the gated activations back into hidden_size. The output is then added to the residual stream — the second residual of the block.',
+      stats:['884k','down_proj','no bias'],
+      links:[{file:'model.py', range:'177', label:'down_proj L177'},
+             {file:'model.py', range:'198', label:'second residual L198'}],
+      update:(t)=>{
+        const m = L.mlp.userData;
+        m.outBar.visible = true;
+        m.outBar.scale.x = Math.min(1, t*1.6);
+      } },
+
+    { t:53, dur:5, title:'Repeat ×30 layers', show:['tower'],
+      cam:{pos:[5,5,9], look:[0,4,0]},
+      shape:'30 × (norm → attn → res → norm → mlp → res)',
+      narr:'The exact same Block recipe repeats 30 times, each with its own independent parameters. ModuleList materializes the layers; the model.forward simply iterates through them, threading the residual stream upward.',
+      stats:['30','layers','independent weights'],
+      links:[{file:'model.py', range:'217', label:'ModuleList L217'},
+             {file:'model.py', range:'233-234', label:'forward loop L233–234'}],
+      update:(t)=>{
+        const N = L.tower.userData.blocks.length;
+        L.tower.userData.blocks.forEach((b, i) => {
+          const k = Math.max(0, Math.min(1, t*1.5 - i/N));
+          b.material.opacity = 0.55 + 0.4*k;
+          b.material.emissive = new THREE.Color().setHSL(0.08, 0.6, 0.85*k);
+          b.scale.y = 1 + 0.5*k;
+        });
+      } },
+
+    { t:58, dur:3, title:'Final RMSNorm', show:['tower','hidden-bar'],
+      cam:{pos:[3,5.5,8], look:[0,4,0]},
+      shape:'(B, T, 576)  →  (B, T, 576)',
+      narr:'After the last block, one more RMSNorm. This is the LlamaModel.norm — sometimes overlooked, but it is essential for stable logits.',
+      stats:['576','final norm','model.norm'],
+      links:[{file:'model.py', range:'218', label:'declared L218'},
+             {file:'model.py', range:'235', label:'applied L235'}],
+      update:(t)=>{
+        const bar = L['hidden-bar'].userData.bar;
+        bar.position.y = lerp(2.4, 8.6, Math.min(1, t));
+        bar.scale.y = 1 + 0.2*Math.sin(t*Math.PI);
+      } },
+
+    { t:61, dur:4, title:'lm_head → logits', show:['lmhead'],
+      cam:{pos:[0,3,7], look:[0,2,0]},
+      shape:'(B, T, 576)  →  (B, T, 49152)',
+      narr:'lm_head is a Linear(576, 49152, bias=False) whose weight ALIASES embed_tokens.weight (tie_word_embeddings = True). One tensor, two views — no extra parameters. Output is a logit per vocabulary token.',
+      stats:['49,152','vocab','tied'],
+      links:[{file:'model.py', range:'243', label:'lm_head decl L243'},
+             {file:'model.py', range:'244-247', label:'tying L244–247'},
+             {file:'model.py', range:'267', label:'forward L267'}],
+      update:(t)=>{
+        L.lmhead.userData.bars.forEach((b,i) => {
+          const k = Math.max(0, Math.min(1, t*1.5 - i*0.05));
+          b.scale.y = lerp(0.05/b.userData.target, 1, k);
+          b.position.y = 1.0 + (b.userData.target * k)/2;
+        });
+      } },
+
+    { t:65, dur:4, title:'Top-k sampling', show:['lmhead','next-tok'],
+      cam:{pos:[0,3,7], look:[0,2,0]},
+      shape:'logits[:, -1, :] / T  →  top-k mask  →  softmax  →  multinomial',
+      narr:'Top-k keeps only the 50 highest logits, T=0.8 softens the distribution, then multinomial draws one token. With T≤0 we argmax: the deterministic winner here is actually " the" (logit 14.023). " Paris" is #2 (12.997) and frequently wins after sampling — both are factually verified against the real official weights.',
+      stats:['k=50','top-k','T=0.8'],
+      links:[{file:'model.py', range:'290-299', label:'sampling L290–299'},
+             {file:'generate.py', range:'24', label:'generate call L24'}],
+      update:(t)=>{
+        const ring = L['next-tok'].userData.ring;
+        ring.scale.setScalar(0.6 + 0.4*Math.sin(t*Math.PI*2));
+        L['next-tok'].userData.lab.material.opacity = Math.min(1, t*2);
+      } },
+
+    { t:69, dur:3, title:'Append + loop', show:['next-tok','tokens'],
+      cam:{pos:[0,2.8,7], look:[0,2,0]},
+      shape:'input_ids = cat([input_ids, next_token], dim=1)',
+      narr:'The new token is concatenated to input_ids and the whole loop runs again — there is no KV cache in this educational starter, so every step recomputes the full prefix.',
+      stats:['+1','autoregressive','no KV cache'],
+      links:[{file:'model.py', range:'287-301', label:'generate loop L287–301'}],
+      update:(t)=>{} },
+
+    { t:72, dur:3, title:'Cross-entropy (training)', show:['hidden-bar'],
+      cam:{pos:[0,3,7], look:[0,2,0]},
+      shape:'shift_logits (B, T-1, V), shift_labels (B, T-1)',
+      narr:'In training, labels are the input shifted left by one. CE flattens (B, T-1) into one big batch and ignores -100 tokens (used for padding). This is the only place a loss is computed.',
+      stats:['scalar','CE','ignore_index=-100'],
+      links:[{file:'model.py', range:'270-278', label:'CE in forward L270–278'},
+             {file:'train.py', range:'159-164', label:'training-loop CE L159–164'}],
+      update:(t)=>{} },
+  ];
+
+  // ---------- panel & timeline ----------
+  const els = {
+    play:    document.getElementById('ci-play'),
+    prev:    document.getElementById('ci-prev'),
+    next:    document.getElementById('ci-next'),
+    time:    document.getElementById('ci-time'),
+    scrub:   document.getElementById('ci-scrub'),
+    speed:   document.getElementById('ci-speed'),
+    title:   document.getElementById('ci-title'),
+    shape:   document.getElementById('ci-shape'),
+    narr:    document.getElementById('ci-narr'),
+    links:   document.getElementById('ci-links'),
+    list:    document.getElementById('ci-list'),
+    sceneNum:document.getElementById('ci-scene-num'),
+    sceneTime:document.getElementById('ci-scene-time'),
+    statA:   document.getElementById('ci-stat-a'),
+    statB:   document.getElementById('ci-stat-b'),
+    statC:   document.getElementById('ci-stat-c'),
+    progFill:document.getElementById('ci-progress-fill'),
+    progMk:  document.getElementById('ci-progress-markers'),
+    chNum:   document.getElementById('ci-chapter-num'),
+    chTitle: document.getElementById('ci-chapter-title'),
+    shapeBadge: document.getElementById('ci-shape-badge'),
+    capTitle:document.getElementById('ci-cap-title'),
+    capNarr: document.getElementById('ci-cap-narr'),
+    capShape:document.getElementById('ci-cap-shape'),
+    capBox:  document.getElementById('ci-caption'),
+    timecode:document.getElementById('ci-timecode'),
+  };
+
+  const TOTAL = SCENES.reduce((s,sc)=>Math.max(s, sc.t + sc.dur), 0);
+  els.scrub.max = TOTAL;
+  function fmtTime(t){ const m=Math.floor(t/60), s=t-60*m; return `${m}:${s.toFixed(1).padStart(4,'0')}`; }
+  els.time.textContent = `0:00.0 / ${fmtTime(TOTAL)}`;
+
+  // build scene list
+  SCENES.forEach((sc, i) => {
+    const li = document.createElement('li');
+    li.className = 'flex items-baseline gap-2 px-2 py-0.5 rounded-md hover:bg-peach-50 cursor-pointer';
+    li.innerHTML = `<span class="text-amber-700 font-mono w-9 inline-block">${sc.t.toFixed(0)}s</span><span class="text-amber-900">${sc.title}</span>`;
+    li.addEventListener('click', () => seek(sc.t + 0.01, true));
+    els.list.appendChild(li);
+  });
+  // markers on progress bar
+  SCENES.forEach(sc => {
+    const m = document.createElement('div');
+    m.className = 'absolute top-0 bottom-0 w-px bg-amber-300/60';
+    m.style.left = (100 * sc.t / TOTAL) + '%';
+    els.progMk.appendChild(m);
+  });
+
+  let currentT = 0;
+  let playing = false;
+  let activeIdx = -1;
+
+  function applyScene(sc, idx) {
+    Object.values(L).forEach(g => g.visible = false);
+    sc.show.forEach(name => { if (L[name]) L[name].visible = true; });
+    if (sc.cam) setCam(sc.cam.pos, sc.cam.look);
+    els.title.textContent = sc.title;
+    els.shape.textContent = sc.shape || '';
+    els.narr.textContent  = sc.narr  || '';
+    els.sceneNum.textContent = `scene ${idx+1} / ${SCENES.length}`;
+    els.sceneTime.textContent = `${sc.t.toFixed(1)}–${(sc.t+sc.dur).toFixed(1)}s`;
+    // on-canvas overlays
+    if (els.chNum)      els.chNum.textContent     = `scene ${idx+1}/${SCENES.length}`;
+    if (els.chTitle)    els.chTitle.textContent   = sc.title;
+    if (els.shapeBadge) els.shapeBadge.textContent = sc.shape || '';
+    if (els.capTitle)   els.capTitle.textContent  = sc.title;
+    if (els.capNarr)    els.capNarr.textContent   = sc.narr || '';
+    if (els.capShape)   els.capShape.textContent  = sc.shape || '';
+    // brief fade-in animation on the caption
+    if (els.capBox) {
+      els.capBox.style.opacity = '0';
+      els.capBox.style.transform = 'translate(-50%, 8px)';
+      requestAnimationFrame(() => {
+        els.capBox.style.transition = 'opacity .3s ease, transform .3s ease';
+        els.capBox.style.opacity = '1';
+        els.capBox.style.transform = 'translate(-50%, 0)';
+      });
+    }
+    const [a,b,c] = sc.stats || ['·','·','·'];
+    els.statA.textContent = a; els.statB.textContent = b; els.statC.textContent = c;
+    // links
+    els.links.innerHTML = '';
+    (sc.links||[]).forEach(lk => {
+      const btn = document.createElement('button');
+      btn.className = 'pill pill-mint hover:bg-mint-200 cursor-pointer underline decoration-dotted underline-offset-2';
+      btn.textContent = lk.label;
+      btn.title = `Open ${lk.file} at ${lk.range}`;
+      btn.addEventListener('click', () => window.openSource(lk.file, lk.range));
+      els.links.appendChild(btn);
+    });
+    // highlight scene in list
+    Array.from(els.list.children).forEach((li, j) => {
+      li.classList.toggle('bg-peach-100', j === idx);
+      li.classList.toggle('font-semibold', j === idx);
+    });
+  }
+
+  function seek(t, force=false) {
+    currentT = Math.max(0, Math.min(TOTAL, t));
+    els.scrub.value = currentT;
+    els.time.textContent = `${fmtTime(currentT)} / ${fmtTime(TOTAL)}`;
+    els.progFill.style.width = (100 * currentT / TOTAL) + '%';
+    if (els.timecode) els.timecode.textContent = fmtTime(currentT);
+    let idx = SCENES.findIndex(s => currentT >= s.t && currentT < s.t + s.dur);
+    if (idx === -1) idx = SCENES.length - 1;
+    if (idx !== activeIdx || force) {
+      activeIdx = idx;
+      applyScene(SCENES[idx], idx);
+    }
+  }
+
+  function setPlaying(p){
+    playing = p;
+    // The Play button in the redesigned UI has an SVG icon + a <span> label.
+    // Update only the label text so we don't blow away the SVG.
+    if (els.play) {
+      const span = els.play.querySelector('span');
+      if (span) span.textContent = p ? 'Pause' : 'Play';
+      else els.play.textContent = p ? 'Pause' : 'Play';
+    }
+  }
+
+  els.play.addEventListener('click', () => {
+    if (currentT >= TOTAL) seek(0, true);
+    setPlaying(!playing);
+  });
+  els.prev.addEventListener('click', () => {
+    const idx = SCENES.findIndex(s => currentT >= s.t && currentT < s.t + s.dur);
+    const i = Math.max(0, (idx === -1 ? SCENES.length-1 : idx) - 1);
+    seek(SCENES[i].t + 0.01, true);
+  });
+  els.next.addEventListener('click', () => {
+    const idx = SCENES.findIndex(s => currentT >= s.t && currentT < s.t + s.dur);
+    const i = Math.min(SCENES.length-1, (idx === -1 ? 0 : idx) + 1);
+    seek(SCENES[i].t + 0.01, true);
+  });
+  els.scrub.addEventListener('input', () => seek(parseFloat(els.scrub.value), false));
+
+  // initial state
+  seek(0, true);
+
+  // animation loop
+  let last = performance.now();
+  function frame(now){
+    const dt = Math.min(0.05, (now - last)/1000);
+    last = now;
+    if (playing) {
+      const sp = parseFloat(els.speed.value);
+      seek(currentT + dt * sp, false);
+      if (currentT >= TOTAL) setPlaying(false);
+    }
+    // run active scene update
+    const sc = SCENES[activeIdx];
+    if (sc && sc.update) {
+      const t01 = Math.max(0, Math.min(1, (currentT - sc.t) / sc.dur));
+      try { sc.update(t01); } catch(e) { /* keep loop alive */ }
+    }
+    // camera lerp
+    camera.position.lerp(camTarget.pos, 0.06);
+    controls.target.lerp(camTarget.look, 0.06);
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+// =================== GQA WIDGET ===================
+(function gqa(){
+  const c = document.getElementById('gqa-scene');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, c.clientWidth/c.clientHeight, 0.1, 100);
+  camera.position.set(0, 2.0, 4.6);
+  const renderer = makeRenderer(c);
+  setupResize(renderer, camera, c);
+  softLights(scene);
+  const ctrl = new OrbitControls(camera, renderer.domElement);
+  ctrl.enableDamping = true; ctrl.autoRotate = true; ctrl.autoRotateSpeed = 0.6;
+
+  // 3 KV "heads" as larger spheres at the back row, 9 Q heads as smaller spheres at the front
+  const KV = 3, Q = 9;
+  const kvMat = new THREE.MeshStandardMaterial({ color:0xa3e6bb, roughness:0.5 });
+  const qMat  = new THREE.MeshStandardMaterial({ color:0xffa973, roughness:0.5 });
+  const kvNodes = [], qNodes = [];
+
+  for (let i=0;i<KV;i++) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.28, 24, 18), kvMat);
+    m.position.set((i-1)*1.4, 0.6, -1.0);
+    scene.add(m); kvNodes.push(m);
+  }
+  for (let i=0;i<Q;i++) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.18, 20, 16), qMat);
+    m.position.set((i - (Q-1)/2)*0.45, -0.6, 0.7);
+    scene.add(m); qNodes.push(m);
+  }
+  // edges Q→KV (each Q connects to floor(i/3)-th KV)
+  qNodes.forEach((q, i) => {
+    const kv = kvNodes[Math.floor(i / (Q/KV))];
+    const geo = new THREE.BufferGeometry().setFromPoints([q.position, kv.position]);
+    const mat = new THREE.LineBasicMaterial({ color:0xffd6b3, transparent:true, opacity:0.7 });
+    scene.add(new THREE.Line(geo, mat));
+  });
+
+  function animate(){
+    const t = performance.now()/1000;
+    qNodes.forEach((m, i) => {
+      m.position.y = -0.6 + Math.sin(t*1.5 + i*0.6)*0.04;
+    });
+    kvNodes.forEach((m, i) => {
+      m.position.y = 0.6 + Math.sin(t*1.2 + i*0.9)*0.05;
+    });
+    ctrl.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+</script>
+
+</body>
+</html>

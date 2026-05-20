@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SmolLM2-135M — GSAP Cinema (preview · scene 1)</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        canvas:  '#F9FAFB',
+        surface: '#FFFFFF',
+        ink:     '#18181B',
+        steel:   '#71717A',
+        slate2:  '#94A3B8',
+        whisper: 'rgba(226,232,240,0.5)',
+        accent:  '#F59E0B',
+        accentHi:'#D97706',
+      },
+      fontFamily: {
+        sans: ['Geist','ui-sans-serif','system-ui','sans-serif'],
+        mono: ['"Geist Mono"','ui-monospace','SFMono-Regular','monospace']
+      },
+    }
+  }
+}
+</script>
+
+<style>
+  :root {
+    --canvas:    #F9FAFB;
+    --surface:   #FFFFFF;
+    --ink:       #18181B;
+    --steel:     #71717A;
+    --slate:     #94A3B8;
+    --whisper:   rgba(226,232,240,0.5);
+    --accent:    #F59E0B;
+    --accent-hi: #D97706;
+    --accent-tint: #FEF3C7;
+    --cinema-bg: #0A0F1F;
+    --shadow-whisper: 0 1px 2px rgba(24,24,27,.04), 0 8px 24px -12px rgba(24,24,27,.05);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: 'ss01' on, 'cv11' on;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .surface-card {
+    background: var(--surface);
+    border-radius: 2rem;
+    box-shadow: var(--shadow-whisper);
+    border: 1px solid var(--whisper);
+  }
+
+  /* Cinema stage — dark canvas behind the SVG */
+  #cinema-stage {
+    position: relative;
+    background: var(--cinema-bg);
+    border-radius: 1.25rem;
+    overflow: hidden;
+  }
+  #cinema-stage:fullscreen,
+  #cinema-stage:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.625rem 1.125rem;
+    font-size: 0.9375rem; font-weight: 500;
+    border-radius: 0.875rem;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--whisper);
+    transition: transform .12s ease, background .15s ease, color .15s ease;
+  }
+  .btn:hover { background: #F3F4F6; }
+  .btn:active { transform: translateY(-1px) scale(0.985); }
+  .btn-primary { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .btn-primary:hover { background: var(--accent-hi); color: var(--surface); border-color: var(--accent-hi); }
+  .btn-ghost { background: transparent; color: var(--steel); border-color: transparent; }
+  .btn-ghost:hover { color: var(--ink); background: #F3F4F6; }
+  .icon { width: 1.05rem; height: 1.05rem; flex-shrink: 0; }
+
+  /* Pills */
+  .pill {
+    display: inline-flex; align-items: center;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.6875rem; font-weight: 500;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.5rem;
+    color: var(--steel);
+    background: #F3F4F6;
+    border: 1px solid var(--whisper);
+    letter-spacing: 0.02em;
+  }
+  .pill-accent { color: var(--accent-hi); background: var(--accent-tint); border-color: var(--accent-tint); }
+
+  /* SVG stage styling */
+  #cinema-svg { width: 100%; height: 100%; display: block; }
+
+  /* Block geometry — drawn in JS but styled here */
+  .blk-stroke { stroke: rgba(245,158,11,0.55); stroke-width: 1.5; fill: rgba(15,23,42,0.65); }
+  .blk-stroke-hi { stroke: #F59E0B; stroke-width: 2; }
+
+  .stage-band { fill: rgba(255,255,255,0.025); stroke: rgba(255,255,255,0.08); stroke-width: 1; }
+  .stage-band-hi { fill: rgba(245,158,11,0.12); stroke: rgba(245,158,11,0.55); }
+
+  .stage-label {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 11px;
+    fill: rgba(249,250,251,0.65);
+    letter-spacing: 0.02em;
+  }
+  .stage-label-hi { fill: #FCD34D; }
+
+  .axis-label {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    fill: rgba(249,250,251,0.5);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .stream-arrow { stroke: rgba(245,158,11,0.7); stroke-width: 2; fill: none; }
+
+  /* Zone wraps — translucent groupings for the Attention / MLP sub-blocks */
+  .zone-wrap {
+    fill: rgba(255,255,255,0.02);
+    stroke: rgba(255,255,255,0.10);
+    stroke-width: 1;
+  }
+  .zone-attn { stroke: rgba(96,165,250,0.30); fill: rgba(96,165,250,0.04); }
+  .zone-mlp  { stroke: rgba(244,114,182,0.30); fill: rgba(244,114,182,0.04); }
+  .zone-tag {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 9px;
+    fill: rgba(249,250,251,0.55);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Internal flow arrows (short hop arrows between adjacent stages) */
+  .flow-arrow {
+    stroke: rgba(245,158,11,0.55);
+    stroke-width: 1.25;
+    fill: none;
+  }
+
+  /* Residual skip arrows — drawn outside the block on either side */
+  .skip-arrow {
+    stroke: rgba(245,158,11,0.85);
+    stroke-width: 2.25;
+    fill: none;
+    stroke-dasharray: 5 3;
+  }
+  .skip-label {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    fill: rgba(252,211,77,0.85);
+    letter-spacing: 0.06em;
+  }
+
+  .token-chip-rect {
+    fill: rgba(15,23,42,0.85);
+    stroke: rgba(252,211,77,0.7);
+    stroke-width: 1.25;
+  }
+  .token-chip-label {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 11px;
+    fill: #FCD34D;
+    text-anchor: middle;
+  }
+  .token-shape-label {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 11px;
+    fill: rgba(249,250,251,0.7);
+    text-anchor: middle;
+  }
+
+  /* RMS trace panel */
+  .rms-frame { fill: rgba(255,255,255,0.02); stroke: rgba(255,255,255,0.08); stroke-width: 1; }
+  .rms-bar   { fill: rgba(245,158,11,0.55); }
+  .rms-tick  { stroke: rgba(255,255,255,0.1); stroke-width: 1; }
+  .rms-label { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10px; fill: rgba(249,250,251,0.55); }
+
+  /* Overlay HUD (chapter, shape, caption, timecode) */
+  .hud-card {
+    position: absolute;
+    padding: 0.4rem 0.75rem;
+    border-radius: 0.6rem;
+    background: rgba(15,23,42,0.78);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(245,158,11,0.3);
+    pointer-events: none;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: #F9FAFB;
+  }
+  .hud-caption {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 1.5rem;
+    max-width: 92%;
+    padding: 1rem 1.5rem;
+    background: rgba(15,23,42,0.86);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 1rem;
+    text-align: center;
+    pointer-events: none;
+  }
+  .hud-caption-title {
+    font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #F9FAFB;
+    line-height: 1.25;
+  }
+  .hud-caption-narr {
+    margin-top: 0.4rem;
+    font-size: 0.84rem;
+    color: rgba(249,250,251,0.78);
+    line-height: 1.4;
+  }
+  .hud-caption-shape {
+    margin-top: 0.5rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.7rem;
+    color: #FCD34D;
+  }
+
+  /* Exit fullscreen overlay */
+  #ci-exit-fs {
+    display: none;
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 30;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.6rem;
+    background: rgba(15,23,42,0.85);
+    border: 1px solid rgba(245,158,11,0.45);
+    color: #F9FAFB;
+    font: 600 12px/1 'Geist', ui-sans-serif, system-ui, sans-serif;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.4rem;
+    backdrop-filter: blur(8px);
+    pointer-events: auto;
+  }
+  #cinema-stage:fullscreen #ci-exit-fs { display: inline-flex; }
+
+  /* Scene-marker styling on the progress bar */
+  .scene-marker {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: rgba(245,158,11,0.55);
+  }
+
+  /* "Preview" banner */
+  .preview-banner {
+    background: var(--accent-tint);
+    color: var(--accent-hi);
+    border: 1px solid #FCD34D;
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+</style>
+</head>
+
+<body>
+<main class="max-w-7xl mx-auto px-6 lg:px-10 py-10">
+
+  <header class="flex items-start justify-between flex-wrap gap-4 mb-8">
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <span class="pill pill-accent">cinema · v2 preview</span>
+        <span class="pill">GSAP · SVG · Tailwind</span>
+      </div>
+      <h1 class="text-3xl lg:text-4xl font-bold tracking-tight">SmolLM2-135M Cinema — Scene 1</h1>
+      <p class="mt-2 text-sm text-steel max-w-2xl" style="color: var(--steel);">
+        A preview of the GSAP-driven, SVG-based cinema. This shows only scene 1 of 16 — the
+        intro to one decoder block. If the look feels right, I'll port the remaining 15
+        scenes plus the surrounding page sections in the same style.
+      </p>
+    </div>
+    <div class="preview-banner">
+      🔍 Preview build · scene 1 of 16 · zero Three.js
+    </div>
+  </header>
+
+  <div class="grid lg:grid-cols-12 gap-6">
+    <!-- Stage -->
+    <div class="lg:col-span-8 surface-card p-3">
+      <div id="cinema-stage" style="height: 640px;">
+        <!-- Exit fullscreen overlay (visible only in fullscreen) -->
+        <button id="ci-exit-fs" type="button" aria-label="Exit fullscreen" title="Exit fullscreen (Esc or F)">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6"/>
+          </svg>
+          <span>Exit fullscreen</span>
+        </button>
+
+        <!-- HUD: chapter chip top-left (scene name, mirrors v1) -->
+        <div class="hud-card" style="top: 0.75rem; left: 0.75rem;">
+          <span id="ci-chapter-num" style="color: #FCD34D;">scene 1/16</span>
+          <span class="mx-1.5" style="color: rgba(249,250,251,0.45);">·</span>
+          <span id="ci-chapter-title" class="font-semibold" style="color: #F9FAFB;">Intro · one of 30 decoder blocks</span>
+        </div>
+
+        <!-- HUD: shape badge top-right — in v1 this echoes the caption title -->
+        <div id="ci-shape-badge" class="hud-card" style="top: 0.75rem; right: 0.75rem; color: #FCD34D; max-width: 55%; text-align: right;">SmolLM2-135M · one transformer block</div>
+
+        <!-- HUD: caption bottom -->
+        <div class="hud-caption">
+          <div id="ci-cap-title" class="hud-caption-title">SmolLM2-135M · one transformer block</div>
+          <div id="ci-cap-narr" class="hud-caption-narr">You are looking at ONE of the 30 identical decoder blocks that make up SmolLM2-135M. Over the next ~2 minutes the camera walks every component, bottom-to-top, while a live trace from a real forward pass shows the per-token RMS at each stage on the right.</div>
+          <div id="ci-cap-shape" class="hud-caption-shape">scene 1/16 · frame 1/3 · 2.5s</div>
+        </div>
+
+        <!-- HUD: timecode bottom-right -->
+        <div id="ci-timecode" class="hud-card" style="bottom: 0.75rem; right: 0.75rem;">0:00.0</div>
+
+        <!-- The SVG stage -->
+        <svg id="cinema-svg" viewBox="0 0 1000 640" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <!-- Arrowhead marker for residual stream arrows -->
+            <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#F59E0B" />
+            </marker>
+            <!-- Subtle radial backdrop -->
+            <radialGradient id="stage-glow" cx="50%" cy="50%" r="65%">
+              <stop offset="0%"  stop-color="#1B2440" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0A0F1F" stop-opacity="1"/>
+            </radialGradient>
+          </defs>
+
+          <!-- Backdrop -->
+          <rect x="0" y="0" width="1000" height="640" fill="url(#stage-glow)"/>
+
+          <!-- ============================================================
+               DECODER BLOCK — proper pre-norm Llama-style schematic
+               ============================================================
+               Data flows BOTTOM-to-TOP (x_in enters at bottom, x_out exits
+               top), per cinema_v2.js scene 1 frame 3.
+
+               Two clearly delineated sub-blocks:
+                 ATTENTION  (lower half) — q/k/v fan-out, RoPE, SDPA, o_proj
+                 MLP        (upper half) — gate/up fan-out, SiLU, ⊙, down
+
+               Two residual SKIP arrows drawn OUTSIDE the block, on each side:
+                 LEFT  side : residual #2 (MLP bypass)  x_mid → ⊕ res #2
+                 RIGHT side : residual #1 (attention bypass)  x_in → ⊕ res #1
+
+               Coords are block-relative; block-group is positioned by the
+               outer translate(). Block frame: 380w × 560h.
+               ============================================================ -->
+          <g id="block-group" transform="translate(310 30)">
+            <!-- Outer block frame -->
+            <rect id="block-frame" class="blk-stroke" x="0" y="0" width="380" height="560" rx="20" ry="20"/>
+
+            <!-- x_out cap above block -->
+            <text id="lbl-xout" x="190" y="-12" class="stage-label" text-anchor="middle" opacity="0">
+              x_out  →  next of 30 blocks   ·   (B=1, T=5, 576)
+            </text>
+
+            <!-- =========== ⊕ RESIDUAL #2 (MLP bypass merges here) =========== -->
+            <g id="res2-node">
+              <circle cx="190" cy="12" r="14" fill="rgba(15,23,42,0.9)" stroke="#F59E0B" stroke-width="1.5"/>
+              <text x="190" y="16" text-anchor="middle"
+                    font-family="Geist Mono" font-size="14" fill="#FCD34D" font-weight="700">⊕</text>
+            </g>
+
+            <!-- =========== MLP SUB-BLOCK =========== -->
+            <g id="mlp-zone" transform="translate(20 36)">
+              <!-- Outer translucent wrap to visually group the MLP -->
+              <rect class="zone-wrap zone-mlp" x="0" y="0" width="340" height="200" rx="12"/>
+              <text class="zone-tag" x="10" y="14">MLP</text>
+
+              <!-- Stages inside MLP, from TOP (last op) to BOTTOM (first op).
+                   Data flows from RMSNorm at the bottom up through gate/up,
+                   SiLU, ⊙, then down_proj at the top. -->
+              <g class="stage mlp-stage" data-stage="down" transform="translate(20 26)">
+                <rect class="stage-band" width="300" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">down_proj  ·  1536 → 576</text>
+              </g>
+              <g class="stage mlp-stage" data-stage="silu_mul" transform="translate(20 58)">
+                <rect class="stage-band" width="300" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">⊙  silu(gate)  ⊙  up</text>
+              </g>
+              <!-- Parallel branches: SiLU on the LEFT, up_proj output passes through on the RIGHT. -->
+              <g class="stage mlp-stage" data-stage="silu" transform="translate(20 90)">
+                <rect class="stage-band" width="140" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">SiLU(gate)</text>
+              </g>
+              <!-- (no right-side box at this y — the up branch passes through. A small arrow shows it.) -->
+              <line x1="240" y1="98" x2="240" y2="120" class="flow-arrow"/>
+
+              <!-- Parallel: gate_proj on the LEFT, up_proj on the RIGHT -->
+              <g class="stage mlp-stage" data-stage="gate" transform="translate(20 122)">
+                <rect class="stage-band" width="140" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">gate_proj  576→1536</text>
+              </g>
+              <g class="stage mlp-stage" data-stage="up" transform="translate(180 122)">
+                <rect class="stage-band" width="140" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">up_proj  576→1536</text>
+              </g>
+
+              <!-- Fan-out point from RMSNorm output: two short arrows splitting -->
+              <line x1="170" y1="156" x2="90"  y2="146" class="flow-arrow"/>
+              <line x1="170" y1="156" x2="250" y2="146" class="flow-arrow"/>
+
+              <!-- Pre-norm RMSNorm (bottom of MLP zone = first op) -->
+              <g class="stage mlp-stage" data-stage="post_norm" transform="translate(20 162)">
+                <rect class="stage-band" width="300" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">RMSNorm  ·  post_attention_layernorm</text>
+              </g>
+            </g>
+
+            <!-- x_mid junction label -->
+            <text id="lbl-xmid" x="190" y="252" class="stage-label" text-anchor="middle" opacity="0.55">
+              x_mid  ·  (B=1, T=5, 576)
+            </text>
+
+            <!-- =========== ⊕ RESIDUAL #1 (attention bypass merges here) =========== -->
+            <g id="res1-node">
+              <circle cx="190" cy="276" r="14" fill="rgba(15,23,42,0.9)" stroke="#F59E0B" stroke-width="1.5"/>
+              <text x="190" y="280" text-anchor="middle"
+                    font-family="Geist Mono" font-size="14" fill="#FCD34D" font-weight="700">⊕</text>
+            </g>
+
+            <!-- =========== ATTENTION SUB-BLOCK =========== -->
+            <g id="attn-zone" transform="translate(20 300)">
+              <rect class="zone-wrap zone-attn" x="0" y="0" width="340" height="200" rx="12"/>
+              <text class="zone-tag" x="10" y="14">ATTENTION  (GQA · 9 Q heads / 3 K / 3 V)</text>
+
+              <!-- From TOP (last op) to BOTTOM (first op) -->
+              <g class="stage attn-stage" data-stage="oproj" transform="translate(20 26)">
+                <rect class="stage-band" width="300" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">concat heads  ·  o_proj  576→576</text>
+              </g>
+              <g class="stage attn-stage" data-stage="sdpa" transform="translate(20 58)">
+                <rect class="stage-band" width="300" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">F.scaled_dot_product_attention</text>
+              </g>
+              <g class="stage attn-stage" data-stage="rope_kvrep" transform="translate(20 90)">
+                <rect class="stage-band" width="300" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">RoPE on Q,K   ·   KV repeat_interleave ×3</text>
+              </g>
+
+              <!-- Parallel: q_proj, k_proj, v_proj — three GQA-sized boxes -->
+              <g class="stage attn-stage" data-stage="qproj" transform="translate(20 122)">
+                <rect class="stage-band" width="92" height="22" rx="6"/>
+                <text class="stage-label" x="46" y="15" text-anchor="middle">q_proj  9×64</text>
+              </g>
+              <g class="stage attn-stage" data-stage="kproj" transform="translate(124 122)">
+                <rect class="stage-band" width="92" height="22" rx="6"/>
+                <text class="stage-label" x="46" y="15" text-anchor="middle">k_proj  3×64</text>
+              </g>
+              <g class="stage attn-stage" data-stage="vproj" transform="translate(228 122)">
+                <rect class="stage-band" width="92" height="22" rx="6"/>
+                <text class="stage-label" x="46" y="15" text-anchor="middle">v_proj  3×64</text>
+              </g>
+
+              <!-- Fan-out from RMSNorm output: three short arrows splitting -->
+              <line x1="170" y1="156" x2="66"  y2="146" class="flow-arrow"/>
+              <line x1="170" y1="156" x2="170" y2="146" class="flow-arrow"/>
+              <line x1="170" y1="156" x2="274" y2="146" class="flow-arrow"/>
+
+              <!-- Pre-norm RMSNorm (bottom of attention zone = first op) -->
+              <g class="stage attn-stage" data-stage="input_layernorm" transform="translate(20 162)">
+                <rect class="stage-band" width="300" height="22" rx="6"/>
+                <text class="stage-label" x="12" y="15">RMSNorm  ·  input_layernorm</text>
+              </g>
+            </g>
+
+            <!-- x_in label inside the block, just below attention zone -->
+            <text id="lbl-xin" x="190" y="540" class="stage-label" text-anchor="middle" opacity="0">
+              x_in  ·  (B=1, T=5, hidden=576)
+            </text>
+
+            <!-- =========== RESIDUAL SKIP ARROWS =========== -->
+            <!-- Residual #1 (attention bypass) on the RIGHT side.
+                 Starts at x_in (190, 540) just under the attention zone,
+                 curves OUT right, climbs straight up, curves back IN to ⊕ res #1 (190, 276). -->
+            <g id="skip-attn" opacity="0">
+              <path d="M 190 528  C 380 528, 410 510, 410 490
+                       L 410 310
+                       C 410 290, 380 276, 204 276"
+                    class="skip-arrow" fill="none"
+                    marker-end="url(#arrow-amber)"/>
+              <text x="416" y="400" class="skip-label" transform="rotate(-90 416 400)">
+                residual #1  ·  x_in skip (attention bypass)
+              </text>
+            </g>
+
+            <!-- Residual #2 (MLP bypass) on the LEFT side.
+                 Starts at x_mid (190, 264), curves OUT left, climbs up, curves IN to ⊕ res #2 (190, 12). -->
+            <g id="skip-mlp" opacity="0">
+              <path d="M 190 264  C 0 264, -30 246, -30 226
+                       L -30 50
+                       C -30 26, 0 12, 176 12"
+                    class="skip-arrow" fill="none"
+                    marker-end="url(#arrow-amber)"/>
+              <text x="-36" y="140" class="skip-label" text-anchor="end" transform="rotate(-90 -36 140)">
+                residual #2  ·  x_mid skip (MLP bypass)
+              </text>
+            </g>
+          </g>
+
+          <!-- Token chips strip below the block. 5 chips for "Hello, my name is".
+               Block ends at absolute y=30+560=590. Chips at y=605. -->
+          <g id="token-strip" transform="translate(322 600)" opacity="1">
+            <!-- Caption above chips -->
+            <text x="178" y="-6" class="axis-label" text-anchor="middle" style="text-transform: none; fill: rgba(249,250,251,0.55);">
+              prompt embedded by embed_tokens  →  enters as x_in
+            </text>
+            <!-- 5 chips, sized to actual BPE pieces -->
+            <g class="token-chip" data-i="0" transform="translate(8 0)">
+              <rect class="token-chip-rect" x="0" y="0" width="56" height="22" rx="6"/>
+              <text class="token-chip-label" x="28" y="15">Hello</text>
+            </g>
+            <g class="token-chip" data-i="1" transform="translate(72 0)">
+              <rect class="token-chip-rect" x="0" y="0" width="22" height="22" rx="6"/>
+              <text class="token-chip-label" x="11" y="15">,</text>
+            </g>
+            <g class="token-chip" data-i="2" transform="translate(102 0)">
+              <rect class="token-chip-rect" x="0" y="0" width="42" height="22" rx="6"/>
+              <text class="token-chip-label" x="21" y="15"> my</text>
+            </g>
+            <g class="token-chip" data-i="3" transform="translate(152 0)">
+              <rect class="token-chip-rect" x="0" y="0" width="58" height="22" rx="6"/>
+              <text class="token-chip-label" x="29" y="15"> name</text>
+            </g>
+            <g class="token-chip" data-i="4" transform="translate(218 0)">
+              <rect class="token-chip-rect" x="0" y="0" width="36" height="22" rx="6"/>
+              <text class="token-chip-label" x="18" y="15"> is</text>
+            </g>
+          </g>
+
+          <!-- "Live trace · per-token RMS" panel on the right (offset further out
+               so the right-side residual skip arrow can climb without overlap). -->
+          <g id="rms-panel" transform="translate(760 60)" opacity="0">
+            <rect class="rms-frame" x="0" y="0" width="200" height="490" rx="12"/>
+            <text x="100" y="22" class="axis-label" text-anchor="middle">live trace · per-token RMS</text>
+            <text x="100" y="40" class="axis-label" text-anchor="middle" style="text-transform: none; font-size: 9px;">"Hello, my name is"</text>
+            <line x1="14" y1="50" x2="186" y2="50" class="rms-tick"/>
+            <!-- 5 horizontal bars (one per token). Real x_in RMS values from
+                 a forward pass of SmolLM2-135M, block 0, on the prompt above:
+                   [0.108, 0.123, 0.115, 0.111, 0.107]
+                 Bar widths are computed at runtime by JS so we don't drift
+                 from the TRACE constant. -->
+            <g id="rms-bars" transform="translate(14 70)">
+              <g class="rms-row" data-i="0">
+                <text class="rms-label" x="0" y="14">Hello</text>
+                <rect class="rms-bar" x="50" y="4" width="0" height="12" rx="3"/>
+                <text class="rms-label rms-value" x="58" y="14" style="fill: rgba(252,211,77,0.85);"></text>
+              </g>
+              <g class="rms-row" data-i="1" transform="translate(0 22)">
+                <text class="rms-label" x="0" y="14">,</text>
+                <rect class="rms-bar" x="50" y="4" width="0" height="12" rx="3"/>
+                <text class="rms-label rms-value" x="58" y="14" style="fill: rgba(252,211,77,0.85);"></text>
+              </g>
+              <g class="rms-row" data-i="2" transform="translate(0 44)">
+                <text class="rms-label" x="0" y="14"> my</text>
+                <rect class="rms-bar" x="50" y="4" width="0" height="12" rx="3"/>
+                <text class="rms-label rms-value" x="58" y="14" style="fill: rgba(252,211,77,0.85);"></text>
+              </g>
+              <g class="rms-row" data-i="3" transform="translate(0 66)">
+                <text class="rms-label" x="0" y="14"> name</text>
+                <rect class="rms-bar" x="50" y="4" width="0" height="12" rx="3"/>
+                <text class="rms-label rms-value" x="58" y="14" style="fill: rgba(252,211,77,0.85);"></text>
+              </g>
+              <g class="rms-row" data-i="4" transform="translate(0 88)">
+                <text class="rms-label" x="0" y="14"> is</text>
+                <rect class="rms-bar" x="50" y="4" width="0" height="12" rx="3"/>
+                <text class="rms-label rms-value" x="58" y="14" style="fill: rgba(252,211,77,0.85);"></text>
+              </g>
+            </g>
+            <g transform="translate(14 192)">
+              <text class="axis-label" x="0" y="0">stage</text>
+              <text id="rms-stage-tag" class="axis-label" x="40" y="0" style="fill: #FCD34D; text-transform: none;">x_in</text>
+            </g>
+          </g>
+
+          <!-- (Stage-tag label removed — info redundant with caption + RMS panel) -->
+        </svg>
+      </div>
+
+      <!-- Transport bar -->
+      <div class="px-4 pt-4 pb-3 flex items-center gap-2 flex-wrap" style="border-top: 1px solid var(--whisper);">
+        <button id="ci-prev" class="btn btn-ghost" title="Previous scene" aria-label="Previous scene">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20L9 12l10-8v16zM5 19V5"/></svg>
+        </button>
+        <button id="ci-play" class="btn btn-primary" title="Play / Pause">
+          <svg class="icon" id="ci-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span id="ci-play-label">Play</span>
+        </button>
+        <button id="ci-next" class="btn btn-ghost" title="Next scene" aria-label="Next scene">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4l10 8-10 8V4zM19 5v14"/></svg>
+        </button>
+        <span id="ci-time" class="font-mono text-[12px] ml-2" style="color: var(--steel);">0:00.0 / 0:07.5</span>
+        <input id="ci-scrub" type="range" min="0" max="1000" step="1" value="0"
+               class="flex-1 mx-2" style="accent-color: var(--accent);" />
+        <label class="font-mono text-[12px] inline-flex items-center gap-1.5" style="color: var(--steel);">
+          <span class="uppercase tracking-widest text-[10px]">speed</span>
+          <select id="ci-speed" class="rounded-md px-2 py-1 text-[12px] font-mono"
+                  style="background: var(--canvas); border: 1px solid var(--whisper); color: var(--ink);">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="1.5">1.5×</option>
+            <option value="2">2×</option>
+          </select>
+        </label>
+        <button id="ci-fs" class="btn" title="Toggle fullscreen (press F)">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></svg>
+          <span id="ci-fs-label">Fullscreen</span>
+        </button>
+      </div>
+
+      <!-- Progress bar with scene markers -->
+      <div id="ci-progress" class="relative mx-4 mb-4 h-1.5 rounded-full overflow-hidden" style="background: #F3F4F6;">
+        <div id="ci-progress-fill" class="absolute inset-y-0 left-0" style="width:0%; background: var(--accent);"></div>
+        <div id="ci-progress-markers" class="absolute inset-0"></div>
+      </div>
+    </div>
+
+    <!-- Scene panel -->
+    <aside class="lg:col-span-4 surface-card p-6 flex flex-col">
+      <div class="flex items-center justify-between">
+        <span class="pill pill-accent" id="ci-scene-num">scene 1 / 16</span>
+        <span class="font-mono text-[11px]" id="ci-scene-time" style="color: var(--slate);">0.0–7.5s</span>
+      </div>
+      <div id="ci-title" class="mt-2 text-lg font-semibold leading-snug" style="color: var(--ink);">
+        Intro · one of 30 decoder blocks
+      </div>
+      <div id="ci-shape" class="mt-1 text-xs font-mono" style="color: var(--accent-hi);">
+        x_in  ·  (B=1, T=5, hidden=576)
+      </div>
+      <p id="ci-narr" class="mt-3 text-sm" style="color: var(--steel);">
+        ONE of the 30 identical decoder blocks that make up SmolLM2-135M. The cinema walks
+        every component bottom-to-top, with a live trace of per-token RMS from a real
+        forward pass on the prompt <span class="font-mono" style="color: var(--ink);">"Hello, my name is"</span>.
+      </p>
+
+      <div class="mt-4">
+        <div class="text-[11px] uppercase tracking-wider" style="color: var(--accent-hi);">Frames in this scene</div>
+        <ol id="ci-frames" class="mt-2 space-y-1 text-sm" style="color: var(--steel);">
+          <li class="flex gap-2 frame-item" data-frame="0"><span class="font-mono text-[10px]" style="color: var(--slate);">2.5s</span><span>SmolLM2-135M · one transformer block</span></li>
+          <li class="flex gap-2 frame-item" data-frame="1"><span class="font-mono text-[10px]" style="color: var(--slate);">2.5s</span><span>Live e2e prompt · 5 tokens enter as x_in</span></li>
+          <li class="flex gap-2 frame-item" data-frame="2"><span class="font-mono text-[10px]" style="color: var(--slate);">2.5s</span><span>Bottom = x_in · Top = x_out</span></li>
+        </ol>
+      </div>
+
+      <div class="mt-auto pt-4 text-[11px]" style="color: var(--slate);">
+        <div>Preview build — only scene 1 implemented.</div>
+        <div class="mt-1">Press <kbd class="px-1 rounded border" style="border-color: var(--whisper);">Space</kbd> to play/pause, <kbd class="px-1 rounded border" style="border-color: var(--whisper);">F</kbd> for fullscreen, <kbd class="px-1 rounded border" style="border-color: var(--whisper);">←/→</kbd> for frames.</div>
+      </div>
+    </aside>
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(function cinemaV2GSAP() {
+  const $ = (id) => document.getElementById(id);
+  const stage = $('cinema-stage');
+  const svg   = $('cinema-svg');
+
+  // ---------- Live-trace data (mirrors cinema_v2.js TRACE) ----------
+  // Captured from a REAL forward pass of HuggingFaceTB/SmolLM2-135M on prompt
+  //   "Hello, my name is"   →   token IDs [19556, 28, 957, 1462, 314]
+  // at block 0 (first of 30). Every number is what the model produces.
+  const TRACE = {
+    prompt: 'Hello, my name is',
+    tokens: [19556, 28, 957, 1462, 314],
+    pieces: ['Hello', ',', ' my', ' name', ' is'],
+    rms: {
+      x_in:    [0.108, 0.123, 0.115, 0.111, 0.107],
+      y_norm1: [0.057, 0.051, 0.039, 0.041, 0.049],
+      attn:    [0.098, 0.117, 0.105, 0.091, 0.117],
+      x_mid:   [0.113, 0.152, 0.150, 0.137, 0.137],
+      y_norm2: [0.099, 0.102, 0.095, 0.093, 0.095],
+      mlp:     [2.258, 1.420, 1.604, 2.050, 1.495],
+      x_out:   [2.265, 1.405, 1.611, 2.051, 1.486],
+    },
+    gamma_norm1: 0.957,
+    gamma_norm2: 2.601,
+  };
+
+  // ---------- Scene 1 storyboard (verbatim from cinema_v2.js) ----------
+  // cinema_v2.js extends each frame's duration up to MAX_DUR=2.5s based on
+  // word count (words / 6 + 0.05). All three frames here are word-heavy
+  // enough to hit the cap, so each is 2.5s → 7.5s total.
+  const SCENE = {
+    name: 'Intro · one of 30 decoder blocks',
+    frames: [
+      {
+        dur: 2.5,
+        cap:  'SmolLM2-135M · one transformer block',
+        narr: 'You are looking at ONE of the 30 identical decoder blocks that make up SmolLM2-135M. Over the next ~2 minutes the camera walks every component, bottom-to-top, while a live trace from a real forward pass shows the per-token RMS at each stage on the right.',
+        stage: null,
+      },
+      {
+        dur: 2.5,
+        cap:  'Live e2e prompt',
+        narr: 'The block is being fed a real (B, T, 576) hidden state produced by embedding the prompt "Hello, my name is" — 5 tokens, hidden_size 576.',
+        stage: 'x_in',
+      },
+      {
+        dur: 2.5,
+        cap:  'Bottom = x_in   ·   Top = x_out',
+        narr: 'The block reads from the residual stream at the bottom, transforms it via attention then MLP (with two residual adds), and writes the updated stream back out at the top. That x_out then becomes x_in for the next block.',
+        stage: null,
+      },
+    ],
+  };
+
+  const TOTAL_DUR = SCENE.frames.reduce((s, f) => s + f.dur, 0);
+  const FRAME_STARTS = SCENE.frames.reduce((acc, f) => {
+    acc.push(acc.length ? acc[acc.length - 1] + SCENE.frames[acc.length - 1].dur : 0);
+    return acc;
+  }, []);
+
+  // ---------- Bar widths from real RMS ----------
+  // Scale: full bar width corresponds to the global max across all stages
+  // (≈ 2.265, from x_out). That way later scenes can show the MLP "punch"
+  // visually without us rescaling the chart between scenes.
+  const RMS_BAR_PX_MAX = 130;
+  const RMS_GLOBAL_MAX = 2.3;
+  const rmsBarWidth = (v) => Math.max(2, Math.round((v / RMS_GLOBAL_MAX) * RMS_BAR_PX_MAX));
+
+  // ---------- Initial state (everything hidden / off-screen) ----------
+  gsap.set('#block-frame', { opacity: 0, transformOrigin: '50% 50%', scale: 0.97 });
+  gsap.set('.zone-wrap, .zone-tag', { opacity: 0 });
+  gsap.set('#block-group .stage', { opacity: 0, y: 4 });
+  gsap.set('#block-group .flow-arrow', { opacity: 0 });
+  gsap.set('#res1-node, #res2-node', { opacity: 0, transformOrigin: '50% 50%', scale: 0.4 });
+  gsap.set('#token-strip .token-chip', { opacity: 0, y: 12, scale: 0.7, transformOrigin: '50% 50%' });
+  gsap.set('#token-strip text', { opacity: 0 });
+  gsap.set('#lbl-xin', { opacity: 0 });
+  gsap.set('#lbl-xmid', { opacity: 0 });
+  gsap.set('#lbl-xout', { opacity: 0 });
+  gsap.set('#skip-attn, #skip-mlp', { opacity: 0 });
+  gsap.set('#rms-panel', { opacity: 0 });
+  gsap.set('#rms-bars .rms-bar', { attr: { width: 0 } });
+  gsap.set('#rms-bars .rms-value', { opacity: 0 });
+
+  // ---------- Master timeline ----------
+  // Paused; transport bar drives play/pause/progress.
+  const tl = gsap.timeline({
+    paused: true,
+    defaults: { ease: 'power2.out' },
+    onUpdate: syncHUD,
+  });
+
+  // --- Frame 1 (0.0 – 2.5s) — Block reveal: frame in, zones in, stages in ---
+  // cap : "SmolLM2-135M · one transformer block"
+  tl.addLabel('f0', 0)
+    .to('#block-frame', { opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' }, 'f0')
+    .to('.zone-wrap', { opacity: 1, duration: 0.55, stagger: 0.18 }, 'f0+=0.35')
+    .to('.zone-tag',  { opacity: 1, duration: 0.4,  stagger: 0.18 }, 'f0+=0.45')
+    .to('#block-group .stage', {
+      opacity: 0.7,
+      y: 0,
+      duration: 0.55,
+      stagger: { amount: 0.85, from: 'random' },
+    }, 'f0+=0.55')
+    .to('#block-group .flow-arrow', { opacity: 0.75, duration: 0.45, stagger: 0.04 }, 'f0+=1.1')
+    .to('#res1-node, #res2-node', {
+      opacity: 1,
+      scale: 1,
+      duration: 0.55,
+      ease: 'back.out(2)',
+      stagger: 0.12,
+    }, 'f0+=1.3');
+
+  // --- Frame 2 (2.5 – 5.0s) — Tokens enter as x_in; live-trace panel slides in ---
+  // cap : "Live e2e prompt"   ·   stage : x_in
+  tl.addLabel('f1', FRAME_STARTS[1])
+    .to('#lbl-xin', { opacity: 1, duration: 0.4 }, 'f1')
+    .to('#token-strip text', { opacity: 1, duration: 0.45 }, 'f1+=0.05')
+    .to('#token-strip .token-chip', {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: 'back.out(2)',
+    }, 'f1+=0.15')
+    .to('#rms-panel', { opacity: 1, duration: 0.55 }, 'f1+=0.4')
+    .to('#rms-bars .rms-bar', {
+      attr: { width: (i) => rmsBarWidth(TRACE.rms.x_in[i]) },
+      duration: 0.7,
+      stagger: 0.07,
+      ease: 'power3.out',
+    }, 'f1+=0.7')
+    .to('#rms-bars .rms-value', { opacity: 1, duration: 0.35, stagger: 0.07 }, 'f1+=1.1');
+
+  // --- Frame 3 (5.0 – 7.5s) — residual skip arrows draw in; x_mid + x_out labels ---
+  // cap : "Bottom = x_in   ·   Top = x_out"
+  // Two residual SKIPs:
+  //   #1 (right side) bypasses ATTENTION (x_in → ⊕ res #1)
+  //   #2 (left side)  bypasses MLP        (x_mid → ⊕ res #2)
+  tl.addLabel('f2', FRAME_STARTS[2])
+    .to('#lbl-xmid', { opacity: 0.8, duration: 0.4 }, 'f2')
+    .to('#skip-attn', { opacity: 1, duration: 0.7, ease: 'power2.inOut' }, 'f2+=0.1')
+    .to('#skip-mlp',  { opacity: 1, duration: 0.7, ease: 'power2.inOut' }, 'f2+=0.45')
+    .to('#lbl-xout',  { opacity: 1, duration: 0.5 }, 'f2+=1.0')
+    // Gentle pulse on the ⊕ junctions to suggest the residual adds firing.
+    .to('#res1-node, #res2-node', {
+      scale: 1.18,
+      duration: 0.45,
+      yoyo: true,
+      repeat: 1,
+      ease: 'sine.inOut',
+      stagger: 0.15,
+    }, 'f2+=1.3');
+
+  // Final length safeguard.
+  tl.duration(TOTAL_DUR);
+
+  // ---------- HUD sync ----------
+  function currentFrameIdx(t) {
+    for (let i = SCENE.frames.length - 1; i >= 0; i--) {
+      if (t >= FRAME_STARTS[i] - 1e-6) return i;
+    }
+    return 0;
+  }
+
+  let lastFrameIdx = -1;
+  function syncHUD() {
+    const t = tl.time();
+    // Timecode
+    $('ci-timecode').textContent = formatTC(t);
+    $('ci-time').textContent = `${formatTC(t)} / ${formatTC(TOTAL_DUR)}`;
+    // Scrub
+    if (!scrubbing) {
+      const p = tl.progress();
+      $('ci-scrub').value = String(Math.round(p * 1000));
+      $('ci-progress-fill').style.width = `${(p * 100).toFixed(2)}%`;
+    }
+    // Frame-bound caption updates — mirror v1 cinema_v2.js:
+    //   capTitle    ← f.cap
+    //   capNarr     ← f.narr
+    //   capShape    ← "scene S/N · frame F/M · D.Ds"
+    //   shapeBadge  ← f.cap   (yes, the badge echoes the caption in v1)
+    //   stage tags  ← f.stage (the 'x_in' / 'y_norm1' / ... label)
+    const fi = currentFrameIdx(t);
+    if (fi !== lastFrameIdx) {
+      lastFrameIdx = fi;
+      const f = SCENE.frames[fi];
+      $('ci-cap-title').textContent = f.cap;
+      $('ci-cap-narr').textContent  = f.narr;
+      $('ci-cap-shape').textContent = `scene 1/16 · frame ${fi + 1}/${SCENE.frames.length} · ${f.dur.toFixed(1)}s`;
+      $('ci-shape-badge').textContent = f.cap;
+      // Stage tag (only shown when this frame declares one)
+      const tag = f.stage || '';
+      $('rms-stage-tag').textContent = tag || '—';
+      // Side panel highlight
+      document.querySelectorAll('.frame-item').forEach((el, i) => {
+        el.style.color = i === fi ? 'var(--ink)' : 'var(--steel)';
+        el.style.fontWeight = i === fi ? '600' : '400';
+      });
+    }
+  }
+
+  // Pre-fill numeric RMS value labels so they're visible alongside the bars.
+  // Values come from TRACE.rms.x_in (real forward-pass numbers).
+  document.querySelectorAll('#rms-bars .rms-row').forEach((row, i) => {
+    const valEl = row.querySelector('.rms-value');
+    if (valEl) valEl.textContent = TRACE.rms.x_in[i].toFixed(3);
+  });
+
+  function formatTC(t) {
+    const s = Math.max(0, t);
+    const m = Math.floor(s / 60);
+    const ss = (s - m * 60).toFixed(1);
+    return `${m}:${ss.padStart(4, '0')}`;
+  }
+
+  // Build scene markers on progress bar
+  (function buildMarkers() {
+    const host = $('ci-progress-markers');
+    FRAME_STARTS.forEach((t, i) => {
+      if (i === 0) return;
+      const m = document.createElement('div');
+      m.className = 'scene-marker';
+      m.style.left = `${(t / TOTAL_DUR) * 100}%`;
+      host.appendChild(m);
+    });
+  })();
+
+  // ---------- Transport ----------
+  let playing = false;
+  function setPlaying(p) {
+    playing = p;
+    if (p) tl.play(); else tl.pause();
+    $('ci-play-label').textContent = p ? 'Pause' : 'Play';
+    $('ci-play-icon').innerHTML = p
+      ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>'
+      : '<path d="M8 5v14l11-7z"/>';
+  }
+  $('ci-play').addEventListener('click', () => setPlaying(!playing));
+  $('ci-prev').addEventListener('click', () => {
+    const fi = currentFrameIdx(tl.time());
+    const target = Math.max(0, fi - 1);
+    tl.time(FRAME_STARTS[target] + 0.001);
+    syncHUD();
+  });
+  $('ci-next').addEventListener('click', () => {
+    const fi = currentFrameIdx(tl.time());
+    const target = Math.min(SCENE.frames.length - 1, fi + 1);
+    tl.time(FRAME_STARTS[target] + 0.001);
+    syncHUD();
+  });
+
+  // Scrub
+  let scrubbing = false;
+  $('ci-scrub').addEventListener('pointerdown', () => { scrubbing = true; setPlaying(false); });
+  $('ci-scrub').addEventListener('pointerup',   () => { scrubbing = false; });
+  $('ci-scrub').addEventListener('input', (e) => {
+    const p = parseInt(e.target.value, 10) / 1000;
+    tl.progress(p);
+    $('ci-progress-fill').style.width = `${(p * 100).toFixed(2)}%`;
+  });
+
+  // Speed
+  $('ci-speed').addEventListener('change', (e) => {
+    tl.timeScale(parseFloat(e.target.value));
+  });
+
+  // ---------- Fullscreen ----------
+  function toggleFs() {
+    if (!document.fullscreenElement) {
+      stage.requestFullscreen?.({ navigationUI: 'hide' }).catch(() => {});
+    } else {
+      document.exitFullscreen?.();
+    }
+  }
+  $('ci-fs').addEventListener('click', toggleFs);
+  $('ci-exit-fs').addEventListener('click', (e) => { e.stopPropagation(); toggleFs(); });
+  document.addEventListener('fullscreenchange', () => {
+    const inFs = document.fullscreenElement === stage;
+    $('ci-fs-label').textContent = inFs ? 'Exit fullscreen' : 'Fullscreen';
+  });
+
+  // ---------- Keyboard ----------
+  window.addEventListener('keydown', (ev) => {
+    const t = ev.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (ev.key === ' ' || ev.code === 'Space') { ev.preventDefault(); setPlaying(!playing); }
+    else if (ev.key === 'f' || ev.key === 'F') { ev.preventDefault(); toggleFs(); }
+    else if (ev.key === 'ArrowRight') { ev.preventDefault(); $('ci-next').click(); }
+    else if (ev.key === 'ArrowLeft')  { ev.preventDefault(); $('ci-prev').click(); }
+  });
+
+  // Initial render at t=0 so HUD is correct.
+  syncHUD();
+
+  // Expose for debugging if needed.
+  window.cinema = { tl, SCENE, setPlaying, toggleFs };
+})();
+</script>
+</body>
+</html>

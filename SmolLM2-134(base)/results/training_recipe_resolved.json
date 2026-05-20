@@ -1,0 +1,40 @@
+{
+  "source": "https://github.com/huggingface/smollm/blob/main/text/pretraining/smollm2/config_smollm2_135M.yaml",
+  "fetched": "2026-05-13",
+  "model": "SmolLM2-135M (nanotron training config)",
+  "optimizer": {
+    "type": "AdamW",
+    "lr": 0.003,
+    "betas": [0.9, 0.95],
+    "eps": 1.0e-08,
+    "weight_decay": 0.01
+  },
+  "schedule": {
+    "type": "WSD (warmup-stable-decay)",
+    "warmup_style": "linear",
+    "warmup_steps": 2000,
+    "decay_style": "linear",
+    "decay_steps": 400000,
+    "decay_starts_at": 1600000,
+    "min_decay_lr": 0
+  },
+  "batch": {
+    "sequence_length": 2048,
+    "micro_batch_size": 8,
+    "batch_accumulation_per_replica": 1,
+    "implied_data_parallel": 64,
+    "global_batch_size": 512,
+    "tokens_per_step": 1048576
+  },
+  "training": {
+    "total_steps": 2000000,
+    "total_tokens_approx": 2097152000000,
+    "clip_grad": 1.0,
+    "precision": "bf16"
+  },
+  "notes": [
+    "Decay fraction = 400000 / 2000000 = 0.20 (matches paper §6)",
+    "Total tokens ≈ 2.1T (matches the paper / model card 2T figure)",
+    "Previous train.py default weight_decay=0.1 was 10× too high — corrected to 0.01"
+  ]
+}

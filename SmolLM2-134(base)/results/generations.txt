@@ -1,0 +1,75 @@
+Prompt: Once upon a time
+[greedy] Once upon a time, there was a little girl named Lily. She lived in a big house with her family, but she didn't have many toys to play with. One day, her mom told her that she could go to a special place called a "
+
+[T=0.4] Once upon a time, in a land far away, there lived a curious little girl named Lily. She loved to play and explore her surroundings. One day, while playing near her house, she saw something strange - a large, shiny object standing tall in the
+
+[T=0.9] Once upon a time, back when dinosaurs roamed America, humans discovered and named some amazing animals like mammoths, sloths, and saber-toothed cats. But did you know that much of those creatures still exist today? They live in cold places like
+
+────────────────────────────────────────────────────────────────────────────────
+Prompt: The three laws of robotics are
+[greedy] The three laws of robotics are:
+
+The first law is that robots should not be created or used for any purpose that would violate the laws of nature.
+
+The second law is that robots should not be created or used for any purpose that would violate the laws
+
+[T=0.4] The three laws of robotics are:
+
+  1. The human body is a single unit and cannot be separated from the environment.
+  2. The human body is a single unit and cannot be separated from the environment.
+  3. The human body is a single unit and
+
+[T=0.9] The three laws of robotics are:
+1) Everything can be automated and controlled.
+2) Robots have the ability to learn and acquire and the ability to adapt,
+3) All actions are reversible.
+
+So do I believe robots are the future of medicine
+
+────────────────────────────────────────────────────────────────────────────────
+Prompt: def is_prime(n):
+[greedy] def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, n):
+        if n % i == 0:
+            return False
+    return True
+
+def is_prime_2(n):
+    if
+
+[T=0.4] def is_prime(n):
+    if n <= 1:
+        return False
+    if n % 2 == 0:
+        return False
+    return True
+
+def is_prime_in_range(n):
+    if n <= 1:
+        return
+
+[T=0.9] def is_prime(n):
+    if n % 2 == 0:
+        return n
+    for x in range(3, int(1.0 / n - 1.0 / 2.0) + 1):
+        if n % x
+
+────────────────────────────────────────────────────────────────────────────────
+Prompt: In a world where
+[greedy] In a world where the world is a place of peace, the world of war is a place of war.
+
+The world of war is a place of war.
+
+The world of war is a place of war.
+
+The world of war
+
+[T=0.4] In a world where the world is a place of endless change, the world of the future is one where the world is a place of endless change.
+
+The future is a place of endless change. It is a place of endless change where the world is
+
+[T=0.9] In a world where the average temperature is expected to rise another 2 or 3 degrees within the next century, there is great hope for life on Mars. In a world where most of the energy use is by electric or biofuel driven vehicles, there is tremendous
+
+────────────────────────────────────────────────────────────────────────────────
