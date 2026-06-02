@@ -39,6 +39,9 @@ SmolLM2-134(base)/results/lm_eval/
 # Claude Code state (skills, settings, scheduled tasks, session caches)
 .claude/
 
+# Skills showcase (Claude skill .md files + demo site) — kept local only
+skills_showcase/
+
 # OS
 .DS_Store
 Thumbs.db
