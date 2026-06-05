@@ -21,6 +21,7 @@ It's organized as **what we did**, **how we did it**, **why we did it that way**
 
 ## Table of contents
 
+0. [Results — verified outputs & visualizations](#0-results--verified-outputs--visualizations)
 1. [Why SmolLM2-135M first](#1-why-smollm2-135m-first)
 2. [Sources of truth](#2-sources-of-truth-what-counts-as-canonical)
 3. [Architecture spec sheet](#3-architecture-spec-sheet-the-non-negotiables)
@@ -34,6 +35,132 @@ It's organized as **what we did**, **how we did it**, **why we did it that way**
 11. [Honest accounting: what we matched vs what we inferred](#11-honest-accounting-what-we-matched-vs-what-we-inferred)
 12. [Suggested video sequence to extend this](#12-suggested-video-sequence-to-extend-this)
 13. [Source map](#13-source-map)
+
+---
+
+## 0. Results — verified outputs & visualizations
+
+Everything in this section is produced live by `results.ipynb` / `verify.py` /
+`train_tinystories.py`. No value is typed by hand; each is cross-checked against
+a file or a model run. The full artifact catalog lives in
+[`results/`](results/) (`summary.json`, `comparison_with_hf.md`,
+`perplexity.json`, `topk_predictions.json`, the training logs/CSVs, and the
+plots below).
+
+### 0.1 Headline numbers
+
+| Metric | Value | Source |
+|---|---|---|
+| Unique parameter count | **134,515,008** (target match ✓) | `results/summary.json` |
+| `lm_head` tied to `embed_tokens` | True | `results/summary.json` |
+| `max │Δlogits│` vs HF `LlamaForCausalLM` (fp32, CPU) | **0.000e+00** (bit-exact) | `results/comparison_with_hf.md` |
+| wikitext-2 val perplexity — ours | **15.370989** | `results/perplexity.json` |
+| wikitext-2 val perplexity — HF | **15.370990** (Δ ≈ 9 × 10⁻⁷) | `results/perplexity.json` |
+| Argmax for `"The capital of France is"` | `' the'` (logit 14.023) — *Paris is only rank #2* | `results/topk_predictions.json` |
+| Tokenization of that prompt | `[504, 3575, 282, 4649, 314]` | `results/summary.json` |
+| TinyStories-val PPL, before → after | **6.8945 → 3.7900** (**−45.0%**) | `results/tinystories_{before,after}.txt` |
+| TinyStories run wall-clock (NVIDIA GB10, bf16) | **116.1 min**, 100M tokens, 24,414 steps | `results/tinystories_train.log` |
+| Best single-batch training loss | **0.9088** @ step 22,353 (deep in WSD decay) | `results/tinystories_train.csv` |
+
+### 0.2 Architecture parity vs HuggingFace (6 cross-checks)
+
+Full write-up in [`results/comparison_with_hf.md`](results/comparison_with_hf.md).
+Same official safetensors loaded into both our `SmolLM2ForCausalLM` and HF's
+reference `LlamaForCausalLM`:
+
+| # | Check | GPU result | CPU result | Verdict |
+|---|---|---|---|---|
+| 1 | Final-logits parity, `"The capital of France is"` | max\|Δ\| = 4.72e-05 | max\|Δ\| = **0.00e+00** | ✓ bit-exact on CPU |
+| 2 | Per-layer hidden-state parity (30 layers) | max\|Δ\| = 1.95e-03 @ L14 | max\|Δ\| = **0.00e+00** everywhere | ✓ bit-exact on CPU |
+| 3 | Greedy generation, 24 tokens × 5 prompts | **5/5 exact** token-by-token | (same) | ✓ |
+| 4 | Top-10 next-token sets, 5 prompts | **5/5 perfect overlap**, max\|Δp\| ≈ 4e-07 | (same) | ✓ |
+| 5 | Long-context (401-token RoPE) | max\|Δ\| = 4.01e-05, argmax matches | (same) | ✓ |
+| 6 | Sampling distribution (2000 draws) | top-1 prob 0.072 analytic vs 0.080 empirical | (same) | ✓ |
+
+The non-zero GPU deltas are pure kernel-dispatch (reduction-order) noise — on
+CPU every per-layer and final-logit Δ collapses to **exactly 0.0**. The
+reproduction is faithful.
+
+### 0.3 Top-5 next-token for `"The capital of France is"`
+
+The parity test's most counter-intuitive catch — the deterministic argmax is
+`' the'`, not `' Paris'` (the model has seen many *"…is the city of Paris"*
+constructions). Source: [`results/topk_predictions.json`](results/topk_predictions.json).
+
+| Rank | Token | Probability | Logit |
+|---:|---|---:|---:|
+| 1 | `' the'` | 0.2617 | 14.023 |
+| 2 | `' Paris'` | 0.0938 | 12.997 |
+| 3 | `' located'` | 0.0731 | 12.747 |
+| 4 | `' called'` | 0.0439 | 12.237 |
+| 5 | `' a'` | 0.0392 | 12.125 |
+
+### 0.4 Continued pretraining on TinyStories — before vs after
+
+100M tokens of `roneneldan/TinyStories` starting from the official weights;
+recipe AdamW(0.9, 0.95), peak LR **3e-4** (10× lower than from-scratch's 3e-3),
+WSD (warmup 200, decay last 20% from step 19,531), wd 0.01, grad-clip 1.0, bf16,
+seq 1024, micro-batch 4. **Validation PPL 6.8945 → 3.7900 (−45.0%)** on 199,485
+target tokens. Same seed / temperature 0.7 / top-k 40 for both columns
+(full text in [`results/tinystories_before.txt`](results/tinystories_before.txt)
+and [`results/tinystories_after.txt`](results/tinystories_after.txt)):
+
+> **Prompt: `"The brave little mouse"`**
+>
+> **Before:** …to make me happy and to help me to live like a man, and to make
+> me understand that I am safe and happy and comfortable in my new home, and
+> that I shall have **plenty of plenty of plenty of plenty of** …
+>
+> **After:** The brave little mouse was so excited that he couldn't wait to find
+> out what the old man was up to. Once upon a time, there was a big, big bear.
+> He was very strong and brave. He lived in a forest with lots of trees. One
+> day, the bear decided to go for a walk …
+
+The base model degenerates into a repetition loop; the trained model exits
+cleanly and even rolls a fresh *"Once upon a time"* — it has internalized
+EOS-as-story-break. This is a **style-shift**, not new knowledge: the model
+re-allocates probability mass toward the in-domain register (simple vocab,
+character-driven dialogue) at the expected cost of out-of-domain quality.
+
+### 0.5 The TinyStories training run
+
+![TinyStories continued-pretraining loss curve](results/plots/tinystories_loss_curve.png)
+
+24,414 steps. Per-step loss (light band) with the 1000-step bucket mean
+(1.586 → 1.316) and the LR schedule overlaid; the dashed line marks where the
+20% linear decay begins (step 19,531). The decay phase delivered an extra
+≈ −0.03 nats on top of the stable plateau.
+
+### 0.6 From-scratch demo run
+
+![150-step from-scratch demo loss + LR](results/plots/loss_curve.png)
+
+A 150-step from-scratch mini-run on a wikitext-2 slice with the nanotron-canonical
+recipe (AdamW(0.9, 0.95), peak LR 3e-3, WSD warmup 20 / decay 20%). Loss drops
+11.254 → 6.321, well below the uniform baseline ln(49152) = 10.803 — proof the
+training loop learns.
+
+### 0.7 Architecture diagnostics
+
+| | |
+|---|---|
+| ![Residual-stream L2 norm across 30 blocks](results/plots/residual_norms.png) | **Residual-stream growth.** Mean L2 norm of the residual stream at each block output. It sits ~50–200 through layers 0–11, jumps to ~1900 at layer 12, climbs to ~2300, then the final RMSNorm crushes it back to 44.1. |
+| ![WSD schedule shape](results/plots/wsd_schedule.png) | **WSD schedule shape** for three (total-steps, warmup) combinations — confirms the warmup → stable → linear-decay profile used in training. |
+| ![RoPE cos/sin tables](results/plots/rope_tables.png) | **RoPE cos/sin tables**, 256 positions × 64-dim head, θ=100k. Demonstrates the split-halves layout (`rope_interleaved=false`). |
+
+### 0.8 Attention maps (`"The quick brown fox jumps over the lazy dog because it was hungry."`)
+
+Softmax-normalized attention weights for all 9 query heads (3 KV groups shared)
+at the first, middle, and last layer of the 30-layer stack.
+
+**Layer 0** — crisp local / diagonal structure plus first-token attention:
+![Layer 0 attention, 9 heads](results/attention/layer_00.png)
+
+**Layer 14** — strong attention-sink columns on the early tokens, diffuse elsewhere:
+![Layer 14 attention, 9 heads](results/attention/layer_14.png)
+
+**Layer 29** — a mix of clean diagonal heads (e.g. head 1) and sink-dominated heads:
+![Layer 29 attention, 9 heads](results/attention/layer_29.png)
 
 ---
 
