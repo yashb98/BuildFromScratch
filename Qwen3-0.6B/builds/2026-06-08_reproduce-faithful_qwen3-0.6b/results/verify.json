@@ -1,0 +1,19 @@
+{
+  "repo": "Qwen/Qwen3-0.6B-Base",
+  "prompt": "The capital of France is",
+  "dtype": "float32",
+  "tolerance": 0.001,
+  "max_abs_error": 0.0,
+  "relative_error": 0.0,
+  "hf_next_token_id": 12095,
+  "our_next_token_id": 12095,
+  "hf_next_token_text": " Paris",
+  "our_next_token_text": " Paris",
+  "argmax_match": true,
+  "passed": true,
+  "input_shape": [
+    1,
+    5
+  ],
+  "total_seconds": 30.0
+}

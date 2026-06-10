@@ -1,0 +1,14 @@
+# Qwen3-0.6B from-scratch after 131,072,000 tokens (smoke=False)
+val PPL: 183922.14 -> 49.28
+
+PROMPT: The capital of France is
+OUTPUT: The capital of France is a fact from the German tradition. It is a mistake to assume that the French people were a little overthrown in Britain. The first of its rulers is a French king who left the European frontier, and the French came to America. In 1895, the Great War ended and the
+
+PROMPT: In a recent study, researchers found that
+OUTPUT: In a recent study, researchers found that the study “was one of the first studies to come up with the benefits of the current research.” (This is the first study of the research.)
+When we look at the findings, it seems a lot more interesting to find the best place to start. The current study was funded by the National Science
+
+PROMPT: def add(a, b):
+OUTPUT: def add(a, b):1.
+- The effect of the body in a person’s body cannot be attributed to the presence of the body in the body. In a person’s body, a person’s body will not be able to produce their own tissues, which requires the tissue to perform the tasks that they are developing. This
+

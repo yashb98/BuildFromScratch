@@ -1,0 +1,7 @@
+[2026-06-09 16:51:36] Original vs reproduction — val=300,000 tokens, 50 windows x 4096
+ORIGINAL  Qwen3-0.6B-Base (36T tok)   val PPL =   13.400  (204,800 tok, 21s)
+REPRO     lr17 (131M tok, from scratch) val PPL =   46.892  gap x   3.5
+REPRO     lr24 (131M tok, from scratch) val PPL =   46.310  gap x   3.5
+REPRO     lr30 (131M tok, from scratch) val PPL =   49.276  gap x   3.7
+
+Best reproduction: lr24 = 46.310  vs original 13.400  => 3.5x higher PPL (expected: 36T vs 131M tokens = ~275,000x less data)

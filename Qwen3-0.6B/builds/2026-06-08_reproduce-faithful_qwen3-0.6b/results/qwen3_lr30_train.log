@@ -1,0 +1,231 @@
+[06:15:24] device=cuda dtype=torch.bfloat16 seed=0
+[06:15:24] args={'steps': 2000, 'seq_len': 4096, 'micro_batch': 4, 'grad_accum': 4, 'peak_lr': 0.003, 'end_lr': 0.00032, 'warmup_steps': 150, 'weight_decay': 0.01, 'grad_clip': 1.0, 'mem_fraction': 0.85, 'seed': 0, 'dtype': 'bfloat16', 'log_every': 10, 'eval_every': 250, 'ckpt_every': 500, 'no_compile': False, 'run_name': 'lr30', 'ckpt_path': '/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_lr30.pt', 'resume': None}
+[06:15:24] tok/step=65,536  steps=2,000  token_budget=131,072,000
+[06:15:24] Loading tokenizer...
+[06:15:25] Streaming FineWeb-Edu sample-10BT...
+[06:15:26]   loaded cached tokens from tokcache_133072000_300000.pt (133,072,000 train + 300,000 val)
+[06:15:26]   32,488 train windows of 4096
+[06:15:26] Initializing Qwen3-0.6B from scratch (random init)...
+[06:15:32] Compiling model with torch.compile() [default mode]...
+[06:15:32] Baseline (random-init) eval...
+[06:15:47]   baseline val PPL=183922.14 (204,800 tokens) — expect ~vocab_size (151,936) at init
+[06:15:47] Training to 2,000 steps (starting at 0)...
+[06:17:19] step    10/2000  loss 10.0847  lr 2.00e-04  |grad| 2.06  mem 52.4GB  tok/s  7,173  tok 0.7M  ETA 303.0min
+[06:18:47] step    20/2000  loss 8.1739  lr 4.00e-04  |grad| 0.80  mem 52.4GB  tok/s  7,297  tok 1.3M  ETA 296.4min
+[06:20:15] step    30/2000  loss 7.7643  lr 6.00e-04  |grad| 0.95  mem 52.4GB  tok/s  7,340  tok 2.0M  ETA 293.1min
+[06:21:43] step    40/2000  loss 7.8246  lr 8.00e-04  |grad| 0.75  mem 52.4GB  tok/s  7,364  tok 2.6M  ETA 290.7min
+[06:23:12] step    50/2000  loss 7.7880  lr 1.00e-03  |grad| 1.09  mem 52.4GB  tok/s  7,375  tok 3.3M  ETA 288.8min
+[06:24:40] step    60/2000  loss 7.6414  lr 1.20e-03  |grad| 1.00  mem 52.4GB  tok/s  7,382  tok 3.9M  ETA 287.0min
+[06:26:08] step    70/2000  loss 7.1789  lr 1.40e-03  |grad| 0.64  mem 52.4GB  tok/s  7,386  tok 4.6M  ETA 285.4min
+[06:27:37] step    80/2000  loss 7.1203  lr 1.60e-03  |grad| 1.64  mem 52.4GB  tok/s  7,389  tok 5.2M  ETA 283.8min
+[06:29:05] step    90/2000  loss 7.0746  lr 1.80e-03  |grad| 0.71  mem 52.4GB  tok/s  7,392  tok 5.9M  ETA 282.2min
+[06:30:34] step   100/2000  loss 7.1399  lr 2.00e-03  |grad| 0.55  mem 52.4GB  tok/s  7,395  tok 6.6M  ETA 280.6min
+[06:32:02] step   110/2000  loss 6.9079  lr 2.20e-03  |grad| 0.55  mem 52.4GB  tok/s  7,397  tok 7.2M  ETA 279.1min
+[06:33:30] step   120/2000  loss 7.6700  lr 2.40e-03  |grad| 0.84  mem 52.4GB  tok/s  7,399  tok 7.9M  ETA 277.5min
+[06:34:58] step   130/2000  loss 6.7910  lr 2.60e-03  |grad| 0.70  mem 52.4GB  tok/s  7,401  tok 8.5M  ETA 276.0min
+[06:36:27] step   140/2000  loss 6.5768  lr 2.80e-03  |grad| 0.61  mem 52.4GB  tok/s  7,402  tok 9.2M  ETA 274.5min
+[06:37:55] step   150/2000  loss 6.5281  lr 3.00e-03  |grad| 0.71  mem 52.4GB  tok/s  7,403  tok 9.8M  ETA 273.0min
+[06:39:23] step   160/2000  loss 6.7968  lr 3.00e-03  |grad| 0.52  mem 52.4GB  tok/s  7,405  tok 10.5M  ETA 271.4min
+[06:40:52] step   170/2000  loss 6.5285  lr 3.00e-03  |grad| 0.53  mem 52.4GB  tok/s  7,406  tok 11.1M  ETA 269.9min
+[06:42:20] step   180/2000  loss 6.3710  lr 3.00e-03  |grad| 0.62  mem 52.4GB  tok/s  7,407  tok 11.8M  ETA 268.4min
+[06:43:48] step   190/2000  loss 6.1846  lr 3.00e-03  |grad| 0.44  mem 52.4GB  tok/s  7,407  tok 12.5M  ETA 266.9min
+[06:45:17] step   200/2000  loss 6.3136  lr 3.00e-03  |grad| 0.52  mem 52.4GB  tok/s  7,407  tok 13.1M  ETA 265.4min
+[06:46:45] step   210/2000  loss 6.3214  lr 2.99e-03  |grad| 0.57  mem 52.4GB  tok/s  7,407  tok 13.8M  ETA 264.0min
+[06:48:14] step   220/2000  loss 6.1710  lr 2.99e-03  |grad| 0.34  mem 52.4GB  tok/s  7,407  tok 14.4M  ETA 262.5min
+[06:49:42] step   230/2000  loss 5.9733  lr 2.99e-03  |grad| 0.34  mem 52.4GB  tok/s  7,407  tok 15.1M  ETA 261.0min
+[06:51:11] step   240/2000  loss 6.1929  lr 2.98e-03  |grad| 0.46  mem 52.4GB  tok/s  7,407  tok 15.7M  ETA 259.5min
+[06:52:39] step   250/2000  loss 6.1334  lr 2.98e-03  |grad| 0.37  mem 52.4GB  tok/s  7,407  tok 16.4M  ETA 258.1min
+[06:52:54]   [eval @ 250] val PPL=436.05 (Δ vs base -183486.10)
+[06:54:23] step   260/2000  loss 5.9668  lr 2.98e-03  |grad| 0.46  mem 52.4GB  tok/s  7,360  tok 17.0M  ETA 258.2min
+[06:55:51] step   270/2000  loss 5.8494  lr 2.97e-03  |grad| 0.48  mem 52.4GB  tok/s  7,361  tok 17.7M  ETA 256.7min
+[06:57:20] step   280/2000  loss 5.9093  lr 2.97e-03  |grad| 0.35  mem 52.4GB  tok/s  7,362  tok 18.4M  ETA 255.2min
+[06:58:48] step   290/2000  loss 5.8919  lr 2.96e-03  |grad| 0.49  mem 52.4GB  tok/s  7,364  tok 19.0M  ETA 253.6min
+[07:00:17] step   300/2000  loss 5.9223  lr 2.96e-03  |grad| 0.28  mem 52.4GB  tok/s  7,365  tok 19.7M  ETA 252.1min
+[07:01:45] step   310/2000  loss 5.8391  lr 2.95e-03  |grad| 0.42  mem 52.4GB  tok/s  7,366  tok 20.3M  ETA 250.6min
+[07:03:14] step   320/2000  loss 5.8430  lr 2.94e-03  |grad| 0.32  mem 52.4GB  tok/s  7,368  tok 21.0M  ETA 249.1min
+[07:04:42] step   330/2000  loss 5.4768  lr 2.94e-03  |grad| 0.31  mem 52.4GB  tok/s  7,369  tok 21.6M  ETA 247.5min
+[07:06:11] step   340/2000  loss 5.5883  lr 2.93e-03  |grad| 0.29  mem 52.4GB  tok/s  7,370  tok 22.3M  ETA 246.0min
+[07:07:39] step   350/2000  loss 5.2415  lr 2.92e-03  |grad| 0.26  mem 52.4GB  tok/s  7,371  tok 22.9M  ETA 244.5min
+[07:09:08] step   360/2000  loss 5.8069  lr 2.92e-03  |grad| 0.30  mem 52.4GB  tok/s  7,372  tok 23.6M  ETA 243.0min
+[07:10:36] step   370/2000  loss 5.5946  lr 2.91e-03  |grad| 0.26  mem 52.4GB  tok/s  7,372  tok 24.2M  ETA 241.5min
+[07:12:05] step   380/2000  loss 5.5835  lr 2.90e-03  |grad| 0.29  mem 52.4GB  tok/s  7,373  tok 24.9M  ETA 240.0min
+[07:13:33] step   390/2000  loss 5.4646  lr 2.89e-03  |grad| 0.31  mem 52.4GB  tok/s  7,374  tok 25.6M  ETA 238.5min
+[07:15:02] step   400/2000  loss 5.3014  lr 2.88e-03  |grad| 0.25  mem 52.4GB  tok/s  7,375  tok 26.2M  ETA 237.0min
+[07:16:30] step   410/2000  loss 5.5810  lr 2.87e-03  |grad| 0.32  mem 52.4GB  tok/s  7,376  tok 26.9M  ETA 235.5min
+[07:17:59] step   420/2000  loss 5.3817  lr 2.86e-03  |grad| 0.25  mem 52.4GB  tok/s  7,376  tok 27.5M  ETA 234.0min
+[07:19:27] step   430/2000  loss 5.2039  lr 2.85e-03  |grad| 0.28  mem 52.4GB  tok/s  7,377  tok 28.2M  ETA 232.5min
+[07:20:56] step   440/2000  loss 5.4703  lr 2.84e-03  |grad| 0.28  mem 52.4GB  tok/s  7,378  tok 28.8M  ETA 231.0min
+[07:22:24] step   450/2000  loss 5.3614  lr 2.83e-03  |grad| 0.25  mem 52.4GB  tok/s  7,378  tok 29.5M  ETA 229.5min
+[07:23:53] step   460/2000  loss 5.4649  lr 2.82e-03  |grad| 0.20  mem 52.4GB  tok/s  7,379  tok 30.1M  ETA 228.0min
+[07:25:21] step   470/2000  loss 5.3458  lr 2.81e-03  |grad| 0.32  mem 52.4GB  tok/s  7,379  tok 30.8M  ETA 226.5min
+[07:26:50] step   480/2000  loss 5.3882  lr 2.80e-03  |grad| 0.24  mem 52.4GB  tok/s  7,380  tok 31.5M  ETA 225.0min
+[07:28:18] step   490/2000  loss 5.2073  lr 2.78e-03  |grad| 0.20  mem 52.4GB  tok/s  7,381  tok 32.1M  ETA 223.5min
+[07:29:47] step   500/2000  loss 5.0131  lr 2.77e-03  |grad| 0.25  mem 52.4GB  tok/s  7,381  tok 32.8M  ETA 222.0min
+[07:30:01]   [eval @ 500] val PPL=181.57 (Δ vs base -183740.58)
+[07:30:05]   [ckpt @ 500] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_lr30.pt
+[07:31:33] step   510/2000  loss 5.0981  lr 2.76e-03  |grad| 0.20  mem 52.4GB  tok/s  7,352  tok 33.4M  ETA 221.4min
+[07:33:02] step   520/2000  loss 5.1661  lr 2.74e-03  |grad| 0.20  mem 52.4GB  tok/s  7,354  tok 34.1M  ETA 219.8min
+[07:34:30] step   530/2000  loss 5.0265  lr 2.73e-03  |grad| 0.20  mem 52.4GB  tok/s  7,354  tok 34.7M  ETA 218.3min
+[07:35:59] step   540/2000  loss 5.0583  lr 2.72e-03  |grad| 0.23  mem 52.4GB  tok/s  7,355  tok 35.4M  ETA 216.8min
+[07:37:27] step   550/2000  loss 5.2239  lr 2.70e-03  |grad| 0.19  mem 52.4GB  tok/s  7,356  tok 36.0M  ETA 215.3min
+[07:38:56] step   560/2000  loss 4.9191  lr 2.69e-03  |grad| 0.17  mem 52.4GB  tok/s  7,357  tok 36.7M  ETA 213.8min
+[07:40:24] step   570/2000  loss 4.8470  lr 2.67e-03  |grad| 0.19  mem 52.4GB  tok/s  7,358  tok 37.4M  ETA 212.3min
+[07:41:53] step   580/2000  loss 4.9955  lr 2.66e-03  |grad| 0.17  mem 52.4GB  tok/s  7,359  tok 38.0M  ETA 210.8min
+[07:43:21] step   590/2000  loss 4.9783  lr 2.64e-03  |grad| 0.19  mem 52.4GB  tok/s  7,360  tok 38.7M  ETA 209.3min
+[07:44:50] step   600/2000  loss 4.9695  lr 2.63e-03  |grad| 0.20  mem 52.4GB  tok/s  7,360  tok 39.3M  ETA 207.8min
+[07:46:18] step   610/2000  loss 4.9596  lr 2.61e-03  |grad| 0.20  mem 52.4GB  tok/s  7,361  tok 40.0M  ETA 206.3min
+[07:47:46] step   620/2000  loss 4.8110  lr 2.60e-03  |grad| 0.21  mem 52.4GB  tok/s  7,362  tok 40.6M  ETA 204.7min
+[07:49:15] step   630/2000  loss 4.9386  lr 2.58e-03  |grad| 0.16  mem 52.4GB  tok/s  7,363  tok 41.3M  ETA 203.2min
+[07:50:44] step   640/2000  loss 4.9173  lr 2.56e-03  |grad| 0.16  mem 52.4GB  tok/s  7,363  tok 41.9M  ETA 201.7min
+[07:52:12] step   650/2000  loss 4.6730  lr 2.55e-03  |grad| 0.18  mem 52.4GB  tok/s  7,364  tok 42.6M  ETA 200.2min
+[07:53:41] step   660/2000  loss 4.8458  lr 2.53e-03  |grad| 0.18  mem 52.4GB  tok/s  7,365  tok 43.3M  ETA 198.7min
+[07:55:09] step   670/2000  loss 4.5894  lr 2.51e-03  |grad| 0.21  mem 52.4GB  tok/s  7,365  tok 43.9M  ETA 197.2min
+[07:56:38] step   680/2000  loss 4.4993  lr 2.49e-03  |grad| 0.19  mem 52.4GB  tok/s  7,366  tok 44.6M  ETA 195.7min
+[07:58:06] step   690/2000  loss 4.8123  lr 2.47e-03  |grad| 0.16  mem 52.4GB  tok/s  7,366  tok 45.2M  ETA 194.2min
+[07:59:34] step   700/2000  loss 4.8346  lr 2.46e-03  |grad| 0.16  mem 52.4GB  tok/s  7,367  tok 45.9M  ETA 192.7min
+[08:01:03] step   710/2000  loss 4.9511  lr 2.44e-03  |grad| 0.16  mem 52.4GB  tok/s  7,367  tok 46.5M  ETA 191.2min
+[08:02:32] step   720/2000  loss 4.6158  lr 2.42e-03  |grad| 0.16  mem 52.4GB  tok/s  7,368  tok 47.2M  ETA 189.8min
+[08:04:00] step   730/2000  loss 4.9479  lr 2.40e-03  |grad| 0.17  mem 52.4GB  tok/s  7,368  tok 47.8M  ETA 188.3min
+[08:05:34] step   740/2000  loss 4.5113  lr 2.38e-03  |grad| 0.18  mem 52.4GB  tok/s  7,362  tok 48.5M  ETA 186.9min
+[08:07:12] step   750/2000  loss 4.6033  lr 2.36e-03  |grad| 0.18  mem 52.4GB  tok/s  7,353  tok 49.2M  ETA 185.7min
+[08:07:28]   [eval @ 750] val PPL=105.98 (Δ vs base -183816.16)
+[08:09:03] step   760/2000  loss 4.6806  lr 2.34e-03  |grad| 0.14  mem 52.4GB  tok/s  7,329  tok 49.8M  ETA 184.8min
+[08:10:39] step   770/2000  loss 4.3472  lr 2.32e-03  |grad| 0.18  mem 52.4GB  tok/s  7,323  tok 50.5M  ETA 183.5min
+[08:12:14] step   780/2000  loss 4.6130  lr 2.30e-03  |grad| 0.19  mem 52.4GB  tok/s  7,316  tok 51.1M  ETA 182.1min
+[08:13:50] step   790/2000  loss 4.8250  lr 2.28e-03  |grad| 0.16  mem 52.4GB  tok/s  7,310  tok 51.8M  ETA 180.8min
+[08:15:25] step   800/2000  loss 4.4467  lr 2.26e-03  |grad| 0.16  mem 52.4GB  tok/s  7,304  tok 52.4M  ETA 179.4min
+[08:17:01] step   810/2000  loss 4.5931  lr 2.24e-03  |grad| 0.16  mem 52.4GB  tok/s  7,298  tok 53.1M  ETA 178.1min
+[08:18:36] step   820/2000  loss 4.5354  lr 2.22e-03  |grad| 0.16  mem 52.4GB  tok/s  7,292  tok 53.7M  ETA 176.7min
+[08:20:12] step   830/2000  loss 4.5103  lr 2.20e-03  |grad| 0.16  mem 52.4GB  tok/s  7,287  tok 54.4M  ETA 175.4min
+[08:21:47] step   840/2000  loss 4.2975  lr 2.18e-03  |grad| 0.19  mem 52.4GB  tok/s  7,282  tok 55.1M  ETA 174.0min
+[08:23:23] step   850/2000  loss 4.2850  lr 2.16e-03  |grad| 0.17  mem 52.4GB  tok/s  7,277  tok 55.7M  ETA 172.6min
+[08:24:58] step   860/2000  loss 4.5474  lr 2.14e-03  |grad| 0.15  mem 52.4GB  tok/s  7,272  tok 56.4M  ETA 171.2min
+[08:26:33] step   870/2000  loss 4.4035  lr 2.12e-03  |grad| 0.14  mem 52.4GB  tok/s  7,267  tok 57.0M  ETA 169.8min
+[08:28:05] step   880/2000  loss 4.4768  lr 2.10e-03  |grad| 0.15  mem 52.4GB  tok/s  7,265  tok 57.7M  ETA 168.4min
+[08:29:34] step   890/2000  loss 4.7869  lr 2.07e-03  |grad| 0.13  mem 52.4GB  tok/s  7,267  tok 58.3M  ETA 166.8min
+[08:31:02] step   900/2000  loss 4.3799  lr 2.05e-03  |grad| 0.16  mem 52.4GB  tok/s  7,269  tok 59.0M  ETA 165.3min
+[08:32:30] step   910/2000  loss 4.5371  lr 2.03e-03  |grad| 0.16  mem 52.4GB  tok/s  7,270  tok 59.6M  ETA 163.8min
+[08:33:59] step   920/2000  loss 4.4785  lr 2.01e-03  |grad| 0.13  mem 52.4GB  tok/s  7,272  tok 60.3M  ETA 162.2min
+[08:35:27] step   930/2000  loss 4.2728  lr 1.99e-03  |grad| 0.14  mem 52.4GB  tok/s  7,273  tok 60.9M  ETA 160.7min
+[08:36:55] step   940/2000  loss 4.4938  lr 1.96e-03  |grad| 0.15  mem 52.4GB  tok/s  7,275  tok 61.6M  ETA 159.2min
+[08:38:24] step   950/2000  loss 4.2599  lr 1.94e-03  |grad| 0.16  mem 52.4GB  tok/s  7,276  tok 62.3M  ETA 157.6min
+[08:39:53] step   960/2000  loss 4.3780  lr 1.92e-03  |grad| 0.15  mem 52.4GB  tok/s  7,277  tok 62.9M  ETA 156.1min
+[08:41:21] step   970/2000  loss 4.1772  lr 1.90e-03  |grad| 0.13  mem 52.4GB  tok/s  7,279  tok 63.6M  ETA 154.6min
+[08:42:50] step   980/2000  loss 4.3798  lr 1.88e-03  |grad| 0.13  mem 52.4GB  tok/s  7,280  tok 64.2M  ETA 153.0min
+[08:44:19] step   990/2000  loss 4.4073  lr 1.85e-03  |grad| 0.14  mem 52.4GB  tok/s  7,280  tok 64.9M  ETA 151.5min
+[08:45:57] step  1000/2000  loss 4.4340  lr 1.83e-03  |grad| 0.16  mem 52.4GB  tok/s  7,274  tok 65.5M  ETA 150.2min
+[08:46:13]   [eval @ 1000] val PPL=79.36 (Δ vs base -183842.79)
+[08:46:16]   [ckpt @ 1000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_lr30.pt
+[08:47:52] step  1010/2000  loss 4.2506  lr 1.81e-03  |grad| 0.14  mem 52.4GB  tok/s  7,254  tok 66.2M  ETA 149.1min
+[08:49:31] step  1020/2000  loss 4.2600  lr 1.78e-03  |grad| 0.13  mem 52.4GB  tok/s  7,248  tok 66.8M  ETA 147.7min
+[08:51:08] step  1030/2000  loss 4.1781  lr 1.76e-03  |grad| 0.14  mem 52.4GB  tok/s  7,242  tok 67.5M  ETA 146.3min
+[08:52:45] step  1040/2000  loss 4.0800  lr 1.74e-03  |grad| 0.13  mem 52.4GB  tok/s  7,237  tok 68.2M  ETA 144.9min
+[08:54:22] step  1050/2000  loss 4.4679  lr 1.72e-03  |grad| 0.14  mem 52.4GB  tok/s  7,232  tok 68.8M  ETA 143.5min
+[08:55:58] step  1060/2000  loss 4.4851  lr 1.69e-03  |grad| 0.13  mem 52.4GB  tok/s  7,228  tok 69.5M  ETA 142.0min
+[08:57:33] step  1070/2000  loss 4.4259  lr 1.67e-03  |grad| 0.14  mem 52.4GB  tok/s  7,225  tok 70.1M  ETA 140.6min
+[08:59:09] step  1080/2000  loss 4.2428  lr 1.65e-03  |grad| 0.14  mem 52.4GB  tok/s  7,221  tok 70.8M  ETA 139.2min
+[09:00:46] step  1090/2000  loss 4.2507  lr 1.63e-03  |grad| 0.13  mem 52.4GB  tok/s  7,217  tok 71.4M  ETA 137.7min
+[09:02:22] step  1100/2000  loss 4.3741  lr 1.60e-03  |grad| 0.14  mem 52.4GB  tok/s  7,213  tok 72.1M  ETA 136.3min
+[09:04:00] step  1110/2000  loss 4.1490  lr 1.58e-03  |grad| 0.13  mem 52.4GB  tok/s  7,208  tok 72.7M  ETA 134.9min
+[09:05:35] step  1120/2000  loss 4.2674  lr 1.56e-03  |grad| 0.15  mem 52.4GB  tok/s  7,205  tok 73.4M  ETA 133.4min
+[09:07:11] step  1130/2000  loss 4.2397  lr 1.54e-03  |grad| 0.13  mem 52.4GB  tok/s  7,201  tok 74.1M  ETA 132.0min
+[09:08:46] step  1140/2000  loss 4.3246  lr 1.51e-03  |grad| 0.13  mem 52.4GB  tok/s  7,198  tok 74.7M  ETA 130.5min
+[09:10:22] step  1150/2000  loss 4.1540  lr 1.49e-03  |grad| 0.13  mem 52.4GB  tok/s  7,195  tok 75.4M  ETA 129.0min
+[09:11:57] step  1160/2000  loss 4.3539  lr 1.47e-03  |grad| 0.13  mem 52.4GB  tok/s  7,192  tok 76.0M  ETA 127.6min
+[09:13:33] step  1170/2000  loss 4.1990  lr 1.44e-03  |grad| 0.14  mem 52.4GB  tok/s  7,189  tok 76.7M  ETA 126.1min
+[09:15:10] step  1180/2000  loss 4.2160  lr 1.42e-03  |grad| 0.13  mem 52.4GB  tok/s  7,185  tok 77.3M  ETA 124.7min
+[09:16:46] step  1190/2000  loss 4.1075  lr 1.40e-03  |grad| 0.13  mem 52.4GB  tok/s  7,182  tok 78.0M  ETA 123.2min
+[09:18:22] step  1200/2000  loss 4.6792  lr 1.38e-03  |grad| 0.16  mem 52.4GB  tok/s  7,179  tok 78.6M  ETA 121.7min
+[09:19:57] step  1210/2000  loss 4.0439  lr 1.36e-03  |grad| 0.13  mem 52.4GB  tok/s  7,177  tok 79.3M  ETA 120.2min
+[09:21:33] step  1220/2000  loss 3.9872  lr 1.33e-03  |grad| 0.12  mem 52.4GB  tok/s  7,174  tok 80.0M  ETA 118.8min
+[09:23:08] step  1230/2000  loss 4.3361  lr 1.31e-03  |grad| 0.12  mem 52.4GB  tok/s  7,171  tok 80.6M  ETA 117.3min
+[09:24:42] step  1240/2000  loss 4.1446  lr 1.29e-03  |grad| 0.12  mem 52.4GB  tok/s  7,169  tok 81.3M  ETA 115.8min
+[09:26:11] step  1250/2000  loss 3.9230  lr 1.27e-03  |grad| 0.14  mem 52.4GB  tok/s  7,171  tok 81.9M  ETA 114.2min
+[09:26:25]   [eval @ 1250] val PPL=64.69 (Δ vs base -183857.45)
+[09:27:54] step  1260/2000  loss 4.0698  lr 1.25e-03  |grad| 0.12  mem 52.4GB  tok/s  7,164  tok 82.6M  ETA 112.8min
+[09:29:22] step  1270/2000  loss 3.9339  lr 1.22e-03  |grad| 0.13  mem 52.4GB  tok/s  7,166  tok 83.2M  ETA 111.3min
+[09:30:51] step  1280/2000  loss 4.4246  lr 1.20e-03  |grad| 0.14  mem 52.4GB  tok/s  7,168  tok 83.9M  ETA 109.7min
+[09:32:19] step  1290/2000  loss 4.1665  lr 1.18e-03  |grad| 0.12  mem 52.4GB  tok/s  7,169  tok 84.5M  ETA 108.2min
+[09:33:48] step  1300/2000  loss 4.0499  lr 1.16e-03  |grad| 0.12  mem 52.4GB  tok/s  7,171  tok 85.2M  ETA 106.6min
+[09:35:16] step  1310/2000  loss 4.0247  lr 1.14e-03  |grad| 0.15  mem 52.4GB  tok/s  7,173  tok 85.9M  ETA 105.1min
+[09:36:45] step  1320/2000  loss 4.3722  lr 1.12e-03  |grad| 0.13  mem 52.4GB  tok/s  7,175  tok 86.5M  ETA 103.5min
+[09:38:13] step  1330/2000  loss 4.0465  lr 1.10e-03  |grad| 0.13  mem 52.4GB  tok/s  7,176  tok 87.2M  ETA 102.0min
+[09:39:42] step  1340/2000  loss 4.4729  lr 1.08e-03  |grad| 0.13  mem 52.4GB  tok/s  7,178  tok 87.8M  ETA 100.4min
+[09:41:10] step  1350/2000  loss 4.0739  lr 1.06e-03  |grad| 0.12  mem 52.4GB  tok/s  7,180  tok 88.5M  ETA 98.9min
+[09:42:39] step  1360/2000  loss 4.1210  lr 1.04e-03  |grad| 0.13  mem 52.4GB  tok/s  7,181  tok 89.1M  ETA 97.3min
+[09:44:07] step  1370/2000  loss 4.1628  lr 1.02e-03  |grad| 0.13  mem 52.4GB  tok/s  7,183  tok 89.8M  ETA 95.8min
+[09:45:36] step  1380/2000  loss 4.1010  lr 9.97e-04  |grad| 0.13  mem 52.4GB  tok/s  7,184  tok 90.4M  ETA 94.3min
+[09:47:04] step  1390/2000  loss 4.1269  lr 9.77e-04  |grad| 0.12  mem 52.4GB  tok/s  7,186  tok 91.1M  ETA 92.7min
+[09:48:33] step  1400/2000  loss 4.1081  lr 9.57e-04  |grad| 0.12  mem 52.4GB  tok/s  7,187  tok 91.8M  ETA 91.2min
+[09:50:01] step  1410/2000  loss 4.2560  lr 9.38e-04  |grad| 0.13  mem 52.4GB  tok/s  7,189  tok 92.4M  ETA 89.6min
+[09:51:30] step  1420/2000  loss 4.2931  lr 9.19e-04  |grad| 0.12  mem 52.4GB  tok/s  7,190  tok 93.1M  ETA 88.1min
+[09:52:58] step  1430/2000  loss 3.8092  lr 9.00e-04  |grad| 0.12  mem 52.4GB  tok/s  7,192  tok 93.7M  ETA 86.6min
+[09:54:27] step  1440/2000  loss 4.2850  lr 8.82e-04  |grad| 0.13  mem 52.4GB  tok/s  7,193  tok 94.4M  ETA 85.0min
+[09:55:55] step  1450/2000  loss 4.0530  lr 8.63e-04  |grad| 0.12  mem 52.4GB  tok/s  7,195  tok 95.0M  ETA 83.5min
+[09:57:24] step  1460/2000  loss 4.0660  lr 8.45e-04  |grad| 0.12  mem 52.4GB  tok/s  7,196  tok 95.7M  ETA 82.0min
+[09:58:52] step  1470/2000  loss 3.9796  lr 8.27e-04  |grad| 0.13  mem 52.4GB  tok/s  7,198  tok 96.3M  ETA 80.4min
+[10:00:21] step  1480/2000  loss 4.2301  lr 8.09e-04  |grad| 0.13  mem 52.4GB  tok/s  7,199  tok 97.0M  ETA 78.9min
+[10:01:49] step  1490/2000  loss 4.0452  lr 7.92e-04  |grad| 0.13  mem 52.4GB  tok/s  7,200  tok 97.6M  ETA 77.4min
+[10:03:17] step  1500/2000  loss 3.7987  lr 7.75e-04  |grad| 0.13  mem 52.4GB  tok/s  7,202  tok 98.3M  ETA 75.8min
+[10:03:32]   [eval @ 1500] val PPL=56.02 (Δ vs base -183866.13)
+[10:03:36]   [ckpt @ 1500] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_lr30.pt
+[10:05:04] step  1510/2000  loss 3.8193  lr 7.58e-04  |grad| 0.12  mem 52.4GB  tok/s  7,193  tok 99.0M  ETA 74.4min
+[10:06:33] step  1520/2000  loss 3.8937  lr 7.41e-04  |grad| 0.12  mem 52.4GB  tok/s  7,195  tok 99.6M  ETA 72.9min
+[10:08:01] step  1530/2000  loss 3.7774  lr 7.25e-04  |grad| 0.12  mem 52.4GB  tok/s  7,196  tok 100.3M  ETA 71.3min
+[10:09:30] step  1540/2000  loss 4.0158  lr 7.08e-04  |grad| 0.13  mem 52.4GB  tok/s  7,197  tok 100.9M  ETA 69.8min
+[10:10:58] step  1550/2000  loss 3.7824  lr 6.93e-04  |grad| 0.13  mem 52.4GB  tok/s  7,199  tok 101.6M  ETA 68.3min
+[10:12:27] step  1560/2000  loss 4.3399  lr 6.77e-04  |grad| 0.12  mem 52.4GB  tok/s  7,200  tok 102.2M  ETA 66.7min
+[10:13:55] step  1570/2000  loss 3.6824  lr 6.62e-04  |grad| 0.12  mem 52.4GB  tok/s  7,201  tok 102.9M  ETA 65.2min
+[10:15:24] step  1580/2000  loss 3.9194  lr 6.47e-04  |grad| 0.12  mem 52.4GB  tok/s  7,203  tok 103.5M  ETA 63.7min
+[10:16:52] step  1590/2000  loss 4.0453  lr 6.32e-04  |grad| 0.12  mem 52.4GB  tok/s  7,204  tok 104.2M  ETA 62.2min
+[10:18:21] step  1600/2000  loss 3.9819  lr 6.17e-04  |grad| 0.13  mem 52.4GB  tok/s  7,205  tok 104.9M  ETA 60.6min
+[10:19:49] step  1610/2000  loss 3.8863  lr 6.03e-04  |grad| 0.12  mem 52.4GB  tok/s  7,206  tok 105.5M  ETA 59.1min
+[10:21:18] step  1620/2000  loss 4.0044  lr 5.89e-04  |grad| 0.13  mem 52.4GB  tok/s  7,207  tok 106.2M  ETA 57.6min
+[10:22:46] step  1630/2000  loss 4.1260  lr 5.76e-04  |grad| 0.13  mem 52.4GB  tok/s  7,209  tok 106.8M  ETA 56.1min
+[10:24:15] step  1640/2000  loss 3.9052  lr 5.63e-04  |grad| 0.14  mem 52.4GB  tok/s  7,210  tok 107.5M  ETA 54.5min
+[10:25:43] step  1650/2000  loss 3.9598  lr 5.50e-04  |grad| 0.17  mem 52.4GB  tok/s  7,211  tok 108.1M  ETA 53.0min
+[10:27:12] step  1660/2000  loss 4.0538  lr 5.37e-04  |grad| 0.12  mem 52.4GB  tok/s  7,212  tok 108.8M  ETA 51.5min
+[10:28:40] step  1670/2000  loss 3.9415  lr 5.25e-04  |grad| 0.13  mem 52.4GB  tok/s  7,213  tok 109.4M  ETA 50.0min
+[10:30:08] step  1680/2000  loss 3.8355  lr 5.13e-04  |grad| 0.12  mem 52.4GB  tok/s  7,214  tok 110.1M  ETA 48.4min
+[10:31:37] step  1690/2000  loss 3.9605  lr 5.01e-04  |grad| 0.12  mem 52.4GB  tok/s  7,216  tok 110.8M  ETA 46.9min
+[10:33:05] step  1700/2000  loss 3.6486  lr 4.90e-04  |grad| 0.12  mem 52.4GB  tok/s  7,217  tok 111.4M  ETA 45.4min
+[10:34:34] step  1710/2000  loss 3.8707  lr 4.79e-04  |grad| 0.12  mem 52.4GB  tok/s  7,218  tok 112.1M  ETA 43.9min
+[10:36:03] step  1720/2000  loss 3.7662  lr 4.69e-04  |grad| 0.13  mem 52.4GB  tok/s  7,219  tok 112.7M  ETA 42.4min
+[10:37:31] step  1730/2000  loss 3.9941  lr 4.58e-04  |grad| 0.13  mem 52.4GB  tok/s  7,220  tok 113.4M  ETA 40.8min
+[10:39:00] step  1740/2000  loss 3.9154  lr 4.49e-04  |grad| 0.11  mem 52.4GB  tok/s  7,221  tok 114.0M  ETA 39.3min
+[10:40:28] step  1750/2000  loss 4.1798  lr 4.39e-04  |grad| 0.13  mem 52.4GB  tok/s  7,222  tok 114.7M  ETA 37.8min
+[10:40:43]   [eval @ 1750] val PPL=51.40 (Δ vs base -183870.75)
+[10:42:12] step  1760/2000  loss 3.8875  lr 4.30e-04  |grad| 0.14  mem 52.4GB  tok/s  7,216  tok 115.3M  ETA 36.3min
+[10:43:40] step  1770/2000  loss 3.7995  lr 4.21e-04  |grad| 0.12  mem 52.4GB  tok/s  7,217  tok 116.0M  ETA 34.8min
+[10:45:09] step  1780/2000  loss 4.0066  lr 4.12e-04  |grad| 0.12  mem 52.4GB  tok/s  7,218  tok 116.7M  ETA 33.3min
+[10:46:37] step  1790/2000  loss 3.8560  lr 4.04e-04  |grad| 0.12  mem 52.4GB  tok/s  7,219  tok 117.3M  ETA 31.8min
+[10:48:06] step  1800/2000  loss 3.6825  lr 3.97e-04  |grad| 0.12  mem 52.4GB  tok/s  7,220  tok 118.0M  ETA 30.3min
+[10:49:34] step  1810/2000  loss 3.9281  lr 3.89e-04  |grad| 0.12  mem 52.4GB  tok/s  7,221  tok 118.6M  ETA 28.7min
+[10:51:02] step  1820/2000  loss 3.9277  lr 3.82e-04  |grad| 0.13  mem 52.4GB  tok/s  7,222  tok 119.3M  ETA 27.2min
+[10:52:31] step  1830/2000  loss 4.1112  lr 3.75e-04  |grad| 0.13  mem 52.4GB  tok/s  7,223  tok 119.9M  ETA 25.7min
+[10:53:59] step  1840/2000  loss 3.7739  lr 3.69e-04  |grad| 0.12  mem 52.4GB  tok/s  7,224  tok 120.6M  ETA 24.2min
+[10:55:28] step  1850/2000  loss 3.9427  lr 3.63e-04  |grad| 0.12  mem 52.4GB  tok/s  7,225  tok 121.2M  ETA 22.7min
+[10:56:56] step  1860/2000  loss 3.9786  lr 3.58e-04  |grad| 0.12  mem 52.4GB  tok/s  7,226  tok 121.9M  ETA 21.2min
+[10:58:25] step  1870/2000  loss 3.9326  lr 3.53e-04  |grad| 0.13  mem 52.4GB  tok/s  7,227  tok 122.6M  ETA 19.6min
+[10:59:53] step  1880/2000  loss 3.7121  lr 3.48e-04  |grad| 0.12  mem 52.4GB  tok/s  7,228  tok 123.2M  ETA 18.1min
+[11:01:22] step  1890/2000  loss 3.9590  lr 3.43e-04  |grad| 0.12  mem 52.4GB  tok/s  7,229  tok 123.9M  ETA 16.6min
+[11:02:50] step  1900/2000  loss 3.8316  lr 3.39e-04  |grad| 0.19  mem 52.4GB  tok/s  7,230  tok 124.5M  ETA 15.1min
+[11:04:19] step  1910/2000  loss 4.0994  lr 3.36e-04  |grad| 0.13  mem 52.4GB  tok/s  7,231  tok 125.2M  ETA 13.6min
+[11:05:47] step  1920/2000  loss 3.8129  lr 3.32e-04  |grad| 0.13  mem 52.4GB  tok/s  7,232  tok 125.8M  ETA 12.1min
+[11:07:15] step  1930/2000  loss 3.8774  lr 3.29e-04  |grad| 0.12  mem 52.4GB  tok/s  7,233  tok 126.5M  ETA 10.6min
+[11:08:44] step  1940/2000  loss 3.9933  lr 3.27e-04  |grad| 0.14  mem 52.4GB  tok/s  7,233  tok 127.1M  ETA 9.1min
+[11:10:12] step  1950/2000  loss 3.9792  lr 3.25e-04  |grad| 0.13  mem 52.4GB  tok/s  7,234  tok 127.8M  ETA 7.5min
+[11:11:41] step  1960/2000  loss 3.9205  lr 3.23e-04  |grad| 0.13  mem 52.4GB  tok/s  7,235  tok 128.5M  ETA 6.0min
+[11:13:09] step  1970/2000  loss 3.7222  lr 3.22e-04  |grad| 0.13  mem 52.4GB  tok/s  7,236  tok 129.1M  ETA 4.5min
+[11:14:38] step  1980/2000  loss 3.9185  lr 3.21e-04  |grad| 0.12  mem 52.4GB  tok/s  7,237  tok 129.8M  ETA 3.0min
+[11:16:06] step  1990/2000  loss 4.0489  lr 3.20e-04  |grad| 0.12  mem 52.4GB  tok/s  7,238  tok 130.4M  ETA 1.5min
+[11:17:35] step  2000/2000  loss 3.7141  lr 3.20e-04  |grad| 0.12  mem 52.4GB  tok/s  7,238  tok 131.1M  ETA 0.0min
+[11:17:50]   [eval @ 2000] val PPL=49.28 (Δ vs base -183872.87)
+[11:17:53]   [ckpt @ 2000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_lr30.pt
+[11:17:53] Training complete in 302.1 min.
+[11:18:08] AFTER val PPL=49.28 (BEFORE 183922.14; improvement +183872.87 = +100.0%)
+[11:18:10]   ['The capital of France is'] The capital of France is a fact from the German tradition. It is a mistake to assume that the French people were a littl
+[11:18:10]   ['In a recent study, researchers found that'] In a recent study, researchers found that the study “was one of the first studies to come up with the benefits of the cu
+[11:18:10]   ['def add(a, b):'] def add(a, b):1.
+- The effect of the body in a person’s body cannot be attributed to the presence of the body in the bod
+[11:18:14] Saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_lr30.pt

@@ -1,13 +1,16 @@
 # BuildFromScratch
 
-From-scratch language-model reproductions and the tooling around them. Three
-subprojects live here:
+From-scratch language-model reproductions and the tooling around them. Two
+reproduction subprojects live here:
 
 | Path | What it is |
 |---|---|
 | [`SmolLM2-134(base)/`](SmolLM2-134(base)/) | Single-file PyTorch reproduction of [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M), verified **bit-exact** against the official HuggingFace weights (`max |Δlogits| = 0.0`). Includes from-scratch training, continued pretraining on TinyStories, multi-axis parity diagnostics, in-domain vs OOD eval, and an `lm-evaluation-harness` wrapper. |
-| [`.claude/skills/`](.claude/skills/) | Claude Code skills that drive this project: `from-scratch-build` (research → implement → verify → train → evaluate loop for new architectures) and `finance-research-loop` (continued-pretraining research/tune/eval loop on finance data). |
-| [`skills_showcase/`](skills_showcase/) | A FastAPI mini-agent harness that exposes the skills above as an HTTP-driven Claude agent loop with tool-use approval, prompt caching, and a static showcase page. |
+| [`Qwen3-0.6B/`](Qwen3-0.6B/) | Single-file PyTorch reproduction of [Qwen3-0.6B-Base](https://huggingface.co/Qwen/Qwen3-0.6B-Base), verified **bit-exact** (`max |Δlogits| = 0.0`), plus a **three-build research experiment** (faithful baseline / modernized *IMU-1* bundle / exploratory *partial-RoPE*) that applies recent 2026 papers and measures them at matched compute. **Currently running Phase B.** Reproduced to within **3.5× perplexity of the original using ~275,000× less data.** See [its README](Qwen3-0.6B/README.md). |
+
+> This repo is driven by local Claude Code skills (`from-scratch-build`,
+> `finance-research-loop`) and a FastAPI agent-harness showcase; those are kept
+> local-only and are **not** committed.
 
 ## Quickstart — the SmolLM2 reproduction
 
@@ -65,9 +68,14 @@ BuildFromScratch/
 │   ├── results.ipynb              # end-to-end results notebook
 │   ├── pyproject.toml             # pinned deps
 │   └── README.md                  # the long-form architecture/recipe doc
-├── .claude/skills/                # Claude Code skill definitions
-│   ├── from-scratch-build/SKILL.md
-│   └── finance-research-loop/SKILL.md
-└── skills_showcase/               # FastAPI agent-harness showcase
-    └── server/                    # /api/tools/* direct invocation + /api/agent/* loop
+├── Qwen3-0.6B/                    # the Qwen3-0.6B reproduction + 3-build experiment (see its README)
+│   ├── model.py                  # the architecture, one file — verified bit-exact vs HF
+│   ├── verify.py                 # parity gate
+│   └── builds/                   # faithful / modernized (IMU-1) / exploratory (partial-RoPE)
+├── safe_cuda.py                   # GB10 unified-memory guard (caps the CUDA process)
+└── jax_safe_env.py                # JAX preallocation guard for the shared-memory box
 ```
+
+> Note: the Claude Code skills (`.claude/`) and the `skills_showcase/` harness that
+> drive this project are intentionally **gitignored** (local-only state), so they do
+> not appear on GitHub. Model checkpoints (`*.pt`) and token caches are excluded too.

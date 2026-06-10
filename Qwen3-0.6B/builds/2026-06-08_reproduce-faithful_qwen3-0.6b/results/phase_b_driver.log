@@ -1,0 +1,101 @@
+=== PHASE B START Tue Jun  9 09:14:16 PM UTC 2026 ===
+=== [1/4] faithful baseline (AdamW 2.4e-3) Tue Jun  9 09:14:16 PM UTC 2026 ===
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[21:14:18] device=cuda dtype=torch.bfloat16 seed=0
+[21:14:18] args={'steps': 18150, 'seq_len': 4096, 'micro_batch': 4, 'grad_accum': 4, 'peak_lr': 0.0024, 'end_lr': 0.00032, 'warmup_steps': 900, 'weight_decay': 0.01, 'grad_clip': 1.0, 'mem_fraction': 0.85, 'seed': 0, 'dtype': 'bfloat16', 'log_every': 50, 'eval_every': 2000, 'ckpt_every': 2000, 'no_compile': False, 'run_name': 'baseline2tpp', 'ckpt_path': '/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt', 'resume': None}
+[21:14:18] tok/step=65,536  steps=18,150  token_budget=1,189,478,400
+[21:14:18] Loading tokenizer...
+[21:14:19] Streaming FineWeb-Edu sample-10BT...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (159977 > 131072). Running this sequence through the model will result in indexing errors
+[21:40:36]   streamed 1,191,478,748 train + 300,012 val tokens in 1573.8s
+[21:41:37]   290,888 train windows of 4096
+[21:41:37] Initializing Qwen3-0.6B from scratch (random init)...
+[21:41:44] Compiling model with torch.compile() [default mode]...
+[21:41:44] Baseline (random-init) eval...
+[21:41:59]   baseline val PPL=185810.49 (204,800 tokens) — expect ~vocab_size (151,936) at init
+[21:41:59] Training to 18,150 steps (starting at 0)...
+[21:49:18] step    50/18150  loss 8.2517  lr 1.33e-04  |grad| 0.94  mem 52.4GB  tok/s  7,461  tok 3.3M  ETA 2649.8min
+[21:56:35] step   100/18150  loss 7.0718  lr 2.67e-04  |grad| 0.67  mem 52.4GB  tok/s  7,480  tok 6.6M  ETA 2635.7min
+[22:03:53] step   150/18150  loss 6.5818  lr 4.00e-04  |grad| 0.79  mem 52.4GB  tok/s  7,481  tok 9.8M  ETA 2628.0min
+[22:11:11] step   200/18150  loss 6.3308  lr 5.33e-04  |grad| 0.62  mem 52.4GB  tok/s  7,482  tok 13.1M  ETA 2620.5min
+[22:18:30] step   250/18150  loss 5.9760  lr 6.67e-04  |grad| 0.42  mem 52.4GB  tok/s  7,479  tok 16.4M  ETA 2614.1min
+[22:25:48] step   300/18150  loss 5.7129  lr 8.00e-04  |grad| 0.48  mem 52.4GB  tok/s  7,478  tok 19.7M  ETA 2607.1min
+[22:33:06] step   350/18150  loss 5.4649  lr 9.33e-04  |grad| 0.40  mem 52.4GB  tok/s  7,479  tok 22.9M  ETA 2599.7min
+[22:40:24] step   400/18150  loss 5.3137  lr 1.07e-03  |grad| 0.38  mem 52.4GB  tok/s  7,479  tok 26.2M  ETA 2592.4min
+[22:47:42] step   450/18150  loss 5.4178  lr 1.20e-03  |grad| 0.38  mem 52.4GB  tok/s  7,479  tok 29.5M  ETA 2585.1min
+[22:55:00] step   500/18150  loss 5.2447  lr 1.33e-03  |grad| 0.33  mem 52.4GB  tok/s  7,480  tok 32.8M  ETA 2577.5min
+[23:02:18] step   550/18150  loss 4.8617  lr 1.47e-03  |grad| 0.29  mem 52.4GB  tok/s  7,480  tok 36.0M  ETA 2570.2min
+[23:09:36] step   600/18150  loss 4.4963  lr 1.60e-03  |grad| 0.26  mem 52.4GB  tok/s  7,480  tok 39.3M  ETA 2562.8min
+[23:16:54] step   650/18150  loss 4.7418  lr 1.73e-03  |grad| 0.25  mem 52.4GB  tok/s  7,480  tok 42.6M  ETA 2555.4min
+[23:24:12] step   700/18150  loss 4.4687  lr 1.87e-03  |grad| 0.29  mem 52.4GB  tok/s  7,480  tok 45.9M  ETA 2548.0min
+[23:31:30] step   750/18150  loss 4.6110  lr 2.00e-03  |grad| 0.24  mem 52.4GB  tok/s  7,480  tok 49.2M  ETA 2540.7min
+[23:38:48] step   800/18150  loss 4.4362  lr 2.13e-03  |grad| 0.27  mem 52.4GB  tok/s  7,480  tok 52.4M  ETA 2533.4min
+[23:46:06] step   850/18150  loss 4.5787  lr 2.27e-03  |grad| 0.28  mem 52.4GB  tok/s  7,480  tok 55.7M  ETA 2526.1min
+[23:53:24] step   900/18150  loss 4.2722  lr 2.40e-03  |grad| 0.28  mem 52.4GB  tok/s  7,481  tok 59.0M  ETA 2518.6min
+[00:00:41] step   950/18150  loss 4.4271  lr 2.40e-03  |grad| 0.24  mem 52.4GB  tok/s  7,481  tok 62.3M  ETA 2511.3min
+[00:07:59] step  1000/18150  loss 4.3426  lr 2.40e-03  |grad| 0.27  mem 52.4GB  tok/s  7,481  tok 65.5M  ETA 2503.9min
+[00:15:17] step  1050/18150  loss 4.4106  lr 2.40e-03  |grad| 0.24  mem 52.4GB  tok/s  7,482  tok 68.8M  ETA 2496.5min
+[00:22:34] step  1100/18150  loss 4.4191  lr 2.40e-03  |grad| 0.23  mem 52.4GB  tok/s  7,482  tok 72.1M  ETA 2489.1min
+[00:29:52] step  1150/18150  loss 3.9770  lr 2.40e-03  |grad| 0.29  mem 52.4GB  tok/s  7,482  tok 75.4M  ETA 2481.7min
+[00:37:10] step  1200/18150  loss 4.4038  lr 2.40e-03  |grad| 0.22  mem 52.4GB  tok/s  7,482  tok 78.6M  ETA 2474.4min
+[00:44:28] step  1250/18150  loss 4.0716  lr 2.40e-03  |grad| 0.22  mem 52.4GB  tok/s  7,482  tok 81.9M  ETA 2467.0min
+[00:51:45] step  1300/18150  loss 4.2199  lr 2.40e-03  |grad| 0.24  mem 52.4GB  tok/s  7,482  tok 85.2M  ETA 2459.7min
+[00:59:03] step  1350/18150  loss 4.0051  lr 2.40e-03  |grad| 0.25  mem 52.4GB  tok/s  7,482  tok 88.5M  ETA 2452.4min
+[01:06:21] step  1400/18150  loss 4.1577  lr 2.40e-03  |grad| 0.22  mem 52.4GB  tok/s  7,482  tok 91.8M  ETA 2445.1min
+[01:13:39] step  1450/18150  loss 4.1443  lr 2.39e-03  |grad| 0.24  mem 52.4GB  tok/s  7,483  tok 95.0M  ETA 2437.8min
+[01:20:57] step  1500/18150  loss 4.0534  lr 2.39e-03  |grad| 0.27  mem 52.4GB  tok/s  7,483  tok 98.3M  ETA 2430.5min
+[01:28:15] step  1550/18150  loss 4.0922  lr 2.39e-03  |grad| 0.21  mem 52.4GB  tok/s  7,483  tok 101.6M  ETA 2423.2min
+[01:35:33] step  1600/18150  loss 4.1172  lr 2.39e-03  |grad| 0.23  mem 52.4GB  tok/s  7,483  tok 104.9M  ETA 2415.9min
+[01:42:50] step  1650/18150  loss 3.8415  lr 2.39e-03  |grad| 0.19  mem 52.4GB  tok/s  7,483  tok 108.1M  ETA 2408.5min
+[01:50:08] step  1700/18150  loss 3.8251  lr 2.39e-03  |grad| 0.23  mem 52.4GB  tok/s  7,483  tok 111.4M  ETA 2401.1min
+[01:57:25] step  1750/18150  loss 4.0970  lr 2.39e-03  |grad| 0.22  mem 52.4GB  tok/s  7,483  tok 114.7M  ETA 2393.8min
+[02:04:43] step  1800/18150  loss 3.9701  lr 2.39e-03  |grad| 0.22  mem 52.4GB  tok/s  7,483  tok 118.0M  ETA 2386.5min
+[02:12:01] step  1850/18150  loss 3.8734  lr 2.38e-03  |grad| 0.24  mem 52.4GB  tok/s  7,483  tok 121.2M  ETA 2379.2min
+[02:19:19] step  1900/18150  loss 4.0584  lr 2.38e-03  |grad| 0.22  mem 52.4GB  tok/s  7,483  tok 124.5M  ETA 2371.9min
+[02:26:37] step  1950/18150  loss 3.9348  lr 2.38e-03  |grad| 0.24  mem 52.4GB  tok/s  7,483  tok 127.8M  ETA 2364.6min
+[02:33:54] step  2000/18150  loss 3.8531  lr 2.38e-03  |grad| 0.20  mem 52.4GB  tok/s  7,483  tok 131.1M  ETA 2357.2min
+[02:34:09]   [eval @ 2000] val PPL=60.10 (Δ vs base -185750.39)
+[02:34:12]   [ckpt @ 2000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[02:41:34] step  2050/18150  loss 3.8360  lr 2.38e-03  |grad| 0.22  mem 52.4GB  tok/s  7,474  tok 134.3M  ETA 2352.8min
+[02:48:51] step  2100/18150  loss 3.8228  lr 2.38e-03  |grad| 0.23  mem 52.4GB  tok/s  7,475  tok 137.6M  ETA 2345.3min
+[02:56:08] step  2150/18150  loss 3.6958  lr 2.37e-03  |grad| 0.21  mem 52.4GB  tok/s  7,475  tok 140.9M  ETA 2337.9min
+[03:03:26] step  2200/18150  loss 3.6143  lr 2.37e-03  |grad| 0.20  mem 52.4GB  tok/s  7,476  tok 144.2M  ETA 2330.5min
+[03:10:44] step  2250/18150  loss 3.8965  lr 2.37e-03  |grad| 0.22  mem 52.4GB  tok/s  7,476  tok 147.5M  ETA 2323.1min
+[03:18:01] step  2300/18150  loss 3.4968  lr 2.37e-03  |grad| 0.28  mem 52.4GB  tok/s  7,476  tok 150.7M  ETA 2315.7min
+[03:25:19] step  2350/18150  loss 3.8085  lr 2.36e-03  |grad| 0.22  mem 52.4GB  tok/s  7,476  tok 154.0M  ETA 2308.3min
+[03:32:36] step  2400/18150  loss 3.7833  lr 2.36e-03  |grad| 0.23  mem 52.4GB  tok/s  7,477  tok 157.3M  ETA 2300.9min
+[03:39:54] step  2450/18150  loss 3.8819  lr 2.36e-03  |grad| 0.22  mem 52.4GB  tok/s  7,477  tok 160.6M  ETA 2293.5min
+[03:47:11] step  2500/18150  loss 3.5547  lr 2.36e-03  |grad| 0.23  mem 52.4GB  tok/s  7,477  tok 163.8M  ETA 2286.1min
+[03:54:28] step  2550/18150  loss 3.6948  lr 2.35e-03  |grad| 0.23  mem 52.4GB  tok/s  7,478  tok 167.1M  ETA 2278.7min
+[04:01:46] step  2600/18150  loss 3.8809  lr 2.35e-03  |grad| 0.21  mem 52.4GB  tok/s  7,478  tok 170.4M  ETA 2271.4min
+[04:09:03] step  2650/18150  loss 3.4673  lr 2.35e-03  |grad| 0.21  mem 52.4GB  tok/s  7,478  tok 173.7M  ETA 2264.0min
+[04:16:21] step  2700/18150  loss 3.5668  lr 2.34e-03  |grad| 0.20  mem 52.4GB  tok/s  7,478  tok 176.9M  ETA 2256.7min
+[04:23:39] step  2750/18150  loss 3.6201  lr 2.34e-03  |grad| 0.21  mem 52.4GB  tok/s  7,478  tok 180.2M  ETA 2249.3min
+[04:30:56] step  2800/18150  loss 3.6907  lr 2.34e-03  |grad| 0.23  mem 52.4GB  tok/s  7,478  tok 183.5M  ETA 2242.0min
+[04:38:14] step  2850/18150  loss 3.7610  lr 2.34e-03  |grad| 0.25  mem 52.4GB  tok/s  7,479  tok 186.8M  ETA 2234.6min
+[04:45:32] step  2900/18150  loss 3.7462  lr 2.33e-03  |grad| 0.17  mem 52.4GB  tok/s  7,479  tok 190.1M  ETA 2227.3min
+[04:52:49] step  2950/18150  loss 3.7865  lr 2.33e-03  |grad| 0.20  mem 52.4GB  tok/s  7,479  tok 193.3M  ETA 2219.9min
+[05:00:07] step  3000/18150  loss 3.7386  lr 2.32e-03  |grad| 0.23  mem 52.4GB  tok/s  7,479  tok 196.6M  ETA 2212.6min
+[05:07:25] step  3050/18150  loss 3.6547  lr 2.32e-03  |grad| 0.20  mem 52.4GB  tok/s  7,479  tok 199.9M  ETA 2205.2min
+[05:14:42] step  3100/18150  loss 3.4077  lr 2.32e-03  |grad| 0.19  mem 52.4GB  tok/s  7,479  tok 203.2M  ETA 2197.9min
+[05:22:00] step  3150/18150  loss 3.6844  lr 2.31e-03  |grad| 0.20  mem 52.4GB  tok/s  7,479  tok 206.4M  ETA 2190.6min
+[05:29:18] step  3200/18150  loss 3.7347  lr 2.31e-03  |grad| 0.19  mem 52.4GB  tok/s  7,479  tok 209.7M  ETA 2183.2min
+[05:36:36] step  3250/18150  loss 3.5585  lr 2.31e-03  |grad| 0.24  mem 52.4GB  tok/s  7,480  tok 213.0M  ETA 2175.9min
+[05:43:53] step  3300/18150  loss 3.5118  lr 2.30e-03  |grad| 0.20  mem 52.4GB  tok/s  7,480  tok 216.3M  ETA 2168.6min
+[05:51:11] step  3350/18150  loss 3.6147  lr 2.30e-03  |grad| 0.20  mem 52.4GB  tok/s  7,480  tok 219.5M  ETA 2161.2min
+[05:58:29] step  3400/18150  loss 3.6852  lr 2.29e-03  |grad| 0.18  mem 52.4GB  tok/s  7,480  tok 222.8M  ETA 2153.9min
+[06:05:47] step  3450/18150  loss 3.5691  lr 2.29e-03  |grad| 0.20  mem 52.4GB  tok/s  7,480  tok 226.1M  ETA 2146.6min
+[06:13:05] step  3500/18150  loss 3.6524  lr 2.29e-03  |grad| 0.22  mem 52.4GB  tok/s  7,480  tok 229.4M  ETA 2139.3min
+[06:20:22] step  3550/18150  loss 3.6383  lr 2.28e-03  |grad| 0.20  mem 52.4GB  tok/s  7,480  tok 232.7M  ETA 2132.0min
+[06:27:40] step  3600/18150  loss 3.8246  lr 2.28e-03  |grad| 0.21  mem 52.4GB  tok/s  7,480  tok 235.9M  ETA 2124.6min
+[06:34:57] step  3650/18150  loss 3.8545  lr 2.27e-03  |grad| 0.20  mem 52.4GB  tok/s  7,480  tok 239.2M  ETA 2117.3min
+[06:42:15] step  3700/18150  loss 3.6016  lr 2.27e-03  |grad| 0.19  mem 52.4GB  tok/s  7,480  tok 242.5M  ETA 2110.0min
+[06:49:33] step  3750/18150  loss 3.6108  lr 2.26e-03  |grad| 0.19  mem 52.4GB  tok/s  7,480  tok 245.8M  ETA 2102.6min
+[06:57:15] step  3800/18150  loss 3.1332  lr 2.26e-03  |grad| 0.19  mem 52.4GB  tok/s  7,475  tok 249.0M  ETA 2096.8min
+[07:04:53] step  3850/18150  loss 3.6505  lr 2.25e-03  |grad| 0.23  mem 52.4GB  tok/s  7,471  tok 252.3M  ETA 2090.8min
+[07:12:11] step  3900/18150  loss 3.4315  lr 2.25e-03  |grad| 0.22  mem 52.4GB  tok/s  7,471  tok 255.6M  ETA 2083.4min
+[07:19:28] step  3950/18150  loss 3.4733  lr 2.24e-03  |grad| 0.27  mem 52.4GB  tok/s  7,471  tok 258.9M  ETA 2076.0min
+[07:27:00] step  4000/18150  loss 3.3170  lr 2.24e-03  |grad| 0.18  mem 52.4GB  tok/s  7,468  tok 262.1M  ETA 2069.5min
+[07:27:16]   [eval @ 4000] val PPL=45.06 (Δ vs base -185765.43)
+[07:27:20]   [ckpt @ 4000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt

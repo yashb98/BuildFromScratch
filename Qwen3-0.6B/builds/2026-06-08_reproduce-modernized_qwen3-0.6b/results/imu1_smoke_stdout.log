@@ -1,0 +1,113 @@
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[16:54:25] device=cuda bundle: vr=True ln=True hg=True  steps=1000
+[16:54:26] param split: 224 NorMuon (2D), 198 AdamW (1D/embed)  tok/step=65,536
+[16:54:29]   loaded cached tokens from tokcache_67536000_300000.pt (67,536,000 train + 300,000 val)
+[16:54:29] Compiling model...
+W0609 16:54:40.661000 1127366 torch/_inductor/utils.py:1731] [0/0] Not enough SMs to use max_autotune_gemm mode
+[16:57:32] step    10/1000  ce 7.7500  z 0.01236  lr 2.20e-03  |grad| 1.12  mem 66.1GB  tok/s 3,579
+[16:59:49] step    20/1000  ce 7.6250  z 0.01360  lr 4.40e-03  |grad| 3.34  mem 66.1GB  tok/s 4,101
+[17:02:04] step    30/1000  ce 6.7500  z 0.01371  lr 6.60e-03  |grad| 0.82  mem 66.1GB  tok/s 4,320
+[17:04:19] step    40/1000  ce 6.8750  z 0.01334  lr 8.80e-03  |grad| 0.74  mem 66.1GB  tok/s 4,442
+[17:06:34] step    50/1000  ce 6.5000  z 0.01363  lr 1.10e-02  |grad| 0.84  mem 66.1GB  tok/s 4,522
+[17:08:49] step    60/1000  ce 6.4375  z 0.01327  lr 1.10e-02  |grad| 0.62  mem 66.1GB  tok/s 4,575
+[17:11:03] step    70/1000  ce 6.0625  z 0.01321  lr 1.10e-02  |grad| 0.43  mem 66.1GB  tok/s 4,618
+[17:13:08] step    80/1000  ce 6.0312  z 0.01297  lr 1.10e-02  |grad| 0.37  mem 66.1GB  tok/s 4,686
+[17:15:13] step    90/1000  ce 6.1250  z 0.01334  lr 1.10e-02  |grad| 0.38  mem 66.1GB  tok/s 4,741
+[17:17:19] step   100/1000  ce 5.7500  z 0.01350  lr 1.10e-02  |grad| 0.33  mem 66.1GB  tok/s 4,785
+[17:19:24] step   110/1000  ce 5.6875  z 0.01364  lr 1.10e-02  |grad| 0.32  mem 66.1GB  tok/s 4,822
+[17:21:30] step   120/1000  ce 5.4375  z 0.01392  lr 1.10e-02  |grad| 0.27  mem 66.1GB  tok/s 4,853
+[17:23:35] step   130/1000  ce 5.2500  z 0.01383  lr 1.10e-02  |grad| 0.23  mem 66.1GB  tok/s 4,880
+[17:25:40] step   140/1000  ce 5.3125  z 0.01406  lr 1.10e-02  |grad| 0.23  mem 66.1GB  tok/s 4,903
+[17:27:46] step   150/1000  ce 5.1562  z 0.01396  lr 1.10e-02  |grad| 0.22  mem 66.1GB  tok/s 4,924
+[17:29:51] step   160/1000  ce 5.1250  z 0.01406  lr 1.10e-02  |grad| 0.17  mem 66.1GB  tok/s 4,941
+[17:31:56] step   170/1000  ce 4.7500  z 0.01466  lr 1.10e-02  |grad| 0.18  mem 66.1GB  tok/s 4,958
+[17:34:02] step   180/1000  ce 4.8750  z 0.01454  lr 1.10e-02  |grad| 0.19  mem 66.1GB  tok/s 4,972
+[17:36:07] step   190/1000  ce 4.6875  z 0.01495  lr 1.10e-02  |grad| 0.14  mem 66.1GB  tok/s 4,984
+[17:38:13] step   200/1000  ce 4.9688  z 0.01474  lr 1.10e-02  |grad| 0.18  mem 66.1GB  tok/s 4,996
+[17:40:18] step   210/1000  ce 4.3750  z 0.01528  lr 1.10e-02  |grad| 0.14  mem 66.1GB  tok/s 5,007
+[17:42:23] step   220/1000  ce 4.5312  z 0.01521  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,016
+[17:44:29] step   230/1000  ce 4.5625  z 0.01483  lr 1.10e-02  |grad| 0.13  mem 66.1GB  tok/s 5,025
+[17:46:34] step   240/1000  ce 4.4375  z 0.01533  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,033
+[17:48:40] step   250/1000  ce 4.5625  z 0.01482  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,040
+[17:49:06]   [eval @ 250] val PPL=92.38
+[17:51:11] step   260/1000  ce 4.5000  z 0.01484  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,009
+[17:53:17] step   270/1000  ce 4.4375  z 0.01534  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,016
+[17:55:22] step   280/1000  ce 4.2500  z 0.01562  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,023
+[17:57:28] step   290/1000  ce 4.3750  z 0.01493  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,030
+[17:59:33] step   300/1000  ce 4.4375  z 0.01530  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,036
+[18:01:38] step   310/1000  ce 4.3438  z 0.01529  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,042
+[18:03:44] step   320/1000  ce 4.4375  z 0.01511  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,048
+[18:05:49] step   330/1000  ce 4.2188  z 0.01525  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,053
+[18:07:55] step   340/1000  ce 3.8750  z 0.01622  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,058
+[18:10:00] step   350/1000  ce 4.1250  z 0.01519  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,062
+[18:12:06] step   360/1000  ce 4.5625  z 0.01481  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,067
+[18:14:11] step   370/1000  ce 4.3125  z 0.01533  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,071
+[18:16:16] step   380/1000  ce 4.1250  z 0.01584  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,075
+[18:18:22] step   390/1000  ce 4.1250  z 0.01527  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,079
+[18:20:27] step   400/1000  ce 4.5625  z 0.01492  lr 1.10e-02  |grad| 0.13  mem 66.1GB  tok/s 5,083
+[18:22:32] step   410/1000  ce 4.0625  z 0.01577  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,086
+[18:24:38] step   420/1000  ce 4.0625  z 0.01572  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,089
+[18:26:43] step   430/1000  ce 4.1875  z 0.01539  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,092
+[18:28:48] step   440/1000  ce 4.0625  z 0.01521  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,095
+[18:30:54] step   450/1000  ce 4.1875  z 0.01534  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,098
+[18:32:59] step   460/1000  ce 4.2500  z 0.01529  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,101
+[18:35:04] step   470/1000  ce 4.1562  z 0.01528  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,104
+[18:37:10] step   480/1000  ce 3.9688  z 0.01534  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,106
+[18:39:16] step   490/1000  ce 4.3125  z 0.01468  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,108
+[18:41:21] step   500/1000  ce 4.1250  z 0.01518  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,110
+[18:41:31]   [eval @ 500] val PPL=59.51
+[18:41:32]   [ckpt @ 500]
+[18:43:37] step   510/1000  ce 4.0312  z 0.01543  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,104
+[18:45:43] step   520/1000  ce 4.0312  z 0.01516  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,107
+[18:47:48] step   530/1000  ce 4.1875  z 0.01481  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,109
+[18:49:53] step   540/1000  ce 4.0000  z 0.01510  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,111
+[18:51:59] step   550/1000  ce 4.0625  z 0.01536  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,113
+[18:54:04] step   560/1000  ce 4.0000  z 0.01515  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,115
+[18:56:09] step   570/1000  ce 3.9219  z 0.01529  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,117
+[18:58:15] step   580/1000  ce 3.9688  z 0.01502  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,119
+[19:00:20] step   590/1000  ce 3.9062  z 0.01531  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,121
+[19:02:26] step   600/1000  ce 4.1250  z 0.01494  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,122
+[19:04:31] step   610/1000  ce 4.1250  z 0.01489  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,124
+[19:06:36] step   620/1000  ce 3.7812  z 0.01545  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,126
+[19:08:42] step   630/1000  ce 4.0000  z 0.01504  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,127
+[19:10:47] step   640/1000  ce 3.4062  z 0.01616  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,129
+[19:12:53] step   650/1000  ce 3.8750  z 0.01528  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,130
+[19:14:58] step   660/1000  ce 3.8281  z 0.01540  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,132
+[19:17:03] step   670/1000  ce 3.9062  z 0.01497  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,133
+[19:19:09] step   680/1000  ce 3.9219  z 0.01529  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,134
+[19:21:14] step   690/1000  ce 3.7812  z 0.01531  lr 1.10e-02  |grad| 0.05  mem 66.1GB  tok/s 5,136
+[19:23:20] step   700/1000  ce 4.0312  z 0.01468  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,137
+[19:25:25] step   710/1000  ce 3.8281  z 0.01499  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,138
+[19:27:30] step   720/1000  ce 4.1250  z 0.01475  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,139
+[19:29:36] step   730/1000  ce 3.8438  z 0.01503  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,141
+[19:31:41] step   740/1000  ce 3.9062  z 0.01500  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,142
+[19:33:46] step   750/1000  ce 4.1250  z 0.01489  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,143
+[19:33:56]   [eval @ 750] val PPL=49.61
+[19:36:01] step   760/1000  ce 3.9531  z 0.01488  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,139
+[19:38:07] step   770/1000  ce 3.7500  z 0.01526  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,140
+[19:40:12] step   780/1000  ce 3.9062  z 0.01534  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,141
+[19:42:18] step   790/1000  ce 3.9219  z 0.01488  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,142
+[19:44:23] step   800/1000  ce 3.7031  z 0.01537  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,143
+[19:46:29] step   810/1000  ce 3.9375  z 0.01485  lr 1.04e-02  |grad| 0.09  mem 66.1GB  tok/s 5,144
+[19:48:34] step   820/1000  ce 3.9375  z 0.01491  lr 9.90e-03  |grad| 0.06  mem 66.1GB  tok/s 5,145
+[19:50:39] step   830/1000  ce 3.7969  z 0.01505  lr 9.35e-03  |grad| 0.06  mem 66.1GB  tok/s 5,146
+[19:52:45] step   840/1000  ce 3.8438  z 0.01503  lr 8.80e-03  |grad| 0.07  mem 66.1GB  tok/s 5,147
+[19:54:50] step   850/1000  ce 3.7500  z 0.01523  lr 8.25e-03  |grad| 0.05  mem 66.1GB  tok/s 5,148
+[19:56:56] step   860/1000  ce 3.7188  z 0.01532  lr 7.70e-03  |grad| 0.07  mem 66.1GB  tok/s 5,149
+[19:59:12] step   870/1000  ce 4.0000  z 0.01478  lr 7.15e-03  |grad| 0.08  mem 66.1GB  tok/s 5,145
+[20:01:27] step   880/1000  ce 3.7031  z 0.01536  lr 6.60e-03  |grad| 0.06  mem 66.1GB  tok/s 5,141
+[20:03:41] step   890/1000  ce 3.8125  z 0.01530  lr 6.05e-03  |grad| 0.06  mem 66.1GB  tok/s 5,138
+[20:05:57] step   900/1000  ce 3.7656  z 0.01532  lr 5.50e-03  |grad| 0.05  mem 66.1GB  tok/s 5,135
+[20:08:11] step   910/1000  ce 4.0000  z 0.01666  lr 4.95e-03  |grad| 0.12  mem 66.1GB  tok/s 5,131
+[20:10:26] step   920/1000  ce 3.9062  z 0.01502  lr 4.40e-03  |grad| 0.06  mem 66.1GB  tok/s 5,128
+[20:12:35] step   930/1000  ce 3.8906  z 0.01519  lr 3.85e-03  |grad| 0.08  mem 66.1GB  tok/s 5,128
+[20:14:40] step   940/1000  ce 3.8438  z 0.01528  lr 3.30e-03  |grad| 0.05  mem 66.1GB  tok/s 5,129
+[20:16:45] step   950/1000  ce 3.6719  z 0.01577  lr 2.75e-03  |grad| 0.06  mem 66.1GB  tok/s 5,130
+[20:18:51] step   960/1000  ce 3.8125  z 0.01520  lr 2.20e-03  |grad| 0.05  mem 66.1GB  tok/s 5,131
+[20:20:56] step   970/1000  ce 3.7188  z 0.01565  lr 1.65e-03  |grad| 0.05  mem 66.1GB  tok/s 5,132
+[20:23:02] step   980/1000  ce 3.8750  z 0.01508  lr 1.10e-03  |grad| 0.05  mem 66.1GB  tok/s 5,133
+[20:25:07] step   990/1000  ce 3.7031  z 0.01551  lr 5.50e-04  |grad| 0.05  mem 66.1GB  tok/s 5,134
+[20:27:12] step  1000/1000  ce 3.7812  z 0.01543  lr 0.00e+00  |grad| 0.05  mem 66.1GB  tok/s 5,135
+[20:27:22]   [eval @ 1000] val PPL=39.83
+[20:27:23]   [ckpt @ 1000]
+[20:27:23] DONE

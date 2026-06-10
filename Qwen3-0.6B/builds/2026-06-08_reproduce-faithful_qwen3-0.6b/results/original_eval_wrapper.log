@@ -1,0 +1,22 @@
+[Tue Jun  9 08:53:14 AM UTC 2026] waiting for Phase A sweep to finish before original-eval...
+[Tue Jun  9 11:18:33 AM UTC 2026] sweep done — running original_vs_repro eval
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  88%|████████▊ | 273/310 [00:00<00:00, 2719.16it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 2840.31it/s]
+Traceback (most recent call last):
+  File "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/eval_original_vs_repro.py", line 80, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/eval_original_vs_repro.py", line 62, in main
+    m.load_state_dict(torch.load(ckpt, map_location="cpu")["model"])
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yashb98/.local/lib/python3.12/site-packages/torch/serialization.py", line 1578, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m. 
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray._reconstruct was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray._reconstruct])` or the `torch.serialization.safe_globals([numpy._core.multiarray._reconstruct])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.
+[Tue Jun  9 11:19:05 AM UTC 2026] original-eval complete

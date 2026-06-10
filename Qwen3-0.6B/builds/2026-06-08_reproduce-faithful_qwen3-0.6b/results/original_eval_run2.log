@@ -1,0 +1,13 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 11047.21it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[2026-06-09 16:51:36] Original vs reproduction — val=300,000 tokens, 50 windows x 4096
+ORIGINAL  Qwen3-0.6B-Base (36T tok)   val PPL =   13.400  (204,800 tok, 21s)
+REPRO     lr17 (131M tok, from scratch) val PPL =   46.892  gap x   3.5
+REPRO     lr24 (131M tok, from scratch) val PPL =   46.310  gap x   3.5
+REPRO     lr30 (131M tok, from scratch) val PPL =   49.276  gap x   3.7
+
+Best reproduction: lr24 = 46.310  vs original 13.400  => 3.5x higher PPL (expected: 36T vs 131M tokens = ~275,000x less data)
+
+wrote /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/original_vs_repro.txt

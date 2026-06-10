@@ -1,0 +1,15 @@
+# Qwen3-0.6B from-scratch after 131,072,000 tokens (smoke=False)
+val PPL: 183922.14 -> 46.31
+
+PROMPT: The capital of France is
+OUTPUT: The capital of France is a fact of its own to the United States of origin.
+As one of the most famous records on the planet, the Great Blue has been a popular destination for its discovery and the world. It is one of the richest and most widely used cities in the world, with more than 500
+
+PROMPT: In a recent study, researchers found that
+OUTPUT: In a recent study, researchers found that the same “rakes” were similar to those found in the same group of twins or non-Aboriginal binary pairs, while the researchers found little difference between the two groups. This finding suggests a “substantially consistent” correlation between two different groups of binary pairings, with the same group
+
+PROMPT: def add(a, b):
+OUTPUT: def add(a, b): The.
+The following is a list of the words, and a list of the words. Also, the word of the word is used to make adverbs, as a noun.
+In this example, a verb is a noun in which the noun is an in which the noun is an in which the
+

@@ -1,0 +1,14 @@
+# Qwen3-0.6B from-scratch after 65,536,000 tokens (smoke=True)
+val PPL: 184590.45 -> 95.87
+
+PROMPT: The capital of France is
+OUTPUT: The capital of France is a country where the government is still in the hands of many people.
+The most famous of the time is the creation of the 20th century. The fact that the government has the capacity to control the trade is the most difficult to do for the government, the more important in recent years.
+
+
+PROMPT: In a recent study, researchers found that
+OUTPUT: In a recent study, researchers found that the same test is the best choice for students to use. The goal of the course is to provide the best results. The good results are that even when we look for the correct answer, we will never start to build up the task of learning the student. The next step is to build a new
+
+PROMPT: def add(a, b):
+OUTPUT: def add(a, b): The ancient name was not known to be a new, ancient, or a small, but still in the ancient Greek part. They may also be found to be a very common type of a stone or a large amount of silver in its way to a large amount of silver that is not produced by the
+

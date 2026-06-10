@@ -1,0 +1,52 @@
+W0608 15:43:56.758000 81334 torch/_inductor/utils.py:1731] [0/0] Not enough SMs to use max_autotune_gemm mode
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+Device: NVIDIA GB10
+Model:  Qwen3-0.6B (596M params), bf16
+Probe:  target micro_batch=16 (backs off [16, 8, 4, 2, 1]), seq_len=4096, measure=50 steps after 5 warmup
+
+=== baseline (compile=False, micro_bs=16) ===
+  warmup 5 steps (incl. compile autotune if on) ...
+  OOM at micro_bs=16 — backing off
+
+=== baseline (compile=False, micro_bs=8) ===
+  warmup 5 steps (incl. compile autotune if on) ...
+  OOM at micro_bs=8 — backing off
+
+=== baseline (compile=False, micro_bs=4) ===
+  warmup 5 steps (incl. compile autotune if on) ...
+  warmup wall: 24.0s (4.79s/step)
+  measuring 50 steps ...
+  tokens/sec  : 3,788
+  sec/step    : 4.326
+  peak mem    : 68.21 GB
+
+=== compiled (compile=True, micro_bs=16) ===
+  compiling (one-time cost) ...
+  compile setup: 0.6s (kernel autotune happens on first fwd)
+  warmup 5 steps (incl. compile autotune if on) ...
+  OOM at micro_bs=16 — backing off
+
+=== compiled (compile=True, micro_bs=8) ===
+  compiling (one-time cost) ...
+  compile setup: 0.0s (kernel autotune happens on first fwd)
+  warmup 5 steps (incl. compile autotune if on) ...
+  OOM at micro_bs=8 — backing off
+
+=== compiled (compile=True, micro_bs=4) ===
+  compiling (one-time cost) ...
+  compile setup: 0.0s (kernel autotune happens on first fwd)
+  warmup 5 steps (incl. compile autotune if on) ...
+  warmup wall: 13.3s (2.66s/step)
+  measuring 50 steps ...
+  tokens/sec  : 7,167
+  sec/step    : 2.286
+  peak mem    : 52.40 GB
+
+=== Summary ===
+  baseline tok/s : 3,788
+  compiled tok/s : 7,167
+  speedup        : 1.89×
+  3-config sweep (2B tokens total) @ baseline (no compile): ~146.7 hr wall
+  3-config sweep (2B tokens total) @ compiled: ~77.5 hr wall
+
+Wrote /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/throughput_probe.json

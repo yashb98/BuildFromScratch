@@ -1,0 +1,15 @@
+# Qwen3-0.6B from-scratch after 131,072,000 tokens (smoke=False)
+val PPL: 183922.14 -> 46.89
+
+PROMPT: The capital of France is
+OUTPUT: The capital of France is a serious problem. The new legislation to develop a federal government, like the U.S. Constitution and the federal government, are in the first place to come a year to the day after the new constitution is ratified. When the Supreme Court has said the New Court will not have a constitutional mandate to create
+
+PROMPT: In a recent study, researchers found that
+OUTPUT: In a recent study, researchers found that the same effect of environmental factors is a result of a decrease in the probability of a decrease in the number of people who had an average of 15 and older.
+The study found that the same data could be used up to the next 25 years. The study found that the number of
+
+PROMPT: def add(a, b):
+OUTPUT: def add(a, b): The first letter was not (a) (2, c) (b) = (b) = t, s, t; and = b, Cf.
+The author also has a short introduction to the original edition of the New York Times.
+The title of this title was produced by the
+
