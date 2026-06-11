@@ -14,11 +14,14 @@ the README mirrors that one's voice. Read it top to bottom and you should be abl
 to narrate every decision — **what we did**, **how we did it**, **why we did it
 that way** — without referring back to the papers.
 
-> **Status: Phase B running.** The architecture is VERIFIED (bit-exact). Phase A
-> (the LR sweep @ 131M tokens) is complete and `lr24 = 2.4e-3` won. Phase B (four
-> matched-compute runs @ 2 TPP = 1.19B tokens each, sequential on one GB10) is
-> **mid-run** — its final perplexities are PENDING. Everything PENDING /
-> PRELIMINARY / CONFOUNDED is flagged as such; nothing is overclaimed.
+> **Status: Phase B running (run 2 of 4).** The architecture is VERIFIED
+> (bit-exact). Phase A (LR sweep @ 131M tokens) is complete (`lr24 = 2.4e-3` won).
+> Phase B = four matched-compute runs @ 2 TPP = 1.19B tokens each, sequential on
+> one GB10. **Run 1 (faithful baseline) is DONE: val PPL = 28.65** — which narrows
+> the gap to the original from 3.5× (@131M) to **2.14× (@1.19B)**. Run 2 (the IMU-1
+> bundle) is now training; the partial-RoPE runs follow. The IMU-1 / partial-RoPE
+> *vs* baseline comparison is still PENDING. Everything PENDING / PRELIMINARY /
+> CONFOUNDED is flagged as such; nothing is overclaimed.
 
 [hfbase]: https://huggingface.co/Qwen/Qwen3-0.6B-Base
 [hfinstruct]: https://huggingface.co/Qwen/Qwen3-0.6B
@@ -101,6 +104,15 @@ The remarkable result is how *small* a 3.5× PPL gap is given a **~275,000×** d
 deficit — strong circumstantial evidence the architecture and recipe are correct,
 and that the residual gap is **data, not skill** (see §11).
 
+> **Phase B update — run 1 of 4 done.** The faithful baseline trained at the full
+> **2 TPP (1.19B tokens)** reaches **val PPL 28.65**
+> ([`qwen3_baseline2tpp_after.txt`](builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_after.txt)),
+> narrowing the gap to the original from **3.5× (@131M) → 2.14× (@1.19B)** — the
+> scaling-law prediction made flesh from 9× more data. Generations are now
+> coherent (*"The capital of France is **Paris**…"*). This **28.65 is the
+> matched-compute reference** the IMU-1 bundle and partial-RoPE runs must beat;
+> those runs are still **PENDING** (run 2 in progress).
+
 ### 0.3 Phase A LR sweep @ 131M tokens (matched compute)
 
 Each run: 2000 steps, seq_len 4096, micro_batch 4 × grad_accum 4, warmup 150,
@@ -146,12 +158,14 @@ stack trains and descends.
 |---|---|---|
 | 65.5M (smoke) | ~96 | smoke run, 65,536,000 tok (`qwen3_smoke_after.txt` header) |
 | 131M (Phase A best) | 46.31 | `original_vs_repro.txt` |
+| **1.19B (Phase B baseline, 2 TPP)** | **28.65** | `qwen3_baseline2tpp_after.txt` |
 | 36T (released) | 13.40 | `original_vs_repro.txt` |
 
 Monotone descent across ~5.5 orders of magnitude of data
-(`65.5M → 131M → 36T` ≈ `96 → 46 → 13.4`) — exactly the Chinchilla-style
-underfitting curve expected. The released model sits ~12× above
-Chinchilla-optimal data (12B for 596M) while our runs sit far below it.
+(`65.5M → 131M → 1.19B → 36T` ≈ `96 → 46 → 28.65 → 13.4`) — exactly the
+Chinchilla-style underfitting curve expected. The released model sits ~12× above
+Chinchilla-optimal data (12B for 596M) while our runs sit far below it; each ~10×
+of extra data roughly halves the gap to the original.
 
 ---
 
@@ -1064,7 +1078,7 @@ Effective batch = 4 × 4 × 4096 = **65,536 tok/step**; 2000 steps ⇒ ~131M tok
 > the probe backs off to 4. So the effective batch is realized as
 > `micro_batch=4 × grad_accum=4`.
 
-### Phase B — 4 matched-compute runs @ 2 TPP = 1.19B tokens each (PENDING / mid-run)
+### Phase B — 4 matched-compute runs @ 2 TPP = 1.19B tokens each (run 2 of 4 in progress)
 
 Source: `phase_b_driver.sh`. **2 tokens-per-parameter** (TPP) ⇒ **18,150 steps =
 1.19B tokens** per run, **best LR 2.4e-3** from Phase A, warmup 900, sequential
@@ -1079,8 +1093,11 @@ caches 1.19B tokens ~30 min, runs 2–4 reuse the cache):
 | 4 | partial RoPE 10% | AdamW, baseline recipe, `partial_rotary_factor 0.10` |
 
 Common flags: `--eval_every 2000 --ckpt_every 2000 --log_every 50`,
-`--steps 18150 --warmup_steps 900`. Phase B final PPLs are **PENDING** (the IMU-1
-smoke in §0.4 is a separate 1000-step preview, not the Phase B run).
+`--steps 18150 --warmup_steps 900`. **Run 1 (faithful baseline) is DONE: val PPL
+28.65** (`qwen3_baseline2tpp_after.txt`) — the matched-compute reference. Run 2
+(IMU-1 bundle) is training; runs 3–4 (partial RoPE) follow. The IMU-1 /
+partial-RoPE *vs* baseline comparison is still **PENDING** (the IMU-1 smoke in
+§0.4 is a separate 1000-step preview, not the Phase B run).
 
 ---
 
@@ -1176,7 +1193,7 @@ A CUDA GPU is not required for parity verification or short generation —
 | Architecture correctness | ✅ **VERIFIED (bit-exact)** | `verify.json`: `max_abs_error = 0.0`, `relative_error = 0.0`, `argmax_match = true`, `passed = true`, fp32, tol 1e-3. Param count `596,049,920` (`architecture_plan.md`, `test_model.py`). |
 | Source of the PPL gap | ✅ **VERIFIED: data, not skill** | 3.5× PPL gap (46.31 vs 13.40) against a **~275,000×** data deficit (`original_vs_repro.txt`, `eval_original_vs_repro.py`). Tiny gap-per-decade-of-data ⇒ recipe is sound; remaining gap is the missing 36T tokens. |
 | Phase A LR choice | ✅ **VERIFIED** | `lr24 = 2.4e-3` best (46.31 < 46.89 < 49.28) at matched 131M-tok compute. This is the only *original* result — Qwen3 never published the 0.6B LR. |
-| Phase B (4 runs @ 2 TPP) | ⏳ **PENDING / IN PROGRESS** | 1.19B tok/run, sequential on the GB10. Final PPLs not yet captured. |
+| Phase B (4 runs @ 2 TPP) | 🔶 **1 of 4 DONE, rest IN PROGRESS** | 1.19B tok/run, sequential on the GB10. Baseline final = **28.65** (`qwen3_baseline2tpp_after.txt`); IMU-1 + partial-RoPE PPLs not yet captured. The "does the bundle beat baseline" finding is still pending. |
 | IMU-1 smoke trajectory | ⚠️ **PRELIMINARY + CONFOUNDED** | 1000-step smoke, different recipe (NorMuon lr 1.1e-2, WSD). Bundle **intentionally changes 6 things at once** (NorMuon + value-resid + LN-scale + head-gate + WSD) — by design it cannot attribute the gain to any single change. Not comparable to Phase A numbers. |
 | 2 TPP token budget | ⚠️ **INFERRED / directional** | Chinchilla-optimal for 596M ≈ **12B tokens** (20 TPP, `training_plan.md`). 2 TPP ≈ **~80×** below that and far below the methods' validated regime ⇒ Phase B results are **directional, not headline**; absolute parity with Qwen3-0.6B-Base is impossible at this scale. |
 | muP (maximal-update param.) | ❌ **OMITTED** | Not implemented; standard init `Normal(0, 0.02)` from HF config (`hp_tuning_plan.md`). |
