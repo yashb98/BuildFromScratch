@@ -169,9 +169,24 @@ writing. Source: [`results/qwen3_imu1_2tpp_train.log`](results/qwen3_imu1_2tpp_t
   (just reached the stable plateau after the 50-step warmup), ~5,216 tok/s, 66.1 GB.
 - **No final val PPL yet** — the run has not reached the WSD decay tail. Final number is `[not captured]`.
 
-For context (from the parent README), the **faithful** baseline at the same 2-TPP / 1.19B-token
-budget reached **val PPL 28.65**. The head-to-head modernized-vs-faithful number will be
-fillable only once this run completes.
+### Where these numbers actually sit (read before comparing anything)
+
+The two builds report PPL at **different token budgets** — comparing across rows is
+meaningless. Same-budget comparison only:
+
+| Token budget | Faithful (Build 1) | IMU-1 bundle (this build) |
+|---|---|---|
+| 65.5M (smoke) | 95.87 (`../2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_after.txt`) | **39.83** |
+| 1.19B (2 TPP) | **28.65** (faithful Phase B, done) | ⏳ **PENDING** (this run, mid-flight) |
+
+- The **only** valid comparison available today is the **smoke row**: at 65.5M tokens the
+  IMU-1 bundle (**39.83**) is far below the faithful smoke (**95.87**) — a *directional,
+  confounded* hint of sample efficiency, **not** a verdict.
+- **Do NOT compare this build's `39.83` (65.5M tokens) against the faithful `28.65`
+  (1.19B tokens).** That is 18× more data, not a method difference — it's why `39.83`
+  looks "worse" than `28.65` even though IMU-1 is the more efficient recipe at equal data.
+- The real matched-compute verdict — **IMU-1 @ 2 TPP vs faithful 28.65** — is fillable
+  only once this run reaches its WSD decay tail. Until then: **PENDING.**
 
 ---
 

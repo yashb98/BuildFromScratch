@@ -48,8 +48,11 @@ not correctness*.
 **Phase A LR sweep** (131M tokens, matched compute) → picked the LR:
 `lr17` (1.7e-3) = 46.89 · **`lr24` (2.4e-3) = 46.31 ← best** · `lr30` (3.0e-3) = 49.28.
 
-**Build-2 IMU-1 smoke** (⚠️ preliminary + confounded): 39.83 PPL @ 65.5M tokens —
-a directional hint, *not* a proven result. The controlled test is Phase B.
+**Build-2 IMU-1 smoke** (⚠️ preliminary + confounded): 39.83 PPL @ **65.5M tokens** —
+better than the faithful *smoke* (95.87 at the same 65.5M), a directional hint of
+sample efficiency. **Do not compare it to the 28.65 baseline above** — that's 1.19B
+tokens (18× more data). The real same-budget verdict (IMU-1 @ 2 TPP vs faithful 28.65)
+is **PENDING**; the controlled test is Phase B.
 
 > The matched-compute **IMU-1 / partial-RoPE vs the 28.65 baseline** comparison is
 > still **PENDING** (runs 2–4 in progress).
