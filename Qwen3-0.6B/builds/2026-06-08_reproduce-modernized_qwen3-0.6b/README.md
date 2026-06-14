@@ -65,7 +65,7 @@ See [`build2_spec.md`](build2_spec.md) for the full verified method spec with ev
 |---|---|
 | `qwen3_imu1_smoke_train.log` | **1000-step smoke run** log (VERIFIED, complete). |
 | `imu1_smoke_stdout.log` | Raw stdout of the smoke run (includes `safe_cuda` cap + compile warnings). |
-| `qwen3_imu1_2tpp_train.log` | **Full 2-TPP run** log — **RUNNING / incomplete** (Phase B run 2). |
+| `qwen3_imu1_2tpp_train.log` | **Full 2-TPP run** log — ✅ DONE (Phase B run 2); final `@18000` eval = **23.52**. |
 | `qwen3_imu1_train.log` | A 3-step CPU `--dry_run` wiring check. |
 | `checkpoint_imu1_smoke_step500.pt`, `checkpoint_imu1_smoke_step1000.pt` | Smoke-run checkpoints (~1.19 GB each). |
 
@@ -159,15 +159,20 @@ Source: [`results/qwen3_imu1_smoke_train.log`](results/qwen3_imu1_smoke_train.lo
 > faithful baseline's eval at the same step count (different optimizer, schedule, and token
 > totals). It is a "does the bundle train and descend" smoke test, not a quality verdict.
 
-### Full 2-TPP run — PENDING ⏳ (RUNNING)
+### Full 2-TPP run — ✅ DONE: **val PPL 23.52**
 
-This is **Phase B, run 2 of the planned parallel builds** and is **mid-run** at the time of
-writing. Source: [`results/qwen3_imu1_2tpp_train.log`](results/qwen3_imu1_2tpp_train.log).
+Phase B run 2, completed 2026-06-14 (reached step 18,150, LR→0).
+Source: [`results/qwen3_imu1_2tpp_train.log`](results/qwen3_imu1_2tpp_train.log) (this trainer
+writes **no** `after.txt`; the final number is the `@18000` eval + the step-18,150 line).
 
-- Config: `steps=18150`, **1,191,478,400 train tokens** (≈2 TPP), 65,536 tok/step, same 224/198 split.
-- Last logged step in the file: **step 950 / 18150**, train CE **3.9375**, LR **1.10e-02**
-  (just reached the stable plateau after the 50-step warmup), ~5,216 tok/s, 66.1 GB.
-- **No final val PPL yet** — the run has not reached the WSD decay tail. Final number is `[not captured]`.
+- Config: `steps=18150`, **1,191,478,400 train tokens** (≈2 TPP), 65,536 tok/step, 224/198 split, NorMuon ~5,170 tok/s.
+- Eval descent: `@2000 44.38 → 35.62 → 32.54 → 30.41 → 29.14 → 28.43 → 27.40 → @16000 24.86 → @18000 **23.52**`.
+- **Result: 23.52 vs the faithful baseline's 28.65 at matched 2 TPP → −17.9%.** Gap to the
+  original (13.40) is **1.76×** (vs the faithful 2.14×). The first *proven* matched-compute
+  win in this repo.
+- ⚠️ **Confound:** this is the full bundle (NorMuon + value-residuals + LN-scaling +
+  head-gating + **WSD-to-zero**) vs the baseline's cosine-to-3.2e-4 — a recipe-level win,
+  **not** attributable to any single component (a NorMuon-only ablation would be needed).
 
 ### Where these numbers actually sit (read before comparing anything)
 
@@ -177,16 +182,15 @@ meaningless. Same-budget comparison only:
 | Token budget | Faithful (Build 1) | IMU-1 bundle (this build) |
 |---|---|---|
 | 65.5M (smoke) | 95.87 (`../2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_after.txt`) | **39.83** |
-| 1.19B (2 TPP) | **28.65** (faithful Phase B, done) | ⏳ **PENDING** (this run, mid-flight) |
+| **1.19B (2 TPP)** | **28.65** (faithful Phase B) | **🥇 23.52** (this build, done) |
 
-- The **only** valid comparison available today is the **smoke row**: at 65.5M tokens the
-  IMU-1 bundle (**39.83**) is far below the faithful smoke (**95.87**) — a *directional,
-  confounded* hint of sample efficiency, **not** a verdict.
-- **Do NOT compare this build's `39.83` (65.5M tokens) against the faithful `28.65`
-  (1.19B tokens).** That is 18× more data, not a method difference — it's why `39.83`
-  looks "worse" than `28.65` even though IMU-1 is the more efficient recipe at equal data.
-- The real matched-compute verdict — **IMU-1 @ 2 TPP vs faithful 28.65** — is fillable
-  only once this run reaches its WSD decay tail. Until then: **PENDING.**
+- **Matched-compute verdict (the 1.19B row): IMU-1 wins, 23.52 < 28.65 (−17.9%).** Both
+  used the same 2 TPP / 1.19B tokens and the same eval; this is the apples-to-apples result.
+- Compare **only within a row** — the smoke `39.83` (65.5M) must NOT be read against the
+  `28.65`/`23.52` numbers (1.19B = 18× more data); that's why `39.83` looks "worse" than
+  the 2-TPP numbers even though IMU-1 is the stronger recipe at equal data.
+- Caveat (again): the win is the **full bundle** (incl. WSD-to-zero), not any single
+  component — see the confound note above.
 
 ---
 

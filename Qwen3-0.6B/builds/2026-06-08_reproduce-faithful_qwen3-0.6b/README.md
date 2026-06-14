@@ -171,7 +171,7 @@ This is the headline Build-1 number. Scaling 131M → 1.19B tokens at the same r
 ## Status legend (per project's "brutal scrutiny" rule)
 
 - **VERIFIED** — bit-exact verify, throughput probe, Phase-A sweep, original-vs-repro, and the Phase-B **baseline** final (run 1 of 4) are all complete and backed by files in `results/`.
-- **PENDING** — Phase B has additional runs (a NorMuon/IMU-1 bundle and partial-RoPE runs) that are sequential on the one GB10 and live with the **modernized/exploratory builds**, not this one. Their *vs-baseline* comparison is not yet decided; do not read the in-progress `phase_b_driver.log` `[2/4]` lines as a Build-1 result.
+- **Phase B comparison (sibling builds):** the **IMU-1 bundle finished at 23.52 — it beats this baseline's 28.65 by −17.9%** at matched 2 TPP (details in the modernized build's README). The **partial-RoPE** runs (25% / 10%) are still in progress; their vs-baseline result is not yet decided. These runs live with the modernized/exploratory builds, not this one.
 - The smoke-run artifacts (`qwen3_after.txt` @65.5M tokens → PPL 95.87; `configA`) exist only to prove the stack trains end-to-end and are **not** comparison results.
 
 ---
