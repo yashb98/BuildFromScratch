@@ -39,6 +39,12 @@ SmolLM2-134(base)/results/lm_eval/
 # Claude Code state (skills, settings, scheduled tasks, session caches)
 .claude/
 
+# Research-loop working tree — churning state (ledger.json, loop_state.json),
+# generated artifacts, concurrent-session output, manuscript packages. Kept
+# local only; already-committed hardening files (ledger.py, sentinel tests,
+# eval_stats.py, CI) stay tracked. Durable ledger backup: research/backup_ledger.sh.
+research/
+
 # Skills showcase (Claude skill .md files + demo site) — kept local only
 skills_showcase/
 
