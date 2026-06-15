@@ -23,8 +23,8 @@ three settings:
 | `partial_rotary_factor` | `rotary_dim` (rotated dims) | passed-through dims | role |
 |---|---|---|---|
 | `1.0`  | 128 | 0  | == faithful baseline (verify anchor) |
-| `0.25` | 32  | 96 | Phase B run 3 (`prope25_2tpp`) — **PENDING** |
-| `0.10` | 12  | 116 | Phase B run 4 (`prope10_2tpp`) — **PENDING** |
+| `0.25` | 32  | 96 | Phase B run 3 (`prope25_2tpp`) — 🔄 **IN PROGRESS** (~48%, prelim ~3% behind baseline) |
+| `0.10` | 12  | 116 | Phase B run 4 (`prope10_2tpp`) — ⏳ **queued** |
 
 `rotary_dim = int(head_dim × factor)`, then rounded **down to even** (rotate_half
 chunks in two), with `assert 2 ≤ rotary_dim ≤ head_dim`
@@ -82,7 +82,7 @@ compute.
 | `model_partialrope.py` | The faithful Qwen3ForCausalLM with one added config field, `partial_rotary_factor` (in `Qwen3Config`), and a sliced `_apply_rope` + `rotary_dim`-sized RoPE cache. Submodule/param names mirror HF `transformers.models.qwen3` so the official safetensors load with no key remap. |
 | `verify_partialrope.py` | The verify gate. Proves `factor=1.0` is bit-identical to `../../model.py` (the faithful reference) and that `0.25`/`0.10` give the right `rotary_dim`, stay finite, and actually change the output. CPU / fp32 — does not touch the GPU sweep. |
 | `train_partialrope.py` | The trainer. Same AdamW + cosine recipe as the faithful baseline (peak LR `2.4e-3`, the Phase-A winner); the only difference vs baseline is `--partial_rotary_factor`. Reuses the faithful trainer's data/eval/scheduler helpers. |
-| `results/` | Created on first training run (`train_partialrope.py:24`). **Does not exist yet** — the partial-RoPE Phase B runs have not started. |
+| `results/` | Created on first training run. **Exists** — holds `qwen3_prope25_2tpp_train.log` (run 3 in progress); `prope10` artifacts appear once run 4 starts. |
 | `__pycache__/` | Compiled bytecode; ignore. |
 
 > There is **no separate `Qwen3Config` reimplementation** here — `model_partialrope.py`
@@ -163,26 +163,36 @@ The `0.25`/`0.10` deltas are measured with **identical weights** to the baseline
 so the only thing that changed is the RoPE buffer — this isolates the partial-RoPE
 effect from any weight difference.
 
-### Training (Phase B partial-RoPE runs) — PENDING ⏳
+### Training (Phase B partial-RoPE runs)
 
-Both partial-RoPE training runs are **queued, not started**:
+Phase B (`../phase_b_driver.sh`) runs four matched-compute jobs **sequentially** on
+one GB10: [1] faithful baseline → [2] IMU-1 bundle → [3] partial RoPE 25% → [4]
+partial RoPE 10%. Status as of 2026-06-15:
 
-- `../phase_b_driver.sh` runs four matched-compute jobs **sequentially** on one
-  GB10, in order: [1] faithful baseline → [2] IMU-1 bundle → [3] partial RoPE 25%
-  → [4] partial RoPE 10%.
-- As of this writing, run **[1/4] faithful baseline is DONE** (its final
-  `val PPL = 28.65`, from the faithful build's `qwen3_baseline2tpp_after.txt`), and
-  run **[2/4] IMU-1 is currently training** (the partial-RoPE runs are blocked
-  behind it). Source: the driver log
-  `../2026-06-08_reproduce-faithful_qwen3-0.6b/results/phase_b_driver.log` shows
-  `[1/4] DONE` then `[2/4] ... ` in progress.
-- Therefore **`prope25_2tpp` and `prope10_2tpp` have NOT run.** No `results/`
-  directory, no checkpoint, no `qwen3_prope*_after.txt`, and no partial-RoPE
-  val-PPL exist yet. The faithful baseline (full RoPE, `val PPL 28.65`) is the
-  matched-compute number these two will be compared against once they finish.
+- **[1/4] faithful baseline — DONE**, `val PPL 28.65` (the full-RoPE reference).
+- **[2/4] IMU-1 bundle — DONE**, `val PPL 23.52`.
+- **[3/4] `prope25_2tpp` — 🔄 IN PROGRESS** (~step 8,800 / 18,150, ~48%).
+- **[4/4] `prope10_2tpp` — ⏳ queued.**
 
-**No partial-RoPE training/quality claim can be made yet.** Anyone reading this
-should treat the partial-RoPE-vs-baseline comparison as open.
+#### prope25 (factor 0.25) — PRELIMINARY mid-run (NOT final)
+
+Same recipe as the baseline (AdamW, cosine, LR 2.4e-3) → the **only** variable is the
+rotated-dim fraction, so this is the cleanest single-variable ablation in the project.
+Matched-step val PPL (`results/qwen3_prope25_2tpp_train.log`) vs the full-RoPE baseline:
+
+| eval step | Baseline (full RoPE) | Partial-RoPE 25% | Δ |
+|---|---|---|---|
+| @2000 | 60.10 | 62.33 | +3.7% |
+| @4000 | 45.06 | 46.42 | +3.0% |
+| @6000 | 39.44 | 40.66 | +3.1% |
+| @8000 | 35.71 | 36.86 | +3.2% |
+
+> ⚠️ **PRELIMINARY — not a result.** This run is ~halfway and has **not** reached its
+> cosine decay tail; the final number is not yet captured. So far partial-RoPE 25% tracks
+> a **steady ~3% behind** full RoPE — broadly consistent with the paper's "comparable
+> convergence" claim (rotating only 25% of dims costs a little). The verdict (final PPL
+> vs the baseline's 28.65) is still **OPEN** until the run completes, and `prope10` (10%)
+> hasn't started. No partial-RoPE quality claim is final yet.
 
 ---
 
