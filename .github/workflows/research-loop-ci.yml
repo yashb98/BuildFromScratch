@@ -1,0 +1,37 @@
+name: research-loop-ci
+
+# Regression gate for the two pieces of code that keep the GB10 box alive and
+# hold the loop's memory: sentinel.py (OOM kill-switch) and ledger.py. Both are
+# stdlib-only and Linux-portable, so this runs on a stock ubuntu runner with no
+# torch / no GPU. A red check here blocks a merge that would silently break the
+# kill-at<0.85 invariant, the PID-reuse guard, or the ledger schema/atomic-write.
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'sentinel.py'
+      - 'safe_cuda.py'
+      - 'research/**'
+      - '.github/workflows/research-loop-ci.yml'
+  pull_request:
+    paths:
+      - 'sentinel.py'
+      - 'safe_cuda.py'
+      - 'research/**'
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pytest
+        run: python -m pip install --upgrade pip pytest
+      - name: Compile-check the safety-critical scripts
+        run: python -m py_compile sentinel.py research/ledger/ledger.py
+      - name: Run research-loop infra tests
+        run: python -m pytest research/tests -q

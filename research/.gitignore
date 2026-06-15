@@ -1,0 +1,18 @@
+# research-loop: keep the durable record (ledger.json, skills, scripts,
+# artifacts) tracked; exclude only transient/runtime files.
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# runtime logs and ephemeral state markers (not durable record)
+cron_logs/
+loop_state.json.sentinel_kill
+.ledger_*.tmp
+
+# the single-generation atomic backup written before every ledger mutation;
+# git history is the real version trail, so this transient copy is not tracked
+ledger/ledger.json.bak
+
+# dated local snapshots from backup_ledger.sh — git history is the canonical
+# trail, these are just a no-commit safety net for mid-session recovery
+ledger/backups/
