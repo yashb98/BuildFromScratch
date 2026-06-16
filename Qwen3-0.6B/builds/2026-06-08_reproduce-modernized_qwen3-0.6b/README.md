@@ -170,6 +170,10 @@ writes **no** `after.txt`; the final number is the `@18000` eval + the step-18,1
 - **Result: 23.52 vs the faithful baseline's 28.65 at matched 2 TPP → −17.9%.** Gap to the
   original (13.40) is **1.76×** (vs the faithful 2.14×). The first *proven* matched-compute
   win in this repo.
+
+![IMU-1 (NorMuon bundle) — val-PPL curve, 23.52 final](results/plots/qwen3_imu1_2tpp_ppl_curve.png)
+
+![Phase B final val PPL — IMU-1 wins at matched compute](../comparison/phaseB_final_ppl.png)
 - ⚠️ **Confound:** this is the full bundle (NorMuon + value-residuals + LN-scaling +
   head-gating + **WSD-to-zero**) vs the baseline's cosine-to-3.2e-4 — a recipe-level win,
   **not** attributable to any single component (a NorMuon-only ablation would be needed).

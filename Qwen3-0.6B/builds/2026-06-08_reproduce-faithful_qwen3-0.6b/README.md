@@ -166,12 +166,16 @@ The faithful baseline re-trained at the Phase-A-winning LR (`2.4e-3`) on a **1,1
 
 This is the headline Build-1 number. Scaling 131M → 1.19B tokens at the same recipe **narrowed the gap to the original from 3.5× to 2.14×**. Mid-training eval (from `qwen3_baseline2tpp_train.log`) shows the monotone descent: PPL `60.10 (@2k) → 45.06 (@4k) → 39.44 (@6k) → 35.71 (@8k) → 33.04 (@10k) → 30.93 (@12k) → 29.59 (@14k) → 28.93 (@16k) → 28.66 (@18k) → 28.65 (final)`. Training ran ~2663 min (~44 hr) at ~7,480 tok/s; peak mem held flat at **52.4 GB** (well under the 109 GB cap). At 1.19B tokens the model reliably completes `"The capital of France is" → "Paris…"` (vs the lr24 @131M checkpoint, which did not).
 
+![Faithful baseline — training dashboard (loss, val PPL, LR, grad-norm, peak mem)](results/plots/dashboard.png)
+
+![Phase B final val PPL in context — this baseline vs IMU-1 / partial-RoPE / original](../comparison/phaseB_final_ppl.png)
+
 ---
 
 ## Status legend (per project's "brutal scrutiny" rule)
 
 - **VERIFIED** — bit-exact verify, throughput probe, Phase-A sweep, original-vs-repro, and the Phase-B **baseline** final (run 1 of 4) are all complete and backed by files in `results/`.
-- **Phase B comparison (sibling builds):** the **IMU-1 bundle finished at 23.52 — it beats this baseline's 28.65 by −17.9%** at matched 2 TPP (details in the modernized build's README). The **partial-RoPE** runs (25% / 10%) are still in progress; their vs-baseline result is not yet decided. These runs live with the modernized/exploratory builds, not this one.
+- **Phase B comparison (sibling builds):** the **IMU-1 bundle finished at 23.52 — it beats this baseline's 28.65 by −17.9%** at matched 2 TPP (details in the modernized build's README). The **partial-RoPE** runs are now decided — **0.25 finished at 29.54 (loses to this baseline by 3.1%)**, 0.10 in progress (50.71 @ ~22%). These runs live with the modernized/exploratory builds, not this one.
 - The smoke-run artifacts (`qwen3_after.txt` @65.5M tokens → PPL 95.87; `configA`) exist only to prove the stack trains end-to-end and are **not** comparison results.
 
 ---

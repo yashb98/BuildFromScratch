@@ -6,12 +6,14 @@ weights (`max |Δlogits| = 0.0`), used as the base for a **three-build experimen
 reproduce it faithfully, then apply recent (2026) research methods and measure — at
 matched compute — whether they beat the faithful baseline.
 
-> **Status: Phase B running (run 3 of 4).** Architecture VERIFIED (bit-exact);
-> Phase A LR sweep complete (`lr24 = 2.4e-3` won). Phase B = four matched-compute
-> runs @ 2 TPP (1.19B tokens each). **Runs 1–2 DONE:** faithful baseline = **28.65**,
-> **IMU-1 bundle = 23.52 — a proven 17.9% win** at matched compute (gap to the
-> original narrows 2.14× → **1.76×**). Runs 3–4 (partial-RoPE 25% / 10%) now training.
-> The *partial-RoPE* vs baseline result is still **PENDING**.
+> **Status: Phase B — runs 1–3 DONE, run 4 in progress.** Architecture VERIFIED
+> (bit-exact); Phase A LR sweep complete (`lr24 = 2.4e-3` won). Phase B = four
+> matched-compute runs @ 2 TPP (1.19B tokens each). **Results:** faithful baseline
+> = **28.65** · **IMU-1 bundle = 23.52 — a proven 17.9% win** (gap to original
+> 2.14× → **1.76×**) · **partial-RoPE 0.25 = 29.54 — LOSES to baseline by 3.1%**.
+> Run 4 (partial-RoPE 0.10) in progress (latest @ step 4000 = 50.71, tracking far
+> behind). **Verdict: IMU-1 wins; partial RoPE does not beat the baseline at this
+> scale.**
 
 > **This is an index.** Each build has its own detailed README — see
 > [the three builds](#the-three-builds) for links. The architecture itself is the
@@ -38,7 +40,12 @@ params **596,049,920**. Our `model.py` *is* Qwen3-0.6B.
 | **Original** `Qwen3-0.6B-Base` | 36T | **13.40** | 1.0× |
 | **🥇 IMU-1 bundle (Build 2)** | **1.19B** | **23.52** | **1.76×** |
 | Faithful baseline (Build 1) | 1.19B | 28.65 | 2.14× |
+| partial-RoPE 0.25 (Build 3) | 1.19B | 29.54 | 2.20× |
 | Our best (Phase A, `lr24`) | 131M | 46.31 | 3.5× |
+
+![Phase B — final val PPL: IMU-1 wins, partial-RoPE loses to the baseline](builds/comparison/phaseB_final_ppl.png)
+
+![Phase B — matched-compute val-PPL curves (same data, eval, budget)](builds/comparison/phaseB_ppl_curves.png)
 
 **Two headline results:**
 
@@ -57,12 +64,16 @@ params **596,049,920**. Our `model.py` *is* Qwen3-0.6B.
 **Phase A LR sweep** (131M tokens, matched compute) → picked the LR:
 `lr17` (1.7e-3) = 46.89 · **`lr24` (2.4e-3) = 46.31 ← best** · `lr30` (3.0e-3) = 49.28.
 
+![Phase A — LR sweep (lr24 wins)](builds/comparison/phaseA_lr_sweep.png)
+
 The earlier **Build-2 IMU-1 smoke** (39.83 @ 65.5M tokens vs faithful smoke 95.87) was a
 directional hint — now confirmed by the full 2-TPP run above (**23.52 vs 28.65**).
 
-> **IMU-1 vs baseline: DECIDED — IMU-1 wins (23.52 < 28.65).** The remaining
-> **partial-RoPE (25% / 10%) vs baseline** comparison is still **PENDING** (runs 3–4 in
-> progress); those test whether reducing rotated RoPE dims matches the full-RoPE baseline.
+> **IMU-1 vs baseline: DECIDED — IMU-1 wins (23.52 < 28.65).**
+> **partial-RoPE vs baseline: DECIDED — partial RoPE LOSES.** 0.25 finished at
+> **29.54 (3.1% worse than the 28.65 baseline)**; 0.10 is tracking far worse
+> (50.71 @ step 4000, run in progress). Reducing the rotated RoPE fraction does
+> **not** match the full-RoPE baseline at this scale — a clean, if negative, result.
 
 ---
 
@@ -75,7 +86,7 @@ and results. Click through for the detail.
 |---|---|---|---|---|
 | **1 · Faithful** | [`builds/…reproduce-faithful…`](builds/2026-06-08_reproduce-faithful_qwen3-0.6b/README.md) | nothing — exact arch, AdamW + cosine (the baseline + shared harness) | [Qwen3 TR][qwen3paper] | ✅ baseline = **28.65** |
 | **2 · Modernized** | [`builds/…reproduce-modernized…`](builds/2026-06-08_reproduce-modernized_qwen3-0.6b/README.md) | full **IMU-1 bundle**: NorMuon + value residuals + LayerNorm-scaling + per-head gating + cautious-WD + WSD + z-loss | [IMU-1](https://arxiv.org/abs/2602.02522), [NorMuon](https://arxiv.org/abs/2510.05491) | ✅ **23.52 — beats baseline −18%** |
-| **3 · Exploratory** | [`builds/…reproduce-exploratory…`](builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/README.md) | **partial RoPE** — rotate 25% / 10% of head dims, pass the rest through | [arXiv:2603.11611](https://arxiv.org/abs/2603.11611) | 🔄 run 3 (~48%, *prelim* ~3% behind) |
+| **3 · Exploratory** | [`builds/…reproduce-exploratory…`](builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/README.md) | **partial RoPE** — rotate 25% / 10% of head dims, pass the rest through | [arXiv:2603.11611](https://arxiv.org/abs/2603.11611) | ✅ 0.25 = **29.54** (loses to baseline); 0.10 in progress (50.71 @ ~22%) |
 | — · Survey | [`builds/…target-survey…`](builds/2026-06-08_target-survey/README.md) | why Qwen3-0.6B was chosen (model-selection phase, not a build) | — | ✅ done |
 
 Each build's verify gate proves the *unchanged* components stay bit-identical to the
@@ -141,8 +152,9 @@ the machine); the scripts import [`safe_cuda`](../safe_cuda.py) to cap the proce
   data, with a clean scaling curve.
 - ✅ **Phase A LR (2.4e-3)** — an original verified finding (Qwen3 never published the
   0.6B LR).
-- 🔶 **Phase B** — baseline (28.65) and IMU-1 (**23.52, a proven −18% win**) done;
-  partial-RoPE *vs* baseline still **pending** (runs 3–4).
+- 🔶 **Phase B** — baseline (28.65), IMU-1 (**23.52, a proven −18% win**), and
+  partial-RoPE 0.25 (**29.54 — loses to baseline**) done; 0.10 in progress (50.71
+  @ ~22%). The partial-RoPE *vs* baseline comparison is now **decided (it loses)**.
 - ⚠️ **2 TPP is ~80× below** the methods' validated regime → Phase B results will be
   **directional, not headline**; the IMU-1 bundle intentionally **confounds** ~6 changes.
 - ⚠️ **Honest gaps** — muP omitted; NorMuon NS5 coeffs are the standard Muon values

@@ -113,3 +113,4 @@
 [21:40:28] step   5300/18150  loss 3.7546  lr 2.08e-03  |grad| 0.19  mem 54.3GB  tok/s 7,104  ETA 32.9h
 [21:48:09] step   5350/18150  loss 3.7168  lr 2.08e-03  |grad| 0.22  mem 54.3GB  tok/s 7,104  ETA 32.8h
 [21:56:23] step   5400/18150  loss 3.6776  lr 2.07e-03  |grad| 0.24  mem 54.3GB  tok/s 7,100  ETA 32.7h
+[22:04:32] step   5450/18150  loss 3.6663  lr 2.06e-03  |grad| 0.21  mem 54.3GB  tok/s 7,096  ETA 32.6h
