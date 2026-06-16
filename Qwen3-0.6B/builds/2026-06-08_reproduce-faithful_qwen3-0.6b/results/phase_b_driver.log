@@ -99,3 +99,1201 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
 [07:27:00] step  4000/18150  loss 3.3170  lr 2.24e-03  |grad| 0.18  mem 52.4GB  tok/s  7,468  tok 262.1M  ETA 2069.5min
 [07:27:16]   [eval @ 4000] val PPL=45.06 (Δ vs base -185765.43)
 [07:27:20]   [ckpt @ 4000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[07:35:24] step  4050/18150  loss 3.5692  lr 2.23e-03  |grad| 0.20  mem 52.4GB  tok/s  7,455  tok 265.4M  ETA 2065.9min
+[07:43:37] step  4100/18150  loss 3.5078  lr 2.23e-03  |grad| 0.24  mem 52.4GB  tok/s  7,444  tok 268.7M  ETA 2061.7min
+[07:51:49] step  4150/18150  loss 3.7093  lr 2.22e-03  |grad| 0.28  mem 52.4GB  tok/s  7,433  tok 272.0M  ETA 2057.3min
+[07:59:46] step  4200/18150  loss 3.5835  lr 2.22e-03  |grad| 0.21  mem 52.4GB  tok/s  7,426  tok 275.3M  ETA 2051.9min
+[08:07:47] step  4250/18150  loss 3.3195  lr 2.21e-03  |grad| 0.18  mem 52.4GB  tok/s  7,418  tok 278.5M  ETA 2046.7min
+[08:15:11] step  4300/18150  loss 3.8414  lr 2.21e-03  |grad| 0.22  mem 52.4GB  tok/s  7,418  tok 281.8M  ETA 2039.5min
+[08:22:30] step  4350/18150  loss 3.5712  lr 2.20e-03  |grad| 0.22  mem 52.4GB  tok/s  7,418  tok 285.1M  ETA 2032.0min
+[08:30:03] step  4400/18150  loss 3.7194  lr 2.20e-03  |grad| 0.21  mem 52.4GB  tok/s  7,416  tok 288.4M  ETA 2025.2min
+[08:37:34] step  4450/18150  loss 3.6164  lr 2.19e-03  |grad| 0.19  mem 52.4GB  tok/s  7,414  tok 291.6M  ETA 2018.3min
+[08:44:52] step  4500/18150  loss 3.5641  lr 2.18e-03  |grad| 0.18  mem 52.4GB  tok/s  7,415  tok 294.9M  ETA 2010.8min
+[08:52:11] step  4550/18150  loss 3.4331  lr 2.18e-03  |grad| 0.25  mem 52.4GB  tok/s  7,415  tok 298.2M  ETA 2003.2min
+[08:59:29] step  4600/18150  loss 3.7513  lr 2.17e-03  |grad| 0.18  mem 52.4GB  tok/s  7,416  tok 301.5M  ETA 1995.7min
+[09:06:47] step  4650/18150  loss 3.4884  lr 2.17e-03  |grad| 0.19  mem 52.4GB  tok/s  7,417  tok 304.7M  ETA 1988.1min
+[09:14:06] step  4700/18150  loss 3.5673  lr 2.16e-03  |grad| 0.19  mem 52.4GB  tok/s  7,417  tok 308.0M  ETA 1980.6min
+[09:21:24] step  4750/18150  loss 3.7227  lr 2.15e-03  |grad| 0.21  mem 52.4GB  tok/s  7,418  tok 311.3M  ETA 1973.1min
+[09:28:42] step  4800/18150  loss 3.4051  lr 2.15e-03  |grad| 0.23  mem 52.4GB  tok/s  7,419  tok 314.6M  ETA 1965.6min
+[09:36:01] step  4850/18150  loss 3.6055  lr 2.14e-03  |grad| 0.20  mem 52.4GB  tok/s  7,419  tok 317.8M  ETA 1958.0min
+[09:43:19] step  4900/18150  loss 3.2516  lr 2.14e-03  |grad| 0.23  mem 52.4GB  tok/s  7,420  tok 321.1M  ETA 1950.5min
+[09:50:37] step  4950/18150  loss 3.3616  lr 2.13e-03  |grad| 0.20  mem 52.4GB  tok/s  7,420  tok 324.4M  ETA 1943.0min
+[09:57:56] step  5000/18150  loss 3.5640  lr 2.12e-03  |grad| 0.20  mem 52.4GB  tok/s  7,421  tok 327.7M  ETA 1935.5min
+[10:05:14] step  5050/18150  loss 3.5379  lr 2.12e-03  |grad| 0.21  mem 52.4GB  tok/s  7,421  tok 331.0M  ETA 1928.0min
+[10:12:32] step  5100/18150  loss 3.5456  lr 2.11e-03  |grad| 0.18  mem 52.4GB  tok/s  7,422  tok 334.2M  ETA 1920.5min
+[10:19:51] step  5150/18150  loss 3.7131  lr 2.10e-03  |grad| 0.22  mem 52.4GB  tok/s  7,422  tok 337.5M  ETA 1913.1min
+[10:27:09] step  5200/18150  loss 3.4740  lr 2.10e-03  |grad| 0.17  mem 52.4GB  tok/s  7,423  tok 340.8M  ETA 1905.6min
+[10:34:27] step  5250/18150  loss 3.1748  lr 2.09e-03  |grad| 0.18  mem 52.4GB  tok/s  7,423  tok 344.1M  ETA 1898.1min
+[10:41:46] step  5300/18150  loss 3.6428  lr 2.08e-03  |grad| 0.20  mem 52.4GB  tok/s  7,424  tok 347.3M  ETA 1890.6min
+[10:49:04] step  5350/18150  loss 3.6086  lr 2.08e-03  |grad| 0.19  mem 52.4GB  tok/s  7,424  tok 350.6M  ETA 1883.1min
+[10:56:22] step  5400/18150  loss 3.5644  lr 2.07e-03  |grad| 0.23  mem 52.4GB  tok/s  7,425  tok 353.9M  ETA 1875.6min
+[11:03:40] step  5450/18150  loss 3.5456  lr 2.06e-03  |grad| 0.22  mem 52.4GB  tok/s  7,426  tok 357.2M  ETA 1868.1min
+[11:10:58] step  5500/18150  loss 3.2777  lr 2.06e-03  |grad| 0.22  mem 52.4GB  tok/s  7,426  tok 360.4M  ETA 1860.7min
+[11:18:16] step  5550/18150  loss 3.6107  lr 2.05e-03  |grad| 0.19  mem 52.4GB  tok/s  7,426  tok 363.7M  ETA 1853.2min
+[11:25:34] step  5600/18150  loss 3.4497  lr 2.04e-03  |grad| 0.19  mem 52.4GB  tok/s  7,427  tok 367.0M  ETA 1845.7min
+[11:32:52] step  5650/18150  loss 3.6057  lr 2.03e-03  |grad| 0.17  mem 52.4GB  tok/s  7,427  tok 370.3M  ETA 1838.2min
+[11:40:10] step  5700/18150  loss 3.5196  lr 2.03e-03  |grad| 0.24  mem 52.4GB  tok/s  7,428  tok 373.6M  ETA 1830.8min
+[11:47:28] step  5750/18150  loss 3.2683  lr 2.02e-03  |grad| 0.17  mem 52.4GB  tok/s  7,428  tok 376.8M  ETA 1823.3min
+[11:54:46] step  5800/18150  loss 3.5625  lr 2.01e-03  |grad| 0.20  mem 52.4GB  tok/s  7,429  tok 380.1M  ETA 1815.8min
+[12:02:04] step  5850/18150  loss 3.3122  lr 2.01e-03  |grad| 0.19  mem 52.4GB  tok/s  7,429  tok 383.4M  ETA 1808.4min
+[12:09:22] step  5900/18150  loss 3.4473  lr 2.00e-03  |grad| 0.18  mem 52.4GB  tok/s  7,430  tok 386.7M  ETA 1800.9min
+[12:16:40] step  5950/18150  loss 3.2928  lr 1.99e-03  |grad| 0.18  mem 52.4GB  tok/s  7,430  tok 389.9M  ETA 1793.5min
+[12:24:00] step  6000/18150  loss 3.5903  lr 1.98e-03  |grad| 0.21  mem 52.4GB  tok/s  7,430  tok 393.2M  ETA 1786.1min
+[12:24:14]   [eval @ 6000] val PPL=39.44 (Δ vs base -185771.05)
+[12:24:18]   [ckpt @ 6000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[12:31:36] step  6050/18150  loss 3.6021  lr 1.98e-03  |grad| 0.23  mem 52.4GB  tok/s  7,428  tok 396.5M  ETA 1779.2min
+[12:38:55] step  6100/18150  loss 3.6160  lr 1.97e-03  |grad| 0.19  mem 52.4GB  tok/s  7,429  tok 399.8M  ETA 1771.8min
+[12:46:13] step  6150/18150  loss 3.5259  lr 1.96e-03  |grad| 0.20  mem 52.4GB  tok/s  7,429  tok 403.0M  ETA 1764.3min
+[12:53:31] step  6200/18150  loss 3.1168  lr 1.95e-03  |grad| 0.17  mem 52.4GB  tok/s  7,429  tok 406.3M  ETA 1756.9min
+[13:00:49] step  6250/18150  loss 3.4902  lr 1.94e-03  |grad| 0.21  mem 52.4GB  tok/s  7,430  tok 409.6M  ETA 1749.5min
+[13:08:08] step  6300/18150  loss 3.5334  lr 1.94e-03  |grad| 0.18  mem 52.4GB  tok/s  7,430  tok 412.9M  ETA 1742.0min
+[13:15:26] step  6350/18150  loss 3.1564  lr 1.93e-03  |grad| 0.17  mem 52.4GB  tok/s  7,430  tok 416.2M  ETA 1734.6min
+[13:22:45] step  6400/18150  loss 3.3100  lr 1.92e-03  |grad| 0.19  mem 52.4GB  tok/s  7,431  tok 419.4M  ETA 1727.2min
+[13:30:03] step  6450/18150  loss 3.3108  lr 1.91e-03  |grad| 0.18  mem 52.4GB  tok/s  7,431  tok 422.7M  ETA 1719.7min
+[13:37:22] step  6500/18150  loss 3.4365  lr 1.90e-03  |grad| 0.20  mem 52.4GB  tok/s  7,431  tok 426.0M  ETA 1712.3min
+[13:44:40] step  6550/18150  loss 3.3831  lr 1.90e-03  |grad| 0.18  mem 52.4GB  tok/s  7,432  tok 429.3M  ETA 1704.9min
+[13:51:59] step  6600/18150  loss 3.6702  lr 1.89e-03  |grad| 0.22  mem 52.4GB  tok/s  7,432  tok 432.5M  ETA 1697.5min
+[13:59:18] step  6650/18150  loss 3.3232  lr 1.88e-03  |grad| 0.23  mem 52.4GB  tok/s  7,432  tok 435.8M  ETA 1690.1min
+[14:06:37] step  6700/18150  loss 3.3197  lr 1.87e-03  |grad| 0.18  mem 52.4GB  tok/s  7,432  tok 439.1M  ETA 1682.7min
+[14:13:55] step  6750/18150  loss 3.1641  lr 1.86e-03  |grad| 0.19  mem 52.4GB  tok/s  7,433  tok 442.4M  ETA 1675.3min
+[14:21:16] step  6800/18150  loss 3.2233  lr 1.86e-03  |grad| 0.18  mem 52.4GB  tok/s  7,433  tok 445.6M  ETA 1667.9min
+[14:28:35] step  6850/18150  loss 3.4097  lr 1.85e-03  |grad| 0.17  mem 52.4GB  tok/s  7,433  tok 448.9M  ETA 1660.5min
+[14:35:54] step  6900/18150  loss 3.2685  lr 1.84e-03  |grad| 0.17  mem 52.4GB  tok/s  7,433  tok 452.2M  ETA 1653.1min
+[14:43:13] step  6950/18150  loss 3.4304  lr 1.83e-03  |grad| 0.18  mem 52.4GB  tok/s  7,433  tok 455.5M  ETA 1645.7min
+[14:50:32] step  7000/18150  loss 3.4548  lr 1.82e-03  |grad| 0.21  mem 52.4GB  tok/s  7,434  tok 458.8M  ETA 1638.3min
+[14:57:52] step  7050/18150  loss 3.3183  lr 1.81e-03  |grad| 0.19  mem 52.4GB  tok/s  7,434  tok 462.0M  ETA 1631.0min
+[15:05:10] step  7100/18150  loss 3.4780  lr 1.80e-03  |grad| 0.18  mem 52.4GB  tok/s  7,434  tok 465.3M  ETA 1623.6min
+[15:12:29] step  7150/18150  loss 3.4139  lr 1.80e-03  |grad| 0.18  mem 52.4GB  tok/s  7,434  tok 468.6M  ETA 1616.2min
+[15:19:48] step  7200/18150  loss 3.4655  lr 1.79e-03  |grad| 0.20  mem 52.4GB  tok/s  7,434  tok 471.9M  ETA 1608.8min
+[15:27:06] step  7250/18150  loss 3.4927  lr 1.78e-03  |grad| 0.17  mem 52.4GB  tok/s  7,435  tok 475.1M  ETA 1601.4min
+[15:34:25] step  7300/18150  loss 3.4498  lr 1.77e-03  |grad| 0.19  mem 52.4GB  tok/s  7,435  tok 478.4M  ETA 1594.0min
+[15:41:44] step  7350/18150  loss 3.2973  lr 1.76e-03  |grad| 0.17  mem 52.4GB  tok/s  7,435  tok 481.7M  ETA 1586.6min
+[15:49:02] step  7400/18150  loss 3.3574  lr 1.75e-03  |grad| 0.22  mem 52.4GB  tok/s  7,435  tok 485.0M  ETA 1579.2min
+[15:56:21] step  7450/18150  loss 3.2950  lr 1.74e-03  |grad| 0.18  mem 52.4GB  tok/s  7,436  tok 488.2M  ETA 1571.8min
+[16:03:40] step  7500/18150  loss 3.4913  lr 1.73e-03  |grad| 0.17  mem 52.4GB  tok/s  7,436  tok 491.5M  ETA 1564.4min
+[16:10:58] step  7550/18150  loss 3.4456  lr 1.73e-03  |grad| 0.17  mem 52.4GB  tok/s  7,436  tok 494.8M  ETA 1557.0min
+[16:18:18] step  7600/18150  loss 3.2934  lr 1.72e-03  |grad| 0.17  mem 52.4GB  tok/s  7,436  tok 498.1M  ETA 1549.6min
+[16:25:36] step  7650/18150  loss 3.2042  lr 1.71e-03  |grad| 0.16  mem 52.4GB  tok/s  7,437  tok 501.4M  ETA 1542.2min
+[16:32:54] step  7700/18150  loss 3.6061  lr 1.70e-03  |grad| 0.20  mem 52.4GB  tok/s  7,437  tok 504.6M  ETA 1534.8min
+[16:40:13] step  7750/18150  loss 3.3942  lr 1.69e-03  |grad| 0.18  mem 52.4GB  tok/s  7,437  tok 507.9M  ETA 1527.4min
+[16:47:31] step  7800/18150  loss 3.6230  lr 1.68e-03  |grad| 0.17  mem 52.4GB  tok/s  7,437  tok 511.2M  ETA 1520.0min
+[16:54:50] step  7850/18150  loss 3.4000  lr 1.67e-03  |grad| 0.20  mem 52.4GB  tok/s  7,438  tok 514.5M  ETA 1512.6min
+[17:02:08] step  7900/18150  loss 3.3449  lr 1.66e-03  |grad| 0.17  mem 52.4GB  tok/s  7,438  tok 517.7M  ETA 1505.3min
+[17:09:26] step  7950/18150  loss 3.4221  lr 1.65e-03  |grad| 0.20  mem 52.4GB  tok/s  7,438  tok 521.0M  ETA 1497.9min
+[17:16:44] step  8000/18150  loss 3.5940  lr 1.65e-03  |grad| 0.20  mem 52.4GB  tok/s  7,438  tok 524.3M  ETA 1490.5min
+[17:16:59]   [eval @ 8000] val PPL=35.71 (Δ vs base -185774.78)
+[17:17:02]   [ckpt @ 8000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[17:24:21] step  8050/18150  loss 3.4667  lr 1.64e-03  |grad| 0.18  mem 52.4GB  tok/s  7,437  tok 527.6M  ETA 1483.5min
+[17:31:39] step  8100/18150  loss 2.9293  lr 1.63e-03  |grad| 0.18  mem 52.4GB  tok/s  7,437  tok 530.8M  ETA 1476.1min
+[17:38:57] step  8150/18150  loss 3.0944  lr 1.62e-03  |grad| 0.18  mem 52.4GB  tok/s  7,437  tok 534.1M  ETA 1468.7min
+[17:46:15] step  8200/18150  loss 3.4424  lr 1.61e-03  |grad| 0.19  mem 52.4GB  tok/s  7,437  tok 537.4M  ETA 1461.3min
+[17:53:33] step  8250/18150  loss 3.2576  lr 1.60e-03  |grad| 0.18  mem 52.4GB  tok/s  7,438  tok 540.7M  ETA 1453.9min
+[18:00:51] step  8300/18150  loss 3.0936  lr 1.59e-03  |grad| 0.17  mem 52.4GB  tok/s  7,438  tok 543.9M  ETA 1446.5min
+[18:08:10] step  8350/18150  loss 3.2765  lr 1.58e-03  |grad| 0.19  mem 52.4GB  tok/s  7,438  tok 547.2M  ETA 1439.1min
+[18:15:28] step  8400/18150  loss 3.5705  lr 1.57e-03  |grad| 0.20  mem 52.4GB  tok/s  7,438  tok 550.5M  ETA 1431.7min
+[18:22:47] step  8450/18150  loss 3.2575  lr 1.56e-03  |grad| 0.16  mem 52.4GB  tok/s  7,438  tok 553.8M  ETA 1424.4min
+[18:30:06] step  8500/18150  loss 3.5919  lr 1.55e-03  |grad| 0.20  mem 52.4GB  tok/s  7,439  tok 557.1M  ETA 1417.0min
+[18:37:24] step  8550/18150  loss 3.3237  lr 1.54e-03  |grad| 0.16  mem 52.4GB  tok/s  7,439  tok 560.3M  ETA 1409.6min
+[18:44:42] step  8600/18150  loss 3.4513  lr 1.53e-03  |grad| 0.22  mem 52.4GB  tok/s  7,439  tok 563.6M  ETA 1402.2min
+[18:52:01] step  8650/18150  loss 3.4007  lr 1.53e-03  |grad| 0.19  mem 52.4GB  tok/s  7,439  tok 566.9M  ETA 1394.8min
+[18:59:19] step  8700/18150  loss 3.1941  lr 1.52e-03  |grad| 0.15  mem 52.4GB  tok/s  7,440  tok 570.2M  ETA 1387.4min
+[19:06:36] step  8750/18150  loss 3.5481  lr 1.51e-03  |grad| 0.16  mem 52.4GB  tok/s  7,440  tok 573.4M  ETA 1380.1min
+[19:13:55] step  8800/18150  loss 3.3365  lr 1.50e-03  |grad| 0.16  mem 52.4GB  tok/s  7,440  tok 576.7M  ETA 1372.7min
+[19:21:13] step  8850/18150  loss 3.3603  lr 1.49e-03  |grad| 0.17  mem 52.4GB  tok/s  7,440  tok 580.0M  ETA 1365.3min
+[19:28:31] step  8900/18150  loss 3.3539  lr 1.48e-03  |grad| 0.17  mem 52.4GB  tok/s  7,440  tok 583.3M  ETA 1357.9min
+[19:35:49] step  8950/18150  loss 3.2166  lr 1.47e-03  |grad| 0.20  mem 52.4GB  tok/s  7,441  tok 586.5M  ETA 1350.5min
+[19:43:07] step  9000/18150  loss 3.3747  lr 1.46e-03  |grad| 0.17  mem 52.4GB  tok/s  7,441  tok 589.8M  ETA 1343.1min
+[19:50:25] step  9050/18150  loss 3.4503  lr 1.45e-03  |grad| 0.16  mem 52.4GB  tok/s  7,441  tok 593.1M  ETA 1335.8min
+[19:57:43] step  9100/18150  loss 3.4940  lr 1.44e-03  |grad| 0.17  mem 52.4GB  tok/s  7,441  tok 596.4M  ETA 1328.4min
+[20:05:01] step  9150/18150  loss 3.5005  lr 1.43e-03  |grad| 0.16  mem 52.4GB  tok/s  7,442  tok 599.7M  ETA 1321.0min
+[20:12:19] step  9200/18150  loss 3.3943  lr 1.42e-03  |grad| 0.18  mem 52.4GB  tok/s  7,442  tok 602.9M  ETA 1313.6min
+[20:19:38] step  9250/18150  loss 3.2954  lr 1.41e-03  |grad| 0.16  mem 52.4GB  tok/s  7,442  tok 606.2M  ETA 1306.3min
+[20:26:56] step  9300/18150  loss 3.2621  lr 1.40e-03  |grad| 0.17  mem 52.4GB  tok/s  7,442  tok 609.5M  ETA 1298.9min
+[20:34:14] step  9350/18150  loss 3.5813  lr 1.39e-03  |grad| 0.17  mem 52.4GB  tok/s  7,442  tok 612.8M  ETA 1291.5min
+[20:41:32] step  9400/18150  loss 3.1677  lr 1.38e-03  |grad| 0.21  mem 52.4GB  tok/s  7,442  tok 616.0M  ETA 1284.2min
+[20:48:50] step  9450/18150  loss 3.1398  lr 1.37e-03  |grad| 0.16  mem 52.4GB  tok/s  7,443  tok 619.3M  ETA 1276.8min
+[20:56:09] step  9500/18150  loss 3.2877  lr 1.36e-03  |grad| 0.17  mem 52.4GB  tok/s  7,443  tok 622.6M  ETA 1269.4min
+[21:03:27] step  9550/18150  loss 2.9493  lr 1.36e-03  |grad| 0.16  mem 52.4GB  tok/s  7,443  tok 625.9M  ETA 1262.0min
+[21:10:45] step  9600/18150  loss 3.3249  lr 1.35e-03  |grad| 0.19  mem 52.4GB  tok/s  7,443  tok 629.1M  ETA 1254.7min
+[21:18:03] step  9650/18150  loss 3.1623  lr 1.34e-03  |grad| 0.17  mem 52.4GB  tok/s  7,443  tok 632.4M  ETA 1247.3min
+[21:25:21] step  9700/18150  loss 4.0070  lr 1.33e-03  |grad| 0.20  mem 52.4GB  tok/s  7,444  tok 635.7M  ETA 1239.9min
+[21:32:39] step  9750/18150  loss 3.3184  lr 1.32e-03  |grad| 0.17  mem 52.4GB  tok/s  7,444  tok 639.0M  ETA 1232.6min
+[21:40:10] step  9800/18150  loss 3.4806  lr 1.31e-03  |grad| 0.17  mem 52.4GB  tok/s  7,443  tok 642.3M  ETA 1225.4min
+[21:48:02] step  9850/18150  loss 3.1821  lr 1.30e-03  |grad| 0.18  mem 52.4GB  tok/s  7,440  tok 645.5M  ETA 1218.5min
+[21:55:35] step  9900/18150  loss 3.2476  lr 1.29e-03  |grad| 0.15  mem 52.4GB  tok/s  7,439  tok 648.8M  ETA 1211.3min
+[22:02:56] step  9950/18150  loss 3.0573  lr 1.28e-03  |grad| 0.17  mem 52.4GB  tok/s  7,439  tok 652.1M  ETA 1204.0min
+[22:10:41] step 10000/18150  loss 3.2191  lr 1.27e-03  |grad| 0.17  mem 52.4GB  tok/s  7,437  tok 655.4M  ETA 1197.0min
+[22:10:56]   [eval @ 10000] val PPL=33.04 (Δ vs base -185777.44)
+[22:10:59]   [ckpt @ 10000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[22:18:18] step 10050/18150  loss 3.0751  lr 1.26e-03  |grad| 0.19  mem 52.4GB  tok/s  7,436  tok 658.6M  ETA 1189.9min
+[22:25:35] step 10100/18150  loss 3.2899  lr 1.25e-03  |grad| 0.16  mem 52.4GB  tok/s  7,436  tok 661.9M  ETA 1182.5min
+[22:32:53] step 10150/18150  loss 3.0928  lr 1.24e-03  |grad| 0.17  mem 52.4GB  tok/s  7,436  tok 665.2M  ETA 1175.1min
+[22:40:11] step 10200/18150  loss 3.3894  lr 1.23e-03  |grad| 0.15  mem 52.4GB  tok/s  7,436  tok 668.5M  ETA 1167.7min
+[22:47:28] step 10250/18150  loss 3.2017  lr 1.22e-03  |grad| 0.17  mem 52.4GB  tok/s  7,437  tok 671.7M  ETA 1160.3min
+[22:54:46] step 10300/18150  loss 3.3270  lr 1.21e-03  |grad| 0.17  mem 52.4GB  tok/s  7,437  tok 675.0M  ETA 1152.9min
+[23:02:04] step 10350/18150  loss 3.3238  lr 1.20e-03  |grad| 0.15  mem 52.4GB  tok/s  7,437  tok 678.3M  ETA 1145.6min
+[23:09:21] step 10400/18150  loss 3.3138  lr 1.19e-03  |grad| 0.16  mem 52.4GB  tok/s  7,437  tok 681.6M  ETA 1138.2min
+[23:16:39] step 10450/18150  loss 3.3334  lr 1.19e-03  |grad| 0.17  mem 52.4GB  tok/s  7,438  tok 684.9M  ETA 1130.8min
+[23:23:56] step 10500/18150  loss 3.3593  lr 1.18e-03  |grad| 0.16  mem 52.4GB  tok/s  7,438  tok 688.1M  ETA 1123.4min
+[23:31:14] step 10550/18150  loss 3.1010  lr 1.17e-03  |grad| 0.17  mem 52.4GB  tok/s  7,438  tok 691.4M  ETA 1116.0min
+[23:38:31] step 10600/18150  loss 3.0709  lr 1.16e-03  |grad| 0.15  mem 52.4GB  tok/s  7,438  tok 694.7M  ETA 1108.7min
+[23:45:49] step 10650/18150  loss 3.2886  lr 1.15e-03  |grad| 0.16  mem 52.4GB  tok/s  7,439  tok 698.0M  ETA 1101.3min
+[23:53:06] step 10700/18150  loss 3.0276  lr 1.14e-03  |grad| 0.17  mem 52.4GB  tok/s  7,439  tok 701.2M  ETA 1093.9min
+[00:00:24] step 10750/18150  loss 3.2071  lr 1.13e-03  |grad| 0.16  mem 52.4GB  tok/s  7,439  tok 704.5M  ETA 1086.5min
+[00:07:41] step 10800/18150  loss 2.9368  lr 1.12e-03  |grad| 0.15  mem 52.4GB  tok/s  7,439  tok 707.8M  ETA 1079.2min
+[00:14:59] step 10850/18150  loss 3.3609  lr 1.11e-03  |grad| 0.16  mem 52.4GB  tok/s  7,439  tok 711.1M  ETA 1071.8min
+[00:22:18] step 10900/18150  loss 3.3405  lr 1.10e-03  |grad| 0.18  mem 52.4GB  tok/s  7,440  tok 714.3M  ETA 1064.4min
+[00:29:36] step 10950/18150  loss 3.2973  lr 1.09e-03  |grad| 0.19  mem 52.4GB  tok/s  7,440  tok 717.6M  ETA 1057.1min
+[00:36:53] step 11000/18150  loss 3.3616  lr 1.08e-03  |grad| 0.15  mem 52.4GB  tok/s  7,440  tok 720.9M  ETA 1049.7min
+[00:44:10] step 11050/18150  loss 3.3227  lr 1.07e-03  |grad| 0.16  mem 52.4GB  tok/s  7,440  tok 724.2M  ETA 1042.3min
+[00:51:28] step 11100/18150  loss 3.2646  lr 1.07e-03  |grad| 0.18  mem 52.4GB  tok/s  7,441  tok 727.4M  ETA 1034.9min
+[00:58:45] step 11150/18150  loss 3.2956  lr 1.06e-03  |grad| 0.14  mem 52.4GB  tok/s  7,441  tok 730.7M  ETA 1027.6min
+[01:06:03] step 11200/18150  loss 3.3030  lr 1.05e-03  |grad| 0.16  mem 52.4GB  tok/s  7,441  tok 734.0M  ETA 1020.2min
+[01:13:21] step 11250/18150  loss 3.1940  lr 1.04e-03  |grad| 0.16  mem 52.4GB  tok/s  7,441  tok 737.3M  ETA 1012.8min
+[01:20:38] step 11300/18150  loss 3.1880  lr 1.03e-03  |grad| 0.17  mem 52.4GB  tok/s  7,441  tok 740.6M  ETA 1005.5min
+[01:27:55] step 11350/18150  loss 3.3288  lr 1.02e-03  |grad| 0.17  mem 52.4GB  tok/s  7,442  tok 743.8M  ETA 998.1min
+[01:35:13] step 11400/18150  loss 3.3199  lr 1.01e-03  |grad| 0.16  mem 52.4GB  tok/s  7,442  tok 747.1M  ETA 990.7min
+[01:42:30] step 11450/18150  loss 3.2028  lr 1.00e-03  |grad| 0.14  mem 52.4GB  tok/s  7,442  tok 750.4M  ETA 983.4min
+[01:49:48] step 11500/18150  loss 2.9565  lr 9.94e-04  |grad| 0.16  mem 52.4GB  tok/s  7,442  tok 753.7M  ETA 976.0min
+[01:57:05] step 11550/18150  loss 3.2167  lr 9.85e-04  |grad| 0.15  mem 52.4GB  tok/s  7,442  tok 756.9M  ETA 968.6min
+[02:04:23] step 11600/18150  loss 3.0885  lr 9.76e-04  |grad| 0.15  mem 52.4GB  tok/s  7,443  tok 760.2M  ETA 961.3min
+[02:11:40] step 11650/18150  loss 3.3417  lr 9.67e-04  |grad| 0.15  mem 52.4GB  tok/s  7,443  tok 763.5M  ETA 953.9min
+[02:18:59] step 11700/18150  loss 3.2543  lr 9.59e-04  |grad| 0.14  mem 52.4GB  tok/s  7,443  tok 766.8M  ETA 946.5min
+[02:26:16] step 11750/18150  loss 3.5953  lr 9.50e-04  |grad| 0.15  mem 52.4GB  tok/s  7,443  tok 770.0M  ETA 939.2min
+[02:33:34] step 11800/18150  loss 3.2794  lr 9.41e-04  |grad| 0.19  mem 52.4GB  tok/s  7,443  tok 773.3M  ETA 931.8min
+[02:40:51] step 11850/18150  loss 3.3750  lr 9.33e-04  |grad| 0.17  mem 52.4GB  tok/s  7,444  tok 776.6M  ETA 924.5min
+[02:48:08] step 11900/18150  loss 3.2067  lr 9.24e-04  |grad| 0.15  mem 52.4GB  tok/s  7,444  tok 779.9M  ETA 917.1min
+[02:55:26] step 11950/18150  loss 3.3040  lr 9.15e-04  |grad| 0.15  mem 52.4GB  tok/s  7,444  tok 783.2M  ETA 909.7min
+[03:02:43] step 12000/18150  loss 2.8963  lr 9.07e-04  |grad| 0.15  mem 52.4GB  tok/s  7,444  tok 786.4M  ETA 902.4min
+[03:02:58]   [eval @ 12000] val PPL=30.93 (Δ vs base -185779.55)
+[03:03:01]   [ckpt @ 12000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[03:10:19] step 12050/18150  loss 3.4468  lr 8.98e-04  |grad| 0.16  mem 52.4GB  tok/s  7,443  tok 789.7M  ETA 895.2min
+[03:17:36] step 12100/18150  loss 3.2220  lr 8.90e-04  |grad| 0.14  mem 52.4GB  tok/s  7,443  tok 793.0M  ETA 887.8min
+[03:24:54] step 12150/18150  loss 3.5502  lr 8.82e-04  |grad| 0.15  mem 52.4GB  tok/s  7,443  tok 796.3M  ETA 880.5min
+[03:32:12] step 12200/18150  loss 3.1679  lr 8.73e-04  |grad| 0.15  mem 52.4GB  tok/s  7,444  tok 799.5M  ETA 873.1min
+[03:39:30] step 12250/18150  loss 3.1988  lr 8.65e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 802.8M  ETA 865.7min
+[03:46:48] step 12300/18150  loss 3.2425  lr 8.56e-04  |grad| 0.15  mem 52.4GB  tok/s  7,444  tok 806.1M  ETA 858.4min
+[03:54:06] step 12350/18150  loss 3.2139  lr 8.48e-04  |grad| 0.15  mem 52.4GB  tok/s  7,444  tok 809.4M  ETA 851.0min
+[04:01:24] step 12400/18150  loss 3.3810  lr 8.40e-04  |grad| 0.15  mem 52.4GB  tok/s  7,444  tok 812.6M  ETA 843.7min
+[04:08:42] step 12450/18150  loss 3.1481  lr 8.32e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 815.9M  ETA 836.3min
+[04:16:00] step 12500/18150  loss 3.2938  lr 8.24e-04  |grad| 0.17  mem 52.4GB  tok/s  7,445  tok 819.2M  ETA 829.0min
+[04:23:19] step 12550/18150  loss 3.2491  lr 8.16e-04  |grad| 0.15  mem 52.4GB  tok/s  7,445  tok 822.5M  ETA 821.6min
+[04:30:37] step 12600/18150  loss 3.0726  lr 8.08e-04  |grad| 0.14  mem 52.4GB  tok/s  7,445  tok 825.8M  ETA 814.3min
+[04:37:54] step 12650/18150  loss 2.9913  lr 8.00e-04  |grad| 0.16  mem 52.4GB  tok/s  7,445  tok 829.0M  ETA 806.9min
+[04:45:12] step 12700/18150  loss 3.1645  lr 7.92e-04  |grad| 0.15  mem 52.4GB  tok/s  7,445  tok 832.3M  ETA 799.6min
+[04:52:30] step 12750/18150  loss 3.0225  lr 7.84e-04  |grad| 0.13  mem 52.4GB  tok/s  7,445  tok 835.6M  ETA 792.2min
+[04:59:48] step 12800/18150  loss 3.2265  lr 7.76e-04  |grad| 0.15  mem 52.4GB  tok/s  7,445  tok 838.9M  ETA 784.9min
+[05:07:06] step 12850/18150  loss 3.2090  lr 7.68e-04  |grad| 0.15  mem 52.4GB  tok/s  7,446  tok 842.1M  ETA 777.5min
+[05:14:24] step 12900/18150  loss 3.1302  lr 7.60e-04  |grad| 0.14  mem 52.4GB  tok/s  7,446  tok 845.4M  ETA 770.2min
+[05:21:42] step 12950/18150  loss 3.1801  lr 7.53e-04  |grad| 0.15  mem 52.4GB  tok/s  7,446  tok 848.7M  ETA 762.8min
+[05:29:00] step 13000/18150  loss 3.1257  lr 7.45e-04  |grad| 0.14  mem 52.4GB  tok/s  7,446  tok 852.0M  ETA 755.5min
+[05:36:18] step 13050/18150  loss 3.0900  lr 7.37e-04  |grad| 0.16  mem 52.4GB  tok/s  7,446  tok 855.2M  ETA 748.1min
+[05:43:36] step 13100/18150  loss 3.3297  lr 7.30e-04  |grad| 0.15  mem 52.4GB  tok/s  7,446  tok 858.5M  ETA 740.8min
+[05:50:54] step 13150/18150  loss 3.1497  lr 7.22e-04  |grad| 0.15  mem 52.4GB  tok/s  7,446  tok 861.8M  ETA 733.4min
+[05:58:12] step 13200/18150  loss 2.8617  lr 7.15e-04  |grad| 0.15  mem 52.4GB  tok/s  7,446  tok 865.1M  ETA 726.1min
+[06:05:30] step 13250/18150  loss 3.2253  lr 7.07e-04  |grad| 0.15  mem 52.4GB  tok/s  7,447  tok 868.4M  ETA 718.7min
+[06:12:48] step 13300/18150  loss 3.0800  lr 7.00e-04  |grad| 0.15  mem 52.4GB  tok/s  7,447  tok 871.6M  ETA 711.4min
+[06:20:07] step 13350/18150  loss 3.0705  lr 6.93e-04  |grad| 0.14  mem 52.4GB  tok/s  7,447  tok 874.9M  ETA 704.0min
+[06:27:25] step 13400/18150  loss 3.2359  lr 6.85e-04  |grad| 0.15  mem 52.4GB  tok/s  7,447  tok 878.2M  ETA 696.7min
+[06:34:44] step 13450/18150  loss 2.8650  lr 6.78e-04  |grad| 0.14  mem 52.4GB  tok/s  7,447  tok 881.5M  ETA 689.4min
+[06:42:02] step 13500/18150  loss 3.1108  lr 6.71e-04  |grad| 0.14  mem 52.4GB  tok/s  7,447  tok 884.7M  ETA 682.0min
+[06:49:20] step 13550/18150  loss 3.0185  lr 6.64e-04  |grad| 0.15  mem 52.4GB  tok/s  7,447  tok 888.0M  ETA 674.7min
+[06:56:38] step 13600/18150  loss 3.2723  lr 6.57e-04  |grad| 0.14  mem 52.4GB  tok/s  7,447  tok 891.3M  ETA 667.3min
+[07:03:56] step 13650/18150  loss 3.1087  lr 6.50e-04  |grad| 0.14  mem 52.4GB  tok/s  7,447  tok 894.6M  ETA 660.0min
+[07:11:14] step 13700/18150  loss 3.1678  lr 6.43e-04  |grad| 0.16  mem 52.4GB  tok/s  7,448  tok 897.8M  ETA 652.6min
+[07:18:32] step 13750/18150  loss 3.1771  lr 6.36e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 901.1M  ETA 645.3min
+[07:25:50] step 13800/18150  loss 3.3011  lr 6.30e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 904.4M  ETA 638.0min
+[07:33:09] step 13850/18150  loss 3.0932  lr 6.23e-04  |grad| 0.15  mem 52.4GB  tok/s  7,448  tok 907.7M  ETA 630.6min
+[07:40:26] step 13900/18150  loss 3.1562  lr 6.16e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 911.0M  ETA 623.3min
+[07:47:45] step 13950/18150  loss 3.0379  lr 6.10e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 914.2M  ETA 615.9min
+[07:55:03] step 14000/18150  loss 2.9006  lr 6.03e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 917.5M  ETA 608.6min
+[07:55:17]   [eval @ 14000] val PPL=29.59 (Δ vs base -185780.90)
+[07:55:21]   [ckpt @ 14000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[08:02:39] step 14050/18150  loss 3.2027  lr 5.97e-04  |grad| 0.14  mem 52.4GB  tok/s  7,447  tok 920.8M  ETA 601.3min
+[08:09:56] step 14100/18150  loss 3.3430  lr 5.90e-04  |grad| 0.15  mem 52.4GB  tok/s  7,447  tok 924.1M  ETA 594.0min
+[08:17:15] step 14150/18150  loss 3.2534  lr 5.84e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 927.3M  ETA 586.6min
+[08:24:34] step 14200/18150  loss 3.0707  lr 5.78e-04  |grad| 0.15  mem 52.4GB  tok/s  7,448  tok 930.6M  ETA 579.3min
+[08:31:52] step 14250/18150  loss 3.2671  lr 5.71e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 933.9M  ETA 572.0min
+[08:39:09] step 14300/18150  loss 2.9546  lr 5.65e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 937.2M  ETA 564.6min
+[08:46:27] step 14350/18150  loss 3.1196  lr 5.59e-04  |grad| 0.13  mem 52.4GB  tok/s  7,448  tok 940.4M  ETA 557.3min
+[08:53:45] step 14400/18150  loss 3.2001  lr 5.53e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 943.7M  ETA 549.9min
+[09:01:03] step 14450/18150  loss 2.8912  lr 5.47e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 947.0M  ETA 542.6min
+[09:08:21] step 14500/18150  loss 3.1038  lr 5.41e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 950.3M  ETA 535.3min
+[09:15:39] step 14550/18150  loss 2.9473  lr 5.36e-04  |grad| 0.14  mem 52.4GB  tok/s  7,448  tok 953.5M  ETA 527.9min
+[09:22:57] step 14600/18150  loss 3.1196  lr 5.30e-04  |grad| 0.14  mem 52.4GB  tok/s  7,449  tok 956.8M  ETA 520.6min
+[09:30:15] step 14650/18150  loss 3.1782  lr 5.24e-04  |grad| 0.13  mem 52.4GB  tok/s  7,449  tok 960.1M  ETA 513.2min
+[09:37:33] step 14700/18150  loss 3.1215  lr 5.19e-04  |grad| 0.14  mem 52.4GB  tok/s  7,449  tok 963.4M  ETA 505.9min
+[09:44:51] step 14750/18150  loss 2.8949  lr 5.13e-04  |grad| 0.14  mem 52.4GB  tok/s  7,449  tok 966.7M  ETA 498.6min
+[09:52:08] step 14800/18150  loss 3.1392  lr 5.08e-04  |grad| 0.14  mem 52.4GB  tok/s  7,449  tok 969.9M  ETA 491.2min
+[09:59:26] step 14850/18150  loss 3.0258  lr 5.02e-04  |grad| 0.15  mem 52.4GB  tok/s  7,449  tok 973.2M  ETA 483.9min
+[10:06:44] step 14900/18150  loss 3.0756  lr 4.97e-04  |grad| 0.13  mem 52.4GB  tok/s  7,449  tok 976.5M  ETA 476.5min
+[10:14:02] step 14950/18150  loss 2.8655  lr 4.92e-04  |grad| 0.15  mem 52.4GB  tok/s  7,449  tok 979.8M  ETA 469.2min
+[10:21:21] step 15000/18150  loss 2.9508  lr 4.86e-04  |grad| 0.14  mem 52.4GB  tok/s  7,449  tok 983.0M  ETA 461.9min
+[10:28:39] step 15050/18150  loss 3.2310  lr 4.81e-04  |grad| 0.14  mem 52.4GB  tok/s  7,450  tok 986.3M  ETA 454.5min
+[10:35:56] step 15100/18150  loss 3.0841  lr 4.76e-04  |grad| 0.14  mem 52.4GB  tok/s  7,450  tok 989.6M  ETA 447.2min
+[10:43:14] step 15150/18150  loss 3.2155  lr 4.71e-04  |grad| 0.15  mem 52.4GB  tok/s  7,450  tok 992.9M  ETA 439.9min
+[10:50:33] step 15200/18150  loss 2.8417  lr 4.67e-04  |grad| 0.14  mem 52.4GB  tok/s  7,450  tok 996.1M  ETA 432.5min
+[10:57:50] step 15250/18150  loss 3.0749  lr 4.62e-04  |grad| 0.14  mem 52.4GB  tok/s  7,450  tok 999.4M  ETA 425.2min
+[11:05:08] step 15300/18150  loss 3.2529  lr 4.57e-04  |grad| 0.14  mem 52.4GB  tok/s  7,450  tok 1002.7M  ETA 417.8min
+[11:13:04] step 15350/18150  loss 3.1469  lr 4.52e-04  |grad| 0.15  mem 52.4GB  tok/s  7,448  tok 1006.0M  ETA 410.6min
+[11:20:27] step 15400/18150  loss 3.3681  lr 4.48e-04  |grad| 0.15  mem 52.4GB  tok/s  7,448  tok 1009.3M  ETA 403.3min
+[11:28:08] step 15450/18150  loss 3.0566  lr 4.43e-04  |grad| 0.14  mem 52.4GB  tok/s  7,447  tok 1012.5M  ETA 396.0min
+[11:35:56] step 15500/18150  loss 3.0864  lr 4.39e-04  |grad| 0.14  mem 52.4GB  tok/s  7,445  tok 1015.8M  ETA 388.8min
+[11:43:14] step 15550/18150  loss 3.1059  lr 4.34e-04  |grad| 0.14  mem 52.4GB  tok/s  7,445  tok 1019.1M  ETA 381.4min
+[11:50:44] step 15600/18150  loss 2.9075  lr 4.30e-04  |grad| 0.14  mem 52.4GB  tok/s  7,445  tok 1022.4M  ETA 374.1min
+[11:58:47] step 15650/18150  loss 2.9320  lr 4.26e-04  |grad| 0.13  mem 52.4GB  tok/s  7,442  tok 1025.6M  ETA 366.9min
+[12:06:30] step 15700/18150  loss 3.2086  lr 4.22e-04  |grad| 0.13  mem 52.4GB  tok/s  7,441  tok 1028.9M  ETA 359.6min
+[12:13:55] step 15750/18150  loss 2.9942  lr 4.18e-04  |grad| 0.14  mem 52.4GB  tok/s  7,441  tok 1032.2M  ETA 352.3min
+[12:21:17] step 15800/18150  loss 3.2653  lr 4.14e-04  |grad| 0.15  mem 52.4GB  tok/s  7,441  tok 1035.5M  ETA 345.0min
+[12:28:35] step 15850/18150  loss 3.1637  lr 4.10e-04  |grad| 0.13  mem 52.4GB  tok/s  7,441  tok 1038.7M  ETA 337.6min
+[12:35:53] step 15900/18150  loss 3.0934  lr 4.06e-04  |grad| 0.13  mem 52.4GB  tok/s  7,441  tok 1042.0M  ETA 330.3min
+[12:43:12] step 15950/18150  loss 3.0451  lr 4.02e-04  |grad| 0.14  mem 52.4GB  tok/s  7,441  tok 1045.3M  ETA 322.9min
+[12:50:30] step 16000/18150  loss 3.0181  lr 3.99e-04  |grad| 0.14  mem 52.4GB  tok/s  7,441  tok 1048.6M  ETA 315.6min
+[12:50:44]   [eval @ 16000] val PPL=28.93 (Δ vs base -185781.56)
+[12:50:48]   [ckpt @ 16000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[12:58:06] step 16050/18150  loss 3.1392  lr 3.95e-04  |grad| 0.13  mem 52.4GB  tok/s  7,441  tok 1051.9M  ETA 308.3min
+[13:05:24] step 16100/18150  loss 2.9266  lr 3.92e-04  |grad| 0.14  mem 52.4GB  tok/s  7,441  tok 1055.1M  ETA 300.9min
+[13:12:42] step 16150/18150  loss 3.2113  lr 3.88e-04  |grad| 0.14  mem 52.4GB  tok/s  7,441  tok 1058.4M  ETA 293.6min
+[13:20:00] step 16200/18150  loss 3.3324  lr 3.85e-04  |grad| 0.13  mem 52.4GB  tok/s  7,441  tok 1061.7M  ETA 286.2min
+[13:27:18] step 16250/18150  loss 2.8044  lr 3.82e-04  |grad| 0.15  mem 52.4GB  tok/s  7,441  tok 1065.0M  ETA 278.9min
+[13:34:36] step 16300/18150  loss 3.3198  lr 3.78e-04  |grad| 0.14  mem 52.4GB  tok/s  7,441  tok 1068.2M  ETA 271.6min
+[13:41:54] step 16350/18150  loss 2.9972  lr 3.75e-04  |grad| 0.14  mem 52.4GB  tok/s  7,441  tok 1071.5M  ETA 264.2min
+[13:49:12] step 16400/18150  loss 3.1327  lr 3.72e-04  |grad| 0.14  mem 52.4GB  tok/s  7,441  tok 1074.8M  ETA 256.9min
+[13:56:30] step 16450/18150  loss 3.2397  lr 3.69e-04  |grad| 0.14  mem 52.4GB  tok/s  7,442  tok 1078.1M  ETA 249.5min
+[14:03:48] step 16500/18150  loss 2.8494  lr 3.67e-04  |grad| 0.14  mem 52.4GB  tok/s  7,442  tok 1081.3M  ETA 242.2min
+[14:11:06] step 16550/18150  loss 3.0995  lr 3.64e-04  |grad| 0.14  mem 52.4GB  tok/s  7,442  tok 1084.6M  ETA 234.8min
+[14:18:24] step 16600/18150  loss 3.0789  lr 3.61e-04  |grad| 0.14  mem 52.4GB  tok/s  7,442  tok 1087.9M  ETA 227.5min
+[14:25:42] step 16650/18150  loss 2.9244  lr 3.59e-04  |grad| 0.14  mem 52.4GB  tok/s  7,442  tok 1091.2M  ETA 220.2min
+[14:33:00] step 16700/18150  loss 2.9009  lr 3.56e-04  |grad| 0.14  mem 52.4GB  tok/s  7,442  tok 1094.5M  ETA 212.8min
+[14:40:18] step 16750/18150  loss 3.1405  lr 3.54e-04  |grad| 0.14  mem 52.4GB  tok/s  7,442  tok 1097.7M  ETA 205.5min
+[14:47:36] step 16800/18150  loss 3.0427  lr 3.51e-04  |grad| 0.13  mem 52.4GB  tok/s  7,442  tok 1101.0M  ETA 198.1min
+[14:54:54] step 16850/18150  loss 2.9574  lr 3.49e-04  |grad| 0.14  mem 52.4GB  tok/s  7,443  tok 1104.3M  ETA 190.8min
+[15:02:12] step 16900/18150  loss 3.2056  lr 3.47e-04  |grad| 0.14  mem 52.4GB  tok/s  7,443  tok 1107.6M  ETA 183.4min
+[15:09:30] step 16950/18150  loss 2.7773  lr 3.45e-04  |grad| 0.13  mem 52.4GB  tok/s  7,443  tok 1110.8M  ETA 176.1min
+[15:16:48] step 17000/18150  loss 3.1222  lr 3.43e-04  |grad| 0.13  mem 52.4GB  tok/s  7,443  tok 1114.1M  ETA 168.8min
+[15:24:06] step 17050/18150  loss 3.4668  lr 3.41e-04  |grad| 0.14  mem 52.4GB  tok/s  7,443  tok 1117.4M  ETA 161.4min
+[15:31:24] step 17100/18150  loss 3.1077  lr 3.39e-04  |grad| 0.14  mem 52.4GB  tok/s  7,443  tok 1120.7M  ETA 154.1min
+[15:38:43] step 17150/18150  loss 2.9742  lr 3.37e-04  |grad| 0.14  mem 52.4GB  tok/s  7,443  tok 1123.9M  ETA 146.7min
+[15:46:00] step 17200/18150  loss 3.1316  lr 3.36e-04  |grad| 0.14  mem 52.4GB  tok/s  7,443  tok 1127.2M  ETA 139.4min
+[15:53:19] step 17250/18150  loss 2.8978  lr 3.34e-04  |grad| 0.13  mem 52.4GB  tok/s  7,443  tok 1130.5M  ETA 132.1min
+[16:00:37] step 17300/18150  loss 3.2126  lr 3.32e-04  |grad| 0.14  mem 52.4GB  tok/s  7,443  tok 1133.8M  ETA 124.7min
+[16:07:54] step 17350/18150  loss 2.9732  lr 3.31e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 1137.0M  ETA 117.4min
+[16:15:12] step 17400/18150  loss 3.3199  lr 3.30e-04  |grad| 0.13  mem 52.4GB  tok/s  7,444  tok 1140.3M  ETA 110.1min
+[16:22:30] step 17450/18150  loss 3.1634  lr 3.28e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 1143.6M  ETA 102.7min
+[16:29:48] step 17500/18150  loss 3.3012  lr 3.27e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 1146.9M  ETA 95.4min
+[16:37:06] step 17550/18150  loss 3.2112  lr 3.26e-04  |grad| 0.13  mem 52.4GB  tok/s  7,444  tok 1150.2M  ETA 88.0min
+[16:44:24] step 17600/18150  loss 3.1078  lr 3.25e-04  |grad| 0.13  mem 52.4GB  tok/s  7,444  tok 1153.4M  ETA 80.7min
+[16:51:42] step 17650/18150  loss 3.2403  lr 3.24e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 1156.7M  ETA 73.4min
+[16:59:00] step 17700/18150  loss 3.0489  lr 3.23e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 1160.0M  ETA 66.0min
+[17:06:18] step 17750/18150  loss 3.1413  lr 3.23e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 1163.3M  ETA 58.7min
+[17:13:37] step 17800/18150  loss 3.2361  lr 3.22e-04  |grad| 0.14  mem 52.4GB  tok/s  7,445  tok 1166.5M  ETA 51.4min
+[17:20:55] step 17850/18150  loss 3.1392  lr 3.22e-04  |grad| 0.13  mem 52.4GB  tok/s  7,445  tok 1169.8M  ETA 44.0min
+[17:28:13] step 17900/18150  loss 3.3111  lr 3.21e-04  |grad| 0.14  mem 52.4GB  tok/s  7,445  tok 1173.1M  ETA 36.7min
+[17:35:31] step 17950/18150  loss 3.1573  lr 3.21e-04  |grad| 0.14  mem 52.4GB  tok/s  7,445  tok 1176.4M  ETA 29.3min
+[17:42:49] step 18000/18150  loss 3.1749  lr 3.20e-04  |grad| 0.14  mem 52.4GB  tok/s  7,445  tok 1179.6M  ETA 22.0min
+[17:43:04]   [eval @ 18000] val PPL=28.66 (Δ vs base -185781.82)
+[17:43:07]   [ckpt @ 18000] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[17:50:25] step 18050/18150  loss 2.9959  lr 3.20e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 1182.9M  ETA 14.7min
+[17:57:43] step 18100/18150  loss 3.1633  lr 3.20e-04  |grad| 0.14  mem 52.4GB  tok/s  7,444  tok 1186.2M  ETA 7.3min
+[18:05:01] step 18150/18150  loss 3.2811  lr 3.20e-04  |grad| 0.13  mem 52.4GB  tok/s  7,444  tok 1189.5M  ETA 0.0min
+[18:05:05]   [ckpt @ 18150] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[18:05:05] Training complete in 2663.1 min.
+[18:05:19] AFTER val PPL=28.65 (BEFORE 185810.49; improvement +185781.84 = +100.0%)
+[18:05:22]   ['The capital of France is'] The capital of France is Paris and the area of Paris is called Paris. The capital of France is Dachau.
+The capital city 
+[18:05:22]   ['In a recent study, researchers found that'] In a recent study, researchers found that when people with high levels of insulin resistance (insulin resistance) are fe
+[18:05:22]   ['def add(a, b):'] def add(a, b): The first letter of each of the following sentences is the only word that refers to another word in the s
+[18:05:25] Saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+=== [1/4] DONE Thu Jun 11 06:05:28 PM UTC 2026 ===
+=== [2/4] IMU-1 full bundle (NorMuon) Thu Jun 11 06:05:28 PM UTC 2026 ===
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[18:05:35] device=cuda bundle: vr=True ln=True hg=True  steps=18150
+[18:05:35] param split: 224 NorMuon (2D), 198 AdamW (1D/embed)  tok/step=65,536
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[18:05:40]   loaded cached tokens from tokcache_1191478400_300000.pt (1,191,478,400 train + 300,000 val)
+[18:05:40] Compiling model...
+[18:16:25] step    50/18150  ce 7.4375  z 0.01204  lr 6.11e-04  |grad| 0.89  mem 66.1GB  tok/s 5,083
+[18:26:52] step   100/18150  ce 6.4375  z 0.01285  lr 1.22e-03  |grad| 0.55  mem 66.1GB  tok/s 5,154
+[18:37:20] step   150/18150  ce 5.9688  z 0.01314  lr 1.83e-03  |grad| 0.55  mem 66.1GB  tok/s 5,175
+[18:47:47] step   200/18150  ce 5.5000  z 0.01389  lr 2.44e-03  |grad| 0.50  mem 66.1GB  tok/s 5,187
+[18:58:14] step   250/18150  ce 5.4375  z 0.01374  lr 3.06e-03  |grad| 0.42  mem 66.1GB  tok/s 5,195
+[19:08:41] step   300/18150  ce 5.0625  z 0.01445  lr 3.67e-03  |grad| 0.37  mem 66.1GB  tok/s 5,200
+[19:19:08] step   350/18150  ce 4.5625  z 0.01533  lr 4.28e-03  |grad| 0.28  mem 66.1GB  tok/s 5,204
+[19:29:35] step   400/18150  ce 4.2500  z 0.01577  lr 4.89e-03  |grad| 0.23  mem 66.1GB  tok/s 5,207
+[19:40:06] step   450/18150  ce 4.3125  z 0.01543  lr 5.50e-03  |grad| 0.22  mem 66.1GB  tok/s 5,205
+[19:50:33] step   500/18150  ce 4.0625  z 0.01555  lr 6.11e-03  |grad| 0.22  mem 66.1GB  tok/s 5,207
+[20:01:00] step   550/18150  ce 4.6250  z 0.01526  lr 6.72e-03  |grad| 0.56  mem 66.1GB  tok/s 5,209
+[20:11:27] step   600/18150  ce 4.2500  z 0.01507  lr 7.33e-03  |grad| 0.19  mem 66.1GB  tok/s 5,210
+[20:21:54] step   650/18150  ce 4.2188  z 0.01466  lr 7.94e-03  |grad| 0.14  mem 66.1GB  tok/s 5,212
+[20:32:21] step   700/18150  ce 4.1250  z 0.01445  lr 8.56e-03  |grad| 0.14  mem 66.1GB  tok/s 5,213
+[20:42:48] step   750/18150  ce 4.0000  z 0.01448  lr 9.17e-03  |grad| 0.13  mem 66.1GB  tok/s 5,213
+[20:53:15] step   800/18150  ce 3.9375  z 0.01488  lr 9.78e-03  |grad| 0.11  mem 66.1GB  tok/s 5,214
+[21:03:42] step   850/18150  ce 3.8594  z 0.01419  lr 1.04e-02  |grad| 0.10  mem 66.1GB  tok/s 5,215
+[21:14:09] step   900/18150  ce 3.9062  z 0.01426  lr 1.10e-02  |grad| 0.14  mem 66.1GB  tok/s 5,216
+[21:24:36] step   950/18150  ce 3.9375  z 0.01417  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,216
+[21:35:45] step  1000/18150  ce 3.8281  z 0.01415  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,199
+[21:47:10] step  1050/18150  ce 3.5938  z 0.01434  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,178
+[21:58:35] step  1100/18150  ce 3.6875  z 0.01449  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,158
+[22:10:03] step  1150/18150  ce 3.8438  z 0.01377  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,140
+[22:21:23] step  1200/18150  ce 3.7500  z 0.01413  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,126
+[22:32:56] step  1250/18150  ce 3.6250  z 0.01452  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,108
+[22:43:49] step  1300/18150  ce 3.6094  z 0.01419  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,105
+[22:54:24] step  1350/18150  ce 3.6562  z 0.01373  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,107
+[23:05:01] step  1400/18150  ce 3.6562  z 0.01407  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,108
+[23:15:28] step  1450/18150  ce 3.4375  z 0.01411  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,112
+[23:25:54] step  1500/18150  ce 3.9688  z 0.01347  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,116
+[23:36:21] step  1550/18150  ce 3.5781  z 0.01386  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,120
+[23:46:48] step  1600/18150  ce 3.6719  z 0.01338  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,123
+[23:57:15] step  1650/18150  ce 3.6562  z 0.01341  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,126
+[00:07:42] step  1700/18150  ce 3.6875  z 0.01363  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,129
+[00:18:09] step  1750/18150  ce 3.6562  z 0.01350  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,132
+[00:28:35] step  1800/18150  ce 3.6875  z 0.01369  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,134
+[00:39:02] step  1850/18150  ce 3.4062  z 0.01419  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,137
+[00:49:29] step  1900/18150  ce 3.6875  z 0.01313  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,139
+[00:59:55] step  1950/18150  ce 3.5000  z 0.01353  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,142
+[01:10:22] step  2000/18150  ce 3.7969  z 0.01315  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,144
+[01:10:35]   [eval @ 2000] val PPL=44.38
+[01:10:36]   [ckpt @ 2000]
+[01:21:03] step  2050/18150  ce 3.4062  z 0.01375  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,143
+[01:31:30] step  2100/18150  ce 3.4219  z 0.01336  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,145
+[01:41:57] step  2150/18150  ce 3.7188  z 0.01285  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,147
+[01:52:24] step  2200/18150  ce 3.4375  z 0.01353  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,149
+[02:02:50] step  2250/18150  ce 3.4375  z 0.01338  lr 1.10e-02  |grad| 0.13  mem 66.1GB  tok/s 5,150
+[02:13:17] step  2300/18150  ce 3.4375  z 0.01297  lr 1.10e-02  |grad| 0.13  mem 66.1GB  tok/s 5,152
+[02:23:44] step  2350/18150  ce 3.2656  z 0.01344  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,154
+[02:34:11] step  2400/18150  ce 3.5781  z 0.01297  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,155
+[02:44:38] step  2450/18150  ce 3.5625  z 0.01304  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,157
+[02:55:05] step  2500/18150  ce 3.6562  z 0.01318  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,158
+[03:05:32] step  2550/18150  ce 3.1875  z 0.01275  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,159
+[03:15:58] step  2600/18150  ce 3.4688  z 0.01286  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,161
+[03:26:25] step  2650/18150  ce 3.1875  z 0.01313  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,162
+[03:36:52] step  2700/18150  ce 3.5156  z 0.01298  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,163
+[03:47:19] step  2750/18150  ce 3.7188  z 0.01234  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,164
+[03:57:45] step  2800/18150  ce 3.3281  z 0.01270  lr 1.10e-02  |grad| 0.15  mem 66.1GB  tok/s 5,165
+[04:08:12] step  2850/18150  ce 3.2188  z 0.01275  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,166
+[04:18:39] step  2900/18150  ce 3.6094  z 0.01248  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,167
+[04:29:06] step  2950/18150  ce 3.5000  z 0.01208  lr 1.10e-02  |grad| 0.05  mem 66.1GB  tok/s 5,168
+[04:39:33] step  3000/18150  ce 3.4062  z 0.01219  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,169
+[04:50:00] step  3050/18150  ce 3.1875  z 0.01297  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,170
+[05:00:27] step  3100/18150  ce 3.4062  z 0.01263  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,171
+[05:10:54] step  3150/18150  ce 3.2812  z 0.01248  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,172
+[05:21:21] step  3200/18150  ce 3.4531  z 0.01258  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,173
+[05:31:47] step  3250/18150  ce 3.5469  z 0.01214  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,174
+[05:42:14] step  3300/18150  ce 3.5156  z 0.01288  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,175
+[05:52:41] step  3350/18150  ce 3.4375  z 0.01242  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,175
+[06:03:08] step  3400/18150  ce 3.4688  z 0.01238  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,176
+[06:13:35] step  3450/18150  ce 3.4062  z 0.01266  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,177
+[06:24:02] step  3500/18150  ce 3.3906  z 0.01204  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,178
+[06:34:29] step  3550/18150  ce 3.2812  z 0.01233  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,178
+[06:44:56] step  3600/18150  ce 3.4688  z 0.01215  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,179
+[06:55:23] step  3650/18150  ce 3.2500  z 0.01191  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,180
+[07:05:49] step  3700/18150  ce 3.2344  z 0.01257  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,180
+[07:16:16] step  3750/18150  ce 3.4375  z 0.01248  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,181
+[07:26:43] step  3800/18150  ce 3.1250  z 0.01212  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,181
+[07:37:10] step  3850/18150  ce 3.3438  z 0.01178  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,182
+[07:47:37] step  3900/18150  ce 3.1875  z 0.01150  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,183
+[07:58:04] step  3950/18150  ce 3.3125  z 0.01175  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,183
+[08:08:31] step  4000/18150  ce 3.1562  z 0.01180  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,184
+[08:08:40]   [eval @ 4000] val PPL=35.62
+[08:08:41]   [ckpt @ 4000]
+[08:19:08] step  4050/18150  ce 3.2344  z 0.01200  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,183
+[08:29:35] step  4100/18150  ce 3.3750  z 0.01136  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,184
+[08:40:40] step  4150/18150  ce 3.2188  z 0.01165  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,180
+[08:51:07] step  4200/18150  ce 3.5156  z 0.01160  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,181
+[09:02:09] step  4250/18150  ce 3.4062  z 0.01105  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,178
+[09:13:25] step  4300/18150  ce 2.8438  z 0.01140  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,174
+[09:24:46] step  4350/18150  ce 3.3750  z 0.01151  lr 1.10e-02  |grad| 0.05  mem 66.1GB  tok/s 5,170
+[09:36:28] step  4400/18150  ce 3.3438  z 0.01116  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,163
+[09:47:43] step  4450/18150  ce 3.1250  z 0.01130  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,160
+[09:58:59] step  4500/18150  ce 3.3750  z 0.01138  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,156
+[10:09:49] step  4550/18150  ce 3.2031  z 0.01151  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,155
+[10:20:38] step  4600/18150  ce 3.3750  z 0.01125  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,153
+[10:31:10] step  4650/18150  ce 3.2500  z 0.01119  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,154
+[10:41:37] step  4700/18150  ce 2.9062  z 0.01200  lr 1.10e-02  |grad| 0.13  mem 66.1GB  tok/s 5,155
+[10:52:05] step  4750/18150  ce 3.3125  z 0.01139  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,155
+[11:02:32] step  4800/18150  ce 3.0938  z 0.01185  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,156
+[11:13:00] step  4850/18150  ce 3.1094  z 0.01176  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,157
+[11:23:27] step  4900/18150  ce 3.3750  z 0.01123  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,157
+[11:33:54] step  4950/18150  ce 3.4531  z 0.01124  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,158
+[11:44:22] step  5000/18150  ce 3.0625  z 0.01102  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,159
+[11:54:49] step  5050/18150  ce 3.3750  z 0.01161  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,159
+[12:05:16] step  5100/18150  ce 3.3281  z 0.01081  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,160
+[12:15:44] step  5150/18150  ce 3.1875  z 0.01126  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,160
+[12:26:11] step  5200/18150  ce 3.5156  z 0.01140  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,161
+[12:36:39] step  5250/18150  ce 2.8750  z 0.01062  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,162
+[12:47:06] step  5300/18150  ce 3.1250  z 0.01117  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,162
+[12:57:42] step  5350/18150  ce 3.3750  z 0.01111  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,162
+[13:08:38] step  5400/18150  ce 3.5938  z 0.01108  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,160
+[13:19:26] step  5450/18150  ce 3.0625  z 0.01152  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,160
+[13:30:36] step  5500/18150  ce 3.1250  z 0.01154  lr 1.10e-02  |grad| 0.05  mem 66.1GB  tok/s 5,157
+[13:41:48] step  5550/18150  ce 3.5469  z 0.01101  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,154
+[13:52:41] step  5600/18150  ce 3.2812  z 0.01116  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,153
+[14:03:10] step  5650/18150  ce 3.4062  z 0.01096  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,154
+[14:13:39] step  5700/18150  ce 3.1875  z 0.01100  lr 1.10e-02  |grad| 0.13  mem 66.1GB  tok/s 5,154
+[14:24:06] step  5750/18150  ce 3.1875  z 0.01071  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,155
+[14:34:33] step  5800/18150  ce 3.0312  z 0.01097  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,155
+[14:45:00] step  5850/18150  ce 3.4531  z 0.01077  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,156
+[14:55:27] step  5900/18150  ce 3.2500  z 0.01114  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,156
+[15:05:54] step  5950/18150  ce 3.2188  z 0.01105  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,157
+[15:16:22] step  6000/18150  ce 3.3750  z 0.01102  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,158
+[15:16:31]   [eval @ 6000] val PPL=32.54
+[15:16:32]   [ckpt @ 6000]
+[15:27:00] step  6050/18150  ce 3.3594  z 0.01069  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,157
+[15:37:27] step  6100/18150  ce 3.1875  z 0.01069  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,158
+[15:47:54] step  6150/18150  ce 3.0938  z 0.01070  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,158
+[15:58:22] step  6200/18150  ce 3.2500  z 0.01053  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,159
+[16:08:49] step  6250/18150  ce 3.1250  z 0.01090  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,159
+[16:19:16] step  6300/18150  ce 3.3125  z 0.01069  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,160
+[16:29:44] step  6350/18150  ce 3.2188  z 0.01059  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,160
+[16:40:10] step  6400/18150  ce 3.1875  z 0.01046  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,161
+[16:50:37] step  6450/18150  ce 3.2969  z 0.01020  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,161
+[17:01:04] step  6500/18150  ce 3.5312  z 0.01067  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,162
+[17:11:32] step  6550/18150  ce 3.4062  z 0.01044  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,162
+[17:21:59] step  6600/18150  ce 3.2188  z 0.01040  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,163
+[17:32:26] step  6650/18150  ce 3.1250  z 0.01110  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,163
+[17:42:53] step  6700/18150  ce 3.2031  z 0.01062  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,164
+[17:53:20] step  6750/18150  ce 3.0312  z 0.01008  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,164
+[18:03:46] step  6800/18150  ce 3.2500  z 0.01070  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,165
+[18:14:13] step  6850/18150  ce 3.2500  z 0.01052  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,165
+[18:24:45] step  6900/18150  ce 3.5625  z 0.01046  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,165
+[18:35:14] step  6950/18150  ce 3.2500  z 0.01028  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,166
+[18:45:43] step  7000/18150  ce 3.2812  z 0.01003  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,166
+[18:56:21] step  7050/18150  ce 3.3281  z 0.01056  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,166
+[19:07:00] step  7100/18150  ce 3.1875  z 0.00997  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,165
+[19:17:33] step  7150/18150  ce 3.1875  z 0.00988  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,166
+[19:28:04] step  7200/18150  ce 3.0469  z 0.01020  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,166
+[19:38:59] step  7250/18150  ce 3.4062  z 0.01002  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,165
+[19:49:26] step  7300/18150  ce 3.3906  z 0.01030  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,165
+[19:59:53] step  7350/18150  ce 3.1562  z 0.01039  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,165
+[20:10:19] step  7400/18150  ce 3.2344  z 0.01005  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,166
+[20:20:47] step  7450/18150  ce 3.3125  z 0.01000  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,166
+[20:31:14] step  7500/18150  ce 3.2500  z 0.01039  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,167
+[20:41:40] step  7550/18150  ce 3.2969  z 0.01028  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,167
+[20:52:07] step  7600/18150  ce 3.0625  z 0.01014  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,167
+[21:02:34] step  7650/18150  ce 3.2188  z 0.01018  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,168
+[21:13:01] step  7700/18150  ce 3.1406  z 0.01055  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,168
+[21:23:27] step  7750/18150  ce 3.3750  z 0.01009  lr 1.10e-02  |grad| 0.16  mem 66.1GB  tok/s 5,169
+[21:33:54] step  7800/18150  ce 3.3281  z 0.01050  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,169
+[21:44:20] step  7850/18150  ce 3.4375  z 0.00979  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,169
+[21:54:47] step  7900/18150  ce 3.3438  z 0.01009  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,170
+[22:05:14] step  7950/18150  ce 3.0312  z 0.00968  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,170
+[22:15:40] step  8000/18150  ce 3.4531  z 0.00997  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,170
+[22:15:50]   [eval @ 8000] val PPL=30.41
+[22:15:51]   [ckpt @ 8000]
+[22:26:19] step  8050/18150  ce 3.3125  z 0.00974  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,170
+[22:36:45] step  8100/18150  ce 2.9062  z 0.01020  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,171
+[22:47:12] step  8150/18150  ce 3.2188  z 0.01002  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,171
+[22:57:39] step  8200/18150  ce 3.3750  z 0.00981  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,171
+[23:08:06] step  8250/18150  ce 3.0312  z 0.01031  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,172
+[23:18:33] step  8300/18150  ce 3.0938  z 0.00982  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,172
+[23:29:00] step  8350/18150  ce 3.3125  z 0.00946  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,172
+[23:39:27] step  8400/18150  ce 3.1094  z 0.00955  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,173
+[23:49:54] step  8450/18150  ce 3.1250  z 0.00990  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,173
+[00:00:20] step  8500/18150  ce 2.7812  z 0.00975  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,173
+[00:10:47] step  8550/18150  ce 3.2812  z 0.01016  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,174
+[00:21:20] step  8600/18150  ce 3.0781  z 0.01010  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,174
+[00:31:58] step  8650/18150  ce 3.3125  z 0.00967  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,173
+[00:42:37] step  8700/18150  ce 3.3125  z 0.00978  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,173
+[00:53:16] step  8750/18150  ce 3.0938  z 0.00947  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,173
+[01:03:54] step  8800/18150  ce 3.0000  z 0.00981  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,173
+[01:14:33] step  8850/18150  ce 3.1562  z 0.00993  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,172
+[01:25:12] step  8900/18150  ce 3.2188  z 0.00960  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,172
+[01:35:51] step  8950/18150  ce 3.3438  z 0.00945  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,172
+[01:46:29] step  9000/18150  ce 3.2500  z 0.00976  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,172
+[01:57:08] step  9050/18150  ce 2.9531  z 0.00987  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,171
+[02:07:47] step  9100/18150  ce 3.0312  z 0.00947  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,171
+[02:18:26] step  9150/18150  ce 3.2656  z 0.00999  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,171
+[02:29:04] step  9200/18150  ce 3.2344  z 0.00927  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,171
+[02:39:43] step  9250/18150  ce 3.2188  z 0.00966  lr 1.10e-02  |grad| 0.14  mem 66.1GB  tok/s 5,171
+[02:50:22] step  9300/18150  ce 3.2500  z 0.00967  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,170
+[03:01:01] step  9350/18150  ce 3.1875  z 0.00977  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,170
+[03:11:40] step  9400/18150  ce 2.9844  z 0.00948  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,170
+[03:22:19] step  9450/18150  ce 3.1875  z 0.00962  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,170
+[03:32:57] step  9500/18150  ce 3.0938  z 0.00969  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,169
+[03:43:36] step  9550/18150  ce 3.1719  z 0.00915  lr 1.10e-02  |grad| 0.13  mem 66.1GB  tok/s 5,169
+[03:54:15] step  9600/18150  ce 3.0000  z 0.00949  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,169
+[04:04:53] step  9650/18150  ce 3.0938  z 0.00937  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,169
+[04:15:32] step  9700/18150  ce 3.1875  z 0.00935  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,169
+[04:26:11] step  9750/18150  ce 2.8438  z 0.00932  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,168
+[04:36:50] step  9800/18150  ce 3.0000  z 0.00953  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,168
+[04:47:29] step  9850/18150  ce 3.2812  z 0.00914  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,168
+[04:58:07] step  9900/18150  ce 3.1094  z 0.00981  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,168
+[05:08:46] step  9950/18150  ce 3.1875  z 0.00910  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,168
+[05:19:25] step 10000/18150  ce 3.2812  z 0.00918  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,167
+[05:19:34]   [eval @ 10000] val PPL=29.14
+[05:19:35]   [ckpt @ 10000]
+[05:30:14] step 10050/18150  ce 3.1719  z 0.00920  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,167
+[05:40:53] step 10100/18150  ce 3.0312  z 0.00926  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,167
+[05:51:32] step 10150/18150  ce 3.0938  z 0.00937  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,166
+[06:02:10] step 10200/18150  ce 3.0938  z 0.00931  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,166
+[06:12:49] step 10250/18150  ce 3.1562  z 0.00945  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,166
+[06:23:27] step 10300/18150  ce 3.3125  z 0.00951  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,166
+[06:34:06] step 10350/18150  ce 3.2188  z 0.00916  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,166
+[06:44:45] step 10400/18150  ce 3.2500  z 0.00925  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,166
+[06:55:24] step 10450/18150  ce 2.9844  z 0.00959  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,165
+[07:06:03] step 10500/18150  ce 2.7969  z 0.00834  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,165
+[07:16:42] step 10550/18150  ce 3.1562  z 0.00931  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,165
+[07:27:20] step 10600/18150  ce 3.0938  z 0.00926  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,165
+[07:37:59] step 10650/18150  ce 3.3281  z 0.00921  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,165
+[07:48:38] step 10700/18150  ce 3.1094  z 0.00964  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,165
+[07:59:17] step 10750/18150  ce 3.1875  z 0.00901  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,164
+[08:09:56] step 10800/18150  ce 3.1250  z 0.00948  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,164
+[08:20:39] step 10850/18150  ce 3.0469  z 0.00950  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,164
+[08:31:18] step 10900/18150  ce 2.9375  z 0.00938  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,164
+[08:41:57] step 10950/18150  ce 3.1250  z 0.00948  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,164
+[08:52:35] step 11000/18150  ce 3.1562  z 0.00923  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,163
+[09:03:14] step 11050/18150  ce 2.9062  z 0.00936  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,163
+[09:13:53] step 11100/18150  ce 3.2969  z 0.00927  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,163
+[09:24:31] step 11150/18150  ce 3.1719  z 0.00910  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,163
+[09:35:10] step 11200/18150  ce 3.1875  z 0.00973  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,163
+[09:45:48] step 11250/18150  ce 2.6562  z 0.00936  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,163
+[09:56:26] step 11300/18150  ce 3.0000  z 0.00901  lr 1.10e-02  |grad| 0.15  mem 66.1GB  tok/s 5,163
+[10:07:05] step 11350/18150  ce 3.0000  z 0.00910  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,162
+[10:17:44] step 11400/18150  ce 3.0000  z 0.00875  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,162
+[10:28:23] step 11450/18150  ce 3.3438  z 0.00929  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,162
+[10:39:01] step 11500/18150  ce 3.1875  z 0.00973  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,162
+[10:49:40] step 11550/18150  ce 3.2344  z 0.00920  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,162
+[11:00:19] step 11600/18150  ce 3.3281  z 0.00888  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,162
+[11:10:58] step 11650/18150  ce 2.8906  z 0.00896  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,162
+[11:21:36] step 11700/18150  ce 3.3438  z 0.00904  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,161
+[11:32:15] step 11750/18150  ce 3.3438  z 0.00885  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,161
+[11:42:54] step 11800/18150  ce 3.0625  z 0.00921  lr 1.10e-02  |grad| 0.14  mem 66.1GB  tok/s 5,161
+[11:53:33] step 11850/18150  ce 3.3125  z 0.00938  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,161
+[12:04:12] step 11900/18150  ce 3.0312  z 0.00879  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,161
+[12:14:50] step 11950/18150  ce 3.4375  z 0.00905  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,161
+[12:25:29] step 12000/18150  ce 3.1406  z 0.00898  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,161
+[12:25:39]   [eval @ 12000] val PPL=28.43
+[12:25:40]   [ckpt @ 12000]
+[12:36:19] step 12050/18150  ce 3.0938  z 0.00900  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,160
+[12:46:57] step 12100/18150  ce 2.9062  z 0.00886  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,160
+[12:57:36] step 12150/18150  ce 3.1875  z 0.00885  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,160
+[13:08:14] step 12200/18150  ce 2.8750  z 0.00884  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,160
+[13:18:53] step 12250/18150  ce 3.2188  z 0.00934  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,160
+[13:29:32] step 12300/18150  ce 3.2500  z 0.00881  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,160
+[13:40:11] step 12350/18150  ce 3.0156  z 0.00908  lr 1.10e-02  |grad| 0.06  mem 66.1GB  tok/s 5,159
+[13:50:49] step 12400/18150  ce 3.0312  z 0.00963  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,159
+[14:01:28] step 12450/18150  ce 3.1562  z 0.00907  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,159
+[14:12:07] step 12500/18150  ce 3.2500  z 0.00913  lr 1.10e-02  |grad| 0.14  mem 66.1GB  tok/s 5,159
+[14:22:46] step 12550/18150  ce 3.2812  z 0.00921  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,159
+[14:33:24] step 12600/18150  ce 3.2500  z 0.00974  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,159
+[14:44:03] step 12650/18150  ce 3.1250  z 0.00920  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,159
+[14:54:41] step 12700/18150  ce 3.1562  z 0.00889  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,159
+[15:05:20] step 12750/18150  ce 3.1875  z 0.00896  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,159
+[15:15:59] step 12800/18150  ce 3.0312  z 0.00891  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,158
+[15:26:37] step 12850/18150  ce 3.1250  z 0.00915  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,158
+[15:37:16] step 12900/18150  ce 3.0000  z 0.00914  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,158
+[15:47:54] step 12950/18150  ce 2.9688  z 0.00928  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,158
+[15:58:33] step 13000/18150  ce 3.0469  z 0.00844  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,158
+[16:09:12] step 13050/18150  ce 2.8438  z 0.00893  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,158
+[16:19:51] step 13100/18150  ce 3.2500  z 0.00889  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,158
+[16:30:31] step 13150/18150  ce 3.1406  z 0.00898  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,158
+[16:41:10] step 13200/18150  ce 3.1875  z 0.00898  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,158
+[16:51:49] step 13250/18150  ce 3.1875  z 0.00916  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,157
+[17:02:28] step 13300/18150  ce 3.4062  z 0.00863  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,157
+[17:13:06] step 13350/18150  ce 3.0000  z 0.00880  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,157
+[17:23:45] step 13400/18150  ce 3.1562  z 0.00903  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,157
+[17:34:56] step 13450/18150  ce 3.1562  z 0.00850  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,156
+[17:45:30] step 13500/18150  ce 3.2500  z 0.00854  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,156
+[17:55:57] step 13550/18150  ce 3.0312  z 0.00868  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,156
+[18:06:26] step 13600/18150  ce 3.0625  z 0.00877  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,157
+[18:16:53] step 13650/18150  ce 3.2344  z 0.00895  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,157
+[18:27:21] step 13700/18150  ce 3.1250  z 0.00938  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,157
+[18:37:48] step 13750/18150  ce 3.0625  z 0.00842  lr 1.10e-02  |grad| 0.11  mem 66.1GB  tok/s 5,157
+[18:48:15] step 13800/18150  ce 3.2188  z 0.00887  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,158
+[18:58:42] step 13850/18150  ce 3.0625  z 0.00894  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,158
+[19:09:09] step 13900/18150  ce 3.0469  z 0.00882  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,158
+[19:19:38] step 13950/18150  ce 3.1250  z 0.00896  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,158
+[19:30:10] step 14000/18150  ce 2.9062  z 0.00911  lr 1.10e-02  |grad| 0.08  mem 66.1GB  tok/s 5,158
+[19:30:19]   [eval @ 14000] val PPL=27.40
+[19:30:20]   [ckpt @ 14000]
+[19:40:49] step 14050/18150  ce 3.5469  z 0.00886  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,158
+[19:51:16] step 14100/18150  ce 3.0312  z 0.00868  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,158
+[20:01:43] step 14150/18150  ce 3.2656  z 0.00904  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,159
+[20:12:10] step 14200/18150  ce 3.2344  z 0.00905  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,159
+[20:22:38] step 14250/18150  ce 3.0156  z 0.00861  lr 1.10e-02  |grad| 0.10  mem 66.1GB  tok/s 5,159
+[20:33:05] step 14300/18150  ce 3.2188  z 0.00862  lr 1.10e-02  |grad| 0.09  mem 66.1GB  tok/s 5,159
+[20:43:32] step 14350/18150  ce 3.3438  z 0.00848  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,160
+[20:53:58] step 14400/18150  ce 2.8281  z 0.00896  lr 1.10e-02  |grad| 0.12  mem 66.1GB  tok/s 5,160
+[21:04:25] step 14450/18150  ce 3.1250  z 0.00868  lr 1.10e-02  |grad| 0.07  mem 66.1GB  tok/s 5,160
+[21:14:52] step 14500/18150  ce 3.2812  z 0.00855  lr 1.10e-02  |grad| 0.16  mem 66.1GB  tok/s 5,160
+[21:25:19] step 14550/18150  ce 3.0156  z 0.00851  lr 1.09e-02  |grad| 0.13  mem 66.1GB  tok/s 5,160
+[21:35:46] step 14600/18150  ce 2.8594  z 0.00834  lr 1.08e-02  |grad| 0.09  mem 66.1GB  tok/s 5,161
+[21:46:13] step 14650/18150  ce 3.0000  z 0.00883  lr 1.06e-02  |grad| 0.10  mem 66.1GB  tok/s 5,161
+[21:56:40] step 14700/18150  ce 2.9688  z 0.00840  lr 1.05e-02  |grad| 0.11  mem 66.1GB  tok/s 5,161
+[22:07:06] step 14750/18150  ce 2.9062  z 0.00863  lr 1.03e-02  |grad| 0.09  mem 66.1GB  tok/s 5,161
+[22:17:34] step 14800/18150  ce 2.9219  z 0.00841  lr 1.02e-02  |grad| 0.08  mem 66.1GB  tok/s 5,162
+[22:28:01] step 14850/18150  ce 3.0312  z 0.00856  lr 1.00e-02  |grad| 0.08  mem 66.1GB  tok/s 5,162
+[22:38:28] step 14900/18150  ce 2.8281  z 0.00835  lr 9.85e-03  |grad| 0.10  mem 66.1GB  tok/s 5,162
+[22:48:55] step 14950/18150  ce 3.0625  z 0.00844  lr 9.70e-03  |grad| 0.10  mem 66.1GB  tok/s 5,162
+[22:59:22] step 15000/18150  ce 3.1250  z 0.00834  lr 9.55e-03  |grad| 0.08  mem 66.1GB  tok/s 5,162
+[23:09:49] step 15050/18150  ce 2.9844  z 0.00858  lr 9.39e-03  |grad| 0.11  mem 66.1GB  tok/s 5,163
+[23:20:16] step 15100/18150  ce 3.0312  z 0.00874  lr 9.24e-03  |grad| 0.11  mem 66.1GB  tok/s 5,163
+[23:30:42] step 15150/18150  ce 3.1719  z 0.00852  lr 9.09e-03  |grad| 0.07  mem 66.1GB  tok/s 5,163
+[23:41:09] step 15200/18150  ce 3.0938  z 0.00833  lr 8.94e-03  |grad| 0.08  mem 66.1GB  tok/s 5,163
+[23:51:36] step 15250/18150  ce 3.4844  z 0.00847  lr 8.79e-03  |grad| 0.08  mem 66.1GB  tok/s 5,163
+[00:02:03] step 15300/18150  ce 2.8438  z 0.00817  lr 8.64e-03  |grad| 0.07  mem 66.1GB  tok/s 5,164
+[00:12:30] step 15350/18150  ce 2.9062  z 0.00809  lr 8.48e-03  |grad| 0.12  mem 66.1GB  tok/s 5,164
+[00:22:59] step 15400/18150  ce 2.9688  z 0.00801  lr 8.33e-03  |grad| 0.10  mem 66.1GB  tok/s 5,164
+[00:33:25] step 15450/18150  ce 3.0938  z 0.00830  lr 8.18e-03  |grad| 0.09  mem 66.1GB  tok/s 5,164
+[00:43:52] step 15500/18150  ce 2.9688  z 0.00778  lr 8.03e-03  |grad| 0.09  mem 66.1GB  tok/s 5,164
+[00:54:19] step 15550/18150  ce 3.0312  z 0.00789  lr 7.88e-03  |grad| 0.12  mem 66.1GB  tok/s 5,165
+[01:04:46] step 15600/18150  ce 3.1406  z 0.00750  lr 7.73e-03  |grad| 0.07  mem 66.1GB  tok/s 5,165
+[01:15:13] step 15650/18150  ce 2.8125  z 0.00776  lr 7.58e-03  |grad| 0.07  mem 66.1GB  tok/s 5,165
+[01:25:40] step 15700/18150  ce 3.0000  z 0.00763  lr 7.42e-03  |grad| 0.09  mem 66.1GB  tok/s 5,165
+[01:36:06] step 15750/18150  ce 2.8906  z 0.00759  lr 7.27e-03  |grad| 0.10  mem 66.1GB  tok/s 5,165
+[01:46:33] step 15800/18150  ce 2.8281  z 0.00742  lr 7.12e-03  |grad| 0.08  mem 66.1GB  tok/s 5,166
+[01:57:00] step 15850/18150  ce 3.0938  z 0.00776  lr 6.97e-03  |grad| 0.07  mem 66.1GB  tok/s 5,166
+[02:07:27] step 15900/18150  ce 2.7812  z 0.00722  lr 6.82e-03  |grad| 0.09  mem 66.1GB  tok/s 5,166
+[02:17:55] step 15950/18150  ce 3.1875  z 0.00768  lr 6.67e-03  |grad| 0.07  mem 66.1GB  tok/s 5,166
+[02:28:21] step 16000/18150  ce 2.9688  z 0.00708  lr 6.52e-03  |grad| 0.08  mem 66.1GB  tok/s 5,166
+[02:28:31]   [eval @ 16000] val PPL=24.86
+[02:28:32]   [ckpt @ 16000]
+[02:38:58] step 16050/18150  ce 2.7188  z 0.00720  lr 6.36e-03  |grad| 0.07  mem 66.1GB  tok/s 5,166
+[02:49:25] step 16100/18150  ce 3.0938  z 0.00737  lr 6.21e-03  |grad| 0.08  mem 66.1GB  tok/s 5,167
+[02:59:52] step 16150/18150  ce 3.0781  z 0.00719  lr 6.06e-03  |grad| 0.10  mem 66.1GB  tok/s 5,167
+[03:10:19] step 16200/18150  ce 3.1562  z 0.00734  lr 5.91e-03  |grad| 0.11  mem 66.1GB  tok/s 5,167
+[03:20:46] step 16250/18150  ce 3.0000  z 0.00738  lr 5.76e-03  |grad| 0.06  mem 66.1GB  tok/s 5,167
+[03:31:12] step 16300/18150  ce 2.9375  z 0.00719  lr 5.61e-03  |grad| 0.08  mem 66.1GB  tok/s 5,167
+[03:41:39] step 16350/18150  ce 3.0312  z 0.00743  lr 5.45e-03  |grad| 0.10  mem 66.1GB  tok/s 5,167
+[03:52:06] step 16400/18150  ce 2.9375  z 0.00715  lr 5.30e-03  |grad| 0.08  mem 66.1GB  tok/s 5,168
+[04:02:33] step 16450/18150  ce 2.7969  z 0.00704  lr 5.15e-03  |grad| 0.06  mem 66.1GB  tok/s 5,168
+[04:12:59] step 16500/18150  ce 2.9375  z 0.00733  lr 5.00e-03  |grad| 0.08  mem 66.1GB  tok/s 5,168
+[04:23:27] step 16550/18150  ce 2.8125  z 0.00699  lr 4.85e-03  |grad| 0.08  mem 66.1GB  tok/s 5,168
+[04:34:15] step 16600/18150  ce 2.9688  z 0.00701  lr 4.70e-03  |grad| 0.09  mem 66.1GB  tok/s 5,168
+[04:44:48] step 16650/18150  ce 3.0312  z 0.00751  lr 4.55e-03  |grad| 0.09  mem 66.1GB  tok/s 5,168
+[04:55:14] step 16700/18150  ce 2.9688  z 0.00678  lr 4.39e-03  |grad| 0.08  mem 66.1GB  tok/s 5,168
+[05:05:41] step 16750/18150  ce 2.9375  z 0.00702  lr 4.24e-03  |grad| 0.09  mem 66.1GB  tok/s 5,168
+[05:16:08] step 16800/18150  ce 2.5938  z 0.00696  lr 4.09e-03  |grad| 0.10  mem 66.1GB  tok/s 5,168
+[05:26:35] step 16850/18150  ce 3.0938  z 0.00712  lr 3.94e-03  |grad| 0.07  mem 66.1GB  tok/s 5,169
+[05:37:01] step 16900/18150  ce 2.9062  z 0.00687  lr 3.79e-03  |grad| 0.08  mem 66.1GB  tok/s 5,169
+[05:47:28] step 16950/18150  ce 2.8750  z 0.00689  lr 3.64e-03  |grad| 0.07  mem 66.1GB  tok/s 5,169
+[05:57:55] step 17000/18150  ce 3.1250  z 0.00696  lr 3.48e-03  |grad| 0.07  mem 66.1GB  tok/s 5,169
+[06:08:22] step 17050/18150  ce 3.0156  z 0.00693  lr 3.33e-03  |grad| 0.08  mem 66.1GB  tok/s 5,169
+[06:18:50] step 17100/18150  ce 2.8750  z 0.00669  lr 3.18e-03  |grad| 0.11  mem 66.1GB  tok/s 5,169
+[06:29:17] step 17150/18150  ce 3.0469  z 0.00669  lr 3.03e-03  |grad| 0.09  mem 66.1GB  tok/s 5,170
+[06:39:43] step 17200/18150  ce 2.8125  z 0.00634  lr 2.88e-03  |grad| 0.08  mem 66.1GB  tok/s 5,170
+[06:50:10] step 17250/18150  ce 2.6875  z 0.00681  lr 2.73e-03  |grad| 0.07  mem 66.1GB  tok/s 5,170
+[07:00:37] step 17300/18150  ce 2.9844  z 0.00671  lr 2.58e-03  |grad| 0.08  mem 66.1GB  tok/s 5,170
+[07:11:03] step 17350/18150  ce 3.0469  z 0.00673  lr 2.42e-03  |grad| 0.07  mem 66.1GB  tok/s 5,170
+[07:21:30] step 17400/18150  ce 2.9688  z 0.00687  lr 2.27e-03  |grad| 0.06  mem 66.1GB  tok/s 5,170
+[07:31:57] step 17450/18150  ce 3.0938  z 0.00650  lr 2.12e-03  |grad| 0.07  mem 66.1GB  tok/s 5,171
+[07:42:24] step 17500/18150  ce 3.0625  z 0.00685  lr 1.97e-03  |grad| 0.07  mem 66.1GB  tok/s 5,171
+[07:52:50] step 17550/18150  ce 2.4062  z 0.00671  lr 1.82e-03  |grad| 0.07  mem 66.1GB  tok/s 5,171
+[08:03:17] step 17600/18150  ce 2.9688  z 0.00625  lr 1.67e-03  |grad| 0.07  mem 66.1GB  tok/s 5,171
+[08:13:44] step 17650/18150  ce 3.0625  z 0.00672  lr 1.52e-03  |grad| 0.07  mem 66.1GB  tok/s 5,171
+[08:24:13] step 17700/18150  ce 3.2969  z 0.00632  lr 1.36e-03  |grad| 0.10  mem 66.1GB  tok/s 5,171
+[08:34:40] step 17750/18150  ce 2.9531  z 0.00671  lr 1.21e-03  |grad| 0.08  mem 66.1GB  tok/s 5,171
+[08:45:07] step 17800/18150  ce 3.0000  z 0.00642  lr 1.06e-03  |grad| 0.08  mem 66.1GB  tok/s 5,172
+[08:55:33] step 17850/18150  ce 3.0312  z 0.00638  lr 9.09e-04  |grad| 0.07  mem 66.1GB  tok/s 5,172
+[09:06:00] step 17900/18150  ce 2.8750  z 0.00666  lr 7.58e-04  |grad| 0.08  mem 66.1GB  tok/s 5,172
+[09:16:27] step 17950/18150  ce 2.9062  z 0.00672  lr 6.06e-04  |grad| 0.06  mem 66.1GB  tok/s 5,172
+[09:26:54] step 18000/18150  ce 2.8125  z 0.00700  lr 4.55e-04  |grad| 0.07  mem 66.1GB  tok/s 5,172
+[09:27:03]   [eval @ 18000] val PPL=23.52
+[09:27:04]   [ckpt @ 18000]
+[09:37:31] step 18050/18150  ce 3.0625  z 0.00661  lr 3.03e-04  |grad| 0.07  mem 66.1GB  tok/s 5,172
+[09:47:58] step 18100/18150  ce 3.0781  z 0.00679  lr 1.52e-04  |grad| 0.06  mem 66.1GB  tok/s 5,172
+[09:58:25] step 18150/18150  ce 2.4688  z 0.00659  lr 0.00e+00  |grad| 0.06  mem 66.1GB  tok/s 5,172
+[09:58:25] DONE
+=== [2/4] DONE Sun Jun 14 09:58:30 AM UTC 2026 ===
+=== [3/4] partial RoPE 25% Sun Jun 14 09:58:30 AM UTC 2026 ===
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[09:58:33] partial RoPE factor=0.25  steps=18,150  tok/step=65,536  budget=1,189,478,400  peak_lr=0.0024
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[09:58:40]   loaded cached tokens from tokcache_1191478400_300000.pt (1,191,478,400 train + 300,000 val)
+[09:58:46] rotary_dim=32 / head_dim=128
+[09:58:47] Baseline eval...
+[09:59:01]   baseline val PPL=185854.22
+W0614 09:59:11.862000 1906225 torch/_inductor/utils.py:1731] [0/0] Not enough SMs to use max_autotune_gemm mode
+[10:07:06] step     50/18150  loss 8.2515  lr 1.33e-04  |grad| 0.94  mem 54.3GB  tok/s 6,767  ETA 48.7h
+[10:14:38] step    100/18150  loss 6.9979  lr 2.67e-04  |grad| 0.59  mem 54.3GB  tok/s 7,001  ETA 46.9h
+[10:22:14] step    150/18150  loss 6.5826  lr 4.00e-04  |grad| 0.92  mem 54.3GB  tok/s 7,063  ETA 46.4h
+[10:29:46] step    200/18150  loss 6.3646  lr 5.33e-04  |grad| 0.54  mem 54.3GB  tok/s 7,109  ETA 46.0h
+[10:37:18] step    250/18150  loss 6.0284  lr 6.67e-04  |grad| 0.40  mem 54.3GB  tok/s 7,138  ETA 45.7h
+[10:44:49] step    300/18150  loss 5.7630  lr 8.00e-04  |grad| 0.48  mem 54.3GB  tok/s 7,157  ETA 45.4h
+[10:52:21] step    350/18150  loss 5.5074  lr 9.33e-04  |grad| 0.38  mem 54.3GB  tok/s 7,170  ETA 45.2h
+[10:59:53] step    400/18150  loss 5.3588  lr 1.07e-03  |grad| 0.44  mem 54.3GB  tok/s 7,180  ETA 45.0h
+[11:07:25] step    450/18150  loss 5.4650  lr 1.20e-03  |grad| 0.34  mem 54.3GB  tok/s 7,189  ETA 44.8h
+[11:14:56] step    500/18150  loss 5.3275  lr 1.33e-03  |grad| 0.35  mem 54.3GB  tok/s 7,195  ETA 44.7h
+[11:22:28] step    550/18150  loss 4.9718  lr 1.47e-03  |grad| 0.28  mem 54.3GB  tok/s 7,200  ETA 44.5h
+[11:30:00] step    600/18150  loss 4.6284  lr 1.60e-03  |grad| 0.31  mem 54.3GB  tok/s 7,204  ETA 44.3h
+[11:37:32] step    650/18150  loss 4.8439  lr 1.73e-03  |grad| 0.26  mem 54.3GB  tok/s 7,208  ETA 44.2h
+[11:45:04] step    700/18150  loss 4.5331  lr 1.87e-03  |grad| 0.31  mem 54.3GB  tok/s 7,211  ETA 44.1h
+[11:52:36] step    750/18150  loss 4.6834  lr 2.00e-03  |grad| 0.29  mem 54.3GB  tok/s 7,214  ETA 43.9h
+[12:00:08] step    800/18150  loss 4.5132  lr 2.13e-03  |grad| 0.27  mem 54.3GB  tok/s 7,216  ETA 43.8h
+[12:07:40] step    850/18150  loss 4.6279  lr 2.27e-03  |grad| 0.35  mem 54.3GB  tok/s 7,218  ETA 43.6h
+[12:15:11] step    900/18150  loss 4.3258  lr 2.40e-03  |grad| 0.29  mem 54.3GB  tok/s 7,220  ETA 43.5h
+[12:22:44] step    950/18150  loss 4.4611  lr 2.40e-03  |grad| 0.30  mem 54.3GB  tok/s 7,221  ETA 43.4h
+[12:30:16] step   1000/18150  loss 4.3972  lr 2.40e-03  |grad| 0.26  mem 54.3GB  tok/s 7,223  ETA 43.2h
+[12:37:48] step   1050/18150  loss 4.4578  lr 2.40e-03  |grad| 0.26  mem 54.3GB  tok/s 7,224  ETA 43.1h
+[12:45:20] step   1100/18150  loss 4.4606  lr 2.40e-03  |grad| 0.27  mem 54.3GB  tok/s 7,225  ETA 43.0h
+[12:52:52] step   1150/18150  loss 4.0208  lr 2.40e-03  |grad| 0.22  mem 54.3GB  tok/s 7,226  ETA 42.8h
+[13:00:24] step   1200/18150  loss 4.4559  lr 2.40e-03  |grad| 0.26  mem 54.3GB  tok/s 7,227  ETA 42.7h
+[13:07:56] step   1250/18150  loss 4.1016  lr 2.40e-03  |grad| 0.24  mem 54.3GB  tok/s 7,228  ETA 42.6h
+[13:15:28] step   1300/18150  loss 4.2380  lr 2.40e-03  |grad| 0.23  mem 54.3GB  tok/s 7,229  ETA 42.4h
+[13:23:00] step   1350/18150  loss 4.0553  lr 2.40e-03  |grad| 0.29  mem 54.3GB  tok/s 7,230  ETA 42.3h
+[13:30:32] step   1400/18150  loss 4.2093  lr 2.40e-03  |grad| 0.23  mem 54.3GB  tok/s 7,230  ETA 42.2h
+[13:38:04] step   1450/18150  loss 4.1745  lr 2.39e-03  |grad| 0.24  mem 54.3GB  tok/s 7,231  ETA 42.0h
+[13:45:35] step   1500/18150  loss 4.0945  lr 2.39e-03  |grad| 0.28  mem 54.3GB  tok/s 7,232  ETA 41.9h
+[13:53:07] step   1550/18150  loss 4.1282  lr 2.39e-03  |grad| 0.25  mem 54.3GB  tok/s 7,232  ETA 41.8h
+[14:00:39] step   1600/18150  loss 4.1317  lr 2.39e-03  |grad| 0.23  mem 54.3GB  tok/s 7,233  ETA 41.7h
+[14:08:11] step   1650/18150  loss 3.8703  lr 2.39e-03  |grad| 0.25  mem 54.3GB  tok/s 7,234  ETA 41.5h
+[14:15:43] step   1700/18150  loss 3.8680  lr 2.39e-03  |grad| 0.23  mem 54.3GB  tok/s 7,234  ETA 41.4h
+[14:23:17] step   1750/18150  loss 4.1530  lr 2.39e-03  |grad| 0.24  mem 54.3GB  tok/s 7,234  ETA 41.3h
+[14:31:19] step   1800/18150  loss 4.0197  lr 2.39e-03  |grad| 0.26  mem 54.3GB  tok/s 7,221  ETA 41.2h
+[14:39:31] step   1850/18150  loss 3.9017  lr 2.38e-03  |grad| 0.24  mem 54.3GB  tok/s 7,204  ETA 41.2h
+[14:47:28] step   1900/18150  loss 4.0808  lr 2.38e-03  |grad| 0.21  mem 54.3GB  tok/s 7,195  ETA 41.1h
+[14:55:04] step   1950/18150  loss 3.9684  lr 2.38e-03  |grad| 0.23  mem 54.3GB  tok/s 7,195  ETA 41.0h
+[15:02:37] step   2000/18150  loss 3.8782  lr 2.38e-03  |grad| 0.21  mem 54.3GB  tok/s 7,196  ETA 40.9h
+[15:02:51]   [eval @ 2000] val PPL=62.33
+[15:10:24] step   2050/18150  loss 3.8651  lr 2.38e-03  |grad| 0.22  mem 54.3GB  tok/s 7,191  ETA 40.8h
+[15:18:08] step   2100/18150  loss 3.8480  lr 2.38e-03  |grad| 0.21  mem 54.3GB  tok/s 7,188  ETA 40.6h
+[15:25:41] step   2150/18150  loss 3.7243  lr 2.37e-03  |grad| 0.22  mem 54.3GB  tok/s 7,190  ETA 40.5h
+[15:33:13] step   2200/18150  loss 3.6673  lr 2.37e-03  |grad| 0.23  mem 54.3GB  tok/s 7,191  ETA 40.4h
+[15:40:45] step   2250/18150  loss 3.9323  lr 2.37e-03  |grad| 0.24  mem 54.3GB  tok/s 7,192  ETA 40.2h
+[15:48:17] step   2300/18150  loss 3.5003  lr 2.37e-03  |grad| 0.25  mem 54.3GB  tok/s 7,193  ETA 40.1h
+[15:55:49] step   2350/18150  loss 3.8375  lr 2.36e-03  |grad| 0.25  mem 54.3GB  tok/s 7,194  ETA 40.0h
+[16:03:22] step   2400/18150  loss 3.8158  lr 2.36e-03  |grad| 0.29  mem 54.3GB  tok/s 7,195  ETA 39.8h
+[16:10:54] step   2450/18150  loss 3.9263  lr 2.36e-03  |grad| 0.21  mem 54.3GB  tok/s 7,196  ETA 39.7h
+[16:18:29] step   2500/18150  loss 3.5875  lr 2.36e-03  |grad| 0.21  mem 54.3GB  tok/s 7,197  ETA 39.6h
+[16:26:01] step   2550/18150  loss 3.7329  lr 2.35e-03  |grad| 0.24  mem 54.3GB  tok/s 7,197  ETA 39.5h
+[16:33:34] step   2600/18150  loss 3.8947  lr 2.35e-03  |grad| 0.21  mem 54.3GB  tok/s 7,198  ETA 39.3h
+[16:41:06] step   2650/18150  loss 3.5285  lr 2.35e-03  |grad| 0.23  mem 54.3GB  tok/s 7,199  ETA 39.2h
+[16:48:38] step   2700/18150  loss 3.6058  lr 2.34e-03  |grad| 0.21  mem 54.3GB  tok/s 7,200  ETA 39.1h
+[16:56:10] step   2750/18150  loss 3.6738  lr 2.34e-03  |grad| 0.22  mem 54.3GB  tok/s 7,201  ETA 38.9h
+[17:03:43] step   2800/18150  loss 3.7243  lr 2.34e-03  |grad| 0.20  mem 54.3GB  tok/s 7,202  ETA 38.8h
+[17:11:15] step   2850/18150  loss 3.7910  lr 2.34e-03  |grad| 0.26  mem 54.3GB  tok/s 7,202  ETA 38.7h
+[17:18:47] step   2900/18150  loss 3.8015  lr 2.33e-03  |grad| 0.18  mem 54.3GB  tok/s 7,203  ETA 38.5h
+[17:26:20] step   2950/18150  loss 3.8201  lr 2.33e-03  |grad| 0.21  mem 54.3GB  tok/s 7,204  ETA 38.4h
+[17:33:52] step   3000/18150  loss 3.7746  lr 2.32e-03  |grad| 0.22  mem 54.3GB  tok/s 7,205  ETA 38.3h
+[17:41:24] step   3050/18150  loss 3.6905  lr 2.32e-03  |grad| 0.20  mem 54.3GB  tok/s 7,205  ETA 38.2h
+[17:48:56] step   3100/18150  loss 3.4490  lr 2.32e-03  |grad| 0.19  mem 54.3GB  tok/s 7,206  ETA 38.0h
+[17:56:28] step   3150/18150  loss 3.7185  lr 2.31e-03  |grad| 0.20  mem 54.3GB  tok/s 7,207  ETA 37.9h
+[18:04:00] step   3200/18150  loss 3.7670  lr 2.31e-03  |grad| 0.20  mem 54.3GB  tok/s 7,207  ETA 37.8h
+[18:11:32] step   3250/18150  loss 3.5869  lr 2.31e-03  |grad| 0.21  mem 54.3GB  tok/s 7,208  ETA 37.6h
+[18:19:06] step   3300/18150  loss 3.5436  lr 2.30e-03  |grad| 0.22  mem 54.3GB  tok/s 7,208  ETA 37.5h
+[18:26:39] step   3350/18150  loss 3.6518  lr 2.30e-03  |grad| 0.21  mem 54.3GB  tok/s 7,209  ETA 37.4h
+[18:34:11] step   3400/18150  loss 3.7279  lr 2.29e-03  |grad| 0.22  mem 54.3GB  tok/s 7,209  ETA 37.2h
+[18:41:43] step   3450/18150  loss 3.5929  lr 2.29e-03  |grad| 0.23  mem 54.3GB  tok/s 7,210  ETA 37.1h
+[18:49:15] step   3500/18150  loss 3.6738  lr 2.29e-03  |grad| 0.22  mem 54.3GB  tok/s 7,210  ETA 37.0h
+[18:56:47] step   3550/18150  loss 3.6752  lr 2.28e-03  |grad| 0.24  mem 54.3GB  tok/s 7,211  ETA 36.9h
+[19:04:19] step   3600/18150  loss 3.8631  lr 2.28e-03  |grad| 0.22  mem 54.3GB  tok/s 7,211  ETA 36.7h
+[19:11:51] step   3650/18150  loss 3.8885  lr 2.27e-03  |grad| 0.21  mem 54.3GB  tok/s 7,212  ETA 36.6h
+[19:19:23] step   3700/18150  loss 3.6328  lr 2.27e-03  |grad| 0.21  mem 54.3GB  tok/s 7,212  ETA 36.5h
+[19:26:54] step   3750/18150  loss 3.6382  lr 2.26e-03  |grad| 0.21  mem 54.3GB  tok/s 7,213  ETA 36.3h
+[19:34:26] step   3800/18150  loss 3.1670  lr 2.26e-03  |grad| 0.20  mem 54.3GB  tok/s 7,213  ETA 36.2h
+[19:41:58] step   3850/18150  loss 3.6983  lr 2.25e-03  |grad| 0.24  mem 54.3GB  tok/s 7,214  ETA 36.1h
+[19:49:30] step   3900/18150  loss 3.4638  lr 2.25e-03  |grad| 0.22  mem 54.3GB  tok/s 7,214  ETA 36.0h
+[19:57:02] step   3950/18150  loss 3.4926  lr 2.24e-03  |grad| 0.25  mem 54.3GB  tok/s 7,215  ETA 35.8h
+[20:04:34] step   4000/18150  loss 3.3331  lr 2.24e-03  |grad| 0.19  mem 54.3GB  tok/s 7,215  ETA 35.7h
+[20:04:48]   [eval @ 4000] val PPL=46.42
+[20:12:22] step   4050/18150  loss 3.5958  lr 2.23e-03  |grad| 0.22  mem 54.3GB  tok/s 7,213  ETA 35.6h
+[20:19:55] step   4100/18150  loss 3.5404  lr 2.23e-03  |grad| 0.23  mem 54.3GB  tok/s 7,213  ETA 35.5h
+[20:27:27] step   4150/18150  loss 3.7454  lr 2.22e-03  |grad| 0.26  mem 54.3GB  tok/s 7,213  ETA 35.3h
+[20:34:59] step   4200/18150  loss 3.6125  lr 2.22e-03  |grad| 0.21  mem 54.3GB  tok/s 7,214  ETA 35.2h
+[20:42:30] step   4250/18150  loss 3.3552  lr 2.21e-03  |grad| 0.19  mem 54.3GB  tok/s 7,214  ETA 35.1h
+[20:50:03] step   4300/18150  loss 3.8711  lr 2.21e-03  |grad| 0.20  mem 54.3GB  tok/s 7,215  ETA 34.9h
+[20:57:35] step   4350/18150  loss 3.6088  lr 2.20e-03  |grad| 0.23  mem 54.3GB  tok/s 7,215  ETA 34.8h
+[21:05:07] step   4400/18150  loss 3.7500  lr 2.20e-03  |grad| 0.23  mem 54.3GB  tok/s 7,215  ETA 34.7h
+[21:12:39] step   4450/18150  loss 3.6538  lr 2.19e-03  |grad| 0.21  mem 54.3GB  tok/s 7,216  ETA 34.6h
+[21:20:11] step   4500/18150  loss 3.5985  lr 2.18e-03  |grad| 0.19  mem 54.3GB  tok/s 7,216  ETA 34.4h
+[21:27:43] step   4550/18150  loss 3.4703  lr 2.18e-03  |grad| 0.19  mem 54.3GB  tok/s 7,216  ETA 34.3h
+[21:35:15] step   4600/18150  loss 3.7822  lr 2.17e-03  |grad| 0.21  mem 54.3GB  tok/s 7,217  ETA 34.2h
+[21:42:47] step   4650/18150  loss 3.5145  lr 2.17e-03  |grad| 0.24  mem 54.3GB  tok/s 7,217  ETA 34.1h
+[21:50:19] step   4700/18150  loss 3.5905  lr 2.16e-03  |grad| 0.22  mem 54.3GB  tok/s 7,218  ETA 33.9h
+[21:57:51] step   4750/18150  loss 3.7515  lr 2.15e-03  |grad| 0.19  mem 54.3GB  tok/s 7,218  ETA 33.8h
+[22:05:23] step   4800/18150  loss 3.4371  lr 2.15e-03  |grad| 0.21  mem 54.3GB  tok/s 7,218  ETA 33.7h
+[22:12:55] step   4850/18150  loss 3.6439  lr 2.14e-03  |grad| 0.19  mem 54.3GB  tok/s 7,218  ETA 33.5h
+[22:20:29] step   4900/18150  loss 3.2758  lr 2.14e-03  |grad| 0.22  mem 54.3GB  tok/s 7,219  ETA 33.4h
+[22:28:01] step   4950/18150  loss 3.3874  lr 2.13e-03  |grad| 0.23  mem 54.3GB  tok/s 7,219  ETA 33.3h
+[22:35:33] step   5000/18150  loss 3.5910  lr 2.12e-03  |grad| 0.20  mem 54.3GB  tok/s 7,219  ETA 33.2h
+[22:43:05] step   5050/18150  loss 3.5682  lr 2.12e-03  |grad| 0.23  mem 54.3GB  tok/s 7,219  ETA 33.0h
+[22:50:37] step   5100/18150  loss 3.5784  lr 2.11e-03  |grad| 0.19  mem 54.3GB  tok/s 7,220  ETA 32.9h
+[22:58:09] step   5150/18150  loss 3.7502  lr 2.10e-03  |grad| 0.25  mem 54.3GB  tok/s 7,220  ETA 32.8h
+[23:05:40] step   5200/18150  loss 3.5003  lr 2.10e-03  |grad| 0.17  mem 54.3GB  tok/s 7,220  ETA 32.7h
+[23:13:13] step   5250/18150  loss 3.2219  lr 2.09e-03  |grad| 0.18  mem 54.3GB  tok/s 7,221  ETA 32.5h
+[23:20:44] step   5300/18150  loss 3.6725  lr 2.08e-03  |grad| 0.22  mem 54.3GB  tok/s 7,221  ETA 32.4h
+[23:28:16] step   5350/18150  loss 3.6190  lr 2.08e-03  |grad| 0.18  mem 54.3GB  tok/s 7,221  ETA 32.3h
+[23:35:49] step   5400/18150  loss 3.5858  lr 2.07e-03  |grad| 0.21  mem 54.3GB  tok/s 7,221  ETA 32.1h
+[23:43:20] step   5450/18150  loss 3.5831  lr 2.06e-03  |grad| 0.20  mem 54.3GB  tok/s 7,222  ETA 32.0h
+[23:50:53] step   5500/18150  loss 3.3029  lr 2.06e-03  |grad| 0.20  mem 54.3GB  tok/s 7,222  ETA 31.9h
+[23:58:24] step   5550/18150  loss 3.6362  lr 2.05e-03  |grad| 0.22  mem 54.3GB  tok/s 7,222  ETA 31.8h
+[00:05:56] step   5600/18150  loss 3.4651  lr 2.04e-03  |grad| 0.18  mem 54.3GB  tok/s 7,222  ETA 31.6h
+[00:13:28] step   5650/18150  loss 3.6308  lr 2.03e-03  |grad| 0.18  mem 54.3GB  tok/s 7,223  ETA 31.5h
+[00:21:02] step   5700/18150  loss 3.5391  lr 2.03e-03  |grad| 0.20  mem 54.3GB  tok/s 7,223  ETA 31.4h
+[00:28:33] step   5750/18150  loss 3.2982  lr 2.02e-03  |grad| 0.18  mem 54.3GB  tok/s 7,223  ETA 31.3h
+[00:36:05] step   5800/18150  loss 3.5981  lr 2.01e-03  |grad| 0.18  mem 54.3GB  tok/s 7,223  ETA 31.1h
+[00:43:37] step   5850/18150  loss 3.3442  lr 2.01e-03  |grad| 0.21  mem 54.3GB  tok/s 7,223  ETA 31.0h
+[00:51:09] step   5900/18150  loss 3.4854  lr 2.00e-03  |grad| 0.17  mem 54.3GB  tok/s 7,224  ETA 30.9h
+[00:58:42] step   5950/18150  loss 3.3279  lr 1.99e-03  |grad| 0.18  mem 54.3GB  tok/s 7,224  ETA 30.7h
+[01:06:14] step   6000/18150  loss 3.6281  lr 1.98e-03  |grad| 0.21  mem 54.3GB  tok/s 7,224  ETA 30.6h
+[01:06:28]   [eval @ 6000] val PPL=40.66
+[01:14:01] step   6050/18150  loss 3.6379  lr 1.98e-03  |grad| 0.20  mem 54.3GB  tok/s 7,222  ETA 30.5h
+[01:21:33] step   6100/18150  loss 3.6380  lr 1.97e-03  |grad| 0.21  mem 54.3GB  tok/s 7,222  ETA 30.4h
+[01:29:05] step   6150/18150  loss 3.5622  lr 1.96e-03  |grad| 0.19  mem 54.3GB  tok/s 7,223  ETA 30.2h
+[01:36:36] step   6200/18150  loss 3.1413  lr 1.95e-03  |grad| 0.20  mem 54.3GB  tok/s 7,223  ETA 30.1h
+[01:44:08] step   6250/18150  loss 3.5269  lr 1.94e-03  |grad| 0.18  mem 54.3GB  tok/s 7,223  ETA 30.0h
+[01:51:40] step   6300/18150  loss 3.5565  lr 1.94e-03  |grad| 0.16  mem 54.3GB  tok/s 7,223  ETA 29.9h
+[01:59:12] step   6350/18150  loss 3.1891  lr 1.93e-03  |grad| 0.16  mem 54.3GB  tok/s 7,224  ETA 29.7h
+[02:06:44] step   6400/18150  loss 3.3400  lr 1.92e-03  |grad| 0.17  mem 54.3GB  tok/s 7,224  ETA 29.6h
+[02:14:16] step   6450/18150  loss 3.3413  lr 1.91e-03  |grad| 0.18  mem 54.3GB  tok/s 7,224  ETA 29.5h
+[02:21:49] step   6500/18150  loss 3.4643  lr 1.90e-03  |grad| 0.18  mem 54.3GB  tok/s 7,224  ETA 29.4h
+[02:29:21] step   6550/18150  loss 3.4180  lr 1.90e-03  |grad| 0.19  mem 54.3GB  tok/s 7,224  ETA 29.2h
+[02:36:53] step   6600/18150  loss 3.7004  lr 1.89e-03  |grad| 0.20  mem 54.3GB  tok/s 7,225  ETA 29.1h
+[02:44:25] step   6650/18150  loss 3.3517  lr 1.88e-03  |grad| 0.21  mem 54.3GB  tok/s 7,225  ETA 29.0h
+[02:51:57] step   6700/18150  loss 3.3589  lr 1.87e-03  |grad| 0.18  mem 54.3GB  tok/s 7,225  ETA 28.9h
+[02:59:29] step   6750/18150  loss 3.1914  lr 1.86e-03  |grad| 0.18  mem 54.3GB  tok/s 7,225  ETA 28.7h
+[03:07:01] step   6800/18150  loss 3.2583  lr 1.86e-03  |grad| 0.17  mem 54.3GB  tok/s 7,225  ETA 28.6h
+[03:14:33] step   6850/18150  loss 3.4390  lr 1.85e-03  |grad| 0.18  mem 54.3GB  tok/s 7,225  ETA 28.5h
+[03:22:05] step   6900/18150  loss 3.2923  lr 1.84e-03  |grad| 0.16  mem 54.3GB  tok/s 7,226  ETA 28.3h
+[03:29:37] step   6950/18150  loss 3.4599  lr 1.83e-03  |grad| 0.21  mem 54.3GB  tok/s 7,226  ETA 28.2h
+[03:37:09] step   7000/18150  loss 3.4715  lr 1.82e-03  |grad| 0.19  mem 54.3GB  tok/s 7,226  ETA 28.1h
+[03:44:40] step   7050/18150  loss 3.3322  lr 1.81e-03  |grad| 0.21  mem 54.3GB  tok/s 7,226  ETA 28.0h
+[03:52:12] step   7100/18150  loss 3.5119  lr 1.80e-03  |grad| 0.18  mem 54.3GB  tok/s 7,226  ETA 27.8h
+[03:59:44] step   7150/18150  loss 3.4410  lr 1.80e-03  |grad| 0.18  mem 54.3GB  tok/s 7,227  ETA 27.7h
+[04:07:16] step   7200/18150  loss 3.4834  lr 1.79e-03  |grad| 0.17  mem 54.3GB  tok/s 7,227  ETA 27.6h
+[04:14:48] step   7250/18150  loss 3.5364  lr 1.78e-03  |grad| 0.17  mem 54.3GB  tok/s 7,227  ETA 27.5h
+[04:22:22] step   7300/18150  loss 3.4737  lr 1.77e-03  |grad| 0.18  mem 54.3GB  tok/s 7,227  ETA 27.3h
+[04:29:53] step   7350/18150  loss 3.3304  lr 1.76e-03  |grad| 0.18  mem 54.3GB  tok/s 7,227  ETA 27.2h
+[04:37:25] step   7400/18150  loss 3.3693  lr 1.75e-03  |grad| 0.18  mem 54.3GB  tok/s 7,227  ETA 27.1h
+[04:44:57] step   7450/18150  loss 3.3361  lr 1.74e-03  |grad| 0.18  mem 54.3GB  tok/s 7,227  ETA 27.0h
+[04:52:29] step   7500/18150  loss 3.5180  lr 1.73e-03  |grad| 0.17  mem 54.3GB  tok/s 7,227  ETA 26.8h
+[05:00:01] step   7550/18150  loss 3.4669  lr 1.73e-03  |grad| 0.17  mem 54.3GB  tok/s 7,228  ETA 26.7h
+[05:07:33] step   7600/18150  loss 3.3221  lr 1.72e-03  |grad| 0.16  mem 54.3GB  tok/s 7,228  ETA 26.6h
+[05:15:05] step   7650/18150  loss 3.2309  lr 1.71e-03  |grad| 0.16  mem 54.3GB  tok/s 7,228  ETA 26.4h
+[05:22:37] step   7700/18150  loss 3.6290  lr 1.70e-03  |grad| 0.18  mem 54.3GB  tok/s 7,228  ETA 26.3h
+[05:30:08] step   7750/18150  loss 3.4235  lr 1.69e-03  |grad| 0.16  mem 54.3GB  tok/s 7,228  ETA 26.2h
+[05:37:40] step   7800/18150  loss 3.6517  lr 1.68e-03  |grad| 0.16  mem 54.3GB  tok/s 7,228  ETA 26.1h
+[05:45:12] step   7850/18150  loss 3.4441  lr 1.67e-03  |grad| 0.18  mem 54.3GB  tok/s 7,229  ETA 25.9h
+[05:52:44] step   7900/18150  loss 3.3746  lr 1.66e-03  |grad| 0.15  mem 54.3GB  tok/s 7,229  ETA 25.8h
+[06:00:16] step   7950/18150  loss 3.4469  lr 1.65e-03  |grad| 0.19  mem 54.3GB  tok/s 7,229  ETA 25.7h
+[06:07:48] step   8000/18150  loss 3.6275  lr 1.65e-03  |grad| 0.18  mem 54.3GB  tok/s 7,229  ETA 25.6h
+[06:08:02]   [eval @ 8000] val PPL=36.86
+[06:15:35] step   8050/18150  loss 3.4851  lr 1.64e-03  |grad| 0.18  mem 54.3GB  tok/s 7,228  ETA 25.4h
+[06:23:09] step   8100/18150  loss 2.9625  lr 1.63e-03  |grad| 0.17  mem 54.3GB  tok/s 7,228  ETA 25.3h
+[06:30:41] step   8150/18150  loss 3.1136  lr 1.62e-03  |grad| 0.16  mem 54.3GB  tok/s 7,228  ETA 25.2h
+[06:38:13] step   8200/18150  loss 3.4660  lr 1.61e-03  |grad| 0.17  mem 54.3GB  tok/s 7,228  ETA 25.1h
+[06:45:44] step   8250/18150  loss 3.2882  lr 1.60e-03  |grad| 0.19  mem 54.3GB  tok/s 7,228  ETA 24.9h
+[06:53:16] step   8300/18150  loss 3.1186  lr 1.59e-03  |grad| 0.15  mem 54.3GB  tok/s 7,228  ETA 24.8h
+[07:00:48] step   8350/18150  loss 3.3055  lr 1.58e-03  |grad| 0.18  mem 54.3GB  tok/s 7,228  ETA 24.7h
+[07:08:20] step   8400/18150  loss 3.6012  lr 1.57e-03  |grad| 0.21  mem 54.3GB  tok/s 7,228  ETA 24.6h
+[07:15:52] step   8450/18150  loss 3.2836  lr 1.56e-03  |grad| 0.15  mem 54.3GB  tok/s 7,229  ETA 24.4h
+[07:23:23] step   8500/18150  loss 3.6226  lr 1.55e-03  |grad| 0.19  mem 54.3GB  tok/s 7,229  ETA 24.3h
+[07:31:18] step   8550/18150  loss 3.3530  lr 1.54e-03  |grad| 0.16  mem 54.3GB  tok/s 7,227  ETA 24.2h
+[07:39:34] step   8600/18150  loss 3.4781  lr 1.53e-03  |grad| 0.17  mem 54.3GB  tok/s 7,223  ETA 24.1h
+[07:47:58] step   8650/18150  loss 3.4346  lr 1.53e-03  |grad| 0.17  mem 54.3GB  tok/s 7,218  ETA 24.0h
+[07:56:11] step   8700/18150  loss 3.2174  lr 1.52e-03  |grad| 0.15  mem 54.3GB  tok/s 7,215  ETA 23.8h
+[08:04:18] step   8750/18150  loss 3.5859  lr 1.51e-03  |grad| 0.17  mem 54.3GB  tok/s 7,212  ETA 23.7h
+[08:12:06] step   8800/18150  loss 3.3545  lr 1.50e-03  |grad| 0.15  mem 54.3GB  tok/s 7,210  ETA 23.6h
+[08:20:18] step   8850/18150  loss 3.3878  lr 1.49e-03  |grad| 0.17  mem 54.3GB  tok/s 7,207  ETA 23.5h
+[08:28:46] step   8900/18150  loss 3.3785  lr 1.48e-03  |grad| 0.16  mem 54.3GB  tok/s 7,202  ETA 23.4h
+[08:37:06] step   8950/18150  loss 3.2576  lr 1.47e-03  |grad| 0.18  mem 54.3GB  tok/s 7,198  ETA 23.3h
+[08:45:23] step   9000/18150  loss 3.4069  lr 1.46e-03  |grad| 0.17  mem 54.3GB  tok/s 7,195  ETA 23.2h
+[08:53:41] step   9050/18150  loss 3.4735  lr 1.45e-03  |grad| 0.18  mem 54.3GB  tok/s 7,191  ETA 23.0h
+[09:01:55] step   9100/18150  loss 3.5242  lr 1.44e-03  |grad| 0.16  mem 54.3GB  tok/s 7,188  ETA 22.9h
+[09:10:11] step   9150/18150  loss 3.5137  lr 1.43e-03  |grad| 0.17  mem 54.3GB  tok/s 7,184  ETA 22.8h
+[09:18:20] step   9200/18150  loss 3.4241  lr 1.42e-03  |grad| 0.18  mem 54.3GB  tok/s 7,181  ETA 22.7h
+[09:26:05] step   9250/18150  loss 3.3343  lr 1.41e-03  |grad| 0.17  mem 54.3GB  tok/s 7,181  ETA 22.6h
+[09:33:37] step   9300/18150  loss 3.3032  lr 1.40e-03  |grad| 0.17  mem 54.3GB  tok/s 7,181  ETA 22.4h
+[09:41:09] step   9350/18150  loss 3.6132  lr 1.39e-03  |grad| 0.17  mem 54.3GB  tok/s 7,181  ETA 22.3h
+[09:48:41] step   9400/18150  loss 3.2054  lr 1.38e-03  |grad| 0.18  mem 54.3GB  tok/s 7,182  ETA 22.2h
+[09:56:12] step   9450/18150  loss 3.1747  lr 1.37e-03  |grad| 0.16  mem 54.3GB  tok/s 7,182  ETA 22.1h
+[10:03:44] step   9500/18150  loss 3.3180  lr 1.36e-03  |grad| 0.16  mem 54.3GB  tok/s 7,182  ETA 21.9h
+[10:11:16] step   9550/18150  loss 2.9814  lr 1.36e-03  |grad| 0.14  mem 54.3GB  tok/s 7,183  ETA 21.8h
+[10:18:48] step   9600/18150  loss 3.3559  lr 1.35e-03  |grad| 0.16  mem 54.3GB  tok/s 7,183  ETA 21.7h
+[10:26:19] step   9650/18150  loss 3.1950  lr 1.34e-03  |grad| 0.17  mem 54.3GB  tok/s 7,184  ETA 21.5h
+[10:33:51] step   9700/18150  loss 4.0311  lr 1.33e-03  |grad| 0.20  mem 54.3GB  tok/s 7,184  ETA 21.4h
+[10:41:23] step   9750/18150  loss 3.3424  lr 1.32e-03  |grad| 0.17  mem 54.3GB  tok/s 7,184  ETA 21.3h
+[10:48:54] step   9800/18150  loss 3.5206  lr 1.31e-03  |grad| 0.18  mem 54.3GB  tok/s 7,185  ETA 21.2h
+[10:56:27] step   9850/18150  loss 3.2174  lr 1.30e-03  |grad| 0.17  mem 54.3GB  tok/s 7,185  ETA 21.0h
+[11:03:59] step   9900/18150  loss 3.2622  lr 1.29e-03  |grad| 0.15  mem 54.3GB  tok/s 7,185  ETA 20.9h
+[11:11:30] step   9950/18150  loss 3.0836  lr 1.28e-03  |grad| 0.17  mem 54.3GB  tok/s 7,186  ETA 20.8h
+[11:19:02] step  10000/18150  loss 3.2404  lr 1.27e-03  |grad| 0.17  mem 54.3GB  tok/s 7,186  ETA 20.6h
+[11:19:16]   [eval @ 10000] val PPL=34.11
+[11:26:50] step  10050/18150  loss 3.0894  lr 1.26e-03  |grad| 0.19  mem 54.3GB  tok/s 7,185  ETA 20.5h
+[11:34:22] step  10100/18150  loss 3.3208  lr 1.25e-03  |grad| 0.15  mem 54.3GB  tok/s 7,185  ETA 20.4h
+[11:41:54] step  10150/18150  loss 3.1239  lr 1.24e-03  |grad| 0.15  mem 54.3GB  tok/s 7,186  ETA 20.3h
+[11:49:25] step  10200/18150  loss 3.4082  lr 1.23e-03  |grad| 0.14  mem 54.3GB  tok/s 7,186  ETA 20.1h
+[11:56:57] step  10250/18150  loss 3.2410  lr 1.22e-03  |grad| 0.18  mem 54.3GB  tok/s 7,186  ETA 20.0h
+[12:04:32] step  10300/18150  loss 3.3490  lr 1.21e-03  |grad| 0.19  mem 54.3GB  tok/s 7,186  ETA 19.9h
+[12:12:12] step  10350/18150  loss 3.3553  lr 1.20e-03  |grad| 0.14  mem 54.3GB  tok/s 7,186  ETA 19.8h
+[12:19:47] step  10400/18150  loss 3.3562  lr 1.19e-03  |grad| 0.15  mem 54.3GB  tok/s 7,186  ETA 19.6h
+[12:27:19] step  10450/18150  loss 3.3627  lr 1.19e-03  |grad| 0.16  mem 54.3GB  tok/s 7,186  ETA 19.5h
+[12:35:16] step  10500/18150  loss 3.3930  lr 1.18e-03  |grad| 0.16  mem 54.3GB  tok/s 7,185  ETA 19.4h
+[12:42:57] step  10550/18150  loss 3.1384  lr 1.17e-03  |grad| 0.16  mem 54.3GB  tok/s 7,185  ETA 19.3h
+[12:50:29] step  10600/18150  loss 3.1069  lr 1.16e-03  |grad| 0.15  mem 54.3GB  tok/s 7,185  ETA 19.1h
+[12:58:02] step  10650/18150  loss 3.3199  lr 1.15e-03  |grad| 0.15  mem 54.3GB  tok/s 7,185  ETA 19.0h
+[13:05:34] step  10700/18150  loss 3.0519  lr 1.14e-03  |grad| 0.14  mem 54.3GB  tok/s 7,185  ETA 18.9h
+[13:13:06] step  10750/18150  loss 3.2603  lr 1.13e-03  |grad| 0.15  mem 54.3GB  tok/s 7,186  ETA 18.7h
+[13:20:38] step  10800/18150  loss 2.9533  lr 1.12e-03  |grad| 0.15  mem 54.3GB  tok/s 7,186  ETA 18.6h
+[13:28:34] step  10850/18150  loss 3.3980  lr 1.11e-03  |grad| 0.16  mem 54.3GB  tok/s 7,185  ETA 18.5h
+[13:36:45] step  10900/18150  loss 3.3730  lr 1.10e-03  |grad| 0.17  mem 54.3GB  tok/s 7,182  ETA 18.4h
+[13:44:58] step  10950/18150  loss 3.3208  lr 1.09e-03  |grad| 0.16  mem 54.3GB  tok/s 7,179  ETA 18.3h
+[13:53:13] step  11000/18150  loss 3.3958  lr 1.08e-03  |grad| 0.15  mem 54.3GB  tok/s 7,177  ETA 18.1h
+[14:01:29] step  11050/18150  loss 3.3543  lr 1.07e-03  |grad| 0.15  mem 54.3GB  tok/s 7,174  ETA 18.0h
+[14:09:39] step  11100/18150  loss 3.2970  lr 1.07e-03  |grad| 0.17  mem 54.3GB  tok/s 7,171  ETA 17.9h
+[14:17:58] step  11150/18150  loss 3.3231  lr 1.06e-03  |grad| 0.14  mem 54.3GB  tok/s 7,169  ETA 17.8h
+[14:26:22] step  11200/18150  loss 3.3444  lr 1.05e-03  |grad| 0.17  mem 54.3GB  tok/s 7,165  ETA 17.7h
+[14:34:55] step  11250/18150  loss 3.2110  lr 1.04e-03  |grad| 0.14  mem 54.3GB  tok/s 7,161  ETA 17.5h
+[14:43:07] step  11300/18150  loss 3.2218  lr 1.03e-03  |grad| 0.17  mem 54.3GB  tok/s 7,159  ETA 17.4h
+[14:51:43] step  11350/18150  loss 3.3573  lr 1.02e-03  |grad| 0.15  mem 54.3GB  tok/s 7,155  ETA 17.3h
+[15:00:01] step  11400/18150  loss 3.3557  lr 1.01e-03  |grad| 0.17  mem 54.3GB  tok/s 7,152  ETA 17.2h
+[15:07:49] step  11450/18150  loss 3.2290  lr 1.00e-03  |grad| 0.13  mem 54.3GB  tok/s 7,152  ETA 17.1h
+[15:15:22] step  11500/18150  loss 2.9978  lr 9.94e-04  |grad| 0.17  mem 54.3GB  tok/s 7,152  ETA 16.9h
+[15:22:54] step  11550/18150  loss 3.2592  lr 9.85e-04  |grad| 0.15  mem 54.3GB  tok/s 7,152  ETA 16.8h
+[15:30:26] step  11600/18150  loss 3.1153  lr 9.76e-04  |grad| 0.15  mem 54.3GB  tok/s 7,153  ETA 16.7h
+[15:37:58] step  11650/18150  loss 3.3732  lr 9.67e-04  |grad| 0.16  mem 54.3GB  tok/s 7,153  ETA 16.5h
+[15:45:30] step  11700/18150  loss 3.2824  lr 9.59e-04  |grad| 0.15  mem 54.3GB  tok/s 7,154  ETA 16.4h
+[15:53:02] step  11750/18150  loss 3.6237  lr 9.50e-04  |grad| 0.15  mem 54.3GB  tok/s 7,154  ETA 16.3h
+[16:00:35] step  11800/18150  loss 3.2851  lr 9.41e-04  |grad| 0.20  mem 54.3GB  tok/s 7,154  ETA 16.2h
+[16:08:07] step  11850/18150  loss 3.4087  lr 9.33e-04  |grad| 0.16  mem 54.3GB  tok/s 7,155  ETA 16.0h
+[16:15:39] step  11900/18150  loss 3.2353  lr 9.24e-04  |grad| 0.15  mem 54.3GB  tok/s 7,155  ETA 15.9h
+[16:23:11] step  11950/18150  loss 3.3344  lr 9.15e-04  |grad| 0.14  mem 54.3GB  tok/s 7,155  ETA 15.8h
+[16:30:43] step  12000/18150  loss 2.9283  lr 9.07e-04  |grad| 0.14  mem 54.3GB  tok/s 7,156  ETA 15.6h
+[16:30:57]   [eval @ 12000] val PPL=31.97
+[16:38:30] step  12050/18150  loss 3.4835  lr 8.98e-04  |grad| 0.16  mem 54.3GB  tok/s 7,155  ETA 15.5h
+[16:46:02] step  12100/18150  loss 3.2622  lr 8.90e-04  |grad| 0.15  mem 54.3GB  tok/s 7,156  ETA 15.4h
+[16:53:34] step  12150/18150  loss 3.5902  lr 8.82e-04  |grad| 0.15  mem 54.3GB  tok/s 7,156  ETA 15.3h
+[17:01:06] step  12200/18150  loss 3.2031  lr 8.73e-04  |grad| 0.15  mem 54.3GB  tok/s 7,156  ETA 15.1h
+[17:08:38] step  12250/18150  loss 3.2291  lr 8.65e-04  |grad| 0.14  mem 54.3GB  tok/s 7,157  ETA 15.0h
+[17:16:10] step  12300/18150  loss 3.2641  lr 8.56e-04  |grad| 0.16  mem 54.3GB  tok/s 7,157  ETA 14.9h
+[17:23:42] step  12350/18150  loss 3.2455  lr 8.48e-04  |grad| 0.14  mem 54.3GB  tok/s 7,158  ETA 14.8h
+[17:31:14] step  12400/18150  loss 3.4028  lr 8.40e-04  |grad| 0.15  mem 54.3GB  tok/s 7,158  ETA 14.6h
+[17:38:46] step  12450/18150  loss 3.1688  lr 8.32e-04  |grad| 0.14  mem 54.3GB  tok/s 7,158  ETA 14.5h
+[17:46:18] step  12500/18150  loss 3.3199  lr 8.24e-04  |grad| 0.16  mem 54.3GB  tok/s 7,159  ETA 14.4h
+[17:53:50] step  12550/18150  loss 3.2690  lr 8.16e-04  |grad| 0.15  mem 54.3GB  tok/s 7,159  ETA 14.2h
+[18:01:22] step  12600/18150  loss 3.1116  lr 8.08e-04  |grad| 0.14  mem 54.3GB  tok/s 7,159  ETA 14.1h
+[18:08:54] step  12650/18150  loss 3.0160  lr 8.00e-04  |grad| 0.15  mem 54.3GB  tok/s 7,160  ETA 14.0h
+[18:16:26] step  12700/18150  loss 3.1894  lr 7.92e-04  |grad| 0.15  mem 54.3GB  tok/s 7,160  ETA 13.9h
+[18:23:58] step  12750/18150  loss 3.0555  lr 7.84e-04  |grad| 0.13  mem 54.3GB  tok/s 7,160  ETA 13.7h
+[18:31:29] step  12800/18150  loss 3.2538  lr 7.76e-04  |grad| 0.15  mem 54.3GB  tok/s 7,161  ETA 13.6h
+[18:39:01] step  12850/18150  loss 3.2315  lr 7.68e-04  |grad| 0.14  mem 54.3GB  tok/s 7,161  ETA 13.5h
+[18:46:33] step  12900/18150  loss 3.1503  lr 7.60e-04  |grad| 0.14  mem 54.3GB  tok/s 7,161  ETA 13.3h
+[18:54:05] step  12950/18150  loss 3.2016  lr 7.53e-04  |grad| 0.15  mem 54.3GB  tok/s 7,162  ETA 13.2h
+[19:01:37] step  13000/18150  loss 3.1473  lr 7.45e-04  |grad| 0.14  mem 54.3GB  tok/s 7,162  ETA 13.1h
+[19:09:09] step  13050/18150  loss 3.1110  lr 7.37e-04  |grad| 0.15  mem 54.3GB  tok/s 7,162  ETA 13.0h
+[19:16:41] step  13100/18150  loss 3.3595  lr 7.30e-04  |grad| 0.14  mem 54.3GB  tok/s 7,163  ETA 12.8h
+[19:24:13] step  13150/18150  loss 3.1838  lr 7.22e-04  |grad| 0.16  mem 54.3GB  tok/s 7,163  ETA 12.7h
+[19:31:44] step  13200/18150  loss 2.9026  lr 7.15e-04  |grad| 0.16  mem 54.3GB  tok/s 7,163  ETA 12.6h
+[19:39:16] step  13250/18150  loss 3.2616  lr 7.07e-04  |grad| 0.15  mem 54.3GB  tok/s 7,164  ETA 12.5h
+[19:46:48] step  13300/18150  loss 3.1052  lr 7.00e-04  |grad| 0.15  mem 54.3GB  tok/s 7,164  ETA 12.3h
+[19:54:19] step  13350/18150  loss 3.1029  lr 6.93e-04  |grad| 0.14  mem 54.3GB  tok/s 7,164  ETA 12.2h
+[20:01:51] step  13400/18150  loss 3.2589  lr 6.85e-04  |grad| 0.15  mem 54.3GB  tok/s 7,165  ETA 12.1h
+[20:09:23] step  13450/18150  loss 2.8889  lr 6.78e-04  |grad| 0.15  mem 54.3GB  tok/s 7,165  ETA 11.9h
+[20:16:54] step  13500/18150  loss 3.1405  lr 6.71e-04  |grad| 0.14  mem 54.3GB  tok/s 7,165  ETA 11.8h
+[20:24:26] step  13550/18150  loss 3.0535  lr 6.64e-04  |grad| 0.15  mem 54.3GB  tok/s 7,166  ETA 11.7h
+[20:31:58] step  13600/18150  loss 3.2973  lr 6.57e-04  |grad| 0.14  mem 54.3GB  tok/s 7,166  ETA 11.6h
+[20:39:30] step  13650/18150  loss 3.1385  lr 6.50e-04  |grad| 0.15  mem 54.3GB  tok/s 7,166  ETA 11.4h
+[20:47:01] step  13700/18150  loss 3.1979  lr 6.43e-04  |grad| 0.15  mem 54.3GB  tok/s 7,167  ETA 11.3h
+[20:54:33] step  13750/18150  loss 3.2011  lr 6.36e-04  |grad| 0.14  mem 54.3GB  tok/s 7,167  ETA 11.2h
+[21:02:05] step  13800/18150  loss 3.3345  lr 6.30e-04  |grad| 0.14  mem 54.3GB  tok/s 7,167  ETA 11.0h
+[21:09:37] step  13850/18150  loss 3.1146  lr 6.23e-04  |grad| 0.15  mem 54.3GB  tok/s 7,168  ETA 10.9h
+[21:17:08] step  13900/18150  loss 3.1753  lr 6.16e-04  |grad| 0.14  mem 54.3GB  tok/s 7,168  ETA 10.8h
+[21:24:57] step  13950/18150  loss 3.0758  lr 6.10e-04  |grad| 0.15  mem 54.3GB  tok/s 7,167  ETA 10.7h
+[21:33:11] step  14000/18150  loss 2.9231  lr 6.03e-04  |grad| 0.13  mem 54.3GB  tok/s 7,165  ETA 10.5h
+[21:33:26]   [eval @ 14000] val PPL=30.55
+[21:41:28] step  14050/18150  loss 3.2319  lr 5.97e-04  |grad| 0.14  mem 54.3GB  tok/s 7,163  ETA 10.4h
+[21:49:01] step  14100/18150  loss 3.3696  lr 5.90e-04  |grad| 0.14  mem 54.3GB  tok/s 7,163  ETA 10.3h
+[21:57:06] step  14150/18150  loss 3.2826  lr 5.84e-04  |grad| 0.14  mem 54.3GB  tok/s 7,162  ETA 10.2h
+[22:05:20] step  14200/18150  loss 3.1021  lr 5.78e-04  |grad| 0.14  mem 54.3GB  tok/s 7,160  ETA 10.0h
+[22:13:30] step  14250/18150  loss 3.2995  lr 5.71e-04  |grad| 0.14  mem 54.3GB  tok/s 7,158  ETA 9.9h
+[22:21:41] step  14300/18150  loss 2.9753  lr 5.65e-04  |grad| 0.14  mem 54.3GB  tok/s 7,156  ETA 9.8h
+[22:29:52] step  14350/18150  loss 3.1603  lr 5.59e-04  |grad| 0.13  mem 54.3GB  tok/s 7,154  ETA 9.7h
+[22:38:02] step  14400/18150  loss 3.2301  lr 5.53e-04  |grad| 0.15  mem 54.3GB  tok/s 7,153  ETA 9.5h
+[22:46:12] step  14450/18150  loss 2.9227  lr 5.47e-04  |grad| 0.14  mem 54.3GB  tok/s 7,151  ETA 9.4h
+[22:54:29] step  14500/18150  loss 3.1294  lr 5.41e-04  |grad| 0.14  mem 54.3GB  tok/s 7,149  ETA 9.3h
+[23:02:33] step  14550/18150  loss 2.9699  lr 5.36e-04  |grad| 0.14  mem 54.3GB  tok/s 7,147  ETA 9.2h
+[23:10:11] step  14600/18150  loss 3.1528  lr 5.30e-04  |grad| 0.15  mem 54.3GB  tok/s 7,148  ETA 9.0h
+[23:17:42] step  14650/18150  loss 3.2097  lr 5.24e-04  |grad| 0.14  mem 54.3GB  tok/s 7,148  ETA 8.9h
+[23:25:13] step  14700/18150  loss 3.1495  lr 5.19e-04  |grad| 0.15  mem 54.3GB  tok/s 7,148  ETA 8.8h
+[23:32:45] step  14750/18150  loss 2.9259  lr 5.13e-04  |grad| 0.14  mem 54.3GB  tok/s 7,149  ETA 8.7h
+[23:40:16] step  14800/18150  loss 3.1701  lr 5.08e-04  |grad| 0.14  mem 54.3GB  tok/s 7,149  ETA 8.5h
+[23:47:48] step  14850/18150  loss 3.0656  lr 5.02e-04  |grad| 0.15  mem 54.3GB  tok/s 7,149  ETA 8.4h
+[23:55:19] step  14900/18150  loss 3.1113  lr 4.97e-04  |grad| 0.14  mem 54.3GB  tok/s 7,150  ETA 8.3h
+[00:02:50] step  14950/18150  loss 2.8929  lr 4.92e-04  |grad| 0.14  mem 54.3GB  tok/s 7,150  ETA 8.1h
+[00:10:22] step  15000/18150  loss 2.9761  lr 4.86e-04  |grad| 0.14  mem 54.3GB  tok/s 7,150  ETA 8.0h
+[00:17:53] step  15050/18150  loss 3.2615  lr 4.81e-04  |grad| 0.14  mem 54.3GB  tok/s 7,151  ETA 7.9h
+[00:25:25] step  15100/18150  loss 3.1117  lr 4.76e-04  |grad| 0.14  mem 54.3GB  tok/s 7,151  ETA 7.8h
+[00:32:56] step  15150/18150  loss 3.2463  lr 4.71e-04  |grad| 0.16  mem 54.3GB  tok/s 7,151  ETA 7.6h
+[00:40:28] step  15200/18150  loss 2.8725  lr 4.67e-04  |grad| 0.14  mem 54.3GB  tok/s 7,152  ETA 7.5h
+[00:47:59] step  15250/18150  loss 3.1061  lr 4.62e-04  |grad| 0.15  mem 54.3GB  tok/s 7,152  ETA 7.4h
+[00:55:31] step  15300/18150  loss 3.2725  lr 4.57e-04  |grad| 0.14  mem 54.3GB  tok/s 7,153  ETA 7.3h
+[01:03:02] step  15350/18150  loss 3.1845  lr 4.52e-04  |grad| 0.15  mem 54.3GB  tok/s 7,153  ETA 7.1h
+[01:10:33] step  15400/18150  loss 3.4005  lr 4.48e-04  |grad| 0.15  mem 54.3GB  tok/s 7,153  ETA 7.0h
+[01:18:04] step  15450/18150  loss 3.0914  lr 4.43e-04  |grad| 0.14  mem 54.3GB  tok/s 7,154  ETA 6.9h
+[01:25:35] step  15500/18150  loss 3.1096  lr 4.39e-04  |grad| 0.14  mem 54.3GB  tok/s 7,154  ETA 6.7h
+[01:33:07] step  15550/18150  loss 3.1457  lr 4.34e-04  |grad| 0.15  mem 54.3GB  tok/s 7,154  ETA 6.6h
+[01:40:38] step  15600/18150  loss 2.9506  lr 4.30e-04  |grad| 0.14  mem 54.3GB  tok/s 7,155  ETA 6.5h
+[01:48:09] step  15650/18150  loss 2.9766  lr 4.26e-04  |grad| 0.13  mem 54.3GB  tok/s 7,155  ETA 6.4h
+[01:55:40] step  15700/18150  loss 3.2271  lr 4.22e-04  |grad| 0.14  mem 54.3GB  tok/s 7,155  ETA 6.2h
+[02:03:11] step  15750/18150  loss 3.0251  lr 4.18e-04  |grad| 0.14  mem 54.3GB  tok/s 7,156  ETA 6.1h
+[02:10:42] step  15800/18150  loss 3.2990  lr 4.14e-04  |grad| 0.15  mem 54.3GB  tok/s 7,156  ETA 6.0h
+[02:18:14] step  15850/18150  loss 3.1986  lr 4.10e-04  |grad| 0.13  mem 54.3GB  tok/s 7,156  ETA 5.9h
+[02:25:45] step  15900/18150  loss 3.1189  lr 4.06e-04  |grad| 0.13  mem 54.3GB  tok/s 7,157  ETA 5.7h
+[02:33:17] step  15950/18150  loss 3.0792  lr 4.02e-04  |grad| 0.15  mem 54.3GB  tok/s 7,157  ETA 5.6h
+[02:40:48] step  16000/18150  loss 3.0442  lr 3.99e-04  |grad| 0.14  mem 54.3GB  tok/s 7,157  ETA 5.5h
+[02:41:02]   [eval @ 16000] val PPL=29.85
+[02:48:34] step  16050/18150  loss 3.1541  lr 3.95e-04  |grad| 0.14  mem 54.3GB  tok/s 7,157  ETA 5.3h
+[02:56:06] step  16100/18150  loss 2.9644  lr 3.92e-04  |grad| 0.14  mem 54.3GB  tok/s 7,157  ETA 5.2h
+[03:03:37] step  16150/18150  loss 3.2418  lr 3.88e-04  |grad| 0.14  mem 54.3GB  tok/s 7,157  ETA 5.1h
+[03:11:08] step  16200/18150  loss 3.3557  lr 3.85e-04  |grad| 0.13  mem 54.3GB  tok/s 7,158  ETA 5.0h
+[03:18:40] step  16250/18150  loss 2.8323  lr 3.82e-04  |grad| 0.15  mem 54.3GB  tok/s 7,158  ETA 4.8h
+[03:26:11] step  16300/18150  loss 3.3323  lr 3.78e-04  |grad| 0.14  mem 54.3GB  tok/s 7,158  ETA 4.7h
+[03:33:43] step  16350/18150  loss 3.0348  lr 3.75e-04  |grad| 0.14  mem 54.3GB  tok/s 7,159  ETA 4.6h
+[03:41:14] step  16400/18150  loss 3.1560  lr 3.72e-04  |grad| 0.14  mem 54.3GB  tok/s 7,159  ETA 4.5h
+[03:48:45] step  16450/18150  loss 3.2841  lr 3.69e-04  |grad| 0.14  mem 54.3GB  tok/s 7,159  ETA 4.3h
+[03:56:17] step  16500/18150  loss 2.8928  lr 3.67e-04  |grad| 0.14  mem 54.3GB  tok/s 7,160  ETA 4.2h
+[04:03:48] step  16550/18150  loss 3.1194  lr 3.64e-04  |grad| 0.14  mem 54.3GB  tok/s 7,160  ETA 4.1h
+[04:11:19] step  16600/18150  loss 3.1155  lr 3.61e-04  |grad| 0.14  mem 54.3GB  tok/s 7,160  ETA 3.9h
+[04:18:51] step  16650/18150  loss 2.9627  lr 3.59e-04  |grad| 0.14  mem 54.3GB  tok/s 7,160  ETA 3.8h
+[04:26:22] step  16700/18150  loss 2.9363  lr 3.56e-04  |grad| 0.14  mem 54.3GB  tok/s 7,161  ETA 3.7h
+[04:33:53] step  16750/18150  loss 3.1763  lr 3.54e-04  |grad| 0.14  mem 54.3GB  tok/s 7,161  ETA 3.6h
+[04:41:25] step  16800/18150  loss 3.0711  lr 3.51e-04  |grad| 0.13  mem 54.3GB  tok/s 7,161  ETA 3.4h
+[04:48:56] step  16850/18150  loss 2.9818  lr 3.49e-04  |grad| 0.14  mem 54.3GB  tok/s 7,162  ETA 3.3h
+[04:56:27] step  16900/18150  loss 3.2519  lr 3.47e-04  |grad| 0.14  mem 54.3GB  tok/s 7,162  ETA 3.2h
+[05:03:59] step  16950/18150  loss 2.8029  lr 3.45e-04  |grad| 0.13  mem 54.3GB  tok/s 7,162  ETA 3.1h
+[05:11:30] step  17000/18150  loss 3.1554  lr 3.43e-04  |grad| 0.14  mem 54.3GB  tok/s 7,163  ETA 2.9h
+[05:19:01] step  17050/18150  loss 3.4872  lr 3.41e-04  |grad| 0.13  mem 54.3GB  tok/s 7,163  ETA 2.8h
+[05:26:33] step  17100/18150  loss 3.1397  lr 3.39e-04  |grad| 0.14  mem 54.3GB  tok/s 7,163  ETA 2.7h
+[05:34:04] step  17150/18150  loss 3.0072  lr 3.37e-04  |grad| 0.14  mem 54.3GB  tok/s 7,163  ETA 2.5h
+[05:41:35] step  17200/18150  loss 3.1547  lr 3.36e-04  |grad| 0.14  mem 54.3GB  tok/s 7,164  ETA 2.4h
+[05:49:07] step  17250/18150  loss 2.9210  lr 3.34e-04  |grad| 0.14  mem 54.3GB  tok/s 7,164  ETA 2.3h
+[05:56:38] step  17300/18150  loss 3.2413  lr 3.32e-04  |grad| 0.14  mem 54.3GB  tok/s 7,164  ETA 2.2h
+[06:04:09] step  17350/18150  loss 3.0094  lr 3.31e-04  |grad| 0.14  mem 54.3GB  tok/s 7,164  ETA 2.0h
+[06:11:41] step  17400/18150  loss 3.3314  lr 3.30e-04  |grad| 0.14  mem 54.3GB  tok/s 7,165  ETA 1.9h
+[06:19:12] step  17450/18150  loss 3.1975  lr 3.28e-04  |grad| 0.14  mem 54.3GB  tok/s 7,165  ETA 1.8h
+[06:26:44] step  17500/18150  loss 3.3350  lr 3.27e-04  |grad| 0.14  mem 54.3GB  tok/s 7,165  ETA 1.7h
+[06:34:15] step  17550/18150  loss 3.2432  lr 3.26e-04  |grad| 0.14  mem 54.3GB  tok/s 7,166  ETA 1.5h
+[06:41:47] step  17600/18150  loss 3.1332  lr 3.25e-04  |grad| 0.13  mem 54.3GB  tok/s 7,166  ETA 1.4h
+[06:49:18] step  17650/18150  loss 3.2627  lr 3.24e-04  |grad| 0.14  mem 54.3GB  tok/s 7,166  ETA 1.3h
+[06:56:50] step  17700/18150  loss 3.0634  lr 3.23e-04  |grad| 0.14  mem 54.3GB  tok/s 7,166  ETA 1.1h
+[07:04:21] step  17750/18150  loss 3.1614  lr 3.23e-04  |grad| 0.14  mem 54.3GB  tok/s 7,167  ETA 1.0h
+[07:11:53] step  17800/18150  loss 3.2596  lr 3.22e-04  |grad| 0.14  mem 54.3GB  tok/s 7,167  ETA 0.9h
+[07:19:24] step  17850/18150  loss 3.1761  lr 3.22e-04  |grad| 0.14  mem 54.3GB  tok/s 7,167  ETA 0.8h
+[07:26:56] step  17900/18150  loss 3.3373  lr 3.21e-04  |grad| 0.14  mem 54.3GB  tok/s 7,167  ETA 0.6h
+[07:34:27] step  17950/18150  loss 3.1887  lr 3.21e-04  |grad| 0.14  mem 54.3GB  tok/s 7,168  ETA 0.5h
+[07:41:59] step  18000/18150  loss 3.2106  lr 3.20e-04  |grad| 0.15  mem 54.3GB  tok/s 7,168  ETA 0.4h
+[07:42:12]   [eval @ 18000] val PPL=29.57
+[07:49:45] step  18050/18150  loss 3.0221  lr 3.20e-04  |grad| 0.14  mem 54.3GB  tok/s 7,167  ETA 0.3h
+[07:57:17] step  18100/18150  loss 3.1827  lr 3.20e-04  |grad| 0.14  mem 54.3GB  tok/s 7,168  ETA 0.1h
+[08:04:48] step  18150/18150  loss 3.3074  lr 3.20e-04  |grad| 0.14  mem 54.3GB  tok/s 7,168  ETA 0.0h
+[08:05:04] DONE  final val PPL=29.54
+=== [3/4] DONE Tue Jun 16 08:05:06 AM UTC 2026 ===
+=== [4/4] partial RoPE 10% Tue Jun 16 08:05:06 AM UTC 2026 ===
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[08:05:09] partial RoPE factor=0.1  steps=18,150  tok/step=65,536  budget=1,189,478,400  peak_lr=0.0024
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[08:05:14]   loaded cached tokens from tokcache_1191478400_300000.pt (1,191,478,400 train + 300,000 val)
+[08:05:20] rotary_dim=12 / head_dim=128
+[08:05:21] Baseline eval...
+[08:05:35]   baseline val PPL=185931.67
+W0616 08:05:45.759000 4003332 torch/_inductor/utils.py:1731] [0/0] Not enough SMs to use max_autotune_gemm mode
+[08:13:39] step     50/18150  loss 8.2509  lr 1.33e-04  |grad| 0.94  mem 54.3GB  tok/s 6,786  ETA 48.6h
+[08:21:10] step    100/18150  loss 7.0073  lr 2.67e-04  |grad| 0.74  mem 54.3GB  tok/s 7,019  ETA 46.8h
+[08:28:41] step    150/18150  loss 6.6049  lr 4.00e-04  |grad| 0.62  mem 54.3GB  tok/s 7,100  ETA 46.1h
+[08:36:12] step    200/18150  loss 6.4673  lr 5.33e-04  |grad| 0.56  mem 54.3GB  tok/s 7,139  ETA 45.8h
+[08:43:44] step    250/18150  loss 6.1641  lr 6.67e-04  |grad| 0.57  mem 54.3GB  tok/s 7,162  ETA 45.5h
+[08:51:15] step    300/18150  loss 5.9922  lr 8.00e-04  |grad| 0.54  mem 54.3GB  tok/s 7,179  ETA 45.3h
+[08:58:46] step    350/18150  loss 5.7151  lr 9.33e-04  |grad| 0.53  mem 54.3GB  tok/s 7,191  ETA 45.1h
+[09:06:17] step    400/18150  loss 5.5713  lr 1.07e-03  |grad| 0.40  mem 54.3GB  tok/s 7,200  ETA 44.9h
+[09:13:48] step    450/18150  loss 5.6763  lr 1.20e-03  |grad| 0.34  mem 54.3GB  tok/s 7,208  ETA 44.7h
+[09:21:19] step    500/18150  loss 5.5376  lr 1.33e-03  |grad| 0.38  mem 54.3GB  tok/s 7,214  ETA 44.5h
+[09:28:50] step    550/18150  loss 5.1994  lr 1.47e-03  |grad| 0.34  mem 54.3GB  tok/s 7,218  ETA 44.4h
+[09:36:21] step    600/18150  loss 4.9007  lr 1.60e-03  |grad| 0.40  mem 54.3GB  tok/s 7,221  ETA 44.2h
+[09:43:52] step    650/18150  loss 5.0715  lr 1.73e-03  |grad| 0.26  mem 54.3GB  tok/s 7,225  ETA 44.1h
+[09:51:23] step    700/18150  loss 4.8693  lr 1.87e-03  |grad| 0.36  mem 54.3GB  tok/s 7,228  ETA 43.9h
+[09:58:54] step    750/18150  loss 4.9583  lr 2.00e-03  |grad| 0.31  mem 54.3GB  tok/s 7,231  ETA 43.8h
+[10:06:25] step    800/18150  loss 4.7701  lr 2.13e-03  |grad| 0.29  mem 54.3GB  tok/s 7,233  ETA 43.7h
+[10:13:56] step    850/18150  loss 4.8246  lr 2.27e-03  |grad| 0.26  mem 54.3GB  tok/s 7,234  ETA 43.5h
+[10:21:27] step    900/18150  loss 4.5097  lr 2.40e-03  |grad| 0.36  mem 54.3GB  tok/s 7,236  ETA 43.4h
+[10:28:58] step    950/18150  loss 4.6509  lr 2.40e-03  |grad| 0.27  mem 54.3GB  tok/s 7,238  ETA 43.3h
+[10:36:29] step   1000/18150  loss 4.5509  lr 2.40e-03  |grad| 0.36  mem 54.3GB  tok/s 7,239  ETA 43.1h
+[10:44:01] step   1050/18150  loss 4.6222  lr 2.40e-03  |grad| 0.27  mem 54.3GB  tok/s 7,240  ETA 43.0h
+[10:51:32] step   1100/18150  loss 4.6044  lr 2.40e-03  |grad| 0.25  mem 54.3GB  tok/s 7,241  ETA 42.9h
+[10:59:03] step   1150/18150  loss 4.1734  lr 2.40e-03  |grad| 0.24  mem 54.3GB  tok/s 7,242  ETA 42.7h
+[11:06:34] step   1200/18150  loss 4.5909  lr 2.40e-03  |grad| 0.27  mem 54.3GB  tok/s 7,243  ETA 42.6h
+[11:14:05] step   1250/18150  loss 4.2284  lr 2.40e-03  |grad| 0.25  mem 54.3GB  tok/s 7,244  ETA 42.5h
+[11:21:36] step   1300/18150  loss 4.3946  lr 2.40e-03  |grad| 0.22  mem 54.3GB  tok/s 7,244  ETA 42.3h
+[11:29:08] step   1350/18150  loss 4.1613  lr 2.40e-03  |grad| 0.24  mem 54.3GB  tok/s 7,245  ETA 42.2h
+[11:36:39] step   1400/18150  loss 4.3381  lr 2.40e-03  |grad| 0.22  mem 54.3GB  tok/s 7,245  ETA 42.1h
+[11:44:10] step   1450/18150  loss 4.2982  lr 2.39e-03  |grad| 0.23  mem 54.3GB  tok/s 7,246  ETA 42.0h
+[11:51:42] step   1500/18150  loss 4.2089  lr 2.39e-03  |grad| 0.30  mem 54.3GB  tok/s 7,247  ETA 41.8h
+[11:59:13] step   1550/18150  loss 4.2505  lr 2.39e-03  |grad| 0.24  mem 54.3GB  tok/s 7,247  ETA 41.7h
+[12:06:44] step   1600/18150  loss 4.2612  lr 2.39e-03  |grad| 0.23  mem 54.3GB  tok/s 7,247  ETA 41.6h
+[12:14:15] step   1650/18150  loss 3.9817  lr 2.39e-03  |grad| 0.25  mem 54.3GB  tok/s 7,248  ETA 41.4h
+[12:21:47] step   1700/18150  loss 3.9990  lr 2.39e-03  |grad| 0.26  mem 54.3GB  tok/s 7,248  ETA 41.3h
+[12:29:18] step   1750/18150  loss 4.2575  lr 2.39e-03  |grad| 0.24  mem 54.3GB  tok/s 7,249  ETA 41.2h
+[12:36:49] step   1800/18150  loss 4.1152  lr 2.39e-03  |grad| 0.23  mem 54.3GB  tok/s 7,249  ETA 41.1h
+[12:44:21] step   1850/18150  loss 4.0142  lr 2.38e-03  |grad| 0.26  mem 54.3GB  tok/s 7,249  ETA 40.9h
+[12:51:52] step   1900/18150  loss 4.1877  lr 2.38e-03  |grad| 0.21  mem 54.3GB  tok/s 7,250  ETA 40.8h
+[12:59:23] step   1950/18150  loss 4.0586  lr 2.38e-03  |grad| 0.21  mem 54.3GB  tok/s 7,250  ETA 40.7h
+[13:06:54] step   2000/18150  loss 3.9917  lr 2.38e-03  |grad| 0.20  mem 54.3GB  tok/s 7,250  ETA 40.6h
+[13:07:08]   [eval @ 2000] val PPL=69.37
+[13:14:40] step   2050/18150  loss 3.9688  lr 2.38e-03  |grad| 0.22  mem 54.3GB  tok/s 7,245  ETA 40.5h
+[13:22:12] step   2100/18150  loss 3.9422  lr 2.38e-03  |grad| 0.23  mem 54.3GB  tok/s 7,245  ETA 40.3h
+[13:29:43] step   2150/18150  loss 3.8267  lr 2.37e-03  |grad| 0.23  mem 54.3GB  tok/s 7,245  ETA 40.2h
+[13:37:14] step   2200/18150  loss 3.7752  lr 2.37e-03  |grad| 0.21  mem 54.3GB  tok/s 7,246  ETA 40.1h
+[13:44:46] step   2250/18150  loss 4.0256  lr 2.37e-03  |grad| 0.23  mem 54.3GB  tok/s 7,246  ETA 39.9h
+[13:52:18] step   2300/18150  loss 3.6093  lr 2.37e-03  |grad| 0.22  mem 54.3GB  tok/s 7,246  ETA 39.8h
+[14:00:47] step   2350/18150  loss 3.9556  lr 2.36e-03  |grad| 0.22  mem 54.3GB  tok/s 7,227  ETA 39.8h
+[14:09:11] step   2400/18150  loss 3.9168  lr 2.36e-03  |grad| 0.21  mem 54.3GB  tok/s 7,210  ETA 39.8h
+[14:16:50] step   2450/18150  loss 4.0073  lr 2.36e-03  |grad| 0.25  mem 54.3GB  tok/s 7,208  ETA 39.6h
+[14:24:23] step   2500/18150  loss 3.6873  lr 2.36e-03  |grad| 0.26  mem 54.3GB  tok/s 7,209  ETA 39.5h
+[14:31:54] step   2550/18150  loss 3.8301  lr 2.35e-03  |grad| 0.22  mem 54.3GB  tok/s 7,210  ETA 39.4h
+[14:39:26] step   2600/18150  loss 4.0127  lr 2.35e-03  |grad| 0.20  mem 54.3GB  tok/s 7,211  ETA 39.3h
+[14:46:57] step   2650/18150  loss 3.6130  lr 2.35e-03  |grad| 0.22  mem 54.3GB  tok/s 7,212  ETA 39.1h
+[14:54:28] step   2700/18150  loss 3.6921  lr 2.34e-03  |grad| 0.19  mem 54.3GB  tok/s 7,213  ETA 39.0h
+[15:02:00] step   2750/18150  loss 3.7503  lr 2.34e-03  |grad| 0.23  mem 54.3GB  tok/s 7,214  ETA 38.9h
+[15:09:31] step   2800/18150  loss 3.8088  lr 2.34e-03  |grad| 0.20  mem 54.3GB  tok/s 7,214  ETA 38.7h
+[15:17:03] step   2850/18150  loss 3.9133  lr 2.34e-03  |grad| 0.23  mem 54.3GB  tok/s 7,215  ETA 38.6h
+[15:24:35] step   2900/18150  loss 3.8714  lr 2.33e-03  |grad| 0.18  mem 54.3GB  tok/s 7,216  ETA 38.5h
+[15:32:06] step   2950/18150  loss 3.9091  lr 2.33e-03  |grad| 0.21  mem 54.3GB  tok/s 7,217  ETA 38.3h
+[15:39:37] step   3000/18150  loss 3.8652  lr 2.32e-03  |grad| 0.22  mem 54.3GB  tok/s 7,217  ETA 38.2h
+[15:47:09] step   3050/18150  loss 3.7926  lr 2.32e-03  |grad| 0.22  mem 54.3GB  tok/s 7,218  ETA 38.1h
+[15:54:40] step   3100/18150  loss 3.5483  lr 2.32e-03  |grad| 0.19  mem 54.3GB  tok/s 7,219  ETA 38.0h
+[16:02:12] step   3150/18150  loss 3.8006  lr 2.31e-03  |grad| 0.23  mem 54.3GB  tok/s 7,219  ETA 37.8h
+[16:09:43] step   3200/18150  loss 3.8552  lr 2.31e-03  |grad| 0.21  mem 54.3GB  tok/s 7,220  ETA 37.7h
+[16:17:14] step   3250/18150  loss 3.6685  lr 2.31e-03  |grad| 0.22  mem 54.3GB  tok/s 7,221  ETA 37.6h
+[16:24:46] step   3300/18150  loss 3.6404  lr 2.30e-03  |grad| 0.23  mem 54.3GB  tok/s 7,221  ETA 37.4h
+[16:32:17] step   3350/18150  loss 3.7416  lr 2.30e-03  |grad| 0.21  mem 54.3GB  tok/s 7,222  ETA 37.3h
+[16:39:48] step   3400/18150  loss 3.8144  lr 2.29e-03  |grad| 0.21  mem 54.3GB  tok/s 7,222  ETA 37.2h
+[16:47:20] step   3450/18150  loss 3.6782  lr 2.29e-03  |grad| 0.24  mem 54.3GB  tok/s 7,223  ETA 37.1h
+[16:54:51] step   3500/18150  loss 3.7779  lr 2.29e-03  |grad| 0.23  mem 54.3GB  tok/s 7,223  ETA 36.9h
+[17:02:22] step   3550/18150  loss 3.7616  lr 2.28e-03  |grad| 0.19  mem 54.3GB  tok/s 7,224  ETA 36.8h
+[17:09:54] step   3600/18150  loss 3.9383  lr 2.28e-03  |grad| 0.21  mem 54.3GB  tok/s 7,224  ETA 36.7h
+[17:17:25] step   3650/18150  loss 3.9830  lr 2.27e-03  |grad| 0.21  mem 54.3GB  tok/s 7,225  ETA 36.5h
+[17:25:28] step   3700/18150  loss 3.7126  lr 2.27e-03  |grad| 0.22  mem 54.3GB  tok/s 7,219  ETA 36.4h
+[17:33:49] step   3750/18150  loss 3.7282  lr 2.26e-03  |grad| 0.22  mem 54.3GB  tok/s 7,209  ETA 36.4h
+[17:42:21] step   3800/18150  loss 3.2363  lr 2.26e-03  |grad| 0.22  mem 54.3GB  tok/s 7,197  ETA 36.3h
+[17:50:46] step   3850/18150  loss 3.7823  lr 2.25e-03  |grad| 0.25  mem 54.3GB  tok/s 7,186  ETA 36.2h
+[17:59:03] step   3900/18150  loss 3.5483  lr 2.25e-03  |grad| 0.20  mem 54.3GB  tok/s 7,178  ETA 36.1h
+[18:07:11] step   3950/18150  loss 3.5760  lr 2.24e-03  |grad| 0.26  mem 54.3GB  tok/s 7,172  ETA 36.0h
+[18:15:40] step   4000/18150  loss 3.4215  lr 2.24e-03  |grad| 0.19  mem 54.3GB  tok/s 7,162  ETA 36.0h
+[18:15:55]   [eval @ 4000] val PPL=50.71
+[18:24:13] step   4050/18150  loss 3.6883  lr 2.23e-03  |grad| 0.21  mem 54.3GB  tok/s 7,151  ETA 35.9h
+[18:32:37] step   4100/18150  loss 3.6196  lr 2.23e-03  |grad| 0.25  mem 54.3GB  tok/s 7,142  ETA 35.8h
+[18:41:10] step   4150/18150  loss 3.8225  lr 2.22e-03  |grad| 0.27  mem 54.3GB  tok/s 7,132  ETA 35.7h
+[18:49:51] step   4200/18150  loss 3.6938  lr 2.22e-03  |grad| 0.21  mem 54.3GB  tok/s 7,121  ETA 35.7h
+[18:58:13] step   4250/18150  loss 3.4385  lr 2.21e-03  |grad| 0.19  mem 54.3GB  tok/s 7,113  ETA 35.6h
+[19:06:31] step   4300/18150  loss 3.9592  lr 2.21e-03  |grad| 0.21  mem 54.3GB  tok/s 7,106  ETA 35.5h
+[19:14:34] step   4350/18150  loss 3.7051  lr 2.20e-03  |grad| 0.23  mem 54.3GB  tok/s 7,103  ETA 35.4h
+[19:22:45] step   4400/18150  loss 3.8203  lr 2.20e-03  |grad| 0.20  mem 54.3GB  tok/s 7,097  ETA 35.3h
+[19:30:42] step   4450/18150  loss 3.7344  lr 2.19e-03  |grad| 0.22  mem 54.3GB  tok/s 7,095  ETA 35.2h
+[19:38:47] step   4500/18150  loss 3.6622  lr 2.18e-03  |grad| 0.22  mem 54.3GB  tok/s 7,091  ETA 35.0h
+[19:46:31] step   4550/18150  loss 3.5490  lr 2.18e-03  |grad| 0.23  mem 54.3GB  tok/s 7,090  ETA 34.9h
+[19:54:15] step   4600/18150  loss 3.8768  lr 2.17e-03  |grad| 0.19  mem 54.3GB  tok/s 7,090  ETA 34.8h
+[20:02:00] step   4650/18150  loss 3.6069  lr 2.17e-03  |grad| 0.20  mem 54.3GB  tok/s 7,090  ETA 34.7h
+[20:09:45] step   4700/18150  loss 3.6703  lr 2.16e-03  |grad| 0.21  mem 54.3GB  tok/s 7,089  ETA 34.5h
+[20:17:17] step   4750/18150  loss 3.8246  lr 2.15e-03  |grad| 0.21  mem 54.3GB  tok/s 7,091  ETA 34.4h
+[20:24:48] step   4800/18150  loss 3.5314  lr 2.15e-03  |grad| 0.20  mem 54.3GB  tok/s 7,093  ETA 34.3h
+[20:32:19] step   4850/18150  loss 3.7325  lr 2.14e-03  |grad| 0.19  mem 54.3GB  tok/s 7,094  ETA 34.1h
+[20:39:51] step   4900/18150  loss 3.3710  lr 2.14e-03  |grad| 0.22  mem 54.3GB  tok/s 7,096  ETA 34.0h
+[20:47:22] step   4950/18150  loss 3.4730  lr 2.13e-03  |grad| 0.19  mem 54.3GB  tok/s 7,098  ETA 33.9h
+[20:54:53] step   5000/18150  loss 3.6587  lr 2.12e-03  |grad| 0.20  mem 54.3GB  tok/s 7,099  ETA 33.7h
+[21:02:24] step   5050/18150  loss 3.6554  lr 2.12e-03  |grad| 0.19  mem 54.3GB  tok/s 7,101  ETA 33.6h
+[21:09:55] step   5100/18150  loss 3.6707  lr 2.11e-03  |grad| 0.20  mem 54.3GB  tok/s 7,102  ETA 33.4h
+[21:17:27] step   5150/18150  loss 3.8221  lr 2.10e-03  |grad| 0.21  mem 54.3GB  tok/s 7,104  ETA 33.3h
+[21:25:12] step   5200/18150  loss 3.5726  lr 2.10e-03  |grad| 0.18  mem 54.3GB  tok/s 7,103  ETA 33.2h
+[21:32:57] step   5250/18150  loss 3.2992  lr 2.09e-03  |grad| 0.20  mem 54.3GB  tok/s 7,103  ETA 33.1h
+[21:40:28] step   5300/18150  loss 3.7546  lr 2.08e-03  |grad| 0.19  mem 54.3GB  tok/s 7,104  ETA 32.9h
+[21:48:09] step   5350/18150  loss 3.7168  lr 2.08e-03  |grad| 0.22  mem 54.3GB  tok/s 7,104  ETA 32.8h
+[21:56:23] step   5400/18150  loss 3.6776  lr 2.07e-03  |grad| 0.24  mem 54.3GB  tok/s 7,100  ETA 32.7h

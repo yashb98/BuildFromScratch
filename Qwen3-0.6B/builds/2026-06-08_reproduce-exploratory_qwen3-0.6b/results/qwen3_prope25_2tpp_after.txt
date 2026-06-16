@@ -1,0 +1,2 @@
+partial RoPE factor=0.25 rotary_dim=32
+val PPL: 185854.22 -> 29.54

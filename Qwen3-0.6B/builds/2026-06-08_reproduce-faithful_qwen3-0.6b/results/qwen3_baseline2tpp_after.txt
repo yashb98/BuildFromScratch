@@ -1,0 +1,19 @@
+# Qwen3-0.6B from-scratch after 1,189,478,400 tokens (smoke=False)
+val PPL: 185810.49 -> 28.65
+
+PROMPT: The capital of France is
+OUTPUT: The capital of France is Paris and the area of Paris is called Paris. The capital of France is Dachau.
+The capital city of France is Paris.
+The capital of France is Paris.
+The capital of France is Paris.
+The capital city of France is Paris.
+The capital city of France is Paris.
+The capital city
+
+PROMPT: In a recent study, researchers found that
+OUTPUT: In a recent study, researchers found that when people with high levels of insulin resistance (insulin resistance) are fed high-fat or non-lean, high fat, high-fiber foods, their food intake actually increases. This means that a lot of people eat more whole, or whole, foods than you can eat. That’s not a
+
+PROMPT: def add(a, b):
+OUTPUT: def add(a, b): The first letter of each of the following sentences is the only word that refers to another word in the sentence: a, b, c, d, e, f.
+When a person has a mental disorder, they may be referred to as a person with a mental illness. The term "person with
+

@@ -38,7 +38,10 @@ warnings.filterwarnings("ignore")
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]  # BuildFromScratch/
 sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT / "research"))
 import safe_cuda  # noqa: E402,F401  — sets expandable_segments before torch touches CUDA
+from data_decontam import (  # noqa: E402  — doc-disjoint split + 13-gram decontam
+    is_val_doc, decontaminate_val, decontam_report, write_decontam_report)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -120,31 +123,71 @@ class PackedTextDataset(torch.utils.data.Dataset):
         return chunk[:-1], chunk[1:]
 
 
-def stream_tokens(tokenizer, n_train: int, n_val: int, log_path) -> tuple[torch.Tensor, torch.Tensor]:
-    """Stream FineWeb-Edu sample-10BT, tokenize on the fly, fill a train buffer
-    then a disjoint val buffer (no full-dataset download). Cached to disk so a
-    re-run with the same budget skips the ~90s stream+tokenize."""
-    cache = RESULTS / f"tokcache_{n_train}_{n_val}.pt"
+def stream_tokens(tokenizer, n_train: int, n_val: int, log_path, seed: int = 0,
+                  val_fraction: float = 0.02, decontam_sample_docs: int = 4000,
+                  decontam_n: int = 13, decontam_threshold: float = 0.8
+                  ) -> tuple[torch.Tensor, torch.Tensor]:
+    """Stream FineWeb-Edu sample-10BT, tokenize on the fly, and build a
+    DOCUMENT-DISJOINT, DECONTAMINATED train/val split (audit fix DATA-1/3):
+
+      * each whole document is routed to train or val by a seeded hash
+        (`is_val_doc`), so train/val never share a document and no document spans
+        the boundary (the old code cut the stream by token count — val was the
+        sequential continuation of train, leak-suspect);
+      * val documents whose 13-gram word overlap with a bounded sample of train
+        documents exceeds `decontam_threshold` are DROPPED, and a
+        `decontam_report.json` is written next to the cache as on-disk evidence.
+
+    The cache key carries the split seed + tokenizer name so a different seed (or
+    tokenizer) re-streams instead of silently reusing a stale, differently-split
+    cache."""
+    tok_tag = getattr(tokenizer, "name_or_path", "tok").split("/")[-1]
+    cache = RESULTS / f"tokcache_{n_train}_{n_val}_seed{seed}_{tok_tag}.pt"
     if cache.exists():
         d = torch.load(cache)
         log(f"  loaded cached tokens from {cache.name} ({len(d['train']):,} train + {len(d['val']):,} val)", log_path)
         return d["train"], d["val"]
     eos = tokenizer.eos_token_id or tokenizer.encode("<|endoftext|>")[0]
     ds = load_dataset("HuggingFaceFW/fineweb-edu", "sample-10BT", split="train", streaming=True)
-    buf, val = [], []
+    train_ids, val_docs_text, val_docs_ids, train_sample_text = [], [], [], []
     t0 = time.time()
+    raw_val_tokens = 0
     for ex in ds:
         text = ex.get("text", "").strip()
         if not text:
             continue
-        ids = tokenizer.encode(text, add_special_tokens=False)
-        (buf if len(buf) < n_train else val).extend(ids + [eos])
-        if len(val) >= n_val:
+        if is_val_doc(text, seed, val_fraction):
+            if raw_val_tokens < n_val * 2:           # gather extra; decontam prunes
+                ids = tokenizer.encode(text, add_special_tokens=False) + [eos]
+                val_docs_text.append(text)
+                val_docs_ids.append(ids)
+                raw_val_tokens += len(ids)
+        elif len(train_ids) < n_train:
+            ids = tokenizer.encode(text, add_special_tokens=False) + [eos]
+            train_ids.extend(ids)
+            if len(train_sample_text) < decontam_sample_docs:
+                train_sample_text.append(text)        # bounded index for decontam
+        if len(train_ids) >= n_train and raw_val_tokens >= n_val * 2:
             break
-    log(f"  streamed {len(buf):,} train + {len(val):,} val tokens in {time.time()-t0:.1f}s", log_path)
-    train_t = torch.tensor(buf[:n_train], dtype=torch.long)
-    val_t = torch.tensor(val[:n_val], dtype=torch.long)
-    torch.save({"train": train_t, "val": val_t}, cache)
+    # decontaminate the val side against a bounded sample of train docs
+    _, dropped, _ = decontaminate_val(
+        val_docs_text, train_sample_text, n=decontam_n, threshold=decontam_threshold)
+    dropped_set = set(dropped)
+    val_ids = []
+    for i, ids in enumerate(val_docs_ids):
+        if i not in dropped_set and len(val_ids) < n_val:
+            val_ids.extend(ids)
+    report = decontam_report(seed, val_fraction, decontam_n, decontam_threshold,
+                             n_train_docs=len(train_sample_text),
+                             n_val_raw=len(val_docs_text), docs_dropped=len(dropped))
+    report["train_sample_docs_for_index"] = len(train_sample_text)
+    write_decontam_report(RESULTS / "decontam_report.json", report)
+    log(f"  streamed {len(train_ids):,} train + {len(val_ids):,} val tokens in "
+        f"{time.time()-t0:.1f}s; decontam dropped {len(dropped)}/{len(val_docs_text)} "
+        f"val docs (report -> results/decontam_report.json)", log_path)
+    train_t = torch.tensor(train_ids[:n_train], dtype=torch.long)
+    val_t = torch.tensor(val_ids[:n_val], dtype=torch.long)
+    torch.save({"train": train_t, "val": val_t, "decontam": report}, cache)
     return train_t, val_t
 
 
@@ -238,7 +281,8 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(REPO)
     log("Streaming FineWeb-Edu sample-10BT...", log_path)
     train_tokens, val_tokens = stream_tokens(
-        tokenizer, n_train=token_budget + 2_000_000, n_val=300_000, log_path=log_path)
+        tokenizer, n_train=token_budget + 2_000_000, n_val=300_000, log_path=log_path,
+        seed=args.seed)
     pack = PackedTextDataset(train_tokens, args.seq_len)
     loader = DataLoader(pack, batch_size=args.micro_batch, shuffle=True, drop_last=True)
     log(f"  {len(pack):,} train windows of {args.seq_len}", log_path)
