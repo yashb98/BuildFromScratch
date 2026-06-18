@@ -116,17 +116,44 @@ it is excluded here. _Caveat: at the proxy budget, small per-component deltas ma
 inside the seed-noise floor → honestly inconclusive; a clear winner gets confirmed at
 higher budget in Phase 2._
 
-### Next (after Phase 1)
+**How it runs / how we read it.** One parameterized trainer (`train_ablation.py`,
+each arm = one CLI flag flipped) driven by a sequential supervisor (`run_arms.sh`) —
+**one trainer at a time** (GB10 §C4.5), `sentinel.py`-guarded, **idempotent** (a crash
+re-runs the supervisor, which skips finished cells and resumes the interrupted one from
+its last 250-step checkpoint). When all 12 cells finish, `/eval-harness` scores every
+checkpoint on the fixed suite (model's own tokenizer, `suite_version` pinned) and
+`research/eval_stats.py::seed_delta_significant` computes the **across-seed 95% CI** for
+each axis (arm − baseline). An axis is called a *driver* only if its CI excludes 0; a CI
+that straddles 0 is reported `not significant`. Progress + verdict land in the ledger
+run `2026-06-18_qwen3-0.6b_imu1-deconfound-p1`.
 
-1. **Phase 2** — drill into whichever axis dominates Phase 1 (e.g. split the arch arm
-   into value-residuals / LN-scaling / per-head-gating).
-2. **Publish** — the paper is packaged; the ladder supplies the per-component
-   attribution it lacks (clears the "no headline on a confound" honesty gate) → submit.
-3. **Post-train rigor** — turn the n=1 inconclusive SFT into a ≥3-seed result, or add a
-   preference/RLVR stage → eval → verdict (close the post-train→verdict arc).
-4. **Ship the loop end-to-end** — one full unattended cycle
-   (idea → train → eval → ablate → verdict → ledger → paper): the Tier-0 milestone that
-   makes "end-to-end" true rather than aspirational.
+### Next (after Phase 1) — what & **how**
+
+Each step reuses machinery that already exists; the "how" is concrete, not aspirational.
+
+1. **Phase 2 — drill into the dominant axis.** *What:* attribute the winning axis to its
+   sub-components. *How:* reuse the SAME `train_ablation.py` + `run_arms.sh`. If **arch**
+   wins, split it into its three already-separate config flags (`use_value_residual`,
+   `use_layernorm_scaling`, `use_head_gating`) → baseline + 3 single-variable sub-arms ×
+   3 seeds, iso-FLOP, same seed-CI verdict. If **WSD** or **z-loss** wins, re-run that one
+   arm at the **full 2-TPP budget** (18,150 steps) to confirm the proxy result holds at
+   scale. New experiment dir, same gate.
+2. **Publish — turn the attribution into the paper.** *What:* ship the packaged
+   manuscript with a real per-component result. *How:* re-run `/manuscript` on this run;
+   the Phase-1 **claim↔evidence gate** now passes because the headline is a single
+   attributed component (not the confounded bundle), figures/tables regenerate from the
+   ablation CSVs, and the package goes out behind the **human attestation** (the skill
+   never auto-submits → you do the arXiv/HF click).
+3. **Post-train rigor — close the post-train arc.** *What:* convert the n=1 inconclusive
+   SFT into a real verdict. *How:* re-run the reasoning SFT at **≥3 seeds** via
+   `/ablation-runner` in `finetune` mode (paired control + the §C13 catastrophic-forgetting
+   probe), or add a preference stage (DPO/GRPO/RLVR); `/eval-harness` → across-seed CI
+   decides win/loss (forgetting regression = a fail, not a footnote).
+4. **Ship the loop end-to-end.** *What:* one fully autonomous cycle. *How:* paste the cron
+   lines (**human-only**, §C4.2/§C20 — I can't install cron) so `/research-loop` runs
+   nightly through its skill chain: `model-radar` → `ml-research` (brief) →
+   `ablation-runner` (this same trainer/gate) → `eval-harness` → `experiment-ledger` →
+   `weekly-retro` → `/manuscript`. One unattended idea→paper pass = the Tier-0 milestone.
 
 > **GB10-only reality:** the reachable target is the **rigorous small-scale** lifecycle
 > above — *not* at-scale distributed training (multi-node / MFU-at-scale need rented
