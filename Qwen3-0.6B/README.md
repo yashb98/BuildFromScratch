@@ -6,14 +6,14 @@ weights (`max |Δlogits| = 0.0`), used as the base for a **three-build experimen
 reproduce it faithfully, then apply recent (2026) research methods and measure — at
 matched compute — whether they beat the faithful baseline.
 
-> **Status: Phase B — runs 1–3 DONE, run 4 in progress.** Architecture VERIFIED
-> (bit-exact); Phase A LR sweep complete (`lr24 = 2.4e-3` won). Phase B = four
-> matched-compute runs @ 2 TPP (1.19B tokens each). **Results:** faithful baseline
-> = **28.65** · **IMU-1 bundle = 23.52 — a proven 17.9% win** (gap to original
-> 2.14× → **1.76×**) · **partial-RoPE 0.25 = 29.54 — LOSES to baseline by 3.1%**.
-> Run 4 (partial-RoPE 0.10) in progress (latest @ step 4000 = 50.71, tracking far
-> behind). **Verdict: IMU-1 wins; partial RoPE does not beat the baseline at this
-> scale.**
+> **Status: Phase B decided — now de-confounding the IMU-1 win.** Architecture
+> VERIFIED bit-exact; Phase A LR sweep done (`lr24 = 2.4e-3`). Phase B (matched
+> compute @ 2 TPP): faithful **28.65** · **IMU-1 bundle 23.52 — a proven 17.9%
+> win** (gap to original 2.14× → **1.76×**) · partial-RoPE 0.25 **29.54 (loses,
+> +3.1%)**; 0.10 abandoned at ~30% (50.71 @ step 4000, also losing). **But the
+> IMU-1 win is a confounded bundle** (NorMuon + WSD + z-loss + 3 arch tweaks).
+> **Now running** (2026-06-18): a single-variable ablation ladder to *attribute* it
+> — see [End-to-end lifecycle](#end-to-end-lifecycle--what-weve-done--whats-next).
 
 > **This is an index.** Each build has its own detailed README — see
 > [the three builds](#the-three-builds) for links. The architecture itself is the
@@ -74,6 +74,63 @@ directional hint — now confirmed by the full 2-TPP run above (**23.52 vs 28.65
 > **29.54 (3.1% worse than the 28.65 baseline)**; 0.10 is tracking far worse
 > (50.71 @ step 4000, run in progress). Reducing the rotated RoPE fraction does
 > **not** match the full-RoPE baseline at this scale — a clean, if negative, result.
+
+---
+
+## End-to-end lifecycle — what we've done & what's next
+
+This model is the spine of a full **small-scale LLM lifecycle** run on one GB10 box
+(no rented compute). Every number traces to the ledger
+(`research/ledger/ledger.json`) or a build log.
+
+### Done (with sources)
+
+| Stage | Result | Evidence |
+|---|---|---|
+| **Architecture** | bit-exact vs HF (`max\|Δlogits\| = 0.0`), 596,049,920 params | `verify.json` |
+| **Pretrain — 3 builds @ 2 TPP** | faithful 28.65 · **IMU-1 23.52 (win, −17.9%)** · partial-RoPE 0.25 29.54 (loss); 0.10 abandoned ~30% | build logs (above) |
+| **Optimizer ablation (clean, single-variable)** | NorMuon **beats** AdamW: wikitext **−0.474 bpb** (95% CI [0.444, 0.505]), code −0.502 bpb ([0.456, 0.547]) — **significant win** | ledger `2026-06-16_qwen3_normuon-vs-adamw` |
+| **Post-train — SFT** | reasoning OpenR1-Math PPL **14.26 → 11.60 (−18.7%)**; catastrophic forgetting **retained** (wikitext +0.2%, code −3.0%, fineweb-edu +0.74% — none significant). **n=1 → verdict inconclusive** | ledger `…vibethinker-small-reasoning` |
+| **Paper** | *"Reproduce, Then Modernize…"* — **packaged** (arXiv/HF source tree), not yet submitted | ledger `papers[]` |
+| **Harness-search side-quest** | Meta-Harness replication: automated harness search ≈ a trivial heuristic on every cheaply-searchable task (bin-packing, seq-packing, codeharness all **zero-headroom**, the last proven against a real 9B). The **promotion gate** (held-out + brittle-exclusion + significance) is the transferable contribution; reward-hack + shadowing fixes committed (`bdc5ec6`). | `research/harness_search/` |
+
+### Now running — de-confound the IMU-1 bundle (Phase 1)
+
+`Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/`. The IMU-1 win is a
+confounded bundle; this is a **single-variable** ladder — each arm differs from the
+faithful baseline by exactly one flag (`model_imu1` with arch-flags **off** is proven
+bit-identical to the faithful model, so the baseline is genuinely faithful):
+
+| Arm | schedule | z-loss | arch | (optimizer = AdamW 1.7e-3, all arms) |
+|---|---|---|---|---|
+| baseline | cosine | 0 | off | = faithful recipe |
+| +WSD | **WSD** | 0 | off | |
+| +z-loss | cosine | **1e-4** | off | |
+| +arch | cosine | 0 | **on** | model_imu1's 3 tweaks |
+
+3 seeds/arm (paired), **iso-FLOP** (token-matched; +arch adds 0.077% params → FLOP
+ratio 1.00043, within the 5% gate), 2000-step proxy (131M tok/cell, ~5h/cell,
+**~2.5 days** total). Verdict by the across-seed 95% CI
+(`eval_stats.seed_delta_significant`). NorMuon is already isolated (the win above), so
+it is excluded here. _Caveat: at the proxy budget, small per-component deltas may sit
+inside the seed-noise floor → honestly inconclusive; a clear winner gets confirmed at
+higher budget in Phase 2._
+
+### Next (after Phase 1)
+
+1. **Phase 2** — drill into whichever axis dominates Phase 1 (e.g. split the arch arm
+   into value-residuals / LN-scaling / per-head-gating).
+2. **Publish** — the paper is packaged; the ladder supplies the per-component
+   attribution it lacks (clears the "no headline on a confound" honesty gate) → submit.
+3. **Post-train rigor** — turn the n=1 inconclusive SFT into a ≥3-seed result, or add a
+   preference/RLVR stage → eval → verdict (close the post-train→verdict arc).
+4. **Ship the loop end-to-end** — one full unattended cycle
+   (idea → train → eval → ablate → verdict → ledger → paper): the Tier-0 milestone that
+   makes "end-to-end" true rather than aspirational.
+
+> **GB10-only reality:** the reachable target is the **rigorous small-scale** lifecycle
+> above — *not* at-scale distributed training (multi-node / MFU-at-scale need rented
+> compute this box doesn't have). "A+-evidence, not A+-credential."
 
 ---
 
