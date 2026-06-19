@@ -12,7 +12,9 @@ matched compute — whether they beat the faithful baseline.
 > win** (gap to original 2.14× → **1.76×**) · partial-RoPE 0.25 **29.54 (loses,
 > +3.1%)**; 0.10 abandoned at ~30% (50.71 @ step 4000, also losing). **But the
 > IMU-1 win is a confounded bundle** (NorMuon + WSD + z-loss + 3 arch tweaks).
-> **Now running** (2026-06-18): a single-variable ablation ladder to *attribute* it
+> **Now de-confounding it** (run `2026-06-18_…imu1-deconfound-p1`, 6/12 cells done):
+> a single-variable, 3-seed ladder. **Preliminary** (in-loop val PPL, not the final
+> BPB verdict): **+WSD tracking as a significant driver** (+6.9%, 95% CI [+0.90, +5.51])
 > — see [End-to-end lifecycle](#end-to-end-lifecycle--what-weve-done--whats-next).
 
 > **This is an index.** Each build has its own detailed README — see
@@ -126,6 +128,32 @@ checkpoint on the fixed suite (model's own tokenizer, `suite_version` pinned) an
 each axis (arm − baseline). An axis is called a *driver* only if its CI excludes 0; a CI
 that straddles 0 is reported `not significant`. Progress + verdict land in the ledger
 run `2026-06-18_qwen3-0.6b_imu1-deconfound-p1`.
+
+**Pre-launch validation (the "tests" for this build).** Before any GPU budget: CPU
+dry-run of all **4 arms** (single-variable confirmed — baseline/wsd/zloss share an
+identical forward, only +arch changes it); GPU **smoke 4/4 + a resume round-trip**
+(checkpoint → reload → continue); **iso-FLOP** check via `flop_accounting.py` (arch-on
+adds 0.077% params → FLOP ratio **1.00043**, inside the 5% gate). Results→verdict is
+pre-wired: `score_cohort.py` (scores all 12 checkpoints — uses `model_imu1` with per-arm
+arch flags so the +arch checkpoints load) → `verdict.py` (`seed_delta_significant`, 15
+tests green) → auto-fired by the conditional `post_cohort.sh` watcher on `cohort.done`.
+
+**Live progress (Jun 19 — 6/12 cells done):** baseline ✓✓✓ · wsd ✓✓✓ · zloss (running) ·
+arch (queued). **Preliminary +WSD signal** — *in-loop val PPL* (the trainer's quick eval,
+NOT yet the canonical eval-harness BPB verdict): baseline **46.44 ±0.35** vs +WSD **43.24
+±0.63** → Δ **+6.9%**, 95% CI **[+0.90, +5.51]**, **significant across 3 seeds** → WSD is
+tracking as a real driver of the IMU-1 gain (mechanistically expected — WSD anneals the LR
+to zero over the last 20%, sharpening the final loss vs cosine-to-floor). The rigorous
+per-axis BPB verdict lands when all 12 cells finish.
+
+**GB10 memory engineering (a real single-box lesson).** The full 151,936-vocab logits make
+`torch.compile`'s startup transiently spike the **unified pool to ~80.7%**, tripping the
+default 80% `sentinel.py` guard — it killed the zloss cell **4×** (the trainer's own RSS was
+only 4.6 GB, so it was the *pool*, not the trainer; snap-confined Firefox couldn't be freed
+to make room). Fix: raise the **per-cohort sentinel to `--kill-at 0.83`** (still under
+`safe_cuda`'s 0.85 CUDA hard-cap, which errors cleanly — so the box stays crash-safe) and
+run the full **mb4+compile** config, *identical* to baseline/wsd (zero execution confound)
+at ~5,000–6,800 tok/s. Net throughput holds; revised total **~2 days**.
 
 ### Next (after Phase 1) — what & **how**
 
