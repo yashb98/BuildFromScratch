@@ -12,7 +12,9 @@ matched compute — whether they beat the faithful baseline.
 > win** (gap to original 2.14× → **1.76×**) · partial-RoPE 0.25 **29.54 (loses,
 > +3.1%)**; 0.10 abandoned at ~30% (50.71 @ step 4000, also losing). **But the
 > IMU-1 win is a confounded bundle** (NorMuon + WSD + z-loss + 3 arch tweaks).
-> **Now running** (2026-06-18): a single-variable ablation ladder to *attribute* it
+> **Now de-confounding it** (run `2026-06-18_…imu1-deconfound-p1`, 6/12 cells done):
+> a single-variable, 3-seed ladder. **Preliminary** (in-loop val PPL, not the final
+> BPB verdict): **+WSD tracking as a significant driver** (+6.9%, 95% CI [+0.90, +5.51])
 > — see [End-to-end lifecycle](#end-to-end-lifecycle--what-weve-done--whats-next).
 
 > **This is an index.** Each build has its own detailed README — see
@@ -116,17 +118,70 @@ it is excluded here. _Caveat: at the proxy budget, small per-component deltas ma
 inside the seed-noise floor → honestly inconclusive; a clear winner gets confirmed at
 higher budget in Phase 2._
 
-### Next (after Phase 1)
+**How it runs / how we read it.** One parameterized trainer (`train_ablation.py`,
+each arm = one CLI flag flipped) driven by a sequential supervisor (`run_arms.sh`) —
+**one trainer at a time** (GB10 §C4.5), `sentinel.py`-guarded, **idempotent** (a crash
+re-runs the supervisor, which skips finished cells and resumes the interrupted one from
+its last 250-step checkpoint). When all 12 cells finish, `/eval-harness` scores every
+checkpoint on the fixed suite (model's own tokenizer, `suite_version` pinned) and
+`research/eval_stats.py::seed_delta_significant` computes the **across-seed 95% CI** for
+each axis (arm − baseline). An axis is called a *driver* only if its CI excludes 0; a CI
+that straddles 0 is reported `not significant`. Progress + verdict land in the ledger
+run `2026-06-18_qwen3-0.6b_imu1-deconfound-p1`.
 
-1. **Phase 2** — drill into whichever axis dominates Phase 1 (e.g. split the arch arm
-   into value-residuals / LN-scaling / per-head-gating).
-2. **Publish** — the paper is packaged; the ladder supplies the per-component
-   attribution it lacks (clears the "no headline on a confound" honesty gate) → submit.
-3. **Post-train rigor** — turn the n=1 inconclusive SFT into a ≥3-seed result, or add a
-   preference/RLVR stage → eval → verdict (close the post-train→verdict arc).
-4. **Ship the loop end-to-end** — one full unattended cycle
-   (idea → train → eval → ablate → verdict → ledger → paper): the Tier-0 milestone that
-   makes "end-to-end" true rather than aspirational.
+**Pre-launch validation (the "tests" for this build).** Before any GPU budget: CPU
+dry-run of all **4 arms** (single-variable confirmed — baseline/wsd/zloss share an
+identical forward, only +arch changes it); GPU **smoke 4/4 + a resume round-trip**
+(checkpoint → reload → continue); **iso-FLOP** check via `flop_accounting.py` (arch-on
+adds 0.077% params → FLOP ratio **1.00043**, inside the 5% gate). Results→verdict is
+pre-wired: `score_cohort.py` (scores all 12 checkpoints — uses `model_imu1` with per-arm
+arch flags so the +arch checkpoints load) → `verdict.py` (`seed_delta_significant`, 15
+tests green) → auto-fired by the conditional `post_cohort.sh` watcher on `cohort.done`.
+
+**Live progress (Jun 19 — 6/12 cells done):** baseline ✓✓✓ · wsd ✓✓✓ · zloss (running) ·
+arch (queued). **Preliminary +WSD signal** — *in-loop val PPL* (the trainer's quick eval,
+NOT yet the canonical eval-harness BPB verdict): baseline **46.44 ±0.35** vs +WSD **43.24
+±0.63** → Δ **+6.9%**, 95% CI **[+0.90, +5.51]**, **significant across 3 seeds** → WSD is
+tracking as a real driver of the IMU-1 gain (mechanistically expected — WSD anneals the LR
+to zero over the last 20%, sharpening the final loss vs cosine-to-floor). The rigorous
+per-axis BPB verdict lands when all 12 cells finish.
+
+**GB10 memory engineering (a real single-box lesson).** The full 151,936-vocab logits make
+`torch.compile`'s startup transiently spike the **unified pool to ~80.7%**, tripping the
+default 80% `sentinel.py` guard — it killed the zloss cell **4×** (the trainer's own RSS was
+only 4.6 GB, so it was the *pool*, not the trainer; snap-confined Firefox couldn't be freed
+to make room). Fix: raise the **per-cohort sentinel to `--kill-at 0.83`** (still under
+`safe_cuda`'s 0.85 CUDA hard-cap, which errors cleanly — so the box stays crash-safe) and
+run the full **mb4+compile** config, *identical* to baseline/wsd (zero execution confound)
+at ~5,000–6,800 tok/s. Net throughput holds; revised total **~2 days**.
+
+### Next (after Phase 1) — what & **how**
+
+Each step reuses machinery that already exists; the "how" is concrete, not aspirational.
+
+1. **Phase 2 — drill into the dominant axis.** *What:* attribute the winning axis to its
+   sub-components. *How:* reuse the SAME `train_ablation.py` + `run_arms.sh`. If **arch**
+   wins, split it into its three already-separate config flags (`use_value_residual`,
+   `use_layernorm_scaling`, `use_head_gating`) → baseline + 3 single-variable sub-arms ×
+   3 seeds, iso-FLOP, same seed-CI verdict. If **WSD** or **z-loss** wins, re-run that one
+   arm at the **full 2-TPP budget** (18,150 steps) to confirm the proxy result holds at
+   scale. New experiment dir, same gate.
+2. **Publish — turn the attribution into the paper.** *What:* ship the packaged
+   manuscript with a real per-component result. *How:* re-run `/manuscript` on this run;
+   the Phase-1 **claim↔evidence gate** now passes because the headline is a single
+   attributed component (not the confounded bundle), figures/tables regenerate from the
+   ablation CSVs, and the package goes out behind the **human attestation** (the skill
+   never auto-submits → you do the arXiv/HF click).
+3. **Post-train rigor — close the post-train arc.** *What:* convert the n=1 inconclusive
+   SFT into a real verdict. *How:* re-run the reasoning SFT at **≥3 seeds** via
+   `/ablation-runner` in `finetune` mode (paired control + the §C13 catastrophic-forgetting
+   probe), or add a preference stage (DPO/GRPO/RLVR); `/eval-harness` → across-seed CI
+   decides win/loss (forgetting regression = a fail, not a footnote).
+4. **Ship the loop end-to-end.** *What:* one fully autonomous cycle. *How:* paste the cron
+   lines (**human-only**, §C4.2/§C20 — I can't install cron) so `/research-loop` runs
+   nightly through its skill chain: `model-radar` → `ml-research` (brief) →
+   `ablation-runner` (this same trainer/gate) → `eval-harness` → `experiment-ledger` →
+   `weekly-retro` → `/manuscript`. One unattended idea→paper pass = the Tier-0 milestone.
 
 > **GB10-only reality:** the reachable target is the **rigorous small-scale** lifecycle
 > above — *not* at-scale distributed training (multi-node / MFU-at-scale need rented
