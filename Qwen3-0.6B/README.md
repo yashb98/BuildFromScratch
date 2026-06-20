@@ -79,6 +79,70 @@ directional hint — now confirmed by the full 2-TPP run above (**23.52 vs 28.65
 
 ---
 
+## Plots & figures gallery
+
+All figures are generated **CPU-only from the on-disk logs/CSVs** (every number traces to a
+file; partial/in-progress runs are labelled). Full set + captions:
+[`PLOTS_INDEX.md`](PLOTS_INDEX.md) (31 figures). Regenerate the cross-build panel with
+[`builds/comparison/make_all_builds_comparison.py`](builds/comparison/make_all_builds_comparison.py).
+
+### Cross-build comparison — matched compute, *same steps*
+
+The three builds (plus the abandoned partial-RoPE-10%) on one axis: identical 1.19B-token
+budget (18,150 steps x 65,536 tok), identical eval slice. IMU-1 sits below the baseline the
+whole way; partial-RoPE stays above it.
+
+![All builds - validation perplexity vs step (matched compute)](builds/comparison/comparison_all_builds_ppl_vs_step.png)
+
+![All builds - training loss vs step](builds/comparison/comparison_all_builds_train_loss.png)
+
+![Matched-compute final val PPL across builds vs the published model](results_overview/plots/fig1_matched_compute_final_ppl_bar.png)
+
+### Phase A — learning-rate sweep (131M tokens)
+
+`lr24 = 2.4e-3` won at matched compute (the LR Qwen3 never published for 0.6B).
+
+![Phase A LR sweep](builds/comparison/phaseA_lr_sweep.png)
+
+### Per-build training dynamics
+
+**Build 1 — Faithful baseline** — loss/LR, grad-norm, peak-mem vs the 109 GB cap, val PPL:
+
+![Faithful loss and LR](builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/plots/fig1_loss_lr_baseline2tpp.png)
+![Faithful grad-norm](builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/plots/fig2_grad_norm_baseline2tpp.png)
+![Faithful peak memory vs cap](builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/plots/fig3_peak_mem_baseline2tpp.png)
+![Faithful val PPL vs tokens](builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/plots/fig4_val_ppl_baseline2tpp.png)
+
+**Build 2 — Modernized (IMU-1 bundle)** — training CE and the eval-PPL descent to 23.52:
+
+![IMU-1 training cross-entropy](builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/plots/fig1_train_ce_vs_step.png)
+![IMU-1 eval PPL descent](builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/plots/fig2_eval_ppl_vs_step.png)
+
+**Build 3 — Exploratory (partial-RoPE)** — prope25 complete (29.54); prope10 dashed (died @5450):
+
+![partial-RoPE training loss](builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/plots/exploratory_prope_train_loss.png)
+![partial-RoPE val PPL](builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/plots/exploratory_prope_val_ppl.png)
+
+### Controlled attribution — NorMuon vs AdamW (single-variable, 3 seeds, iso-FLOP, verifier-PASS)
+
+The clean optimizer isolation that de-confounds one strand of the IMU-1 bundle: NorMuon beats
+AdamW by **+0.474 bpb on wikitext-2 (95% CI [0.444, 0.505])** and +0.502 on code — significant.
+
+![NorMuon vs AdamW - wikitext-2 BPB with 95% CI](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig1_headline_wikitext2_bpb.png)
+![NorMuon vs AdamW - code BPB](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig2_code_bpb.png)
+![NorMuon vs AdamW - FineWeb-Edu val PPL](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig3_fineweb_val_ppl.png)
+![NorMuon vs AdamW - per-seed training curves](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig4_train_loss_curves.png)
+![AdamW LR-sweep robustness control](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig5_adamw_lr_sweep.png)
+
+### Post-training — SFT (VibeThinker reasoning, n=1 preliminary)
+
+Held-out reasoning PPL 14.26 -> 11.60; no catastrophic forgetting (FineWeb-Edu retained).
+
+![SFT training loss](experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/plots/vibethinker_sft_loss.png)
+![SFT reasoning PPL vs step](experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/plots/vibethinker_sft_reasoning_ppl.png)
+
+---
+
 ## End-to-end lifecycle — what we've done & what's next
 
 This model is the spine of a full **small-scale LLM lifecycle** run on one GB10 box
@@ -166,18 +230,35 @@ Each step reuses machinery that already exists; the "how" is concrete, not aspir
    3 seeds, iso-FLOP, same seed-CI verdict. If **WSD** or **z-loss** wins, re-run that one
    arm at the **full 2-TPP budget** (18,150 steps) to confirm the proxy result holds at
    scale. New experiment dir, same gate.
-2. **Publish — turn the attribution into the paper.** *What:* ship the packaged
+2. **Phase 2b — optimizer/schedule head-to-head (settle WSD vs NorMuon vs Zeta), reusing
+   what we already have.** *What:* put WSD, NorMuon, and Zeta on one comparable axis — the
+   2000-step proxy ranked the *non-optimizer* components but couldn't compare the
+   optimizer/schedule effects (different experiments, metrics, budgets). *How — and the key
+   efficiency:* **don't re-run the baseline or WSD — Phase 1 already produced
+   `baseline_seed{0,1,2}` and `wsd_seed{0,1,2}` at exactly this config/budget** (§C13
+   control-reuse: a control is reusable when budget/data/seed/config match). So Phase 2b adds
+   only **two new arms — +NorMuon (NorMuon+cosine) and +Zeta (Zeta+cosine), 3 seeds each =
+   6 new cells (~1.5 days)** — then `score_cohort.py` scores all 12 (6 reused + 6 new) on the
+   *same* **eval-harness BPB** for a clean 4-way comparison: baseline · +WSD · +NorMuon ·
+   +Zeta. (NorMuon/Zeta optimizer gains show all-training-long, so they read cleanly even at
+   2000 steps; WSD's gain is endpoint-only and *budget-dependent*, so **only if the
+   optimizer margin is close** do we spend a single full-1.19B confirmation of the winner —
+   not a 22-day 12-cell cohort.) *Code to add:* Zeta from its Algorithm 2 as `zeta.py` (the
+   `normuon.py` pattern) + a `--optimizer zeta` flag in `train_ablation.py`
+   ([arXiv:2606.14187](https://arxiv.org/abs/2606.14187), brief
+   `research/briefs/zeta-dual-whitening.md`); trainer/`run_arms.sh`/gate/83%-guard reused.
+3. **Publish — turn the attribution into the paper.** *What:* ship the packaged
    manuscript with a real per-component result. *How:* re-run `/manuscript` on this run;
    the Phase-1 **claim↔evidence gate** now passes because the headline is a single
    attributed component (not the confounded bundle), figures/tables regenerate from the
    ablation CSVs, and the package goes out behind the **human attestation** (the skill
    never auto-submits → you do the arXiv/HF click).
-3. **Post-train rigor — close the post-train arc.** *What:* convert the n=1 inconclusive
+4. **Post-train rigor — close the post-train arc.** *What:* convert the n=1 inconclusive
    SFT into a real verdict. *How:* re-run the reasoning SFT at **≥3 seeds** via
    `/ablation-runner` in `finetune` mode (paired control + the §C13 catastrophic-forgetting
    probe), or add a preference stage (DPO/GRPO/RLVR); `/eval-harness` → across-seed CI
    decides win/loss (forgetting regression = a fail, not a footnote).
-4. **Ship the loop end-to-end.** *What:* one fully autonomous cycle. *How:* paste the cron
+5. **Ship the loop end-to-end.** *What:* one fully autonomous cycle. *How:* paste the cron
    lines (**human-only**, §C4.2/§C20 — I can't install cron) so `/research-loop` runs
    nightly through its skill chain: `model-radar` → `ml-research` (brief) →
    `ablation-runner` (this same trainer/gate) → `eval-harness` → `experiment-ledger` →
