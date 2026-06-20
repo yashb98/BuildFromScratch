@@ -134,6 +134,24 @@ AdamW by **+0.474 bpb on wikitext-2 (95% CI [0.444, 0.505])** and +0.502 on code
 ![NorMuon vs AdamW - per-seed training curves](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig4_train_loss_curves.png)
 ![AdamW LR-sweep robustness control](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig5_adamw_lr_sweep.png)
 
+### Deconfounding the IMU-1 win — 12-cell single-variable ladder (in progress)
+
+*Which* component of the IMU-1 bundle drives the -17.9%? A single-variable, 3-seed,
+iso-FLOP ladder at a matched **131M-token / 2000-step proxy** (baseline vs +WSD vs +z-loss
+vs +arch, all AdamW). **Preliminary (9/12 cells done; the +arch arm is running):** **+WSD is
+the driver** — 43.2 vs baseline 46.4 (~7%); **+z-loss is flat** (46.5); **+arch pending**.
+(In-loop val PPL; the canonical eval-harness BPB verdict lands when all 12 cells finish.)
+The honest same-step caveat is built in: the deconfound arms are *complete* 2000-step runs
+(LR fully decayed), while a build's "step 2000" is a *mid-run* snapshot of an 18,150-step run
+(LR still high) — so the valid cross-check is deconfound-baseline (46.4) ≈ Phase-A faithful
+complete-run (46.31), which holds.
+
+![Deconfound arms vs the full builds (different budgets, not directly overlaid)](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/deconfound_vs_builds.png)
+
+![Deconfound arms vs the builds at the same 2000 steps (complete vs mid-run, honest)](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/same_steps_curves.png)
+
+![Per-component attribution - single-variable, 3 seeds per arm](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/deconfound_attribution.png)
+
 ### Post-training — SFT (VibeThinker reasoning, n=1 preliminary)
 
 Held-out reasoning PPL 14.26 -> 11.60; no catastrophic forgetting (FineWeb-Edu retained).
