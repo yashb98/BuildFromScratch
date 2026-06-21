@@ -12,9 +12,10 @@ matched compute — whether they beat the faithful baseline.
 > win** (gap to original 2.14× → **1.76×**) · partial-RoPE 0.25 **29.54 (loses,
 > +3.1%)**; 0.10 abandoned at ~30% (50.71 @ step 4000, also losing). **But the
 > IMU-1 win is a confounded bundle** (NorMuon + WSD + z-loss + 3 arch tweaks).
-> **Now de-confounding it** (run `2026-06-18_…imu1-deconfound-p1`, 6/12 cells done):
-> a single-variable, 3-seed ladder. **Preliminary** (in-loop val PPL, not the final
-> BPB verdict): **+WSD tracking as a significant driver** (+6.9%, 95% CI [+0.90, +5.51])
+> **Now de-confounding it** (run `2026-06-18_…imu1-deconfound-p1`, **11/12 cells done**):
+> a single-variable, 3-seed ladder. **Preliminary** (in-loop val PPL, not the final BPB
+> verdict): **the architecture modules are the dominant driver** — +arch **−22%** (36.2 vs
+> baseline 46.4), with +WSD secondary (**−7%**) and +z-loss null (≈0)
 > — see [End-to-end lifecycle](#end-to-end-lifecycle--what-weve-done--whats-next).
 
 > **This is an index.** Each build has its own detailed README — see
@@ -138,9 +139,12 @@ AdamW by **+0.474 bpb on wikitext-2 (95% CI [0.444, 0.505])** and +0.502 on code
 
 *Which* component of the IMU-1 bundle drives the -17.9%? A single-variable, 3-seed,
 iso-FLOP ladder at a matched **131M-token / 2000-step proxy** (baseline vs +WSD vs +z-loss
-vs +arch, all AdamW). **Preliminary (9/12 cells done; the +arch arm is running):** **+WSD is
-the driver** — 43.2 vs baseline 46.4 (~7%); **+z-loss is flat** (46.5); **+arch pending**.
-(In-loop val PPL; the canonical eval-harness BPB verdict lands when all 12 cells finish.)
+vs +arch, all AdamW). **Preliminary (11/12 cells done; arch arm 2/3 seeds, last confirming):**
+**the architecture modules (+arch) are the dominant driver** — 36.2 vs baseline 46.4 (**−22%**),
+below baseline at every logged step; **+WSD** secondary (43.2, **−7%**); **+z-loss** null (46.5, ≈0).
+The three arch modules: value residuals + LayerNorm-scaling + per-head gating (IMU-1, no
+optimizer/schedule change in this arm). (In-loop val PPL; the canonical eval-harness BPB verdict
+with across-seed CIs lands when all 12 cells finish.)
 The honest same-step caveat is built in: the deconfound arms are *complete* 2000-step runs
 (LR fully decayed), while a build's "step 2000" is a *mid-run* snapshot of an 18,150-step run
 (LR still high) — so the valid cross-check is deconfound-baseline (46.4) ≈ Phase-A faithful
@@ -220,13 +224,16 @@ pre-wired: `score_cohort.py` (scores all 12 checkpoints — uses `model_imu1` wi
 arch flags so the +arch checkpoints load) → `verdict.py` (`seed_delta_significant`, 15
 tests green) → auto-fired by the conditional `post_cohort.sh` watcher on `cohort.done`.
 
-**Live progress (Jun 19 — 6/12 cells done):** baseline ✓✓✓ · wsd ✓✓✓ · zloss (running) ·
-arch (queued). **Preliminary +WSD signal** — *in-loop val PPL* (the trainer's quick eval,
-NOT yet the canonical eval-harness BPB verdict): baseline **46.44 ±0.35** vs +WSD **43.24
-±0.63** → Δ **+6.9%**, 95% CI **[+0.90, +5.51]**, **significant across 3 seeds** → WSD is
-tracking as a real driver of the IMU-1 gain (mechanistically expected — WSD anneals the LR
-to zero over the last 20%, sharpening the final loss vs cosine-to-floor). The rigorous
-per-axis BPB verdict lands when all 12 cells finish.
+**Live progress (Jun 21 — 11/12 cells done):** baseline ✓✓✓ · wsd ✓✓✓ · zloss ✓✓✓ ·
+arch ✓✓ (seed2 running). **The attribution flipped once +arch ran** — *in-loop val PPL*
+(the trainer's quick eval, NOT yet the canonical eval-harness BPB verdict): baseline **46.44**,
++z-loss **46.47** (null), +WSD **43.24** (**−6.9%**), and **+arch 36.20** (**−22.1%**; seeds
+36.21 / 36.19, and below baseline at *every* logged step 500→2000). So the IMU-1 win is
+**primarily the architecture modules** — value residuals + LayerNorm-scaling + per-head gating
+(IMU-1 Eq.3/4/5) — with WSD a real secondary driver and z-loss doing nothing. (Earlier this
+section read "+WSD is the driver"; that was before the arch arm ran. arch n=2 → n=3 when seed2
+finishes.) The rigorous per-axis BPB verdict (across-seed 95% CIs) lands when `arch_seed2`
+finishes and `cohort.done` fires the scorer.
 
 **GB10 memory engineering (a real single-box lesson).** The full 151,936-vocab logits make
 `torch.compile`'s startup transiently spike the **unified pool to ~80.7%**, tripping the
