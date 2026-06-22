@@ -36,12 +36,26 @@ so every row is directly comparable.
 **Bit-exact reproduction** — `verify.json`: `max_abs_error = 0.0`, argmax `" Paris"`,
 params **596,049,920**. Our `model.py` *is* Qwen3-0.6B.
 
-**The reproduction gap (the headline):**
+**Two tiers of evidence — read them differently.** The repo's *defensible* results are the
+single-variable, **3-seed, iso-FLOP** ablations scored on the canonical **BPB** metric (bits-per-byte
+on held-out wikitext + code) with **across-seed 95% CIs**. The cross-*build* comparison is
+**directional only**: each build is **n=1** (one seed) on **FineWeb-Edu val PPL** (in-distribution),
+no seed CI, no downstream evals — a scaling/sanity reading, not a defended claim.
 
-| Model | Training tokens | val PPL | Gap vs original |
+**Defensible (3 seeds · iso-FLOP · BPB · across-seed 95% CI):**
+
+| Result | Metric (vs faithful baseline) | Verdict |
+|---|---|---|
+| **NorMuon > AdamW** | wikitext −0.474 bpb [0.444, 0.505] · code −0.502 [0.456, 0.547] | **significant win** |
+| **arch modules drive the IMU-1 win** | wikitext −0.118 bpb [0.100, 0.135] · code −0.305 [0.259, 0.351] | **significant — sole driver** |
+| WSD schedule · z-loss | CI crosses 0 (both corpora) | **not significant** |
+
+**Directional (n=1 · FineWeb-Edu val PPL · single seed — NOT a defended claim):**
+
+| Model | Training tokens | val PPL (n=1) | Gap vs original |
 |---|---|---|---|
 | **Original** `Qwen3-0.6B-Base` | 36T | **13.40** | 1.0× |
-| **🥇 IMU-1 bundle (Build 2)** | **1.19B** | **23.52** | **1.76×** |
+| IMU-1 bundle (Build 2) | 1.19B | 23.52 | 1.76× |
 | Faithful baseline (Build 1) | 1.19B | 28.65 | 2.14× |
 | partial-RoPE 0.25 (Build 3) | 1.19B | 29.54 | 2.20× |
 | Our best (Phase A, `lr24`) | 131M | 46.31 | 3.5× |
@@ -50,19 +64,23 @@ params **596,049,920**. Our `model.py` *is* Qwen3-0.6B.
 
 ![Phase B — matched-compute val-PPL curves (same data, eval, budget)](builds/comparison/phaseB_ppl_curves.png)
 
-**Two headline results:**
+**What the evidence supports (and what it doesn't):**
 
-1. **Reproduction** — the faithful baseline reproduces Qwen3-0.6B to within **2.14×**
-   perplexity using **~275,000× less data**; each ~10× more data roughly halves the gap
-   (the gap is *data scale, not correctness*).
-2. **Research win (matched compute, both @ 2 TPP / 1.19B tokens)** — the modernized
-   **IMU-1 bundle (23.52) beats the faithful baseline (28.65) by 17.9%** — the project's
-   first *proven* result that a recent 2026 method improves on our own correct baseline.
-   It was the *full* bundle (NorMuon + value-residuals + LN-scaling + head-gating +
-   WSD-to-zero + z-loss vs the baseline's cosine/AdamW), so we **de-confounded it**: the
-   single-variable 3-seed ladder attributes the win to **NorMuon (optimizer) + the three
-   architecture modules**, while the **WSD schedule and z-loss are *not* significant** on the
-   canonical BPB metric (see [the de-confound](#end-to-end-lifecycle--what-weve-done--whats-next)).
+1. **Reproduction (directional):** the faithful baseline reaches **2.14× the original's PPL** with
+   ~275,000× less data; each ~10× data roughly halves the gap (n=1, but the scaling trend is robust).
+2. **The de-confounded win (defensible):** the IMU-1 bundle's improvement over our own faithful
+   baseline is **attributable to NorMuon (optimizer) + the architecture modules** — both proven at
+   3 seeds, iso-FLOP, on BPB with CIs excluding 0; **WSD and z-loss are NOT significant**. The
+   bundle's *−17.9% PPL* number itself is **n=1 and directional** — the defended claim is the
+   per-component BPB attribution, not the single-seed bundle delta. *Caveat:* "matched compute" =
+   matched **tokens** (1.19B); IMU-1 also ran NorMuon (~30% more wall-clock, uncounted by the 6ND
+   FLOP model, though params are iso-FLOP at 1.00043).
+
+> **Rigor status — being upgraded (eval suite `text-lm-v3`):** downstream task-accuracy benchmarks
+> (ARC-e / LAMBADA / HellaSwag / PIQA / WinoGrande) + multi-seed CIs on the build comparison are
+> being wired into the **standing** eval so every claim carries them, every time. Honest caveat: at
+> 596M / 1.19B tok the model is near-chance on most multiple-choice tasks, so BPB-on-held-out-corpora
+> stays the sensitive metric and the decisive fix is **multi-seed + the framing above**.
 
 **Scaling trend:** `65.5M → 131M → 1.19B → 36T  ≈  96 → 46 → 28.65 → 13.4`.
 

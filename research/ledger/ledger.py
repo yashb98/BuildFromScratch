@@ -46,6 +46,7 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 import re
@@ -67,7 +68,7 @@ RUN_TYPES = {"ablation", "finetune", "eval", "dataset-prep",
              # serving/RAG/safeguards benches, and the sweep parent group.
              "scaling-fit", "replication", "serving-bench", "rag-eval",
              "safeguards-round", "sweep", "serve"}
-VERDICTS = {"win", "loss", "inconclusive", None}
+VERDICTS = {"win", "loss", "inconclusive", "directional", None}  # "directional" = §C25 eval-completeness cap (battery incomplete; not a never_repeat loss)
 PROP_KINDS = {"new-build", "big-run", "needs-approval"}
 PROP_STATUS = {"open", "accepted", "declined"}
 PAPER_STATUS = {"drafting", "packaged", "submitted", "published", "abandoned"}  # §C16
@@ -155,6 +156,11 @@ def validate_technique(t: dict):
     ts = t.get("taste_score")                              # §C15.2 deep score
     if ts is not None and not isinstance(ts, (int, float)):
         fail(f"technique[{t['slug']}].taste_score must be a number or null, got {ts!r}")
+    pwp = t.get("predicted_win_prob")                      # §C15.3 calibrated prob
+    if pwp is not None and not (isinstance(pwp, (int, float)) and not isinstance(pwp, bool)
+                                and 0.0 <= pwp <= 1.0):
+        fail(f"technique[{t['slug']}].predicted_win_prob must be a number in [0,1] or "
+             f"null, got {pwp!r}")
 
 
 def validate_run(r: dict):
@@ -176,6 +182,27 @@ def validate_run(r: dict):
     for sub in ("lineage", "cost"):  # §C8 reproducibility + cost (optional/null)
         if r.get(sub) is not None and not isinstance(r[sub], dict):
             fail(f"run[{r['run_id']}].{sub} must be a JSON object or null")
+    # §C18 confound_check hygiene + single-variable WIN gate. The field is
+    # optional (a bundle/multi-variable run is legitimately recordable — cf. the
+    # IMU-1 matched-compute paper), but if present it must be well-formed, and a
+    # recorded `verdict=win` on a launch-bearing run MUST be a single-variable,
+    # FLOP-matched comparison — else the headline number is confounded /
+    # non-comparable, the exact P0 the rubric names.
+    cc = r.get("confound_check")
+    if cc is not None:
+        if not isinstance(cc, dict):
+            fail(f"run[{r['run_id']}].confound_check must be a JSON object or null")
+        if "n_vars" in cc and not (isinstance(cc["n_vars"], int)
+                                   and not isinstance(cc["n_vars"], bool) and cc["n_vars"] >= 1):
+            fail(f"run[{r['run_id']}].confound_check.n_vars must be a positive int")
+        if "iso_flop" in cc and not isinstance(cc["iso_flop"], bool):
+            fail(f"run[{r['run_id']}].confound_check.iso_flop must be a bool")
+    if r.get("verdict") == "win" and r.get("type") in {"ablation", "finetune", "replication"}:
+        if not (isinstance(cc, dict) and cc.get("n_vars") == 1 and cc.get("iso_flop") is True):
+            fail(f"run[{r['run_id']}].verdict='win' on a {r.get('type')} requires "
+                 'confound_check={"n_vars":1,"iso_flop":true} (§C18 single-variable, '
+                 f"FLOP-matched); got {cc!r}. A multi-variable bundle must be recorded "
+                 "as inconclusive or an explicit recipe-level result, not a bare win.")
 
 
 def validate_proposal(p: dict):
@@ -260,6 +287,18 @@ def save(path: Path, data: dict):
     validate(data)
     if path.exists():
         shutil.copy2(path, path.with_name(path.name + ".bak"))
+        # §C8 durability: a once-per-day pre-mutation snapshot in backups/ so a
+        # mid-iteration corruption can be rolled back to last-good (the .bak is a
+        # single slot overwritten on every mutation; the ledger is gitignored, so
+        # git is not a fallback). Best-effort; never blocks a write.
+        try:
+            bdir = path.parent / "backups"
+            bdir.mkdir(exist_ok=True)
+            daily = bdir / f"{path.stem}-{today()}.json"
+            if not daily.exists():
+                shutil.copy2(path, daily)
+        except OSError:
+            pass
     fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=".ledger_", suffix=".tmp")
     try:
         with os.fdopen(fd, "w") as f:
@@ -271,10 +310,43 @@ def save(path: Path, data: dict):
         # preserve the existing ledger's mode (or 0644 on first creation).
         os.chmod(tmp, (os.stat(path).st_mode & 0o777) if path.exists() else 0o644)
         os.replace(tmp, path)  # atomic on POSIX, same filesystem
+        # §C8 durability: fsync the PARENT DIR so the rename itself is persisted.
+        # Without this, on the documented GB10 unified-memory hard-crash the new
+        # directory entry can be lost on reboot, reverting a just-recorded
+        # verdict/metrics even though the file contents were fsynced.
+        try:
+            dfd = os.open(str(path.parent), os.O_DIRECTORY)
+            try:
+                os.fsync(dfd)
+            finally:
+                os.close(dfd)
+        except OSError:
+            pass
     except BaseException:
         if os.path.exists(tmp):
             os.unlink(tmp)
         raise
+
+
+def acquire_lock(path: Path):
+    """§C8 cross-process safety: an exclusive advisory lock on <ledger>.lock,
+    serializing the load->mutate->save sequence so a recovery cron racing a
+    hand-run cannot lose-update. Fail-open: if locking is unavailable, return
+    None and proceed (a missing lock must never brick the CLI)."""
+    try:
+        fd = os.open(str(path.with_name(path.name + ".lock")), os.O_CREAT | os.O_RDWR, 0o644)
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        return fd
+    except OSError:
+        return None
+
+
+def release_lock(fd):
+    if fd is not None:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        finally:
+            os.close(fd)
 
 
 def merge_subdicts(target, patch):
@@ -404,6 +476,14 @@ def cmd_add_run(led, a):
     if r.get("technique_slug"):
         t = find(led["techniques"], "slug", r["technique_slug"])
         if t is None:
+            # §C8 referential integrity: an orphan ablation/finetune/replication run
+            # would let next-best re-select the "untried" technique and burn a
+            # SECOND paid run. Hard-fail for launch-bearing types; warn for
+            # free-floating ones (eval/dataset-prep/etc.).
+            if r["type"] in ("ablation", "finetune", "replication"):
+                fail(f"technique_slug {r['technique_slug']!r} has no technique entry — a "
+                     f"{r['type']} run must reference a recorded technique (§C8); add the "
+                     "technique first so its run_ids[] back-references this run", code=3)
             warn(f"technique_slug {r['technique_slug']!r} has no technique entry")
         elif r["run_id"] not in t.setdefault("run_ids", []):
             t["run_ids"].append(r["run_id"])
@@ -725,29 +805,35 @@ def main(argv=None) -> int:
     sub.add_parser("status", parents=[common])
 
     a = ap.parse_args(argv)
-    led = load(a.ledger)
+    # §C8: serialize the whole load->mutate->save under an exclusive lock so two
+    # concurrent invocations (e.g. recovery cron + hand-run) cannot lose-update.
+    lock_fd = acquire_lock(a.ledger)
+    try:
+        led = load(a.ledger)
 
-    mutators = {"add-technique": cmd_add_technique,
-                "update-technique": cmd_update_technique,
-                "add-run": cmd_add_run, "update-run": cmd_update_run,
-                "add-proposal": cmd_add_proposal,
-                "update-proposal": cmd_update_proposal,
-                "add-never-repeat": cmd_add_never_repeat,
-                "add-paper": cmd_add_paper, "update-paper": cmd_update_paper}
-    if a.cmd in mutators:
-        result = mutators[a.cmd](led, a)
-        save(a.ledger, led)
-        emit(result)
+        mutators = {"add-technique": cmd_add_technique,
+                    "update-technique": cmd_update_technique,
+                    "add-run": cmd_add_run, "update-run": cmd_update_run,
+                    "add-proposal": cmd_add_proposal,
+                    "update-proposal": cmd_update_proposal,
+                    "add-never-repeat": cmd_add_never_repeat,
+                    "add-paper": cmd_add_paper, "update-paper": cmd_update_paper}
+        if a.cmd in mutators:
+            result = mutators[a.cmd](led, a)
+            save(a.ledger, led)
+            emit(result)
+            return 0
+        if a.cmd == "check-dup":
+            return cmd_check_dup(led, a)
+        if a.cmd == "query":
+            cmd_query(led, a)
+        elif a.cmd == "next-best":
+            cmd_next_best(led, a)
+        elif a.cmd == "status":
+            cmd_status(led, a)
         return 0
-    if a.cmd == "check-dup":
-        return cmd_check_dup(led, a)
-    if a.cmd == "query":
-        cmd_query(led, a)
-    elif a.cmd == "next-best":
-        cmd_next_best(led, a)
-    elif a.cmd == "status":
-        cmd_status(led, a)
-    return 0
+    finally:
+        release_lock(lock_fd)
 
 
 if __name__ == "__main__":
