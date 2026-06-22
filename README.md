@@ -76,6 +76,3 @@ BuildFromScratch/
 └── jax_safe_env.py                # JAX preallocation guard for the shared-memory box
 ```
 
-> Note: the Claude Code skills (`.claude/`) and the `skills_showcase/` harness that
-> drive this project are intentionally **gitignored** (local-only state), so they do
-> not appear on GitHub. Model checkpoints (`*.pt`) and token caches are excluded too.
