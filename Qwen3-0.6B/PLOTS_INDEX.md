@@ -1,0 +1,88 @@
+# Qwen3-0.6B — Plots Index
+
+Top-level index of **every plot file** under `builds/*/results/plots/`,
+`experiments/*/results/plots/`, and `results_overview/plots/`. Paths are
+relative to this file (`Qwen3-0.6B/`). Captions are one-liners; the exact source
+file and full data points live in each plot dir's own `README.md`.
+
+Generated this run by globbing the on-disk tree (no GPU, no model loads, no
+process interaction). **Total plot files indexed: 51** (PNG + PDF; some older
+figures are PNG-only — flagged below).
+
+## Run-status legend (verified from the on-disk logs this run)
+
+| Run | Build / experiment | Status | Final number (source) |
+|-----|--------------------|--------|-----------------------|
+| Faithful baseline2tpp | `builds/2026-06-08_reproduce-faithful_qwen3-0.6b` | **COMPLETE** | val PPL 28.65 (`qwen3_baseline2tpp_after.txt`) |
+| Faithful Phase-A LR sweep | same | **COMPLETE** (short, 2k-step) | lr24 best 46.31 (`qwen3_lr24_after.txt`) |
+| IMU-1 / NorMuon imu1_2tpp | `builds/2026-06-08_reproduce-modernized_qwen3-0.6b` | **COMPLETE** | val PPL 23.52 (`qwen3_imu1_2tpp_train.log` eval@18000) |
+| IMU-1 smoke | same | **COMPLETE** (short, 1k-step) | 39.83 @1000 (`qwen3_imu1_smoke_train.log`) |
+| partial-RoPE-25% prope25 | `builds/2026-06-08_reproduce-exploratory_qwen3-0.6b` | **COMPLETE** | val PPL 29.54 (`qwen3_prope25_2tpp_train.log` DONE) |
+| partial-RoPE-10% prope10 | same | **INCOMPLETE — DIED @ step 5450/18150** | last eval 50.71 @4000 (no DONE line) |
+| NorMuon-vs-AdamW ablation | `experiments/2026-06-16_qwen3_normuon-vs-adamw` | **COMPLETE** (n=3 seeds, 42M-tok iso-FLOP) | NorMuon 1.6355 vs AdamW 2.1098 bpb wikitext-2 (`verdict.json`) |
+| VibeThinker SFT | `experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning` | **COMPLETE** — its log reads `DONE in 297.3 min` @ step 238 (reasoning PPL 14.262 -> 11.596). NOTE: its local `plots/README.md` + the two figures still say "IN PROGRESS @ step 230/238" because they were drawn before the final step; the figures are correct for the points they show (steps 10-230) but predate the final eval. | reasoning PPL 11.596 (`vibethinker_sft_driver.log` DONE) |
+| Cross-build overview | `results_overview` | **COMPLETE** (this run) | combines the three COMPLETE 2-TPP finals |
+
+---
+
+## results_overview/plots/  (CROSS-BUILD — new this run)
+
+- `results_overview/plots/fig1_matched_compute_final_ppl_bar.png` / `.pdf` — Matched-compute (1.19B-token) final val-PPL bar: Faithful 28.65 / IMU-1 23.52 / pRoPE-25% 29.54 vs published 13.40 dashed line; gap-to-original annotated (2.14x / 1.76x / 2.21x). [COMPLETE]
+- `results_overview/plots/fig2_eval_ppl_vs_tokens_faithful_vs_imu1.png` / `.pdf` — Eval val-PPL vs tokens (log y), Faithful vs IMU-1 overlaid; both COMPLETE @ 1.19B tok, IMU-1 below Faithful throughout (28.65 vs 23.52). [COMPLETE]
+
+## builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/plots/  [COMPLETE baseline]
+
+- `fig1_loss_lr_baseline2tpp.png` / `.pdf` — Training loss (raw + EMA) with cosine LR on a twin axis; COMPLETE 18,150-step / 1.19B-tok run.
+- `fig2_grad_norm_baseline2tpp.png` / `.pdf` — Gradient L2 norm vs step (raw + EMA) with clip=1.0 reference; COMPLETE run.
+- `fig3_peak_mem_baseline2tpp.png` / `.pdf` — Peak CUDA memory vs step vs the 109 GB cap and 119.7 GB pool; COMPLETE run (peak 52.4 GB).
+- `fig4_val_ppl_baseline2tpp.png` / `.pdf` — Validation PPL (log y) vs tokens; COMPLETE run, 60.1 @0.13B -> 28.65 @1.19B.
+- `fig5_phaseA_lr_sweep.png` / `.pdf` — Phase-A LR-sweep final val-PPL bar (SHORT 2k-step / 131M-tok runs): lr17 46.89, lr24 46.31 (chosen), lr30 49.28.
+- `dashboard.png` *(PNG only)* — Combined baseline2tpp training dashboard (legacy single-PNG figure).
+- `loss_curve.png` *(PNG only)* — Legacy standalone training-loss curve (baseline2tpp).
+- `lr_schedule.png` *(PNG only)* — Legacy standalone LR-schedule curve (baseline2tpp).
+- `grad_norm.png` *(PNG only)* — Legacy standalone gradient-norm curve (baseline2tpp).
+- `peak_mem.png` *(PNG only)* — Legacy standalone peak-memory curve (baseline2tpp).
+- `val_ppl.png` *(PNG only)* — Legacy standalone validation-PPL curve (baseline2tpp).
+- `qwen3_baseline2tpp_ppl_curve.png` *(PNG only)* — Legacy baseline2tpp val-PPL-vs-step curve.
+
+## builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/plots/  [COMPLETE — IMU-1 / NorMuon bundle]
+
+- `fig1_train_ce_vs_step.png` / `.pdf` — Training cross-entropy vs step (raw + EMA α=0.1); COMPLETE run, ce 7.44 @50 -> 2.47 @18150.
+- `fig2_eval_ppl_vs_step.png` / `.pdf` — Eval val-PPL vs step (log y); COMPLETE run, 44.38 @2000 -> 23.52 @18000.
+- `fig3_grad_norm_vs_step.png` / `.pdf` — Gradient norm vs step (raw + EMA α=0.1); COMPLETE run, max 0.89 @50 settling to ~0.06-0.10.
+- `fig4_smoke_eval_descent.png` / `.pdf` — Smoke-run eval-PPL descent 92.38 -> 39.83 over steps 250/500/750/1000 (COMPLETE smoke run).
+- `qwen3_imu1_2tpp_dashboard.png` *(PNG only)* — Legacy combined IMU-1 2tpp training dashboard.
+- `qwen3_imu1_2tpp_ppl_curve.png` *(PNG only)* — Legacy IMU-1 2tpp val-PPL-vs-step curve.
+
+## builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/plots/  [prope25 COMPLETE; prope10 INCOMPLETE]
+
+- `exploratory_prope_train_loss.png` / `.pdf` — Training loss vs step, prope25 (COMPLETE 18,150 steps, solid) and prope10 (INCOMPLETE — died @5450, dashed with X at death point) overlaid.
+- `exploratory_prope_val_ppl.png` / `.pdf` — Eval val-PPL vs step (log y): prope25 COMPLETE final 29.54; prope10 INCOMPLETE (only eval @2000 & 4000 exist).
+- `qwen3_prope25_2tpp_ppl_curve.png` *(PNG only)* — Legacy prope25 (factor=0.25) val-PPL-vs-step curve [COMPLETE run].
+- `qwen3_prope10_2tpp_ppl_curve.png` *(PNG only)* — Legacy prope10 (factor=0.10) val-PPL-vs-step curve [INCOMPLETE — trainer died @ step 5450/18150].
+
+## experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/  [COMPLETE — n=3-seed 42M-tok iso-FLOP ablation]
+
+- `fig1_headline_wikitext2_bpb.png` / `.pdf` — Headline wikitext-2 BPB: AdamW 2.1098 vs NorMuon 1.6355 (mean ± 95% CI, per-seed dots); +0.474 bpb, significant.
+- `fig2_code_bpb.png` / `.pdf` — codeparrot-clean-valid BPB: AdamW 3.3847 vs NorMuon 2.8831; +0.502 bpb, significant.
+- `fig3_fineweb_val_ppl.png` / `.pdf` — In-training fineweb-val PPL per seed (log y): AdamW ~145-156 vs NorMuon ~60-61 (independent corroboration).
+- `fig4_train_loss_curves.png` / `.pdf` — Training-loss curves, 2 arms × 3 seeds; NorMuon converges to ~4.0-4.2 vs AdamW ~4.7-5.1.
+- `fig5_adamw_lr_sweep.png` / `.pdf` — Confirmatory AdamW LR sweep (baseline not undertuned): spread ~0.047 bpb vs NorMuon's +0.474 gap.
+
+## experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/plots/  [run COMPLETE; figures drawn at step 230 pre-final]
+
+- `vibethinker_sft_loss.png` / `.pdf` — SFT training CE-loss vs step (logged steps 10-230). The run has since logged `DONE` @ step 238; figure shows the points up to step 230.
+- `vibethinker_sft_reasoning_ppl.png` / `.pdf` — Held-out reasoning PPL vs step at eval checkpoints, with pre-SFT base floor 14.262 dashed; run's final logged eval is 11.596.
+
+---
+
+## Counts
+
+- builds/*/results/plots/: **33** PNG+PDF files (faithful 17, modernized 10, exploratory 6). Of these, 11 are legacy PNG-only figures (7 in faithful, 2 in modernized, 2 in exploratory) with no PDF companion; the rest are PNG+PDF pairs.
+- experiments/*/results/plots/: **14** PNG+PDF files (NorMuon-vs-AdamW 10, VibeThinker 4).
+- results_overview/plots/: **4** PNG+PDF files (2 figures × {png,pdf}).
+- **TOTAL plot image files indexed: 51.**
+
+Non-image companions present but NOT counted as plots: per-dir `README.md` files
+and the `make_plots.py` / `plot_vibethinker_sft.py` / `make_overview_plots.py`
+generator scripts.
