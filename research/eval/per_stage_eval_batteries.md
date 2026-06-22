@@ -49,7 +49,7 @@ Legend — Coverage: ✅have · ◑partial · ❌MISSING (build backlog). Runnab
 > **§C25.3 Where it plugs in (S8, the verdict).** The verdict owner is **ablation-runner Phase 6** (the §C11 launch monopoly's judge), which already calls `/eval-harness` and writes `verdict`. §C25 inserts a **completeness check between metric-collection and verdict**:
 > 1. eval-harness measures + stamps `suite_version` (unchanged; it never judges).
 > 2. ablation-runner Phase 6 loads the run's `lifecycle_stage`, looks up the registry battery, and checks every HARD item is present in the run's recorded metrics/artifacts.
-> 3. **If any HARD item is absent or marked `not run`:** the run is stamped `incomplete-eval: <comma-separated missing items>` in the ledger, `verdict` is forced to **`directional`** (a new `RUN_STATUS`/verdict value), and the headline is auto-downgraded — the digest/README/manuscript renderer prints "**directional (incomplete-eval: …)**", never "win". A `directional` run is NOT a `never_repeat` loss; it is "battery incomplete, re-runnable".
+> 3. **If any HARD item is absent or marked `not run`:** the run is stamped `incomplete-eval: <comma-separated missing items>` in the ledger, `verdict` is forced to **`directional`** (a new **`verdict`** value — the run keeps `status: done`; AS-BUILT in `ledger.py` `VERDICTS`), and the headline is auto-downgraded — the digest/README/manuscript renderer prints "**directional (incomplete-eval: …)**", never "win". A `directional` run is NOT a `never_repeat` loss; it is "battery incomplete, re-runnable".
 > 4. **If all HARD items present** but a stage-specific significance gate fails (CI overlaps zero/chance, ladder CONVERGES, KL past hump, etc.): existing §C13/§C17 verdict logic applies (`loss`/`inconclusive`).
 > 5. **Only if HARD-complete AND significant:** `win` is permitted.
 >
@@ -70,8 +70,8 @@ Legend — Coverage: ✅have · ◑partial · ❌MISSING (build backlog). Runnab
 >
 > **§C25.6 Scale-honesty clause (project-specific).** At 596M params / 1.19B tokens many MC benchmarks sit near chance. The gate REQUIRES near-chance results be reported as **`no-signal`** (Wilson CI overlaps chance) or in **BPB/log-likelihood** (continuous), never spun as a win. A stage whose full battery is propose-only/rented on the GB10 records its on-box subset as `done` only for that subset, with the off-box items marked `not run — requires off-box compute (§C20)`. An all-near-chance null with a *complete* battery is an honest `inconclusive`, distinct from `incomplete-eval`.
 
-**Required ledger/loop edits (verified targets):**
-- `research/ledger/ledger.py` L65: `RUN_STATUS` add `"directional"`; add additive run keys `lifecycle_stage`, `registry_version`, `incomplete_eval` (list).
+**Ledger/loop edits (AS-BUILT 2026-06-22, verified):**
+- `research/ledger/ledger.py` L71: `VERDICTS` add `"directional"` (DONE) — the run keeps `status: done`; `directional` is a *verdict* cap, never a never_repeat loss. Additive run keys `lifecycle_stage`, `registry_version`, `incomplete_eval` (list) are accepted by the open `--set` schema (verified on a temp-ledger round-trip).
 - `.claude/skills/research-loop/SKILL.md` `## S8` step 2: insert the §C25.3 completeness check before "records verdict".
 - `.claude/skills/eval-harness/references/suite.md`: register `eval_completeness_registry.md` as the battery source-of-truth.
 
@@ -138,4 +138,4 @@ Ordering: **Phase-2 arch drill → data arm → post-train (GRPO is the live nex
 - **The "scaling" tag is "fit on-box, evidence off-box":** the fit script is CPU-seconds; every gate it defines needs an off-box training grid.
 - **Preference (DPO) cannot run today even on-box** — no preference checkpoint or preference eval split exists on disk (only an SFT-math checkpoint + math dataset); the live next stage is **GRPO-correctness**, which is genuinely on-box at GSM8K scale.
 
-**Files the §C25 implementation must import at the correct (verified) paths:** `flop_accounting.py`, `mfu_meter.py`, `sentinel.py`, `safe_cuda.py` at **repo root**; `research/provenance.py`, `research/eval_metrics.py`, `research/eval_stats.py`, `research/eval_downstream.py`, `research/distributed_correctness.py`, `research/kernel_oracle.py`, `research/posttrain_losses.py`, `research/scaling_fit.py`, `research/scaling_ladder.py`, `research/data_decontam.py`. Ledger: `research/ledger/ledger.py` (RUN_STATUS L65, RUN_TYPES L66). Loop: `.claude/skills/research-loop/SKILL.md` `## S8`.
+**Files the §C25 implementation must import at the correct (verified) paths:** `flop_accounting.py`, `mfu_meter.py`, `sentinel.py`, `safe_cuda.py` at **repo root**; `research/provenance.py`, `research/eval_metrics.py`, `research/eval_stats.py`, `research/eval_downstream.py`, `research/distributed_correctness.py`, `research/kernel_oracle.py`, `research/posttrain_losses.py`, `research/scaling_fit.py`, `research/scaling_ladder.py`, `research/data_decontam.py`. Ledger: `research/ledger/ledger.py` (VERDICTS L71 — `directional` added; RUN_TYPES L66). Loop: `.claude/skills/research-loop/SKILL.md` `## S8`.
