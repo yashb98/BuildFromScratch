@@ -6,17 +6,17 @@ weights (`max |Δlogits| = 0.0`), used as the base for a **three-build experimen
 reproduce it faithfully, then apply recent (2026) research methods and measure — at
 matched compute — whether they beat the faithful baseline.
 
-> **Status: Phase B decided — now de-confounding the IMU-1 win.** Architecture
-> VERIFIED bit-exact; Phase A LR sweep done (`lr24 = 2.4e-3`). Phase B (matched
-> compute @ 2 TPP): faithful **28.65** · **IMU-1 bundle 23.52 — a proven 17.9%
-> win** (gap to original 2.14× → **1.76×**) · partial-RoPE 0.25 **29.54 (loses,
-> +3.1%)**; 0.10 abandoned at ~30% (50.71 @ step 4000, also losing). **But the
-> IMU-1 win is a confounded bundle** (NorMuon + WSD + z-loss + 3 arch tweaks).
-> **Now de-confounding it** (run `2026-06-18_…imu1-deconfound-p1`, **11/12 cells done**):
-> a single-variable, 3-seed ladder. **Preliminary** (in-loop val PPL, not the final BPB
-> verdict): **the architecture modules are the dominant driver** — +arch **−22%** (36.2 vs
-> baseline 46.4), with +WSD secondary (**−7%**) and +z-loss null (≈0)
-> — see [End-to-end lifecycle](#end-to-end-lifecycle--what-weve-done--whats-next).
+> **Status: IMU-1 win de-confounded → architecture is the driver; Phase 2 now drilling *which* arch tweak.**
+> Architecture VERIFIED bit-exact; Phase A LR (`lr24 = 2.4e-3`); Phase B @ 2 TPP: faithful **28.65** ·
+> **IMU-1 bundle 23.52 — a proven 17.9% win** (gap 2.14× → **1.76×**) · partial-RoPE 0.25 **29.54 (loses)**.
+> The IMU-1 win was a confounded bundle (NorMuon + WSD + z-loss + 3 arch tweaks). **Phase 1 de-confound is
+> DONE** (run `2026-06-18_…imu1-deconfound-p1`, 12/12 cells, canonical eval-harness **BPB** verdict
+> `overall_verdict: attributed`): on the canonical metric **+arch is the SOLE driver** (wikitext **−0.118 bpb**,
+> 95% CI [0.100, 0.135]; code **−0.305 bpb**, CI [0.259, 0.351] — both significant), while **+WSD is NOT
+> significant** (CI crosses 0 — the −6.9% *in-loop proxy* gain did **not** survive the canonical metric) and
+> **+z-loss is null**. So the −17.9% bundle = **NorMuon (optimizer, proven) + the IMU-1 architecture modules.**
+> **Phase 2 is now RUNNING** (`2026-06-21_…arch-subdrill-p2`): splits arch into value-residual / layernorm-scaling /
+> head-gating to find which carries it (~Jun 24). — see [End-to-end lifecycle](#end-to-end-lifecycle--what-weve-done--whats-next).
 
 > **This is an index.** Each build has its own detailed README — see
 > [the three builds](#the-three-builds) for links. The architecture itself is the
@@ -58,9 +58,11 @@ params **596,049,920**. Our `model.py` *is* Qwen3-0.6B.
 2. **Research win (matched compute, both @ 2 TPP / 1.19B tokens)** — the modernized
    **IMU-1 bundle (23.52) beats the faithful baseline (28.65) by 17.9%** — the project's
    first *proven* result that a recent 2026 method improves on our own correct baseline.
-   ⚠️ It's the *full* bundle (NorMuon + value-residuals + LN-scaling + head-gating +
-   **WSD-to-zero** vs the baseline's cosine) — a **recipe-level** win, **not** attributable
-   to any single component (the WSD schedule alone could account for part of it).
+   It was the *full* bundle (NorMuon + value-residuals + LN-scaling + head-gating +
+   WSD-to-zero + z-loss vs the baseline's cosine/AdamW), so we **de-confounded it**: the
+   single-variable 3-seed ladder attributes the win to **NorMuon (optimizer) + the three
+   architecture modules**, while the **WSD schedule and z-loss are *not* significant** on the
+   canonical BPB metric (see [the de-confound](#end-to-end-lifecycle--what-weve-done--whats-next)).
 
 **Scaling trend:** `65.5M → 131M → 1.19B → 36T  ≈  96 → 46 → 28.65 → 13.4`.
 
@@ -74,8 +76,8 @@ directional hint — now confirmed by the full 2-TPP run above (**23.52 vs 28.65
 
 > **IMU-1 vs baseline: DECIDED — IMU-1 wins (23.52 < 28.65).**
 > **partial-RoPE vs baseline: DECIDED — partial RoPE LOSES.** 0.25 finished at
-> **29.54 (3.1% worse than the 28.65 baseline)**; 0.10 is tracking far worse
-> (50.71 @ step 4000, run in progress). Reducing the rotated RoPE fraction does
+> **29.54 (3.1% worse than the 28.65 baseline)**; 0.10 **died incomplete** at step
+> 5450/18150 (~30%; last eval 50.71 @ step 4000, far worse). Reducing the rotated RoPE fraction does
 > **not** match the full-RoPE baseline at this scale — a clean, if negative, result.
 
 ---
@@ -135,26 +137,44 @@ AdamW by **+0.474 bpb on wikitext-2 (95% CI [0.444, 0.505])** and +0.502 on code
 ![NorMuon vs AdamW - per-seed training curves](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig4_train_loss_curves.png)
 ![AdamW LR-sweep robustness control](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig5_adamw_lr_sweep.png)
 
-### Deconfounding the IMU-1 win — 12-cell single-variable ladder (in progress)
+### Deconfounding the IMU-1 win — 12-cell single-variable ladder (DONE — arch is the driver)
 
 *Which* component of the IMU-1 bundle drives the -17.9%? A single-variable, 3-seed,
 iso-FLOP ladder at a matched **131M-token / 2000-step proxy** (baseline vs +WSD vs +z-loss
-vs +arch, all AdamW). **Preliminary (11/12 cells done; arch arm 2/3 seeds, last confirming):**
-**the architecture modules (+arch) are the dominant driver** — 36.2 vs baseline 46.4 (**−22%**),
-below baseline at every logged step; **+WSD** secondary (43.2, **−7%**); **+z-loss** null (46.5, ≈0).
-The three arch modules: value residuals + LayerNorm-scaling + per-head gating (IMU-1, no
-optimizer/schedule change in this arm). (In-loop val PPL; the canonical eval-harness BPB verdict
-with across-seed CIs lands when all 12 cells finish.)
+vs +arch, all AdamW). **Complete (12/12 cells); canonical eval-harness BPB verdict**
+(`verdict.json`, `overall_verdict: attributed`; bpb reduction, **+** = better, significant iff CI excludes 0):
+
+| Axis vs baseline | wikitext-2 Δbpb (95% CI) | code Δbpb (95% CI) | verdict |
+|---|---|---|---|
+| **+arch** (value-residual + LN-scaling + head-gating) | **+0.118** [0.100, 0.135] | **+0.305** [0.259, 0.351] | **DRIVER** (both CIs exclude 0) |
+| +WSD (schedule) | +0.025 [**−0.017**, 0.066] | +0.036 [**−0.065**, 0.137] | not significant |
+| +z-loss | −0.003 [−0.018, 0.011] | −0.001 [−0.052, 0.051] | null |
+
+**The proxy flipped on the canonical metric.** The *in-loop val-PPL* proxy had ranked +arch −22%
+**and** +WSD −6.9% (significant) — but on the canonical BPB, **only arch survives**; +WSD's CI
+straddles 0. **+arch is the sole attributed driver** (baseline bpb 1.516/2.639 → arch 1.398/2.334),
+so the −17.9% bundle decomposes into **NorMuon (optimizer, proven separately) + the IMU-1
+architecture modules** — not schedule, not z-loss. This is exactly why the loop trusts eval-harness
+BPB, not in-loop PPL, as the verdict (the in-loop plots below are the proxy; the table above is the verdict).
 The honest same-step caveat is built in: the deconfound arms are *complete* 2000-step runs
 (LR fully decayed), while a build's "step 2000" is a *mid-run* snapshot of an 18,150-step run
 (LR still high) — so the valid cross-check is deconfound-baseline (46.4) ≈ Phase-A faithful
 complete-run (46.31), which holds.
 
-![Deconfound arms vs the full builds (different budgets, not directly overlaid)](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/deconfound_vs_builds.png)
+**The canonical verdict figure** (the headline — eval-harness BPB, 3 seeds/arm, 95% CI; only the
+arch axis is significant, so `drivers=[arch]`):
+
+![Canonical per-axis BPB attribution — only the arch axis is significant (3 seeds, 95% CI; + = better; source verdict.json)](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/deconfound_bpb_verdict.png)
+
+The three figures below are the **in-loop val-PPL proxy** (the trainer's quick eval during
+training) — kept to show the proxy→canonical flip (the proxy ranked +WSD a driver; the
+canonical BPB above does not), *not* the verdict:
+
+![Deconfound arms vs the full builds (different budgets, not directly overlaid; in-loop proxy PPL)](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/deconfound_vs_builds.png)
 
 ![Deconfound arms vs the builds at the same 2000 steps (complete vs mid-run, honest)](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/same_steps_curves.png)
 
-![Per-component attribution - single-variable, 3 seeds per arm](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/deconfound_attribution.png)
+![Per-component attribution - single-variable, 3 seeds per arm (in-loop proxy PPL)](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/deconfound_attribution.png)
 
 ### Post-training — SFT (VibeThinker reasoning, n=1 preliminary)
 
@@ -176,13 +196,14 @@ This model is the spine of a full **small-scale LLM lifecycle** run on one GB10 
 | Stage | Result | Evidence |
 |---|---|---|
 | **Architecture** | bit-exact vs HF (`max\|Δlogits\| = 0.0`), 596,049,920 params | `verify.json` |
-| **Pretrain — 3 builds @ 2 TPP** | faithful 28.65 · **IMU-1 23.52 (win, −17.9%)** · partial-RoPE 0.25 29.54 (loss); 0.10 abandoned ~30% | build logs (above) |
+| **Pretrain — 3 builds @ 2 TPP** | faithful 28.65 · **IMU-1 23.52 (win, −17.9%)** · partial-RoPE 0.25 29.54 (loss); 0.10 died incomplete @ step 5450/18150 (~30%) | build logs (above) |
 | **Optimizer ablation (clean, single-variable)** | NorMuon **beats** AdamW: wikitext **−0.474 bpb** (95% CI [0.444, 0.505]), code −0.502 bpb ([0.456, 0.547]) — **significant win** | ledger `2026-06-16_qwen3_normuon-vs-adamw` |
+| **De-confound attribution (Phase 1, single-variable, 3-seed, iso-FLOP)** | the IMU-1 win is **architecture**: **+arch −0.118/−0.305 bpb** (95% CI excludes 0, both corpora) is the **sole driver**; +WSD not significant on canonical BPB, +z-loss null → bundle = **NorMuon + arch modules** | ledger `2026-06-18_…imu1-deconfound-p1`, `verdict.json` |
 | **Post-train — SFT** | reasoning OpenR1-Math PPL **14.26 → 11.60 (−18.7%)**; catastrophic forgetting **retained** (wikitext +0.2%, code −3.0%, fineweb-edu +0.74% — none significant). **n=1 → verdict inconclusive** | ledger `…vibethinker-small-reasoning` |
-| **Paper** | *"Reproduce, Then Modernize…"* — **packaged** (arXiv/HF source tree), not yet submitted | ledger `papers[]` |
-| **Harness-search side-quest** | Meta-Harness replication: automated harness search ≈ a trivial heuristic on every cheaply-searchable task (bin-packing, seq-packing, codeharness all **zero-headroom**, the last proven against a real 9B). The **promotion gate** (held-out + brittle-exclusion + significance) is the transferable contribution; reward-hack + shadowing fixes committed (`bdc5ec6`). | `research/harness_search/` |
+| **Paper** | consolidated single-model study **`qwen3-0.6b-study`** — status **drafting** (arXiv/HF source tree, PDF built via Tectonic, 14 API-verified refs); the earlier per-result *"Reproduce, Then Modernize…"* paper is **abandoned/superseded** by it | ledger `papers[]` (2 entries) |
+| **Harness-search side-quest** | Meta-Harness replication: on the bin-packing target, gated search **beat** the hand-designed baseline by **+5.3 pts** (95% CI [+4.5, +6.2], held-out) — but selecting by raw search-score crowned a brittle overfit (0.0 on an unseen seed). The transferable contribution is the **promotion gate** (held-out + brittle-exclusion + significance), which recovers the real win and refuses the brittle one; oracle-integrity fixes (codeharness reward-hack + seqpack module-shadowing) committed (`bdc5ec6`, tests 309→317). | `research/harness_search/` |
 
-### Now running — de-confound the IMU-1 bundle (Phase 1)
+### Phase 1 (DONE) — de-confound the IMU-1 bundle
 
 `Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/`. The IMU-1 win is a
 confounded bundle; this is a **single-variable** ladder — each arm differs from the
@@ -224,16 +245,16 @@ pre-wired: `score_cohort.py` (scores all 12 checkpoints — uses `model_imu1` wi
 arch flags so the +arch checkpoints load) → `verdict.py` (`seed_delta_significant`, 15
 tests green) → auto-fired by the conditional `post_cohort.sh` watcher on `cohort.done`.
 
-**Live progress (Jun 21 — 11/12 cells done):** baseline ✓✓✓ · wsd ✓✓✓ · zloss ✓✓✓ ·
-arch ✓✓ (seed2 running). **The attribution flipped once +arch ran** — *in-loop val PPL*
-(the trainer's quick eval, NOT yet the canonical eval-harness BPB verdict): baseline **46.44**,
-+z-loss **46.47** (null), +WSD **43.24** (**−6.9%**), and **+arch 36.20** (**−22.1%**; seeds
-36.21 / 36.19, and below baseline at *every* logged step 500→2000). So the IMU-1 win is
-**primarily the architecture modules** — value residuals + LayerNorm-scaling + per-head gating
-(IMU-1 Eq.3/4/5) — with WSD a real secondary driver and z-loss doing nothing. (Earlier this
-section read "+WSD is the driver"; that was before the arch arm ran. arch n=2 → n=3 when seed2
-finishes.) The rigorous per-axis BPB verdict (across-seed 95% CIs) lands when `arch_seed2`
-finishes and `cohort.done` fires the scorer.
+**FINAL (Jun 21 — 12/12 cells; canonical BPB verdict in `verdict.json`):** baseline ✓✓✓ ·
+wsd ✓✓✓ · zloss ✓✓✓ · arch ✓✓✓. **`overall_verdict: attributed` — +arch is the sole driver**
+(wikitext −0.118 bpb [0.100, 0.135], code −0.305 bpb [0.259, 0.351], both CIs exclude 0); **+WSD
+NOT significant** on BPB (CI crosses 0); **+z-loss null**. The two-stage story is the point: the
+*in-loop val-PPL* proxy had ranked **+arch −22% AND +WSD −6.9%** (baseline 46.44 · +z-loss 46.47
+null · +WSD 43.24 · +arch 36.20) — but on the canonical metric **only arch survives**; WSD's proxy
+gain evaporated. That gap (proxy says significant, BPB says not) is precisely why the loop trusts
+eval-harness BPB, not in-loop PPL, as the verdict. So the −17.9% bundle = **NorMuon (optimizer,
+proven) + the IMU-1 architecture modules** (value residuals + LayerNorm-scaling + per-head gating,
+IMU-1 Eq.3/4/5) — not schedule, not z-loss.
 
 **GB10 memory engineering (a real single-box lesson).** The full 151,936-vocab logits make
 `torch.compile`'s startup transiently spike the **unified pool to ~80.7%**, tripping the
@@ -244,54 +265,48 @@ to make room). Fix: raise the **per-cohort sentinel to `--kill-at 0.83`** (still
 run the full **mb4+compile** config, *identical* to baseline/wsd (zero execution confound)
 at ~5,000–6,800 tok/s. Net throughput holds; revised total **~2 days**.
 
-### Next (after Phase 1) — what & **how**
+### Now running — Phase 2: *which* arch tweak carries the win? (launched Jun 21)
 
-Each step reuses machinery that already exists; the "how" is concrete, not aspirational.
+`Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/`. Phase 1 attributed the win to the
+arch bundle; Phase 2 splits it into its **three already-separate flags** as single-variable sub-arms:
+**value-residual** vs **layernorm-scaling** vs **head-gating** — baseline (reused from Phase 1, §C13
+control-reuse) + 3 sub-arms × 3 seeds = **9 new cells**, iso-FLOP (vr +84 params, ln **+0**
+parameter-free, hg +0.077%), 2000-step proxy. Same machinery, minimal diff: `train_ablation.py` →
+`train_subdrill.py` (a 4-line flag split), `run_arms.sh` → `score_cohort.py` → `verdict.py` →
+`post_cohort.sh` watcher, 0.83 sentinel guard. **All §C5 gates passed before launch** (smoke 3/3 +
+resume round-trip + iso-FLOP). **ETA ~Jun 24**; on `cohort.done` the watcher auto-writes `verdict.json`
+with the per-flag across-seed BPB CI → the named architectural mechanism for the paper.
 
-1. **Phase 2 — drill into the dominant axis.** *What:* attribute the winning axis to its
-   sub-components. *How:* reuse the SAME `train_ablation.py` + `run_arms.sh`. If **arch**
-   wins, split it into its three already-separate config flags (`use_value_residual`,
-   `use_layernorm_scaling`, `use_head_gating`) → baseline + 3 single-variable sub-arms ×
-   3 seeds, iso-FLOP, same seed-CI verdict. If **WSD** or **z-loss** wins, re-run that one
-   arm at the **full 2-TPP budget** (18,150 steps) to confirm the proxy result holds at
-   scale. New experiment dir, same gate.
-2. **Phase 2b — optimizer/schedule head-to-head (settle WSD vs NorMuon vs Zeta), reusing
-   what we already have.** *What:* put WSD, NorMuon, and Zeta on one comparable axis — the
-   2000-step proxy ranked the *non-optimizer* components but couldn't compare the
-   optimizer/schedule effects (different experiments, metrics, budgets). *How — and the key
-   efficiency:* **don't re-run the baseline or WSD — Phase 1 already produced
-   `baseline_seed{0,1,2}` and `wsd_seed{0,1,2}` at exactly this config/budget** (§C13
-   control-reuse: a control is reusable when budget/data/seed/config match). So Phase 2b adds
-   only **two new arms — +NorMuon (NorMuon+cosine) and +Zeta (Zeta+cosine), 3 seeds each =
-   6 new cells (~1.5 days)** — then `score_cohort.py` scores all 12 (6 reused + 6 new) on the
-   *same* **eval-harness BPB** for a clean 4-way comparison: baseline · +WSD · +NorMuon ·
-   +Zeta. (NorMuon/Zeta optimizer gains show all-training-long, so they read cleanly even at
-   2000 steps; WSD's gain is endpoint-only and *budget-dependent*, so **only if the
-   optimizer margin is close** do we spend a single full-1.19B confirmation of the winner —
-   not a 22-day 12-cell cohort.) *Code to add:* Zeta from its Algorithm 2 as `zeta.py` (the
-   `normuon.py` pattern) + a `--optimizer zeta` flag in `train_ablation.py`
-   ([arXiv:2606.14187](https://arxiv.org/abs/2606.14187), brief
-   `research/briefs/zeta-dual-whitening.md`); trainer/`run_arms.sh`/gate/83%-guard reused.
-3. **Publish — turn the attribution into the paper.** *What:* ship the packaged
-   manuscript with a real per-component result. *How:* re-run `/manuscript` on this run;
-   the Phase-1 **claim↔evidence gate** now passes because the headline is a single
-   attributed component (not the confounded bundle), figures/tables regenerate from the
-   ablation CSVs, and the package goes out behind the **human attestation** (the skill
-   never auto-submits → you do the arXiv/HF click).
-4. **Post-train rigor — close the post-train arc.** *What:* convert the n=1 inconclusive
-   SFT into a real verdict. *How:* re-run the reasoning SFT at **≥3 seeds** via
-   `/ablation-runner` in `finetune` mode (paired control + the §C13 catastrophic-forgetting
-   probe), or add a preference stage (DPO/GRPO/RLVR); `/eval-harness` → across-seed CI
-   decides win/loss (forgetting regression = a fail, not a footnote).
-5. **Ship the loop end-to-end.** *What:* one fully autonomous cycle. *How:* paste the cron
-   lines (**human-only**, §C4.2/§C20 — I can't install cron) so `/research-loop` runs
-   nightly through its skill chain: `model-radar` → `ml-research` (brief) →
-   `ablation-runner` (this same trainer/gate) → `eval-harness` → `experiment-ledger` →
-   `weekly-retro` → `/manuscript`. One unattended idea→paper pass = the Tier-0 milestone.
+### The road to a finished lifecycle — steps ahead
 
-> **GB10-only reality:** the reachable target is the **rigorous small-scale** lifecycle
-> above — *not* at-scale distributed training (multi-node / MFU-at-scale need rented
-> compute this box doesn't have). "A+-evidence, not A+-credential."
+The reachable target on this one GB10 box is a **rigorous small-scale** run of the *entire* LLM
+lifecycle (full dated plan:
+[`research/decisions/2026-06-21_lifecycle-completion-plan.md`](../research/decisions/2026-06-21_lifecycle-completion-plan.md)).
+Honest estimate from measured throughput: **~3–5 weeks serial** (one GPU job at a time); the critical
+path is **data → post-training**, and two stages are **rented-only** (the GB10 physically can't run them).
+The scaffold is fixed; each technique is chosen by the prior stage's *measured* result — Phase 1's
+proxy→canonical flip is exactly why we don't pre-commit the technique list.
+
+| # | Stage (lifecycle ch.) | What | Status |
+|---|---|---|---|
+| 1 | **Phase 2 arch sub-drill** (Ch.3) | which of value-residual / LN-scaling / head-gating carries the win | **running** (~Jun 24) |
+| 2 | **Data arm** (Ch.2) | fixed-token data-selection A/B — FineWeb-Edu vs Ultra-FineWeb-L3 / dclm-edu, OOD-BPB, strict decontam (the *bitter-lesson* lever: the gap to 13.40 is data-not-skill) | recon done; prep **deferred** until GPU frees |
+| 3 | **Mid-training** (Ch.7) | anneal on premium data @ low LR + RoPE context-extension | planned |
+| 4 | **Serving export** (Ch.14) | vLLM registration shim — *pulled forward*, it unblocks GRPO rollouts | planned |
+| 5 | **Post-training** (Ch.9–11) | SFT **≥3-seed** + paired control → DPO → GRPO/RLVR (turn the n=1 SFT into a real verdict) | planned |
+| 6 | **Serving bench** (Ch.14) | `/serving-bench` continuous-batching + paged-KV + `--quant fp8`; `/observability-slo` SLOs | planned |
+| 7 | **Safety** (Ch.12) | `/safeguards-eval` + red-team passes (methodology demo; 0.6B isn't ASL-relevant) | planned |
+| 8 | **Interpretability** (Ch.13) | SAE / probing demo | **gap** (no skill yet — build-or-skip) |
+| 9 | **Publish** (Ch.15) | `/manuscript` — now a clean **single-component** headline (NorMuon + arch), behind human submit | gated on Phase 2 |
+| R | **Kernel roofline** (Ch.5/14) · **Distributed scaling** (Ch.5) | one Triton kernel + roofline; FSDP/TP scaling table | **rented-only** (human-$ gate) |
+
+_Side bets (propose-only, off the critical path):_ a Zeta-vs-NorMuon optimizer replication at the
+paper's regime (**rented** — [`research/proposals/zeta-tuned-baseline-replication.md`](../research/proposals/zeta-tuned-baseline-replication.md));
+shipping the nightly `/research-loop` end-to-end (one autonomous idea→paper pass = the Tier-0 milestone).
+
+> **GB10-only reality:** the reachable target is the **rigorous small-scale** lifecycle above —
+> *not* at-scale distributed training (multi-node / MFU-at-scale need rented compute this box
+> doesn't have). "A+-evidence, not A+-credential."
 
 ---
 
@@ -304,7 +319,7 @@ and results. Click through for the detail.
 |---|---|---|---|---|
 | **1 · Faithful** | [`builds/…reproduce-faithful…`](builds/2026-06-08_reproduce-faithful_qwen3-0.6b/README.md) | nothing — exact arch, AdamW + cosine (the baseline + shared harness) | [Qwen3 TR][qwen3paper] | ✅ baseline = **28.65** |
 | **2 · Modernized** | [`builds/…reproduce-modernized…`](builds/2026-06-08_reproduce-modernized_qwen3-0.6b/README.md) | full **IMU-1 bundle**: NorMuon + value residuals + LayerNorm-scaling + per-head gating + cautious-WD + WSD + z-loss | [IMU-1](https://arxiv.org/abs/2602.02522), [NorMuon](https://arxiv.org/abs/2510.05491) | ✅ **23.52 — beats baseline −18%** |
-| **3 · Exploratory** | [`builds/…reproduce-exploratory…`](builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/README.md) | **partial RoPE** — rotate 25% / 10% of head dims, pass the rest through | [arXiv:2603.11611](https://arxiv.org/abs/2603.11611) | ✅ 0.25 = **29.54** (loses to baseline); 0.10 in progress (50.71 @ ~22%) |
+| **3 · Exploratory** | [`builds/…reproduce-exploratory…`](builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/README.md) | **partial RoPE** — rotate 25% / 10% of head dims, pass the rest through | [arXiv:2603.11611](https://arxiv.org/abs/2603.11611) | ✅ 0.25 = **29.54** (loses to baseline); 0.10 **died incomplete** @ step 5450/18150 (~30%; last eval 50.71) |
 | — · Survey | [`builds/…target-survey…`](builds/2026-06-08_target-survey/README.md) | why Qwen3-0.6B was chosen (model-selection phase, not a build) | — | ✅ done |
 
 Each build's verify gate proves the *unchanged* components stay bit-identical to the
@@ -314,7 +329,8 @@ faithful model, so any result is attributable to the one thing that changed.
 
 ## Architecture at a glance
 
-Full spec is in [`model.py`](model.py) (one file, every value cited to `config.json`).
+Full spec is in [`model.py`](model.py) (one file; every value annotated to its upstream
+`config.json` field, pulled live via `AutoConfig` — there is no local `config.json`).
 
 | Field | Value | | Field | Value |
 |---|---|---|---|---|
@@ -371,8 +387,11 @@ the machine); the scripts import [`safe_cuda`](../safe_cuda.py) to cap the proce
 - ✅ **Phase A LR (2.4e-3)** — an original verified finding (Qwen3 never published the
   0.6B LR).
 - 🔶 **Phase B** — baseline (28.65), IMU-1 (**23.52, a proven −18% win**), and
-  partial-RoPE 0.25 (**29.54 — loses to baseline**) done; 0.10 in progress (50.71
-  @ ~22%). The partial-RoPE *vs* baseline comparison is now **decided (it loses)**.
+  partial-RoPE 0.25 (**29.54 — loses to baseline**) done; 0.10 **died incomplete** at
+  step 5450/18150 (~30%; last eval 50.71). The partial-RoPE *vs* baseline comparison is **decided (it loses)**.
+- ✅ **IMU-1 attribution** — de-confounded (12/12 cells, 3-seed iso-FLOP, canonical BPB):
+  **architecture modules are the sole significant driver** (+arch +0.118/+0.305 bpb, CIs
+  exclude 0); WSD & z-loss not significant. Phase 2 now drills *which* arch module.
 - ⚠️ **2 TPP is ~80× below** the methods' validated regime → Phase B results will be
   **directional, not headline**; the IMU-1 bundle intentionally **confounds** ~6 changes.
 - ⚠️ **Honest gaps** — muP omitted; NorMuon NS5 coeffs are the standard Muon values
