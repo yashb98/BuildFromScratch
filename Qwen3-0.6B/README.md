@@ -15,8 +15,11 @@ matched compute — whether they beat the faithful baseline.
 > 95% CI [0.100, 0.135]; code **−0.305 bpb**, CI [0.259, 0.351] — both significant), while **+WSD is NOT
 > significant** (CI crosses 0 — the −6.9% *in-loop proxy* gain did **not** survive the canonical metric) and
 > **+z-loss is null**. So the −17.9% bundle = **NorMuon (optimizer, proven) + the IMU-1 architecture modules.**
-> **Phase 2 is now RUNNING** (`2026-06-21_…arch-subdrill-p2`): splits arch into value-residual / layernorm-scaling /
-> head-gating to find which carries it (~Jun 24). — see [End-to-end lifecycle](#end-to-end-lifecycle--what-weve-done--whats-next).
+> **Phase 2 DONE** (`2026-06-21_…arch-subdrill-p2`): the arch win splits into **all three flags as significant
+> drivers** — value-residual (largest), layernorm-scaling (parameter-free), head-gating — `attributed`, and the
+> text-lm-v3 downstream battery confirms it. **Now running: the data arm** (`2026-06-24_…data-dclm-vs-fineweb`) —
+> a fixed-token **dclm-edu vs FineWeb-Edu** A/B (the bitter-lesson lever toward 13.40), then mid-training auto-follows.
+> — see [End-to-end lifecycle](#end-to-end-lifecycle--what-weve-done--whats-next).
 
 > **This is an index.** Each build has its own detailed README — see
 > [the three builds](#the-three-builds) for links. The architecture itself is the
@@ -348,15 +351,15 @@ proxy→canonical flip is exactly why we don't pre-commit the technique list.
 
 | # | Stage (lifecycle ch.) | What | Status |
 |---|---|---|---|
-| 1 | **Phase 2 arch sub-drill** (Ch.3) | which of value-residual / LN-scaling / head-gating carries the win | **running** (~Jun 24) |
-| 2 | **Data arm** (Ch.2) | fixed-token data-selection A/B — FineWeb-Edu vs Ultra-FineWeb-L3 / dclm-edu, OOD-BPB, strict decontam (the *bitter-lesson* lever: the gap to 13.40 is data-not-skill) | recon done; prep **deferred** until GPU frees |
-| 3 | **Mid-training** (Ch.7) | anneal on premium data @ low LR + RoPE context-extension | planned |
+| 1 | **Phase 2 arch sub-drill** (Ch.3) | which of value-residual / LN-scaling / head-gating carries the win | **✅ DONE** — all 3 significant drivers (vr largest, ln parameter-free), `attributed`; downstream confirms |
+| 2 | **Data arm** (Ch.2) | fixed-token data-selection A/B — **dclm-edu vs FineWeb-Edu** (control reused), OOD-BPB, strict decontam (the *bitter-lesson* lever: the gap to 13.40 is data-not-skill) | **🔄 RUNNING NOW** — 150M-token dclm-edu slice prepped (0 decontam drops); A/B training (3 cells, ~Jun 25 verdict). *(Ultra-FineWeb-L3 dropped — it's synthetic data.)* |
+| 3 | **Mid-training** (Ch.7) | anneal on the winning data @ low LR + RoPE context-extension | next (auto after the data verdict) |
 | 4 | **Serving export** (Ch.14) | vLLM registration shim — *pulled forward*, it unblocks GRPO rollouts | planned |
 | 5 | **Post-training** (Ch.9–11) | SFT **≥3-seed** + paired control → DPO → GRPO/RLVR (turn the n=1 SFT into a real verdict) | planned |
 | 6 | **Serving bench** (Ch.14) | `/serving-bench` continuous-batching + paged-KV + `--quant fp8`; `/observability-slo` SLOs | planned |
 | 7 | **Safety** (Ch.12) | `/safeguards-eval` + red-team passes (methodology demo; 0.6B isn't ASL-relevant) | planned |
 | 8 | **Interpretability** (Ch.13) | SAE / probing demo | **gap** (no skill yet — build-or-skip) |
-| 9 | **Publish** (Ch.15) | `/manuscript` — now a clean **single-component** headline (NorMuon + arch), behind human submit | gated on Phase 2 |
+| 9 | **Publish** (Ch.15) | `/manuscript` — clean attributed headline (NorMuon + the 3 arch modules), behind human submit | headline ready; gated on a §C25-complete result + human submit |
 | R | **Kernel roofline** (Ch.5/14) · **Distributed scaling** (Ch.5) | one Triton kernel + roofline; FSDP/TP scaling table | **rented-only** (human-$ gate) |
 
 _Side bets (propose-only, off the critical path):_ a Zeta-vs-NorMuon optimizer replication at the
