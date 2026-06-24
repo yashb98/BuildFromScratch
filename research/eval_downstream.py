@@ -61,7 +61,7 @@ def loglikelihood(logits_fn: LogitsFn, ctx_ids: Sequence[int], cont_ids: Sequenc
     logits = logits_fn(ids)[0].float()                       # [T, V]
     start = len(ctx_ids)
     logp = logits[start - 1:len(full) - 1].log_softmax(dim=-1)  # predicts tokens start..end-1
-    tgt = torch.tensor(full[start:], dtype=torch.long)
+    tgt = torch.tensor(full[start:], dtype=torch.long, device=logp.device)  # match GPU/CPU logits
     tok_lp = logp.gather(-1, tgt.unsqueeze(-1)).squeeze(-1)   # [n_cont]
     is_greedy = bool((logp.argmax(dim=-1) == tgt).all().item())
     return float(tok_lp.sum().item()), len(cont_ids), is_greedy

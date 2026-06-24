@@ -76,11 +76,28 @@ no seed CI, no downstream evals — a scaling/sanity reading, not a defended cla
    matched **tokens** (1.19B); IMU-1 also ran NorMuon (~30% more wall-clock, uncounted by the 6ND
    FLOP model, though params are iso-FLOP at 1.00043).
 
-> **Rigor status — being upgraded (eval suite `text-lm-v3`):** downstream task-accuracy benchmarks
-> (ARC-e / LAMBADA / HellaSwag / PIQA / WinoGrande) + multi-seed CIs on the build comparison are
-> being wired into the **standing** eval so every claim carries them, every time. Honest caveat: at
-> 596M / 1.19B tok the model is near-chance on most multiple-choice tasks, so BPB-on-held-out-corpora
-> stays the sensitive metric and the decisive fix is **multi-seed + the framing above**.
+> **Rigor status (`text-lm-v3` downstream battery — RUN 2026-06-24):** the §C25 downstream battery
+> (LAMBADA + per-task **BPB-on-gold** + ARC-e/HellaSwag/WinoGrande) has now been executed on **all 25
+> checkpoints** (4 builds + Phase-1 + Phase-2) — full table:
+> [`research/eval/downstream_v3/RESULTS.md`](../research/eval/downstream_v3/RESULTS.md). As §C25.6
+> predicted, MC accuracy is near-chance (no-signal); **LAMBADA + BPB-on-gold discriminate** — and they
+> **independently confirm every attribution**.
+
+### Downstream confirmation — the builds (1.19B tok), independent of PPL
+
+| Build | val PPL | LAMBADA acc ↑ | BPB-gold ↓ |
+|---|---|---|---|
+| **IMU-1 (modernized)** | **23.52** | **0.212** | **1.142** |
+| faithful baseline | 28.65 | 0.170 | 1.188 |
+| partial-RoPE 0.25 | 29.54 | 0.166 | 1.202 |
+| partial-RoPE 0.10 (abandoned) | ~50 | 0.088 | 1.451 |
+
+The downstream ordering **exactly matches the PPL ordering** (IMU-1 > faithful > pRoPE) on two
+metrics independent of PPL. Cohorts confirm it too: Phase-1 **+arch** is the downstream driver
+(LAMBADA 0.142 vs baseline 0.035), and Phase-2 **vr < ln < hg all below baseline** on BPB-gold —
+matching the canonical BPB verdicts. *(One real bug was caught + fixed mid-run: partial-RoPE
+checkpoints were initially loaded as full-RoPE — `partial_rotary_factor` not applied — producing
+garbage; re-run with the fix gives the sensible numbers above.)*
 
 **Scaling trend:** `65.5M → 131M → 1.19B → 36T  ≈  96 → 46 → 28.65 → 13.4`.
 
@@ -292,8 +309,24 @@ control-reuse) + 3 sub-arms × 3 seeds = **9 new cells**, iso-FLOP (vr +84 param
 parameter-free, hg +0.077%), 2000-step proxy. Same machinery, minimal diff: `train_ablation.py` →
 `train_subdrill.py` (a 4-line flag split), `run_arms.sh` → `score_cohort.py` → `verdict.py` →
 `post_cohort.sh` watcher, 0.83 sentinel guard. **All §C5 gates passed before launch** (smoke 3/3 +
-resume round-trip + iso-FLOP). **ETA ~Jun 24**; on `cohort.done` the watcher auto-writes `verdict.json`
-with the per-flag across-seed BPB CI → the named architectural mechanism for the paper.
+resume round-trip + iso-FLOP). **ETA ~midnight Jun 23** (≈11h out — 2 hg seeds left, serial); on
+`cohort.done` the watcher auto-writes `verdict.json` with the per-flag across-seed BPB CI → the named
+architectural mechanism for the paper.
+
+**Live progress (Jun 23 — 7/9 cells):** vr ✓✓✓ · ln ✓✓✓ · hg ✓ (seed1 running). **Preliminary
+*in-loop val PPL* (the proxy, NOT the canonical BPB verdict):**
+
+| Arm (flag) | seeds | mean | Δ vs baseline (46.44) |
+|---|---|---|---|
+| **ln** — layernorm-scaling (**+0 params**) | 42.40 / 42.35 / 42.54 | **42.43** | **−8.6%** |
+| **vr** — value-residual (+84 params) | 44.03 / 42.27 / 42.97 | **43.09** | **−7.2%** |
+| **hg** — head-gating (+0.077%) | 44.03 / running / — | *(n=1)* | — |
+
+Both finished arms improve and look close, with the **parameter-free `ln`** marginally ahead — but this
+is the *same in-loop proxy that over-credited WSD in Phase 1* (significant on the proxy, null on the
+canonical BPB). **No flag is called** until the per-flag **BPB across-seed CI** lands (`verdict.json`, on
+`cohort.done`). Per **§C25**, this single-mix / single-scale ablation's honest verdict will be
+**directional (on-corpus-X)** — only a multi-scale / multi-data grid (rented) would make any winner "universal".
 
 ### The road to a finished lifecycle — steps ahead
 
