@@ -247,8 +247,8 @@ This model is the spine of a full **small-scale LLM lifecycle** run on one GB10 
 
 ### Phase 1 (DONE) — de-confound the IMU-1 bundle
 
-`Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/`. The IMU-1 win is a
-confounded bundle; this is a **single-variable** ladder — each arm differs from the
+`Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/`. The IMU-1 win was a
+confounded bundle; this was a **single-variable** ladder — each arm differs from the
 faithful baseline by exactly one flag (`model_imu1` with arch-flags **off** is proven
 bit-identical to the faithful model, so the baseline is genuinely faithful):
 
@@ -263,9 +263,10 @@ bit-identical to the faithful model, so the baseline is genuinely faithful):
 ratio 1.00043, within the 5% gate), 2000-step proxy (131M tok/cell, ~5h/cell,
 **~2.5 days** total). Verdict by the across-seed 95% CI
 (`eval_stats.seed_delta_significant`). NorMuon is already isolated (the win above), so
-it is excluded here. _Caveat: at the proxy budget, small per-component deltas may sit
-inside the seed-noise floor → honestly inconclusive; a clear winner gets confirmed at
-higher budget in Phase 2._
+it is excluded here. _The proxy-budget caveat played out exactly as designed: small
+per-component deltas could have sat inside the seed-noise floor — and WSD/z-loss did
+(CIs cross 0, not significant), while arch's signal was large and cleanly significant.
+So the budget was sufficient to attribute the win without needing a higher-budget re-run._
 
 **How it runs / how we read it.** One parameterized trainer (`train_ablation.py`,
 each arm = one CLI flag flipped) driven by a sequential supervisor (`run_arms.sh`) —
@@ -307,37 +308,54 @@ to make room). Fix: raise the **per-cohort sentinel to `--kill-at 0.83`** (still
 run the full **mb4+compile** config, *identical* to baseline/wsd (zero execution confound)
 at ~5,000–6,800 tok/s. Net throughput holds; revised total **~2 days**.
 
-### Now running — Phase 2: *which* arch tweak carries the win? (launched Jun 21)
+### Phase 2 (DONE) — *which* arch tweak carries the win?
 
 `Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/`. Phase 1 attributed the win to the
-arch bundle; Phase 2 splits it into its **three already-separate flags** as single-variable sub-arms:
+arch bundle; Phase 2 split it into its **three already-separate flags** as single-variable sub-arms:
 **value-residual** vs **layernorm-scaling** vs **head-gating** — baseline (reused from Phase 1, §C13
 control-reuse) + 3 sub-arms × 3 seeds = **9 new cells**, iso-FLOP (vr +84 params, ln **+0**
 parameter-free, hg +0.077%), 2000-step proxy. Same machinery, minimal diff: `train_ablation.py` →
 `train_subdrill.py` (a 4-line flag split), `run_arms.sh` → `score_cohort.py` → `verdict.py` →
-`post_cohort.sh` watcher, 0.83 sentinel guard. **All §C5 gates passed before launch** (smoke 3/3 +
-resume round-trip + iso-FLOP). **ETA ~midnight Jun 23** (≈11h out — 2 hg seeds left, serial); on
-`cohort.done` the watcher auto-writes `verdict.json` with the per-flag across-seed BPB CI → the named
-architectural mechanism for the paper.
+`post_cohort.sh` watcher, 0.83 sentinel guard. All §C5 gates passed before launch (smoke 3/3 +
+resume round-trip + iso-FLOP).
 
-**Live progress (Jun 23 — 7/9 cells):** vr ✓✓✓ · ln ✓✓✓ · hg ✓ (seed1 running). **Preliminary
-*in-loop val PPL* (the proxy, NOT the canonical BPB verdict):**
+**FINAL (Jun 23 — 9/9 cells; canonical BPB verdict in `verdict.json`):** vr ✓✓✓ · ln ✓✓✓ · hg ✓✓✓.
+**`overall_verdict: attributed`, `drivers=[vr, ln, hg]` — all three arch flags are significant drivers**
+(every CI excludes 0), with **value-residual the largest** contributor:
 
-| Arm (flag) | seeds | mean | Δ vs baseline (46.44) |
+| Arch flag vs baseline | wikitext-2 Δbpb (95% CI) | code Δbpb (95% CI) | verdict |
 |---|---|---|---|
-| **ln** — layernorm-scaling (**+0 params**) | 42.40 / 42.35 / 42.54 | **42.43** | **−8.6%** |
-| **vr** — value-residual (+84 params) | 44.03 / 42.27 / 42.97 | **43.09** | **−7.2%** |
-| **hg** — head-gating (+0.077%) | 44.03 / running / — | *(n=1)* | — |
-
-The proxy table above had `ln` marginally ahead — but it's the *same in-loop metric that over-credited
-WSD in Phase 1*. **VERDICT LANDED (Jun 24, canonical BPB, 3 seeds, `verdict.json`): all three flags are
-significant drivers** — wikitext **vr +0.0355 [0.012,0.059] · ln +0.0337 [0.018,0.050] · hg +0.0256
-[0.013,0.039]** (code larger, same order), `overall_verdict: attributed`. So **vr (value-residual) is the
-largest** contributor, **ln is a parameter-free significant win**, hg the smallest but real — and the
-proxy mis-ranked again (it had ln ahead; BPB puts vr first). Per **§C25** this single-mix / single-scale
-result is honestly **directional (on-corpus-X)** — only a rented multi-scale / multi-data grid makes a winner "universal".
+| **vr** — value-residual (+84 params) | **+0.0355** [0.012, 0.059] | **+0.107** [0.049, 0.165] | **DRIVER (largest)** |
+| **ln** — layernorm-scaling (**+0 params**) | +0.0337 [0.018, 0.050] | +0.061 [0.020, 0.101] | **DRIVER (parameter-free)** |
+| **hg** — head-gating (+0.077%) | +0.0256 [0.013, 0.039] | +0.042 [0.008, 0.076] | **DRIVER (smallest, still real)** |
 
 ![Phase 2 — per-flag arch attribution: all three significant, vr largest (3 seeds, 95% CI)](experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/plots/phase2_arch_subdrill_bpb.png)
+
+**The proxy mis-ranked again** — exactly the Phase-1 lesson, repeated. The completed *in-loop val-PPL*
+proxy (the trainer's quick eval, **not** the verdict) had `ln` marginally ahead of `vr`:
+
+| Arm (flag) | proxy seeds (val PPL @2000) | mean | Δ vs baseline 46.44 |
+|---|---|---|---|
+| ln — layernorm-scaling | 42.40 / 42.35 / 42.54 | 42.43 | −8.6% |
+| vr — value-residual | 44.03 / 42.27 / 42.97 | 43.09 | −7.2% |
+| hg — head-gating | 44.03 / 43.74 / 44.89 | 44.22 | −4.8% |
+
+…but on the canonical BPB it's **vr > ln > hg**. Same in-loop metric that over-credited WSD in Phase 1;
+same reason the loop trusts eval-harness BPB, not in-loop PPL, as the verdict. Per **§C25** this
+single-mix / single-scale result is honestly **directional** (on this corpus, at this scale) — making a
+winner "universal" needs a rented multi-scale / multi-data grid. The `text-lm-v3` downstream battery
+(LAMBADA + BPB-on-gold, run on all 25 checkpoints) independently confirms the per-flag ordering.
+
+### Now running — the data arm (lifecycle step 2; launched Jun 24)
+
+`Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/`. With the architecture attribution
+settled, the next lever is **data** (the gap to the original's 13.40 is *data scale, not skill*). A
+fixed-token data-selection A/B: **dclm-edu** (treatment) vs **FineWeb-Edu** (control, **reused** from the
+Phase-1 baselines, §C13) at a matched 131M-token / 2000-step budget — same trainer family
+(`train_dataarm.py`), same 0.83 sentinel guard, same `score_cohort.py → verdict.py → post_cohort.sh`
+results→verdict wiring (OOD-BPB, strict 13-gram decontam, 0 leakage drops on the prepped slice).
+Treatment cells only (control reused → ~3 new cells); the watcher auto-writes the BPB verdict on
+`cohort.done`. *(Ultra-FineWeb-L3 was dropped from the A/B — it's synthetic data.)*
 
 ### The road to a finished lifecycle — steps ahead
 
@@ -451,9 +469,11 @@ the machine); the scripts import [`safe_cuda`](../safe_cuda.py) to cap the proce
 - 🔶 **Phase B** — baseline (28.65), IMU-1 (**23.52, a proven −18% win**), and
   partial-RoPE 0.25 (**29.54 — loses to baseline**) done; 0.10 **died incomplete** at
   step 5450/18150 (~30%; last eval 50.71). The partial-RoPE *vs* baseline comparison is **decided (it loses)**.
-- ✅ **IMU-1 attribution** — de-confounded (12/12 cells, 3-seed iso-FLOP, canonical BPB):
-  **architecture modules are the sole significant driver** (+arch +0.118/+0.305 bpb, CIs
-  exclude 0); WSD & z-loss not significant. Phase 2 now drills *which* arch module.
+- ✅ **IMU-1 attribution** — de-confounded across two phases (3-seed iso-FLOP, canonical BPB):
+  Phase 1 (12/12 cells) → **architecture modules are the sole significant driver** (+arch
+  +0.118/+0.305 bpb, CIs exclude 0; WSD & z-loss not significant); Phase 2 (9/9 cells) →
+  **all three arch flags are significant drivers, value-residual the largest** (vr +0.0355 >
+  ln +0.0337 > hg +0.0256 bpb wikitext, every CI excludes 0).
 - ⚠️ **2 TPP is ~80× below** the methods' validated regime → Phase B results will be
   **directional, not headline**; the IMU-1 bundle intentionally **confounds** ~6 changes.
 - ⚠️ **Honest gaps** — muP omitted; NorMuon NS5 coeffs are the standard Muon values

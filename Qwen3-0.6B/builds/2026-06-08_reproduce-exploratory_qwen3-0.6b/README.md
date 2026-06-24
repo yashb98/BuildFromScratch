@@ -24,7 +24,7 @@ three settings:
 |---|---|---|---|
 | `1.0`  | 128 | 0  | == faithful baseline (verify anchor) |
 | `0.25` | 32  | 96 | Phase B run 3 (`prope25_2tpp`) — ✅ **DONE: val PPL 29.54** (loses to the 28.65 baseline by 3.1%) |
-| `0.10` | 12  | 116 | Phase B run 4 (`prope10_2tpp`) — 🔄 **in progress** (latest @ step 4000 = 50.71) |
+| `0.10` | 12  | 116 | Phase B run 4 (`prope10_2tpp`) — ⚠️ **died incomplete** at step 5450/18150 (~30%; last eval @4000 = 50.71) |
 
 `rotary_dim = int(head_dim × factor)`, then rounded **down to even** (rotate_half
 chunks in two), with `assert 2 ≤ rotary_dim ≤ head_dim`
@@ -82,7 +82,7 @@ compute.
 | `model_partialrope.py` | The faithful Qwen3ForCausalLM with one added config field, `partial_rotary_factor` (in `Qwen3Config`), and a sliced `_apply_rope` + `rotary_dim`-sized RoPE cache. Submodule/param names mirror HF `transformers.models.qwen3` so the official safetensors load with no key remap. |
 | `verify_partialrope.py` | The verify gate. Proves `factor=1.0` is bit-identical to `../../model.py` (the faithful reference) and that `0.25`/`0.10` give the right `rotary_dim`, stay finite, and actually change the output. CPU / fp32 — does not touch the GPU sweep. |
 | `train_partialrope.py` | The trainer. Same AdamW + cosine recipe as the faithful baseline (peak LR `2.4e-3`, the Phase-A winner); the only difference vs baseline is `--partial_rotary_factor`. Reuses the faithful trainer's data/eval/scheduler helpers. |
-| `results/` | Both runs' logs, checkpoints, and per-run PPL-curve plots: `qwen3_prope25_2tpp_train.log` (run 3, DONE → 29.54) + `qwen3_prope25_2tpp_after.txt`, `qwen3_prope10_2tpp_train.log` (run 4, in progress), and `plots/`. |
+| `results/` | Both runs' logs, checkpoints, and per-run PPL-curve plots: `qwen3_prope25_2tpp_train.log` (run 3, DONE → 29.54) + `qwen3_prope25_2tpp_after.txt`, `qwen3_prope10_2tpp_train.log` (run 4, died incomplete at step 5450/18150 ~30%), and `plots/`. |
 | `__pycache__/` | Compiled bytecode; ignore. |
 
 > There is **no separate `Qwen3Config` reimplementation** here — `model_partialrope.py`
@@ -167,12 +167,12 @@ effect from any weight difference.
 
 Phase B (`../phase_b_driver.sh`) runs four matched-compute jobs **sequentially** on
 one GB10: [1] faithful baseline → [2] IMU-1 bundle → [3] partial RoPE 25% → [4]
-partial RoPE 10%. Status as of 2026-06-16:
+partial RoPE 10%. Final status:
 
 - **[1/4] faithful baseline — DONE**, `val PPL 28.65` (the full-RoPE reference).
 - **[2/4] IMU-1 bundle — DONE**, `val PPL 23.52`.
 - **[3/4] `prope25_2tpp` — ✅ DONE**, `val PPL 29.54` (final) — **loses to the baseline by 3.1%**.
-- **[4/4] `prope10_2tpp` — 🔄 IN PROGRESS** (latest eval @ step 4000 = `50.71`, ~22%).
+- **[4/4] `prope10_2tpp` — ⚠️ DIED INCOMPLETE** at step 5450/18150 (~30%; last eval @4000 = `50.71`); the run never resumed, so 0.10 has no final number — but it was already tracking far behind both the baseline and 0.25.
 
 ![partial-RoPE vs the rest — Phase B matched-compute val-PPL curves](../comparison/phaseB_ppl_curves.png)
 
@@ -202,23 +202,24 @@ Full matched-step val PPL (`results/qwen3_prope25_2tpp_train.log`) vs the full-R
 > rotating only 25% of head dims costs a small but consistent amount and does **not**
 > match the full-RoPE baseline at the 596M / 2-TPP scale. This contradicts a naive read
 > of the paper's "comparable convergence at ~10%" claim *at this scale/budget* (the
-> paper's regime is ~135M; the 10% setting is still running). Honest caveat: single
+> paper's regime is ~135M; the 10% setting died incomplete at ~30%, but was tracking
+> far worse). Honest caveat: single
 > seed, one budget, ~10× below Chinchilla — a directional **negative** result, not a
 > publishable one.
 
-#### prope10 (factor 0.10) — IN PROGRESS
+#### prope10 (factor 0.10) — DIED INCOMPLETE (~30%, step 5450/18150)
 
-Tracking **far worse** than both the baseline and 0.25 — latest eval
-(`results/qwen3_prope10_2tpp_train.log`):
+Tracked **far worse** than both the baseline and 0.25 before the run died and was
+never resumed (last eval `results/qwen3_prope10_2tpp_train.log`):
 
 | eval step | Baseline (full RoPE) | Partial-RoPE 10% | Δ |
 |---|---|---|---|
 | @2000 | 60.10 | 69.37 | +15.4% |
 | @4000 | 45.06 | 50.71 | +12.5% |
 
-At ~22% through with no decay tail it is not final, but it is **~12.5% behind the
-baseline and worse than 0.25** — rotating only 10% of dims clearly is not on course
-to match full RoPE at this scale.
+The run died incomplete at step 5450/18150 (~30%) with no decay tail, so 0.10 has no
+final number — but at its last eval it was **~12.5% behind the baseline and worse than
+0.25**, clearly not on course to match full RoPE at this scale.
 
 ![prope10 val-PPL curve](results/plots/qwen3_prope10_2tpp_ppl_curve.png)
 
