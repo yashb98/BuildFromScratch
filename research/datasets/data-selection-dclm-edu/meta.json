@@ -1,0 +1,9 @@
+{
+  "dataset": "HuggingFaceTB/dclm-edu",
+  "revision": "dbad8ad71224482740cd9c9d353591adbf62fe04",
+  "tokenizer_repo": "Qwen/Qwen3-0.6B-Base",
+  "dtype": "uint32",
+  "vocab_size": 151669,
+  "eos_id": 151643,
+  "shards": 4
+}

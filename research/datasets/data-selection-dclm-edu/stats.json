@@ -1,0 +1,10 @@
+{
+  "train_tokens": 150107480,
+  "eval_tokens": 748210,
+  "shards": 4,
+  "n_docs": 110000,
+  "docs_dropped_decontam": 0,
+  "decontam_jaccard": 0.8,
+  "wall_clock_s": 267,
+  "sample_decode": "(flushed)"
+}
