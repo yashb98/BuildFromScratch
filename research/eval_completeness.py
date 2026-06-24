@@ -90,6 +90,12 @@ REGISTRY: dict[str, dict] = {
     },
 }
 
+# §C26 — every step ships a FIGURE. Global report-only item checked for ALL stages: a run
+# without a `figure` artifact is flagged `report_missing: [figure]` and may not be rendered to a
+# README/digest until `research/eval_plots.figure_for_run(run_dir)` has produced one. Tracked, not
+# a HARD significance cap (a missing plot doesn't make a real result `directional`).
+GLOBAL_REPORT_ONLY = ("figure",)
+
 # §C25.7.3 — items that may NEVER be a stage's SOLE headline signal (auto-flagged).
 DISALLOWED_SOLE_SIGNAL = frozenset({
     "mmlu_raw", "humaneval_alone", "hellaswag_headline", "gsm8k_original_absolute",
@@ -108,9 +114,10 @@ def check_completeness(lifecycle_stage: str, present_items, conditions=None) -> 
     """
     present = set(present_items or ())
     conds = set(conditions or ())
+    report_missing = [k for k in GLOBAL_REPORT_ONLY if k not in present]  # §C26 figure check (all stages)
     if lifecycle_stage not in REGISTRY:
         return {"stage": lifecycle_stage, "known": False, "complete": False,
-                "missing_hard": [], "verdict_cap": "inconclusive",
+                "missing_hard": [], "verdict_cap": "inconclusive", "report_missing": report_missing,
                 "reason": f"unknown lifecycle_stage '{lifecycle_stage}' — cannot be win (§C25.1)"}
     spec = REGISTRY[lifecycle_stage]
     required = list(spec["required"])
@@ -123,7 +130,7 @@ def check_completeness(lifecycle_stage: str, present_items, conditions=None) -> 
     return {
         "stage": lifecycle_stage, "known": True, "complete": complete,
         "required": required, "present": sorted(present), "missing_hard": missing,
-        "disallowed_sole_signal": bad_sole,
+        "disallowed_sole_signal": bad_sole, "report_missing": report_missing,  # §C26: [figure] if no plot
         "verdict_cap": None if complete else "directional",
         "registry_version": REGISTRY_VERSION, "researched_on": RESEARCHED_ON,
     }
