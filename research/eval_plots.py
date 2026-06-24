@@ -105,8 +105,24 @@ def figure_for_run(run_dir, out_dir=None):
                                          out=out_dir / "train_curve.png"))
         except Exception as e:
             print(f"  [eval_plots] curve skipped: {str(e)[:60]}")
+    # interp_metrics.json -> Loss-Recovered-vs-L0 Pareto (SAE vs PCA/random floors) + probe AUROC-vs-floor bars
+    im = run_dir / "interp_metrics.json"
+    if im.exists():
+        try:
+            d = json.loads(im.read_text())
+            if d.get("pareto"):  # [{l0, sae, pca, random}] — error vs sparsity, floors overlaid
+                xs = [p["l0"] for p in d["pareto"]]
+                series = {k: [p[k] for p in d["pareto"]] for k in ("sae", "pca", "random") if k in d["pareto"][0]}
+                written.append(lines(xs, series, title=f"{run_dir.name} — recon error vs L0 (SAE vs floors)",
+                                     xlabel="L0 (active features)", ylabel="recon error", out=out_dir / "interp_pareto.png"))
+            if d.get("probe"):  # {auroc, vs_random_init, vs_length_confound}
+                pr = d["probe"]; labs = [k for k in ("auroc", "vs_random_init", "vs_length_confound") if k in pr]
+                written.append(bar_with_ci(labs, [pr[k] for k in labs], title=f"{run_dir.name} — probe AUROC vs floors",
+                                           ylabel="AUROC", out=out_dir / "interp_probe.png", zero_line=False, baseline=0.5))
+        except Exception as e:
+            print(f"  [eval_plots] interp figure skipped: {str(e)[:60]}")
     if not written:
-        print(f"  [eval_plots] no plottable artifact in {run_dir} (need verdict.json or *train*.csv)")
+        print(f"  [eval_plots] no plottable artifact in {run_dir} (need verdict.json / *train*.csv / interp_metrics.json)")
     return written
 
 
