@@ -99,6 +99,10 @@ matching the canonical BPB verdicts. *(One real bug was caught + fixed mid-run: 
 checkpoints were initially loaded as full-RoPE — `partial_rotary_factor` not applied — producing
 garbage; re-run with the fix gives the sensible numbers above.)*
 
+![Downstream — builds: LAMBADA + BPB-on-gold confirm the PPL ordering](../research/eval/downstream_v3/plots/downstream_builds.png)
+
+![Downstream — cohorts: arch is the driver; vr<ln<hg all below baseline on BPB-gold](../research/eval/downstream_v3/plots/downstream_cohorts.png)
+
 **Scaling trend:** `65.5M → 131M → 1.19B → 36T  ≈  96 → 46 → 28.65 → 13.4`.
 
 **Phase A LR sweep** (131M tokens, matched compute) → picked the LR:
@@ -322,11 +326,15 @@ architectural mechanism for the paper.
 | **vr** — value-residual (+84 params) | 44.03 / 42.27 / 42.97 | **43.09** | **−7.2%** |
 | **hg** — head-gating (+0.077%) | 44.03 / running / — | *(n=1)* | — |
 
-Both finished arms improve and look close, with the **parameter-free `ln`** marginally ahead — but this
-is the *same in-loop proxy that over-credited WSD in Phase 1* (significant on the proxy, null on the
-canonical BPB). **No flag is called** until the per-flag **BPB across-seed CI** lands (`verdict.json`, on
-`cohort.done`). Per **§C25**, this single-mix / single-scale ablation's honest verdict will be
-**directional (on-corpus-X)** — only a multi-scale / multi-data grid (rented) would make any winner "universal".
+The proxy table above had `ln` marginally ahead — but it's the *same in-loop metric that over-credited
+WSD in Phase 1*. **VERDICT LANDED (Jun 24, canonical BPB, 3 seeds, `verdict.json`): all three flags are
+significant drivers** — wikitext **vr +0.0355 [0.012,0.059] · ln +0.0337 [0.018,0.050] · hg +0.0256
+[0.013,0.039]** (code larger, same order), `overall_verdict: attributed`. So **vr (value-residual) is the
+largest** contributor, **ln is a parameter-free significant win**, hg the smallest but real — and the
+proxy mis-ranked again (it had ln ahead; BPB puts vr first). Per **§C25** this single-mix / single-scale
+result is honestly **directional (on-corpus-X)** — only a rented multi-scale / multi-data grid makes a winner "universal".
+
+![Phase 2 — per-flag arch attribution: all three significant, vr largest (3 seeds, 95% CI)](experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/plots/phase2_arch_subdrill_bpb.png)
 
 ### The road to a finished lifecycle — steps ahead
 
