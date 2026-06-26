@@ -346,7 +346,7 @@ single-mix / single-scale result is honestly **directional** (on this corpus, at
 winner "universal" needs a rented multi-scale / multi-data grid. The `text-lm-v3` downstream battery
 (LAMBADA + BPB-on-gold, run on all 25 checkpoints) independently confirms the per-flag ordering.
 
-### Now running — the data arm (lifecycle step 2; launched Jun 24)
+### Data arm (DONE) — fixed-token data-selection A/B (lifecycle step 2; launched Jun 24)
 
 `Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/`. With the architecture attribution
 settled, the next lever is **data** (the gap to the original's 13.40 is *data scale, not skill*). A
@@ -372,8 +372,17 @@ and reveals a real prose↔structure tradeoff. Per §C25: `directional` (single 
 
 ![Data A/B — dclm-edu vs FineWeb-Edu: null on English, large significant win on code (3 seeds, 95% CI)](experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/plots/verdict_bpb.png)
 
-**Next (mid-training, in progress):** anneal on a **FineWeb-Edu + dclm-edu mix** — does the code gain survive
-mixing without an English tradeoff? A composition curve reusing both arms.
+### Now running — the data-composition curve (mix arm; launched Jun 26)
+
+`Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/`. The A/B above is a *two-point*
+result (FineWeb-Edu vs dclm-edu); the mix arm turns it into a **three-point composition curve** by adding a
+**50/50 FineWeb-Edu + dclm-edu** slice (`train_dataarm.py --data mix`) — does the large code gain survive
+mixing **without** an English tradeoff (best-of-both), or does mixing dilute it (a real composition tradeoff)?
+Both prior arms are **reused** (§C13: FineWeb-Edu = the Phase-1 baselines, dclm-edu = the A/B treatment), so
+only **3 new mix cells** train; `score_cohort.py → verdict.py` then renders a clean 3-arm curve on OOD-BPB.
+Same §C5 discipline (smoke 1/1 + the 50/50 loader verified, 0.83 sentinel). The `post_cohort.sh` watcher is now
+**hardened with a 4× retry** — the A/B verdict was briefly stranded Jun 25 when the auto-scorer hit a transient
+DNS blip (recovered by re-scoring); a network blip can no longer strand a finished run.
 
 ### The road to a finished lifecycle — steps ahead
 
@@ -388,13 +397,14 @@ proxy→canonical flip is exactly why we don't pre-commit the technique list.
 | # | Stage (lifecycle ch.) | What | Status |
 |---|---|---|---|
 | 1 | **Phase 2 arch sub-drill** (Ch.3) | which of value-residual / LN-scaling / head-gating carries the win | **✅ DONE** — all 3 significant drivers (vr largest, ln parameter-free), `attributed`; downstream confirms |
-| 2 | **Data arm** (Ch.2) | fixed-token data-selection A/B — **dclm-edu vs FineWeb-Edu** (control reused), OOD-BPB, strict decontam (the *bitter-lesson* lever: the gap to 13.40 is data-not-skill) | **🔄 RUNNING NOW** — 150M-token dclm-edu slice prepped (0 decontam drops); A/B training (3 cells, ~Jun 25 verdict). *(Ultra-FineWeb-L3 dropped — it's synthetic data.)* |
-| 3 | **Mid-training** (Ch.7) | anneal on the winning data @ low LR + RoPE context-extension | next (auto after the data verdict) |
+| 2 | **Data arm** (Ch.2) | fixed-token data-selection A/B — **dclm-edu vs FineWeb-Edu** (control reused), OOD-BPB, strict decontam (the *bitter-lesson* lever: the gap to 13.40 is data-not-skill) | **✅ DONE** — null on English, **large significant code win** (−0.70 bpb, PPL 1890→247); data composition beats method. `directional` (single budget). |
+| 2b | **Data-composition curve** (Ch.2) | add a **50/50 mix** arm (reuse both A/B arms, §C13) → does the code gain survive mixing without an English tradeoff? | **🔄 RUNNING NOW** — 3 mix cells (~Jun 26–27 verdict) |
+| 3 | **Mid-training** (Ch.7) | anneal a base checkpoint on the chosen data @ low LR + RoPE context-extension | next (auto after the composition verdict) |
 | 4 | **Serving export** (Ch.14) | vLLM registration shim — *pulled forward*, it unblocks GRPO rollouts | planned |
 | 5 | **Post-training** (Ch.9–11) | SFT **≥3-seed** + paired control → DPO → GRPO/RLVR (turn the n=1 SFT into a real verdict) | planned |
 | 6 | **Serving bench** (Ch.14) | `/serving-bench` continuous-batching + paged-KV + `--quant fp8`; `/observability-slo` SLOs | planned |
 | 7 | **Safety** (Ch.12) | `/safeguards-eval` + red-team passes (methodology demo; 0.6B isn't ASL-relevant) | planned |
-| 8 | **Interpretability** (Ch.13) | SAE / probing demo | **gap** (no skill yet — build-or-skip) |
+| 8 | **Interpretability** (Ch.13) | SAE / probing demo, control-floor-first | **on-box core BUILT** (`research/interp.py`: BatchTopK SAE + PCA/random floors + the CI-disjoint anti-laundering gate; `roc_auc`/`bootstrap_ci`/`mcnemar` verified vs sklearn/scipy; 342 tests). Honest verdict baked in: a **CI-backed null at the floor is the *passing* result** at 596M/1.19B (arXiv:2602.14111). Skill wrapper + GPU run pending |
 | 9 | **Publish** (Ch.15) | `/manuscript` — clean attributed headline (NorMuon + the 3 arch modules), behind human submit | headline ready; gated on a §C25-complete result + human submit |
 | R | **Kernel roofline** (Ch.5/14) · **Distributed scaling** (Ch.5) | one Triton kernel + roofline; FSDP/TP scaling table | **rented-only** (human-$ gate) |
 
@@ -492,6 +502,14 @@ the machine); the scripts import [`safe_cuda`](../safe_cuda.py) to cap the proce
   +0.118/+0.305 bpb, CIs exclude 0; WSD & z-loss not significant); Phase 2 (9/9 cells) →
   **all three arch flags are significant drivers, value-residual the largest** (vr +0.0355 >
   ln +0.0337 > hg +0.0256 bpb wikitext, every CI excludes 0).
+- ✅ **Data composition > method (bitter lesson, measured)** — at fixed 131M tokens, dclm-edu vs
+  FineWeb-Edu is **null on English but −0.70 bpb on code** (PPL 1890→247, 3-seed CI excludes 0);
+  verified it's *not* code content (dclm-edu has ~none) but FineWeb-Edu's prose filter being bad at
+  code structure. A *data swap* moved the metric more than NorMuon (−0.50) or arch (−0.30). The mix
+  arm (now running) tests whether a blend keeps both.
+- 🔶 **Interpretability core built, run pending** — `interp.py` (SAE + control floors + the CI-disjoint
+  anti-laundering gate) is built + CPU-verified; the honest expectation at this scale is a **null at the
+  control floor**, which the gate reports as a *pass*, never spun as "we found features".
 - ⚠️ **2 TPP is ~80× below** the methods' validated regime → Phase B results will be
   **directional, not headline**; the IMU-1 bundle intentionally **confounds** ~6 changes.
 - ⚠️ **Honest gaps** — muP omitted; NorMuon NS5 coeffs are the standard Muon values
