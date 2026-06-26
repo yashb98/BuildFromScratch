@@ -228,8 +228,11 @@ def main():
                 half = (token_budget + 1_000_000) // 2
                 fw_tokens, val_tokens = stream_tokens(tokenizer, half, 300_000, log_path)
                 fw = fw_tokens.numpy() if hasattr(fw_tokens, "numpy") else np.asarray(fw_tokens)
+                # concatenate the two COHERENT halves; the mix happens at the SEQUENCE level —
+                # PackedTextDataset packs seq_len windows (each from one source, coherent) and
+                # DataLoader(shuffle=True) randomizes their order. Do NOT shuffle tokens here:
+                # that destroys all sequence structure → token soup → garbage. (Verified bug, fixed.)
                 tr = np.concatenate([dclm[:half], fw.astype(np.int64)])
-                np.random.default_rng(args.seed).shuffle(tr)   # interleave the two sources
                 train_tokens = torch.from_numpy(tr)
                 log(f"DATA=mix(50/50 dclm+FineWeb): {len(tr):,} train ({half:,} dclm + {len(fw):,} fw) + {len(val_tokens):,} val", log_path)
             else:
