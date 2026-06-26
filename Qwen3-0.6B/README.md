@@ -354,8 +354,26 @@ fixed-token data-selection A/B: **dclm-edu** (treatment) vs **FineWeb-Edu** (con
 Phase-1 baselines, §C13) at a matched 131M-token / 2000-step budget — same trainer family
 (`train_dataarm.py`), same 0.83 sentinel guard, same `score_cohort.py → verdict.py → post_cohort.sh`
 results→verdict wiring (OOD-BPB, strict 13-gram decontam, 0 leakage drops on the prepped slice).
-Treatment cells only (control reused → ~3 new cells); the watcher auto-writes the BPB verdict on
-`cohort.done`. *(Ultra-FineWeb-L3 was dropped from the A/B — it's synthetic data.)*
+Treatment cells only (control reused → ~3 new cells). *(Ultra-FineWeb-L3 was dropped — it's synthetic data.)*
+
+**VERDICT (Jun 26, 3 seeds, OOD-BPB — a strong, verified, mixed result):**
+
+| Corpus | FineWeb-Edu (control) | dclm-edu (treatment) | Δ (95% CI) | verdict |
+|---|---|---|---|---|
+| **English** (wikitext-2) | 1.516 bpb | 1.525 bpb | −0.010 [−0.026, +0.006] | **null** (CI crosses 0) |
+| **Code** | 2.64 bpb (PPL **1890**) | 1.93 bpb (PPL **247**) | **+0.70 [+0.66, +0.74]** | **significant — large** |
+
+At fixed tokens, dclm-edu is **equal on English but dramatically better on code** (a 7.6× PPL drop). Verified
+it's **not** "more code" — dclm-edu has ~none (0.2 code-tokens/1k chars); rather **FineWeb-Edu's aggressive
+educational-prose filter leaves the model catastrophically bad at code structure** (PPL 1890), while dclm-edu's
+broader web distribution models it far better. **The bitter-lesson lever, confirmed:** a *data swap* moved code
+BPB **−0.70** — bigger than NorMuon (−0.50) or the arch modules (−0.30). Data composition dominates method,
+and reveals a real prose↔structure tradeoff. Per §C25: `directional` (single 131M budget, 2 corpora); robust across 3 seeds.
+
+![Data A/B — dclm-edu vs FineWeb-Edu: null on English, large significant win on code (3 seeds, 95% CI)](experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/plots/verdict_bpb.png)
+
+**Next (mid-training, in progress):** anneal on a **FineWeb-Edu + dclm-edu mix** — does the code gain survive
+mixing without an English tradeoff? A composition curve reusing both arms.
 
 ### The road to a finished lifecycle — steps ahead
 
