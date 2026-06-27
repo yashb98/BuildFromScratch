@@ -1,0 +1,17 @@
+{
+  "per_length_accuracy": {
+    "512": 0.3333333333333333,
+    "1024": 0.3333333333333333,
+    "2048": 0.3333333333333333,
+    "4096": 0.08333333333333333,
+    "6144": 0.5833333333333334,
+    "8192": 0.25
+  },
+  "effective_context_length": 6144,
+  "trained_len": 4096,
+  "accuracy_at_trained_len": 0.08333333333333333,
+  "threshold": 0.5,
+  "gate": "FAIL",
+  "verdict": "context-extension MOOT \u2014 base collapses before its trained window; propose-only",
+  "wall_clock_s": 145
+}
