@@ -372,17 +372,33 @@ and reveals a real prose↔structure tradeoff. Per §C25: `directional` (single 
 
 ![Data A/B — dclm-edu vs FineWeb-Edu: null on English, large significant win on code (3 seeds, 95% CI)](experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/plots/verdict_bpb.png)
 
-### Now running — the data-composition curve (mix arm; launched Jun 26)
+### Data-composition curve (DONE) — the 50/50 mix is best-of-both (Jun 27)
 
-`Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/`. The A/B above is a *two-point*
-result (FineWeb-Edu vs dclm-edu); the mix arm turns it into a **three-point composition curve** by adding a
-**50/50 FineWeb-Edu + dclm-edu** slice (`train_dataarm.py --data mix`) — does the large code gain survive
-mixing **without** an English tradeoff (best-of-both), or does mixing dilute it (a real composition tradeoff)?
-Both prior arms are **reused** (§C13: FineWeb-Edu = the Phase-1 baselines, dclm-edu = the A/B treatment), so
-only **3 new mix cells** train; `score_cohort.py → verdict.py` then renders a clean 3-arm curve on OOD-BPB.
-Same §C5 discipline (smoke 1/1 + the 50/50 loader verified, 0.83 sentinel). The `post_cohort.sh` watcher is now
-**hardened with a 4× retry** — the A/B verdict was briefly stranded Jun 25 when the auto-scorer hit a transient
-DNS blip (recovered by re-scoring); a network blip can no longer strand a finished run.
+`Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/`. The A/B above is a *two-point* result;
+the mix arm makes it a **three-point composition curve** by adding a **50/50 FineWeb-Edu + dclm-edu** slice
+(`train_dataarm.py --data mix`). Both prior arms **reused** (§C13: FineWeb-Edu = Phase-1 baselines, dclm-edu =
+the A/B treatment), so only **3 new mix cells** trained.
+
+**VERDICT (Jun 27, 3 seeds, OOD-BPB — bpb, lower=better):**
+
+| Corpus | FineWeb-Edu | **mix (50/50)** | dclm-edu |
+|---|---|---|---|
+| **English** (wikitext-2) | 1.516 | **1.500** | 1.525 |
+| **Code** | 2.639 | **2.048** | 1.935 |
+
+**Best-of-both — no tradeoff.** The mix keeps English on par with FineWeb (Δ +0.016, CI [−0.001, +0.033] →
+n.s., actually marginally the best of all three) **and** recovers **+0.59 of dclm-edu's +0.70 bpb code gain**
+(~84%; significant, CI [+0.55, +0.63]). It's the only arm strong on *both* corpora — FineWeb is bad at code,
+dclm is weaker on English, the mix gets nearly all the code benefit at zero English cost. → **the 50/50 mix is
+the data carried into mid-training.**
+
+![Data-composition curve — the 50/50 mix keeps English AND captures most of the code gain (3 seeds)](experiments/2026-06-26_qwen3-0.6b_data-mix-composition/plots/composition_curve.png)
+
+_A data-loading bug was caught + fixed mid-stage: the first mix run shuffled tokens at the **token level**
+(destroying sequence structure → "mix worse than both arms", physically impossible → a bug). The fix mixes at
+the **sequence** level (`DataLoader(shuffle=True)` over coherent windows); the corrected mix sitting cleanly
+**between** the two sources (2.05, between 2.64 and 1.94) confirms the fix. The `post_cohort.sh` watcher was also
+hardened with a **4× retry** after a Jun-25 DNS blip briefly stranded the A/B verdict._
 
 ### The road to a finished lifecycle — steps ahead
 
@@ -398,8 +414,8 @@ proxy→canonical flip is exactly why we don't pre-commit the technique list.
 |---|---|---|---|
 | 1 | **Phase 2 arch sub-drill** (Ch.3) | which of value-residual / LN-scaling / head-gating carries the win | **✅ DONE** — all 3 significant drivers (vr largest, ln parameter-free), `attributed`; downstream confirms |
 | 2 | **Data arm** (Ch.2) | fixed-token data-selection A/B — **dclm-edu vs FineWeb-Edu** (control reused), OOD-BPB, strict decontam (the *bitter-lesson* lever: the gap to 13.40 is data-not-skill) | **✅ DONE** — null on English, **large significant code win** (−0.70 bpb, PPL 1890→247); data composition beats method. `directional` (single budget). |
-| 2b | **Data-composition curve** (Ch.2) | add a **50/50 mix** arm (reuse both A/B arms, §C13) → does the code gain survive mixing without an English tradeoff? | **🔄 RUNNING NOW** — 3 mix cells (~Jun 26–27 verdict) |
-| 3 | **Mid-training** (Ch.7) | anneal a base checkpoint on the chosen data @ low LR + RoPE context-extension | next (auto after the composition verdict) |
+| 2b | **Data-composition curve** (Ch.2) | add a **50/50 mix** arm (reuse both A/B arms, §C13) → does the code gain survive mixing without an English tradeoff? | **✅ DONE** — best-of-both: mix keeps English (on par) AND captures ~84% of the code win. The mix is the data for mid-training. |
+| 3 | **Mid-training** (Ch.7) | anneal a base checkpoint on the **50/50 mix** @ low LR + RoPE context-extension | **🔄 NEXT** (auto) |
 | 4 | **Serving export** (Ch.14) | vLLM registration shim — *pulled forward*, it unblocks GRPO rollouts | planned |
 | 5 | **Post-training** (Ch.9–11) | SFT **≥3-seed** + paired control → DPO → GRPO/RLVR (turn the n=1 SFT into a real verdict) | planned |
 | 6 | **Serving bench** (Ch.14) | `/serving-bench` continuous-batching + paged-KV + `--quant fp8`; `/observability-slo` SLOs | planned |
