@@ -1,0 +1,13 @@
+{
+  "run_id": "2026-06-27_qwen3-0.6b_sft-3seed",
+  "model_dir": "Qwen3-0.6B", "lifecycle_stage": "sft", "objective": "finetune", "framework": "pytorch",
+  "purpose": "Convert the n=1 SFT (inconclusive, openr1_math_220k_heldout 17.60->14.22, floor 25.2%) into a >=3-seed paired-CI verdict + an iso-FLOP --no_mask control (attributes any reasoning gain to SFT-format vs just-more-math-tokens).",
+  "base_ckpt": "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt (loaded strict=True)",
+  "arm_plan": {"arms": ["sft (response-masked)", "ctrl (--no_mask continued-pretrain)"], "seeds": [0,1,2], "new_cells": 6},
+  "single_variable": "masking only: sft masks prompts (97.6% trained), ctrl trains all tokens (100%) on the SAME data/budget/config -> the 619 prompt tokens are the only difference (verified from data)",
+  "recipe": "faithful base; response-masked CE via posttrain_losses.masked_sft_nll; peak_lr 5e-5 cosine->8e-8, warmup 5%, mb4 x ga32 (global 128), AdamW(0.9,0.95) wd 0.01, ~125M tok, compile on",
+  "smoke": {"result": "pass", "detail": "base loads strict=True (596,049,920 params); loss-oracle masked_chunked_ce==masked_sft_nll; baseline reasoning PPL=17.196; masked trains 24,934/25,553 (97.6%) matching live log; --no_mask=100% verified from data"},
+  "probe": {"tokens_per_sec": 7200, "peak_mem_gb": 52.4, "source": "n=1 SFT measured (297.3 min/seed)"},
+  "eta_hours": 30,
+  "verdict_metric": "across-seed 95% CI (eval_stats.seed_delta_significant): SFT vs control (attribution headline) + SFT vs base; figure via eval_plots"
+}
