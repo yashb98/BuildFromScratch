@@ -1,0 +1,9 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Repo card metadata block was not found. Setting CardData to empty.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (262210 > 131072). Running this sequence through the model will result in indexing errors
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[suite text-lm-v2] loading target: /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/checkpoint_prope10_2tpp_.pt
+[suite] wikitext2_val (wikitext2_raw_v1_val): target=69.6293 floor_abs=3.6679 (26s)
+[suite] code_py (codeparrot_clean_valid): target=1356.3067 floor_abs=690.9564 (25s)
+[suite] generations: 8 prompts done
+SUITE COMPLETE -> /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3-0.6b_eval-prope10/eval/suite_results.json

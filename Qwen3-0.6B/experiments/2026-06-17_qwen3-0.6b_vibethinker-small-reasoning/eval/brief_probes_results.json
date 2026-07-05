@@ -1,0 +1,51 @@
+{
+  "suite_version": "text-lm-v2",
+  "methodology_note": "text-lm-v2 window/floor/significance machinery on brief-specified corpora (FineWeb-Edu forgetting probe + OpenR1-Math reasoning); these corpora are NOT the frozen Section-1 corpora, so numbers compare only to other runs scored on the SAME corpus_id + tokenizer.",
+  "date": "2026-06-18 10:53:28",
+  "objective": "finetune",
+  "tokenizer_repo": "Qwen/Qwen3-0.6B-Base",
+  "base_ckpt": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt",
+  "target_ckpt": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt",
+  "probes": {
+    "forgetting_fineweb_edu": {
+      "corpus_id": "fineweb_edu_sample10bt_heldout",
+      "desc": "\u00a7C13 catastrophic-forgetting probe \u2014 FineWeb-Edu (base pretrain corpus)",
+      "n_tokens": 204600,
+      "base_ppl": 24.55139646501548,
+      "target_ppl": 24.733118254705115,
+      "delta_abs": 0.18172178968963593,
+      "delta_pct": 0.7401688533219707,
+      "floor_abs": 8.015499179425731,
+      "floor_pct": 33.92801247337685,
+      "subsample_ppls": [
+        27.286604053382277,
+        24.317346182789898,
+        19.271104873956546
+      ],
+      "significant": false,
+      "significance_label": "not significant",
+      "forgetting_label": "retained",
+      "base_ppl_claim_readme": 28.65,
+      "base_ppl_measured_vs_claim_delta": -4.09860353498452
+    },
+    "reasoning_openr1": {
+      "corpus_id": "openr1_math_220k_heldout",
+      "desc": "in-domain held-out reasoning PPL \u2014 OpenR1-Math",
+      "n_tokens": 204600,
+      "base_ppl": 17.603485139890818,
+      "target_ppl": 14.221655693213233,
+      "delta_abs": -3.3818294466775853,
+      "delta_pct": -19.211135862035103,
+      "floor_abs": 4.429114799861228,
+      "floor_pct": 25.196931454538515,
+      "subsample_ppls": [
+        15.589729736754872,
+        20.0188445366161,
+        17.125404161889428
+      ],
+      "significant": false,
+      "significance_label": "not significant"
+    }
+  },
+  "not_run": {}
+}

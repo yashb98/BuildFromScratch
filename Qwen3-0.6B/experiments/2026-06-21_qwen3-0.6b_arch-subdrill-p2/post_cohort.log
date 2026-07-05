@@ -1,0 +1,41 @@
+[2026-06-21 22:18:21] watcher armed (waiting for cohort.done)
+[2026-06-23 23:23:42] cohort.done detected -> scoring 12 cells
+PREFLIGHT OK mem_available=86% disk_free=3306GB load1=0.42 cores=20 trainers=none
+Repo card metadata block was not found. Setting CardData to empty.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (262210 > 131072). Running this sequence through the model will result in indexing errors
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+loading corpora (once)...
+  baseline_seed0: wikitext bpb=1.5192 ppl=87.90 | code bpb=2.6396  (33s)
+  baseline_seed1: wikitext bpb=1.5085 ppl=85.17 | code bpb=2.6234  (33s)
+  baseline_seed2: wikitext bpb=1.5194 ppl=87.96 | code bpb=2.6526  (33s)
+  vr_seed0: wikitext bpb=1.4906 ppl=80.79 | code bpb=2.5507  (34s)
+  vr_seed1: wikitext bpb=1.4680 ppl=75.59 | code bpb=2.4994  (33s)
+  vr_seed2: wikitext bpb=1.4821 ppl=78.80 | code bpb=2.5440  (35s)
+  ln_seed0: wikitext bpb=1.4812 ppl=78.59 | code bpb=2.5912  (33s)
+  ln_seed1: wikitext bpb=1.4841 ppl=79.26 | code bpb=2.5835  (32s)
+  ln_seed2: wikitext bpb=1.4808 ppl=78.50 | code bpb=2.5593  (30s)
+  hg_seed0: wikitext bpb=1.4927 ppl=81.31 | code bpb=2.6075  (30s)
+  hg_seed1: wikitext bpb=1.4864 ppl=79.79 | code bpb=2.5969  (31s)
+  hg_seed2: wikitext bpb=1.4914 ppl=80.98 | code bpb=2.5847  (31s)
+DONE -> /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/cohort_bpb.json
+==========================================================================
+IMU-1 DE-CONFOUND — per-axis across-seed verdict (headline: wikitext2_val, lower BPB better)
+==========================================================================
+
+[+vr] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +vr   seeds [1.4906, 1.468, 1.4821] mean=1.4802±0.0066
+        Δ(baseline−+vr) = +0.0355 bpb  95% CI [+0.0116, +0.0594]  significant=True  <-- DRIVER
+
+[+ln] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +ln   seeds [1.4812, 1.4841, 1.4808] mean=1.4820±0.0010
+        Δ(baseline−+ln) = +0.0337 bpb  95% CI [+0.0175, +0.0498]  significant=True  <-- DRIVER
+
+[+hg] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +hg   seeds [1.4927, 1.4864, 1.4914] mean=1.4902±0.0019
+        Δ(baseline−+hg) = +0.0256 bpb  95% CI [+0.0125, +0.0386]  significant=True  <-- DRIVER
+
+==========================================================================
+DRIVERS: ['vr', 'ln', 'hg']  ->  attributed
+==========================================================================
+[2026-06-23 23:30:19] PIPELINE DONE -> verdict.json ready; signalling pipeline.done

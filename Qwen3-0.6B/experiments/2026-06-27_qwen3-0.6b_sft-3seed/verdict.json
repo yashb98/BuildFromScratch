@@ -1,0 +1,34 @@
+{
+  "sft_final_ppl": [
+    11.596,
+    11.594,
+    11.594
+  ],
+  "ctrl_final_ppl": [
+    12.274,
+    12.274,
+    12.272
+  ],
+  "base_ppl": 14.262,
+  "sft_vs_control": {
+    "improvement_ppl": 0.6786666666666665,
+    "ci95": [
+      0.6760494287672351,
+      0.681283904566098
+    ],
+    "significant": true,
+    "warning": null,
+    "CONFOUND": "in-loop control PPL is over ALL tokens, SFT PPL over RESPONSE tokens only \u2014 NOT directly comparable; re-score both arms on one fixed response-masked held-out set via /eval-harness before trusting this. Advisory, not the verdict."
+  },
+  "sft_vs_base": {
+    "improvement_ppl": 2.6673333333333336,
+    "ci95": [
+      2.664464666666666,
+      2.670202000000001
+    ],
+    "significant": true,
+    "note": "base is a single frozen number repeated x3 -> CI reflects SFT seed-variance only (a sanity check, not a true paired test)"
+  },
+  "headline": "SFT reasoning PPL 11.59 (3 seeds) vs base 14.26, control 12.27; SFT-vs-control significant=True",
+  "overall_verdict": "directional (in-loop) \u2014 SFT's in-loop PPL beats the control's, but the two are scored over different token sets (see CONFOUND); confirm via /eval-harness on one fixed response-masked held-out set before calling it a win"
+}

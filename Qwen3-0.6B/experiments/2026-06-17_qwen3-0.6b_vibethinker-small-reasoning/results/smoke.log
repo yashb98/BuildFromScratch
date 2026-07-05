@@ -1,0 +1,13 @@
+[smoke] 1. loss-oracle OK: masked_chunked_ce=4.414680 == masked_sft_nll=4.414680
+[smoke] 2. base loaded strict=True; 138 windows; response-token frac=0.976
+[smoke]   step 1/4 loss 2.8219
+[smoke]   step 2/4 loss 2.7394
+[smoke]   step 3/4 loss 2.4355
+[smoke]   step 4/4 loss 2.7304
+[smoke] 3. ran 4 steps, all finite; losses=['2.8219', '2.7394', '2.4355', '2.7304']
+[smoke] 4a. wrote checkpoint smoke_ckpt.pt
+[smoke] 4b. reload round-trip OK: model max|Δ|=0.0, step/cursor restored
+[smoke]   step 1/2 loss 2.8101
+[smoke]   step 2/2 loss 2.7234
+[smoke] 5. resume ran 2 more steps, finite; losses=['2.8101', '2.7234']
+[smoke] SMOKE PASS

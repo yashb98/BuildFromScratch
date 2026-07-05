@@ -1,0 +1,90 @@
+===== CELL baseline_seed0  (12:42:40)  =====
+[done] baseline_seed0
+===== CELL baseline_seed1  (18:36:40)  =====
+[done] baseline_seed1
+===== CELL baseline_seed2  (00:11:43)  =====
+[done] baseline_seed2
+===== CELL wsd_seed0  (05:28:11)  =====
+[done] wsd_seed0
+===== CELL wsd_seed1  (10:56:51)  =====
+[done] wsd_seed1
+===== CELL wsd_seed2  (16:21:09)  =====
+[done] wsd_seed2
+===== CELL zloss_seed0  (21:40:09)  =====
+[FAIL] zloss_seed0 rc=143 — stopping cohort (resume = re-run this script)
+[skip] baseline_seed0 (done)
+[skip] baseline_seed1 (done)
+[skip] baseline_seed2 (done)
+[skip] wsd_seed0 (done)
+[skip] wsd_seed1 (done)
+[skip] wsd_seed2 (done)
+  [settle] MemAvailable 105G before zloss_seed0
+===== CELL zloss_seed0  (21:48:45)  =====
+[FAIL] zloss_seed0 rc=143 — stopping cohort (resume = re-run this script)
+[skip] baseline_seed0 (done)
+[skip] baseline_seed1 (done)
+[skip] baseline_seed2 (done)
+[skip] wsd_seed0 (done)
+[skip] wsd_seed1 (done)
+[skip] wsd_seed2 (done)
+  [settle] MemAvailable 104G before zloss_seed0
+===== CELL zloss_seed0  (21:56:32)  =====
+[FAIL] zloss_seed0 rc=143 — stopping cohort (resume = re-run this script)
+[skip] baseline_seed0 (done)
+[skip] baseline_seed1 (done)
+[skip] baseline_seed2 (done)
+[skip] wsd_seed0 (done)
+[skip] wsd_seed1 (done)
+[skip] wsd_seed2 (done)
+  [settle] MemAvailable 105G before zloss_seed0
+===== CELL zloss_seed0  (22:00:42)  =====
+[skip] baseline_seed0 (done)
+[skip] baseline_seed1 (done)
+[skip] baseline_seed2 (done)
+[skip] wsd_seed0 (done)
+[skip] wsd_seed1 (done)
+[skip] wsd_seed2 (done)
+  [settle] MemAvailable 105G before zloss_seed0
+===== CELL zloss_seed0  (22:19:24)  =====
+[skip] baseline_seed0 (done)
+[skip] baseline_seed1 (done)
+[skip] baseline_seed2 (done)
+[skip] wsd_seed0 (done)
+[skip] wsd_seed1 (done)
+[skip] wsd_seed2 (done)
+  [settle] MemAvailable 105G before zloss_seed0
+===== CELL zloss_seed0  (23:32:16)  =====
+[FAIL] zloss_seed0 rc=143 — stopping cohort (resume = re-run this script)
+[skip] baseline_seed0 (done)
+[skip] baseline_seed1 (done)
+[skip] baseline_seed2 (done)
+[skip] wsd_seed0 (done)
+[skip] wsd_seed1 (done)
+[skip] wsd_seed2 (done)
+  [settle] MemAvailable 105G before zloss_seed0
+===== CELL zloss_seed0  (23:34:29)  =====
+[skip] baseline_seed0 (done)
+[skip] baseline_seed1 (done)
+[skip] baseline_seed2 (done)
+[skip] wsd_seed0 (done)
+[skip] wsd_seed1 (done)
+[skip] wsd_seed2 (done)
+  [settle] MemAvailable 105G before zloss_seed0
+===== CELL zloss_seed0  (23:36:17)  =====
+[done] zloss_seed0
+  [settle] MemAvailable 105G before zloss_seed1
+===== CELL zloss_seed1  (06:53:22)  =====
+[done] zloss_seed1
+  [settle] MemAvailable 105G before zloss_seed2
+===== CELL zloss_seed2  (14:09:51)  =====
+[done] zloss_seed2
+  [settle] MemAvailable 105G before arch_seed0
+===== CELL arch_seed0  (21:24:05)  =====
+[done] arch_seed0
+  [settle] MemAvailable 105G before arch_seed1
+===== CELL arch_seed1  (03:11:15)  =====
+[done] arch_seed1
+  [settle] MemAvailable 105G before arch_seed2
+===== CELL arch_seed2  (08:50:51)  =====
+[done] arch_seed2
+ALL 12 CELLS COMPLETE (14:32:44)

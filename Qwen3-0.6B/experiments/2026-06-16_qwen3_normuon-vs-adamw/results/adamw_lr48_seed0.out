@@ -1,0 +1,41 @@
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[14:28:28] [adamw_lr48_seed0] start: optimizer=adamw seed=0 steps=640 tok_budget=41,943,040 peak_lr=0.0048 normuon_lr=0.011 wd=0.1
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[14:28:29]   loaded cached tokens from tokcache_43943040_300000_seed0_Qwen3-0.6B-Base.pt (43,943,040 train + 300,000 val)
+[14:28:29] [adamw_lr48_seed0] 10,728 train windows of 4096
+[14:28:35] [adamw_lr48_seed0] param split: 196 2D->adamw | 114 rest->AdamW
+[14:28:51] [adamw_lr48_seed0] baseline (random-init) val PPL=184184.11
+[14:31:50] [adamw_lr48_seed0] step 20/640 loss 8.2161 lr 1.92e-03 |grad| 1.56 tok/s 7,342 mem 52.4GB
+[14:34:45] [adamw_lr48_seed0] step 40/640 loss 7.8645 lr 3.84e-03 |grad| 0.62 tok/s 7,408 mem 52.4GB
+[14:37:42] [adamw_lr48_seed0] step 60/640 loss 7.4036 lr 4.80e-03 |grad| 0.62 tok/s 7,416 mem 52.4GB
+[14:40:38] [adamw_lr48_seed0] step 80/640 loss 7.0982 lr 4.77e-03 |grad| 0.41 tok/s 7,418 mem 52.4GB
+[14:43:35] [adamw_lr48_seed0] step 100/640 loss 6.8798 lr 4.73e-03 |grad| 0.46 tok/s 7,415 mem 52.4GB
+[14:46:32] [adamw_lr48_seed0] step 120/640 loss 6.6890 lr 4.66e-03 |grad| 0.40 tok/s 7,414 mem 52.4GB
+[14:49:29] [adamw_lr48_seed0] step 140/640 loss 6.3759 lr 4.56e-03 |grad| 0.35 tok/s 7,413 mem 52.4GB
+[14:52:26] [adamw_lr48_seed0] step 160/640 loss 6.6771 lr 4.45e-03 |grad| 0.31 tok/s 7,413 mem 52.4GB
+[14:55:22] [adamw_lr48_seed0] step 180/640 loss 6.2496 lr 4.31e-03 |grad| 0.23 tok/s 7,415 mem 52.4GB
+[14:58:19] [adamw_lr48_seed0] step 200/640 loss 6.3878 lr 4.16e-03 |grad| 0.29 tok/s 7,415 mem 52.4GB
+[15:01:16] [adamw_lr48_seed0] step 220/640 loss 6.3603 lr 3.98e-03 |grad| 0.23 tok/s 7,415 mem 52.4GB
+[15:04:12] [adamw_lr48_seed0] step 240/640 loss 5.9934 lr 3.80e-03 |grad| 0.22 tok/s 7,417 mem 52.4GB
+[15:07:08] [adamw_lr48_seed0] step 260/640 loss 5.9257 lr 3.59e-03 |grad| 0.20 tok/s 7,418 mem 52.4GB
+[15:10:05] [adamw_lr48_seed0] step 280/640 loss 5.9566 lr 3.38e-03 |grad| 0.20 tok/s 7,420 mem 52.4GB
+[15:13:01] [adamw_lr48_seed0] step 300/640 loss 5.8997 lr 3.16e-03 |grad| 0.13 tok/s 7,419 mem 52.4GB
+[15:15:58] [adamw_lr48_seed0] step 320/640 loss 5.8275 lr 2.94e-03 |grad| 0.13 tok/s 7,419 mem 52.4GB
+[15:18:54] [adamw_lr48_seed0] step 340/640 loss 5.6575 lr 2.71e-03 |grad| 0.13 tok/s 7,420 mem 52.4GB
+[15:21:51] [adamw_lr48_seed0] step 360/640 loss 5.7069 lr 2.48e-03 |grad| 0.15 tok/s 7,420 mem 52.4GB
+[15:24:48] [adamw_lr48_seed0] step 380/640 loss 5.5699 lr 2.25e-03 |grad| 0.10 tok/s 7,420 mem 52.4GB
+[15:27:45] [adamw_lr48_seed0] step 400/640 loss 5.7253 lr 2.03e-03 |grad| 0.13 tok/s 7,419 mem 52.4GB
+[15:30:42] [adamw_lr48_seed0] step 420/640 loss 5.5218 lr 1.81e-03 |grad| 0.11 tok/s 7,418 mem 52.4GB
+[15:33:39] [adamw_lr48_seed0] step 440/640 loss 5.5116 lr 1.60e-03 |grad| 0.10 tok/s 7,418 mem 52.4GB
+[15:36:36] [adamw_lr48_seed0] step 460/640 loss 5.4621 lr 1.41e-03 |grad| 0.16 tok/s 7,418 mem 52.4GB
+[15:39:32] [adamw_lr48_seed0] step 480/640 loss 5.4662 lr 1.23e-03 |grad| 0.11 tok/s 7,418 mem 52.4GB
+[15:42:29] [adamw_lr48_seed0] step 500/640 loss 5.3265 lr 1.06e-03 |grad| 0.12 tok/s 7,418 mem 52.4GB
+[15:45:25] [adamw_lr48_seed0] step 520/640 loss 5.2455 lr 9.13e-04 |grad| 0.12 tok/s 7,419 mem 52.4GB
+[15:48:22] [adamw_lr48_seed0] step 540/640 loss 5.3739 lr 7.85e-04 |grad| 0.10 tok/s 7,419 mem 52.4GB
+[15:51:19] [adamw_lr48_seed0] step 560/640 loss 5.2349 lr 6.78e-04 |grad| 0.13 tok/s 7,418 mem 52.4GB
+[15:54:16] [adamw_lr48_seed0] step 580/640 loss 5.1728 lr 5.93e-04 |grad| 0.11 tok/s 7,418 mem 52.4GB
+[15:57:13] [adamw_lr48_seed0] step 600/640 loss 5.1018 lr 5.31e-04 |grad| 0.11 tok/s 7,417 mem 52.4GB
+[16:00:10] [adamw_lr48_seed0] step 620/640 loss 5.3030 lr 4.93e-04 |grad| 0.11 tok/s 7,416 mem 52.4GB
+[16:03:07] [adamw_lr48_seed0] step 640/640 loss 5.3304 lr 4.80e-04 |grad| 0.12 tok/s 7,416 mem 52.4GB
+[16:03:22] [adamw_lr48_seed0] DONE in 94.5 min; fineweb-val PPL 184184.11 -> 179.49 (the eval-harness does the real scoring)
+[16:03:23] [adamw_lr48_seed0] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/results/checkpoint_adamw_lr48_seed0.pt

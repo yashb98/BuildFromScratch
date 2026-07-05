@@ -15,9 +15,13 @@ Metric direction: perplexity / loss are lower-is-better (a regression is an
 INCREASE); accuracy-style metrics are higher-is-better. Pass --higher-better for
 the latter.
 
-suite_results.json shape (only the read fields shown):
-    {"suite_version": "...", "metrics": {"<name>": {"mean": <f>} | <f>, ...}}
-Both a bare number and a {"mean": ...} object are accepted.
+suite_results.json shape ACTUALLY emitted by eval-harness's eval_suite_template.py
+(headline metrics live at the TOP LEVEL, not under a "metrics" key):
+    {"suite_version": "...", "ppl": <f>, "bpb": <f>, "noise_floor": <f>,
+     "<corpus>": {"mean": <f>, "ci_low": <f>, "ci_high": <f>, "n_seeds": <int>}, ...}
+`_lift_metrics` flattens this into a {name: value} lookup. For backward
+compatibility a legacy {"metrics": {"<name>": {"mean": <f>} | <f>}} shape is also
+accepted. Both a bare number and a {"mean": ...} object resolve via _metric_value.
 """
 from __future__ import annotations
 
@@ -25,6 +29,29 @@ import argparse
 import json
 import sys
 from pathlib import Path
+
+# keys that are metadata, never headline metrics
+_META_KEYS = {"suite_version", "metrics", "suite", "model", "checkpoint", "device",
+              "dtype", "n_windows", "seq_len", "stride", "timestamp", "run_id"}
+
+
+def _lift_metrics(suite: dict) -> dict:
+    """Flatten a suite_results.json into a {name: scalar | {"mean": ...}} dict,
+    accepting BOTH the real top-level harness shape AND the legacy nested
+    {"metrics": {...}} shape. This is the adapter that lets the gate read the one
+    artifact the paid run actually produces."""
+    flat: dict = {}
+    nested = suite.get("metrics")
+    if isinstance(nested, dict):
+        flat.update(nested)
+    for k, v in suite.items():
+        if k in _META_KEYS:
+            continue
+        if isinstance(v, (int, float)) and not isinstance(v, bool):
+            flat.setdefault(k, v)
+        elif isinstance(v, dict) and "mean" in v:
+            flat.setdefault(k, v)
+    return flat
 
 
 def _metric_value(metrics: dict, name: str):
@@ -43,8 +70,8 @@ def check(candidate: dict, baseline: dict, metric: str, floor_abs: float,
     """Return a verdict dict; verdict in {pass, regress}. A regression is a move
     in the worse direction by MORE than floor_abs (a within-floor move is noise
     and passes)."""
-    cand = _metric_value(candidate.get("metrics", {}), metric)
-    base = _metric_value(baseline.get("metrics", {}), metric)
+    cand = _metric_value(_lift_metrics(candidate), metric)
+    base = _metric_value(_lift_metrics(baseline), metric)
     # delta in the "worse" direction
     worse = (base - cand) if higher_better else (cand - base)
     regressed = worse > floor_abs

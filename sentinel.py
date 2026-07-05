@@ -102,28 +102,124 @@ def meminfo():
     return fields["MemTotal"], fields["MemAvailable"]
 
 
-def find_trainers(notes):
-    """Evidence lines for running trainers; appends degraded-check notes."""
-    hits = []
-    me = os.getpid()
+# Tokens whose presence in a process's argv marks it as a PROBE, never a
+# trainer — pgrep/grep self-matching its own pattern, the sentinel itself, the
+# crash-guard helper, or a shell wrapper literally carrying the search pattern
+# (e.g. the ad-hoc `bash -c "pgrep -f train.*\.py"` watcher that self-matched
+# and never fired — 2026-06-17 digest Health section). Matched on whole argv
+# tokens / basenames so a real `python train.py` is NOT excluded.
+_PROBE_MARKERS = ("pgrep", "sentinel.py", "safe_cuda")
+# A real launcher token must appear as its OWN argv token (not a substring of
+# some path) for the process to count as a trainer.
+_LAUNCHER_TOKENS = ("python", "python3", "torchrun", "accelerate", "deepspeed")
+
+
+def self_pid_set():
+    """The current process AND its full ancestor chain (pid -> ppid -> ... -> 1).
+
+    The pgrep child, the shell that launched the watcher, and the watcher
+    script itself all carry the trainer PATTERN in their command line (that is
+    literally why `pgrep -f <pattern>` self-matches). Excluding only
+    os.getpid() is not enough — the pattern-bearing ancestors must go too. We
+    walk /proc/<pid>/stat field 4 (ppid) up to init so none of them can ever be
+    miscounted as a trainer, independent of what their argv says.
+    """
+    pids = set()
+    pid = os.getpid()
+    for _ in range(64):  # bounded: deepest plausible chain, never loops forever
+        if pid <= 0 or pid in pids:
+            break
+        pids.add(pid)
+        try:
+            with open(f"/proc/{pid}/stat") as f:
+                # field 4 is ppid; comm (field 2) may contain spaces/parens, so
+                # parse from the LAST ')' to be robust to weird process names.
+                data = f.read()
+            after = data[data.rindex(")") + 1:].split()
+            ppid = int(after[1])  # state, ppid, ...
+        except (OSError, ValueError, IndexError):
+            break
+        pid = ppid
+    return pids
+
+
+def _proc_argv(pid):
+    """argv tokens of <pid> from /proc/<pid>/cmdline (NUL-separated), or None.
+
+    Read directly rather than trusting pgrep's reformatted single-line output,
+    so token-level matching is exact (no false split on spaces inside a path).
+    """
     try:
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            raw = f.read()
+    except OSError:
+        return None
+    toks = [t.decode("utf-8", "replace") for t in raw.split(b"\x00") if t]
+    return toks
+
+
+def is_probe(argv):
+    """True if this argv is one of OUR probes (pgrep/sentinel/safe_cuda).
+
+    Substring match on the joined argv is deliberate here: any process whose
+    command line contains `pgrep`/`sentinel.py`/`safe_cuda` is infrastructure,
+    not a trainer, regardless of the search pattern it carries.
+    """
+    joined = " ".join(argv)
+    return any(m in joined for m in _PROBE_MARKERS)
+
+
+def is_trainer(pid, argv, self_pids):
+    """Classify (pid, argv) as a real trainer. Pure — fully unit-testable.
+
+    Excludes: our own PID + every ancestor (self_pids), any probe process
+    (is_probe), and anything that does not actually look like a launched
+    training job (a LAUNCHER token must appear as its own argv token, so a
+    browser with 'train' in some URL argument is not counted).
+    """
+    if not argv:
+        return False
+    if pid in self_pids:
+        return False
+    if is_probe(argv):
+        return False
+    # A launcher token must be a WHOLE token or the basename of one (so
+    # /usr/bin/python3 counts but a path like /opt/pretrain/x does not via a
+    # bare 'train' substring).
+    bases = {tok.rsplit("/", 1)[-1] for tok in argv}
+    return any(b in _LAUNCHER_TOKENS for b in bases) and \
+        any(TRAINER_PATTERN in tok for tok in argv)
+
+
+def find_trainers(notes):
+    """Evidence lines for running trainers; appends degraded-check notes.
+
+    Robust against pgrep self-match (2026-06-17 digest): pgrep is used only to
+    cheaply ENUMERATE candidate PIDs whose argv contains the pattern; the
+    actual decision is made by is_trainer() against argv read straight from
+    /proc and the self+ancestor PID set, so the watcher can never count itself,
+    its shell wrapper, or the pgrep/grep child as a trainer.
+    """
+    hits = []
+    self_pids = self_pid_set()
+    try:
+        # -f matches full argv; we re-read each /proc cmdline ourselves below.
         out = subprocess.run(
-            ["pgrep", "-af", TRAINER_PATTERN],
+            ["pgrep", "-f", TRAINER_PATTERN],
             capture_output=True, text=True, timeout=10,
         ).stdout
     except (OSError, subprocess.TimeoutExpired):
         out = ""
         notes.append("pgrep unavailable — process-name check skipped")
-    for line in out.splitlines():
-        pid_s, _, cmd = line.strip().partition(" ")
-        if not pid_s.isdigit() or int(pid_s) == me:
+    for pid_s in out.split():
+        if not pid_s.isdigit():
             continue
-        if "sentinel.py" in cmd or "pgrep" in cmd:
+        pid = int(pid_s)
+        argv = _proc_argv(pid)
+        if argv is None:  # raced exit; nothing to count
             continue
-        # Count only things that look like a training job, not e.g. a
-        # browser process that happens to contain 'train' in an argument.
-        if any(t in cmd for t in ("python", "torchrun", "accelerate")):
-            hits.append(f"pgrep: {pid_s} {cmd}")
+        if is_trainer(pid, argv, self_pids):
+            hits.append(f"pgrep: {pid} {' '.join(argv)}")
     try:
         out = subprocess.run(
             ["nvidia-smi",
@@ -345,7 +441,16 @@ def liveness(state_path=None) -> int:
         print("[sentinel] liveness: no in-flight run — idle")
         return 0
     pid = state.get("train_pid")
-    if isinstance(pid, int) and pid_alive(pid):
+    if pid is None:
+        # INCONSISTENT: an in-flight run with NO recorded pid (null / missing key).
+        # We cannot probe liveness, so fail OPEN (exit 0) — returning 4 here makes
+        # the */30 recovery cron fire `/research-loop resume` every 30 min on a
+        # phantom-dead run (resume spam + a spurious relaunch). A present-but-
+        # corrupt pid (e.g. a string) is still treated as DEAD below.
+        print(f"[sentinel] liveness: in-flight {run} has no train_pid — "
+              f"inconsistent state, failing OPEN (exit 0)")
+        return 0
+    if isinstance(pid, int) and not isinstance(pid, bool) and pid_alive(pid):
         print(f"[sentinel] liveness: in-flight {run} pid {pid} alive — ok")
         return 0
     print(f"[sentinel] liveness: in-flight {run} pid {pid} is DEAD — "

@@ -1,0 +1,3 @@
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (133770 > 131072). Running this sequence through the model will result in indexing errors
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+SMOKE OK -> suite=text-lm-v2 objective=pretrain-ablation ppl=181.0676 (n=2046, tiny max_windows; NOT a result)

@@ -1,0 +1,15 @@
+{
+  "seq_len": 4096,
+  "micro_batch": 4,
+  "grad_accum": 32,
+  "tok_per_step": 524288,
+  "measured_opt_steps": 3,
+  "elapsed_s": 210.69,
+  "tokens_per_sec": 7465.3,
+  "peak_mem_gb": 52.39,
+  "pool_gb": 119,
+  "plan_cap_gb": 71.4,
+  "fits": true,
+  "warmup_loss": 2.8712,
+  "last_loss": 2.7884
+}

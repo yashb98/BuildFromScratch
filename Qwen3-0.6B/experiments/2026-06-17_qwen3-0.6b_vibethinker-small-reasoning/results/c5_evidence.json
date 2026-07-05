@@ -1,0 +1,21 @@
+{
+  "run_id": "2026-06-17_qwen3-0.6b_vibethinker-small-reasoning",
+  "c5_0_smoke": "pass (smoke.log: oracle eq, strict-load, finite steps, save->reload max|d|=0, resume; main-script 2-step+resume exit 0)",
+  "c5_1_concurrency": "pass (pgrep/nvidia-smi none; preflight OK mem 87%, disk 3406GB, load 0.23)",
+  "c5_2_budget": {
+    "tokens": 125000000,
+    "source": "brief vibethinker-small-reasoning \u00a7C5.2 / Addendum: ~100-125M, one pass over prepared 125,000,592-tok set"
+  },
+  "c5_3_probe": {
+    "tokens_per_sec": 7465.3,
+    "peak_mem_gb": 52.39,
+    "plan_cap_gb": 71.4,
+    "fits": true
+  },
+  "c5_4_eta_hours": 4.65,
+  "c5_5_resume": "pass (real-script resume at step=2 sample_cursor=8, exit 0; smoke save->reload byte-identical)",
+  "c5_6_sentinel": "armed at launch (sentinel.py watch --pid <trainer>)",
+  "c5_7_safe_cuda_chunked_ce": "pass (grep: import safe_cuda + safe_cuda.guard; masked_chunked_ce; no full-vocab logits.float())",
+  "total_steps": 238,
+  "tok_per_step": 524288
+}

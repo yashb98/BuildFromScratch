@@ -1,0 +1,7 @@
+[17:13:50] [smoke_ladder] start: optimizer=adamw seed=0 steps=1 tok_budget=65,536 peak_lr=0.0024 normuon_lr=0.011 wd=0.1
+[17:14:03]   streamed 2,068,631 train + 301,253 val tokens in 9.2s; decontam dropped 0/451 val docs (report -> results/decontam_report.json)
+[17:14:03] [smoke_ladder] 504 train windows of 4096
+[17:14:09] [smoke_ladder] param split: 196 2D->adamw | 114 rest->AdamW
+[17:14:24] [smoke_ladder] baseline (random-init) val PPL=184184.11
+[17:14:56] [smoke_ladder] DONE in 0.5 min; fineweb-val PPL 184184.11 -> 121012.48 (the eval-harness does the real scoring)
+[17:14:58] [smoke_ladder] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/results/checkpoint_smoke_ladder.pt

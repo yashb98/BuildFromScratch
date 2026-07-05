@@ -1,0 +1,48 @@
+[2026-06-18 21:41:37] watcher armed (waiting for cohort.done)
+[2026-06-19 21:49:19] watcher armed (waiting for cohort.done)
+[2026-06-19 21:56:37] watcher armed (waiting for cohort.done)
+[2026-06-19 22:00:42] watcher armed (waiting for cohort.done)
+[2026-06-19 22:19:24] watcher armed (waiting for cohort.done)
+[2026-06-19 23:32:16] watcher armed (waiting for cohort.done)
+[2026-06-19 23:34:29] watcher armed (waiting for cohort.done)
+[2026-06-19 23:36:17] watcher armed (waiting for cohort.done)
+[2026-06-21 14:36:34] cohort.done detected -> scoring 12 cells
+PREFLIGHT OK mem_available=88% disk_free=3339GB load1=0.47 cores=20 trainers=none
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Repo card metadata block was not found. Setting CardData to empty.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (262210 > 131072). Running this sequence through the model will result in indexing errors
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+loading corpora (once)...
+  baseline_seed0: wikitext bpb=1.5192 ppl=87.90 | code bpb=2.6396  (33s)
+  baseline_seed1: wikitext bpb=1.5085 ppl=85.17 | code bpb=2.6234  (33s)
+  baseline_seed2: wikitext bpb=1.5194 ppl=87.96 | code bpb=2.6526  (33s)
+  wsd_seed0: wikitext bpb=1.5085 ppl=85.18 | code bpb=2.6422  (33s)
+  wsd_seed1: wikitext bpb=1.4783 ppl=77.91 | code bpb=2.5666  (33s)
+  wsd_seed2: wikitext bpb=1.4870 ppl=79.94 | code bpb=2.5984  (33s)
+  zloss_seed0: wikitext bpb=1.5238 ppl=89.09 | code bpb=2.6587  (33s)
+  zloss_seed1: wikitext bpb=1.5148 ppl=86.76 | code bpb=2.6125  (32s)
+  zloss_seed2: wikitext bpb=1.5187 ppl=87.77 | code bpb=2.6466  (30s)
+  arch_seed0: wikitext bpb=1.3959 ppl=61.12 | code bpb=2.3444  (31s)
+  arch_seed1: wikitext bpb=1.4015 ppl=62.14 | code bpb=2.3101  (31s)
+  arch_seed2: wikitext bpb=1.3960 ppl=61.14 | code bpb=2.3463  (31s)
+DONE -> /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/cohort_bpb.json
+==========================================================================
+IMU-1 DE-CONFOUND — per-axis across-seed verdict (headline: wikitext2_val, lower BPB better)
+==========================================================================
+
+[+wsd] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +wsd   seeds [1.5085, 1.4783, 1.487] mean=1.4913±0.0090
+        Δ(baseline−+wsd) = +0.0245 bpb  95% CI [-0.0173, +0.0662]  significant=False
+
+[+zloss] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +zloss   seeds [1.5238, 1.5148, 1.5187] mean=1.5191±0.0026
+        Δ(baseline−+zloss) = -0.0034 bpb  95% CI [-0.0175, +0.0108]  significant=False
+
+[+arch] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +arch   seeds [1.3959, 1.4015, 1.396] mean=1.3978±0.0019
+        Δ(baseline−+arch) = +0.1179 bpb  95% CI [+0.1005, +0.1354]  significant=True  <-- DRIVER
+
+==========================================================================
+DRIVERS: ['arch']  ->  attributed
+==========================================================================
+[2026-06-21 14:43:11] PIPELINE DONE -> verdict.json ready; signalling pipeline.done

@@ -5,6 +5,7 @@ __pycache__/
 *.pyd
 *.egg-info/
 .pytest_cache/
+.coverage
 .mypy_cache/
 .ruff_cache/
 .python-version
@@ -47,6 +48,10 @@ research/
 
 # Skills showcase (Claude skill .md files + demo site) — kept local only
 skills_showcase/
+
+# Agent instruction docs — generated from the repo, kept local only
+/CLAUDE.md
+/AGENTS.md
 
 # OS
 .DS_Store

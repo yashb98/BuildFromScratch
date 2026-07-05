@@ -1,0 +1,57 @@
+{
+  "run_id": "2026-07-02_qwen3-0.6b_grpo-phase2",
+  "lifecycle_stage": "rlvr",
+  "seeds": 1,
+  "verdict": "directional",
+  "verdict_capped_reason": "n=1 seed; \u00a7C25 rlvr requires seed_ci (>=3 paired seeds) for a non-directional call",
+  "extractor": "math-acc-v1",
+  "comparison": [
+    {
+      "set": "gsm8k",
+      "sft_pass1": 0.0112,
+      "grpo_pass1": 0.01,
+      "random_pass1": 0.01,
+      "rft_pass1": 0.015,
+      "sft_pass8": 0.07,
+      "grpo_pass8": 0.07,
+      "random_pass8": 0.06,
+      "rft_pass8": 0.11,
+      "grpo_pass1_ci": [
+        0.0051,
+        0.0196
+      ],
+      "sft_pass1_ci": [
+        0.0059,
+        0.0212
+      ],
+      "grpo_beats_sft_floor": false,
+      "grpo_beats_random_gate": false
+    },
+    {
+      "set": "math500_l13",
+      "sft_pass1": 0.015,
+      "grpo_pass1": 0.0225,
+      "random_pass1": 0.015,
+      "rft_pass1": 0.0175,
+      "sft_pass8": 0.1,
+      "grpo_pass8": 0.16,
+      "random_pass8": 0.1,
+      "rft_pass8": 0.12,
+      "grpo_pass1_ci": [
+        0.0119,
+        0.0422
+      ],
+      "sft_pass1_ci": [
+        0.0069,
+        0.0323
+      ],
+      "grpo_beats_sft_floor": false,
+      "grpo_beats_random_gate": false
+    }
+  ],
+  "grpo_reward_trajectory": "flat ~0 over 300 steps (health_grpo_seed0.jsonl) \u2014 no gradient signal",
+  "rft_arm": "degenerate control: ~0 verifier-correct completions/step across 300 steps -> masked-SFT ~no-op; scored for cohort completeness, expected == SFT floor (see rft_pass1/rft_pass8)",
+  "random_reward_gate": "scored",
+  "proceed_to_phase3": false,
+  "conclusion": "PREDICTED NULL CONFIRMED: GRPO does not beat the SFT floor; GRPO does not beat the random-reward gate. At ~1% base pass@1 there is nothing for RL to sharpen (GRPO reward stayed ~0; RFT collected 0 verifier-correct completions). Do NOT spend the multi-seed cohort; the reasoning gain lives in SFT/distillation, not RL at this scale."
+}

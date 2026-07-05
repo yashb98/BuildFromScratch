@@ -1,0 +1,5 @@
+[12:36:53] ARM arch=imu1 schedule=cosine optimizer=adamw zloss=0.0 | vr=True ln=True hg=True | steps=6 seed=0 tok/step=65,536
+[12:36:54] optimizer split: 225 / 197 param tensors
+[12:36:57]   loaded cached tokens from tokcache_2393216_300000_seed0_Qwen3-0.6B-Base.pt (2,393,216 train + 300,000 val)
+[12:39:01]   [ckpt @ 6] -> smoke_arch.pt
+[12:39:05] DONE

@@ -1,0 +1,29 @@
+{
+  "suite": "ecl-ladder-v1 (passkey, eval_longcontext loader)",
+  "lengths": [
+    512
+  ],
+  "depths": [
+    0.1,
+    0.3
+  ],
+  "n_per_rung": 4,
+  "trained_len": 4096,
+  "rel_threshold": 0.85,
+  "abs_threshold": 0.5,
+  "cells": {
+    "base": {
+      "per_rung_accuracy": {
+        "512": 0.5
+      },
+      "per_rung_wilson95": {
+        "512": [
+          0.15003898915214953,
+          0.8499610108478505
+        ]
+      },
+      "ecl_rel085_shortctx": 512,
+      "ecl_abs05": 512
+    }
+  }
+}

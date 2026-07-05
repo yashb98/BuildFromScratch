@@ -1,0 +1,39 @@
+[07:01:30] [normuon_seed2] start: optimizer=normuon seed=2 steps=640 tok_budget=41,943,040 peak_lr=0.0024 normuon_lr=0.011 wd=0.1
+[07:01:31]   loaded cached tokens from tokcache_43943040_300000_seed0_Qwen3-0.6B-Base.pt (43,943,040 train + 300,000 val)
+[07:01:31] [normuon_seed2] 10,728 train windows of 4096
+[07:01:38] [normuon_seed2] param split: 196 2D->normuon | 114 rest->AdamW
+[07:01:53] [normuon_seed2] baseline (random-init) val PPL=187868.41
+[07:05:12] [normuon_seed2] step 20/640 loss 7.6551 lr 9.60e-04 |grad| 1.52 tok/s 6,583 mem 52.4GB
+[07:08:28] [normuon_seed2] step 40/640 loss 6.9751 lr 1.92e-03 |grad| 0.99 tok/s 6,635 mem 52.4GB
+[07:11:45] [normuon_seed2] step 60/640 loss 6.5424 lr 2.40e-03 |grad| 0.58 tok/s 6,649 mem 52.4GB
+[07:15:01] [normuon_seed2] step 80/640 loss 6.3385 lr 2.39e-03 |grad| 0.50 tok/s 6,659 mem 52.4GB
+[07:18:17] [normuon_seed2] step 100/640 loss 6.0961 lr 2.36e-03 |grad| 0.43 tok/s 6,666 mem 52.4GB
+[07:21:33] [normuon_seed2] step 120/640 loss 5.9351 lr 2.33e-03 |grad| 0.33 tok/s 6,669 mem 52.4GB
+[07:24:49] [normuon_seed2] step 140/640 loss 5.6725 lr 2.28e-03 |grad| 0.36 tok/s 6,671 mem 52.4GB
+[07:28:05] [normuon_seed2] step 160/640 loss 5.4353 lr 2.22e-03 |grad| 0.31 tok/s 6,673 mem 52.4GB
+[07:31:21] [normuon_seed2] step 180/640 loss 5.4502 lr 2.16e-03 |grad| 0.37 tok/s 6,674 mem 52.4GB
+[07:34:37] [normuon_seed2] step 200/640 loss 5.3107 lr 2.08e-03 |grad| 0.32 tok/s 6,675 mem 52.4GB
+[07:37:53] [normuon_seed2] step 220/640 loss 5.1206 lr 1.99e-03 |grad| 0.26 tok/s 6,676 mem 52.4GB
+[07:41:09] [normuon_seed2] step 240/640 loss 4.7788 lr 1.90e-03 |grad| 0.28 tok/s 6,677 mem 52.4GB
+[07:44:25] [normuon_seed2] step 260/640 loss 5.1798 lr 1.80e-03 |grad| 0.25 tok/s 6,678 mem 52.4GB
+[07:47:41] [normuon_seed2] step 280/640 loss 4.8405 lr 1.69e-03 |grad| 0.26 tok/s 6,679 mem 52.4GB
+[07:50:57] [normuon_seed2] step 300/640 loss 4.6280 lr 1.58e-03 |grad| 0.25 tok/s 6,679 mem 52.4GB
+[07:54:13] [normuon_seed2] step 320/640 loss 4.8998 lr 1.47e-03 |grad| 0.25 tok/s 6,680 mem 52.4GB
+[07:57:29] [normuon_seed2] step 340/640 loss 4.6087 lr 1.35e-03 |grad| 0.23 tok/s 6,680 mem 52.4GB
+[08:00:45] [normuon_seed2] step 360/640 loss 4.4861 lr 1.24e-03 |grad| 0.22 tok/s 6,680 mem 52.4GB
+[08:04:01] [normuon_seed2] step 380/640 loss 4.6586 lr 1.13e-03 |grad| 0.22 tok/s 6,681 mem 52.4GB
+[08:07:17] [normuon_seed2] step 400/640 loss 4.7471 lr 1.01e-03 |grad| 0.20 tok/s 6,681 mem 52.4GB
+[08:10:33] [normuon_seed2] step 420/640 loss 4.4316 lr 9.05e-04 |grad| 0.19 tok/s 6,681 mem 52.4GB
+[08:13:49] [normuon_seed2] step 440/640 loss 4.2379 lr 8.02e-04 |grad| 0.18 tok/s 6,681 mem 52.4GB
+[08:17:05] [normuon_seed2] step 460/640 loss 4.3159 lr 7.04e-04 |grad| 0.19 tok/s 6,682 mem 52.4GB
+[08:20:21] [normuon_seed2] step 480/640 loss 4.2184 lr 6.13e-04 |grad| 0.17 tok/s 6,682 mem 52.4GB
+[08:23:37] [normuon_seed2] step 500/640 loss 4.1169 lr 5.30e-04 |grad| 0.18 tok/s 6,682 mem 52.4GB
+[08:26:53] [normuon_seed2] step 520/640 loss 4.1965 lr 4.57e-04 |grad| 0.17 tok/s 6,682 mem 52.4GB
+[08:30:09] [normuon_seed2] step 540/640 loss 4.3526 lr 3.92e-04 |grad| 0.16 tok/s 6,682 mem 52.4GB
+[08:33:26] [normuon_seed2] step 560/640 loss 4.0381 lr 3.39e-04 |grad| 0.16 tok/s 6,682 mem 52.4GB
+[08:36:41] [normuon_seed2] step 580/640 loss 4.3892 lr 2.96e-04 |grad| 0.18 tok/s 6,683 mem 52.4GB
+[08:39:57] [normuon_seed2] step 600/640 loss 3.8544 lr 2.66e-04 |grad| 0.15 tok/s 6,683 mem 52.4GB
+[08:43:14] [normuon_seed2] step 620/640 loss 4.2303 lr 2.47e-04 |grad| 0.16 tok/s 6,683 mem 52.4GB
+[08:46:30] [normuon_seed2] step 640/640 loss 4.1562 lr 2.40e-04 |grad| 0.15 tok/s 6,683 mem 52.4GB
+[08:46:44] [normuon_seed2] DONE in 104.9 min; fineweb-val PPL 187868.41 -> 60.06 (the eval-harness does the real scoring)
+[08:46:46] [normuon_seed2] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/results/checkpoint_normuon_seed2.pt

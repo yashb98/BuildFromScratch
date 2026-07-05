@@ -1,0 +1,58 @@
+{
+  "run_id": "2026-06-18_qwen3-0.6b_imu1-deconfound-p1",
+  "model_dir": "Qwen3-0.6B",
+  "objective": "pretrain-ablation",
+  "framework": "pytorch",
+  "purpose": "De-confound the IMU-1 'modernized' bundle: single-variable attribution of WSD / z-loss / arch vs the faithful AdamW baseline (NorMuon axis already isolated).",
+  "budget": {
+    "steps_per_cell": 2000,
+    "tokens_per_cell": 131072000,
+    "cells": 12,
+    "total_tokens": 1572864000,
+    "source": "user-approved 2000-step proxy (Phase 1)"
+  },
+  "probe": {
+    "tokens_per_sec": 7444,
+    "peak_mem_gb": 52.4,
+    "source": "matched build config (compile on, build logs); smoke no-compile peaked 75.6GB"
+  },
+  "eta_hours": 58.7,
+  "arm_plan": {
+    "arms": [
+      "baseline",
+      "wsd",
+      "zloss",
+      "arch"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "optimizer": "adamw (all arms \u2014 single AdamW 1.7e-3, wd-split 0.01/0)",
+    "single_variable": {
+      "baseline": "faithful (cosine, z=0, arch off)",
+      "wsd": "schedule=wsd only",
+      "zloss": "z=1e-4 only",
+      "arch": "model_imu1 flags on only"
+    }
+  },
+  "confound_check": {
+    "n_vars": 1,
+    "iso_flop": true,
+    "note": "baseline/wsd/zloss share the arch-off model (exact iso-FLOP); arch adds 0.077% params -> fpt ratio 1.00043, within 5%"
+  },
+  "iso_flop_detail": {
+    "fpt_off": 6394900000.0,
+    "fpt_on": 6397600000.0,
+    "ratio": 1.00042,
+    "train_flops_per_cell_off": 8.381923328e+17,
+    "train_flops_per_cell_on": 8.385462272e+17
+  },
+  "smoke": "pass",
+  "smoke_detail": "4/4 arms 6-step GPU runs DONE + baseline resume round-trip (RESUMED @ step7 -> step10); 5/5 checkpoints",
+  "resume_roundtrip": "pass",
+  "guards": "verified (safe_cuda.guard + chunked_cross_entropy + --resume in train_ablation.py)",
+  "arch_equivalence": "model_imu1 flags-off == faithful model.py bit-exact (max|\u0394logits|=0.0) \u2014 baseline arm is genuinely faithful",
+  "evidence_path": "Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/c5_evidence.json"
+}

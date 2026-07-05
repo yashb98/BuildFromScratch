@@ -1,0 +1,300 @@
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[21:40:16] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0001 | vr=False ln=False hg=False | steps=2000 seed=0 tok/step=65,536
+[21:40:17] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[21:40:20]   loaded cached tokens from tokcache_133072000_300000_seed0_Qwen3-0.6B-Base.pt (133,072,000 train + 300,000 val)
+[21:40:20] Compiling model...
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[21:48:52] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0001 | vr=False ln=False hg=False | steps=2000 seed=0 tok/step=65,536
+[21:48:53] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[21:48:55]   loaded cached tokens from tokcache_133072000_300000_seed0_Qwen3-0.6B-Base.pt (133,072,000 train + 300,000 val)
+[21:48:55] Compiling model...
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[21:56:39] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0001 | vr=False ln=False hg=False | steps=2000 seed=0 tok/step=65,536
+[21:56:40] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[21:56:42]   loaded cached tokens from tokcache_133072000_300000_seed0_Qwen3-0.6B-Base.pt (133,072,000 train + 300,000 val)
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[22:00:49] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0001 | vr=False ln=False hg=False | steps=2000 seed=0 tok/step=65,536
+[22:00:50] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[22:00:53]   loaded cached tokens from tokcache_133072000_300000_seed0_Qwen3-0.6B-Base.pt (133,072,000 train + 300,000 val)
+[22:04:27] step    10/2000  ce 10.0874  z 0.01415  lr 1.70e-04  |grad| 2.00  mem 52.0GB  tok/s 3,058
+[22:08:02] step    20/2000  ce 8.1002  z 0.01232  lr 3.40e-04  |grad| 0.85  mem 52.0GB  tok/s 3,056
+[22:11:36] step    30/2000  ce 7.8549  z 0.01324  lr 5.10e-04  |grad| 0.86  mem 52.0GB  tok/s 3,058
+[22:15:10] step    40/2000  ce 7.3599  z 0.01279  lr 6.80e-04  |grad| 0.64  mem 52.0GB  tok/s 3,059
+[22:18:42] step    50/2000  ce 7.6197  z 0.01243  lr 8.50e-04  |grad| 1.05  mem 52.0GB  tok/s 3,065
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[22:19:31] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0001 | vr=False ln=False hg=False | steps=2000 seed=0 tok/step=65,536
+[22:19:32] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[22:19:35]   loaded cached tokens from tokcache_133072000_300000_seed0_Qwen3-0.6B-Base.pt (133,072,000 train + 300,000 val)
+[22:19:35] Compiling model...
+W0619 22:19:45.582000 3746523 torch/_inductor/utils.py:1731] [0/0] Not enough SMs to use max_autotune_gemm mode
+[22:22:24] step    10/2000  ce 10.0875  z 0.01415  lr 1.70e-04  |grad| 2.00  mem 43.5GB  tok/s 3,893
+[22:24:36] step    20/2000  ce 8.1006  z 0.01232  lr 3.40e-04  |grad| 0.85  mem 43.5GB  tok/s 4,354
+[22:26:46] step    30/2000  ce 7.8552  z 0.01324  lr 5.10e-04  |grad| 0.86  mem 43.5GB  tok/s 4,562
+[22:28:56] step    40/2000  ce 7.3631  z 0.01278  lr 6.80e-04  |grad| 0.61  mem 43.5GB  tok/s 4,674
+[22:31:07] step    50/2000  ce 7.6308  z 0.01237  lr 8.50e-04  |grad| 1.13  mem 43.5GB  tok/s 4,739
+[22:33:17] step    60/2000  ce 7.0789  z 0.01245  lr 1.02e-03  |grad| 0.97  mem 43.5GB  tok/s 4,786
+[22:35:27] step    70/2000  ce 7.3664  z 0.01302  lr 1.19e-03  |grad| 0.73  mem 43.5GB  tok/s 4,819
+[22:37:38] step    80/2000  ce 7.4560  z 0.01306  lr 1.36e-03  |grad| 0.70  mem 43.5GB  tok/s 4,845
+[22:39:48] step    90/2000  ce 6.8201  z 0.01333  lr 1.53e-03  |grad| 0.76  mem 43.5GB  tok/s 4,863
+[22:42:02] step   100/2000  ce 6.8846  z 0.01361  lr 1.70e-03  |grad| 1.01  mem 43.5GB  tok/s 4,869
+[22:44:12] step   110/2000  ce 6.5898  z 0.01335  lr 1.70e-03  |grad| 0.57  mem 43.5GB  tok/s 4,883
+[22:46:18] step   120/2000  ce 6.6516  z 0.01368  lr 1.70e-03  |grad| 0.69  mem 43.5GB  tok/s 4,908
+[22:48:19] step   130/2000  ce 6.6181  z 0.01318  lr 1.70e-03  |grad| 0.57  mem 43.5GB  tok/s 4,944
+[22:50:20] step   140/2000  ce 6.7527  z 0.01286  lr 1.70e-03  |grad| 0.48  mem 43.5GB  tok/s 4,975
+[22:52:21] step   150/2000  ce 6.3993  z 0.01345  lr 1.70e-03  |grad| 0.55  mem 43.5GB  tok/s 5,002
+[22:54:22] step   160/2000  ce 6.3591  z 0.01321  lr 1.70e-03  |grad| 0.51  mem 43.5GB  tok/s 5,026
+[22:56:23] step   170/2000  ce 6.1123  z 0.01288  lr 1.70e-03  |grad| 0.44  mem 43.5GB  tok/s 5,047
+[22:58:24] step   180/2000  ce 6.6708  z 0.01278  lr 1.69e-03  |grad| 0.48  mem 43.5GB  tok/s 5,066
+[23:00:25] step   190/2000  ce 6.1938  z 0.01282  lr 1.69e-03  |grad| 0.63  mem 43.5GB  tok/s 5,083
+[23:02:26] step   200/2000  ce 6.0747  z 0.01274  lr 1.69e-03  |grad| 0.60  mem 43.5GB  tok/s 5,099
+[23:04:27] step   210/2000  ce 6.1515  z 0.01248  lr 1.69e-03  |grad| 0.34  mem 43.5GB  tok/s 5,113
+[23:06:28] step   220/2000  ce 5.9068  z 0.01321  lr 1.69e-03  |grad| 0.49  mem 43.5GB  tok/s 5,126
+[23:08:29] step   230/2000  ce 6.2568  z 0.01287  lr 1.68e-03  |grad| 0.52  mem 43.5GB  tok/s 5,138
+[23:10:30] step   240/2000  ce 6.0948  z 0.01211  lr 1.68e-03  |grad| 0.59  mem 43.5GB  tok/s 5,149
+[23:12:31] step   250/2000  ce 5.9625  z 0.01278  lr 1.68e-03  |grad| 0.56  mem 43.5GB  tok/s 5,159
+[23:12:34]   [ckpt @ 250] -> checkpoint_zloss_seed0.pt
+[23:14:35] step   260/2000  ce 5.7448  z 0.01262  lr 1.68e-03  |grad| 0.40  mem 43.5GB  tok/s 5,163
+[23:16:36] step   270/2000  ce 6.0157  z 0.01301  lr 1.67e-03  |grad| 0.48  mem 43.5GB  tok/s 5,172
+[23:18:37] step   280/2000  ce 6.0529  z 0.01249  lr 1.67e-03  |grad| 0.36  mem 43.5GB  tok/s 5,181
+[23:20:38] step   290/2000  ce 5.5733  z 0.01315  lr 1.67e-03  |grad| 0.43  mem 43.5GB  tok/s 5,188
+[23:22:39] step   300/2000  ce 5.5927  z 0.01328  lr 1.66e-03  |grad| 0.34  mem 43.5GB  tok/s 5,196
+[23:24:41] step   310/2000  ce 5.8343  z 0.01275  lr 1.66e-03  |grad| 0.38  mem 43.5GB  tok/s 5,202
+[23:26:42] step   320/2000  ce 5.4168  z 0.01356  lr 1.65e-03  |grad| 0.40  mem 43.5GB  tok/s 5,208
+[23:28:43] step   330/2000  ce 5.4702  z 0.01298  lr 1.65e-03  |grad| 0.37  mem 43.5GB  tok/s 5,214
+[23:30:53] step   340/2000  ce 5.4671  z 0.01302  lr 1.65e-03  |grad| 0.37  mem 43.5GB  tok/s 5,209
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[23:32:22] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0001 | vr=False ln=False hg=False | steps=2000 seed=0 tok/step=65,536
+[23:32:23] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[23:32:26]   loaded cached tokens from tokcache_133072000_300000_seed0_Qwen3-0.6B-Base.pt (133,072,000 train + 300,000 val)
+[23:32:26] Compiling model...
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[23:34:36] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0001 | vr=False ln=False hg=False | steps=2000 seed=0 tok/step=65,536
+[23:34:37] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[23:34:40]   loaded cached tokens from tokcache_133072000_300000_seed0_Qwen3-0.6B-Base.pt (133,072,000 train + 300,000 val)
+[23:34:40] Compiling model...
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[23:36:24] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0001 | vr=False ln=False hg=False | steps=2000 seed=0 tok/step=65,536
+[23:36:24] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[23:36:27]   loaded cached tokens from tokcache_133072000_300000_seed0_Qwen3-0.6B-Base.pt (133,072,000 train + 300,000 val)
+[23:36:27] Compiling model...
+[23:38:54] step    10/2000  ce 10.0653  z 0.01415  lr 1.70e-04  |grad| 2.00  mem 67.3GB  tok/s 4,492
+[23:41:16] step    20/2000  ce 8.1383  z 0.01232  lr 3.40e-04  |grad| 0.85  mem 67.3GB  tok/s 4,541
+[23:43:41] step    30/2000  ce 7.8965  z 0.01324  lr 5.10e-04  |grad| 0.86  mem 67.3GB  tok/s 4,534
+[23:46:01] step    40/2000  ce 7.5675  z 0.01277  lr 6.80e-04  |grad| 0.61  mem 67.3GB  tok/s 4,571
+[23:48:21] step    50/2000  ce 7.6578  z 0.01242  lr 8.50e-04  |grad| 1.12  mem 67.3GB  tok/s 4,594
+[23:50:41] step    60/2000  ce 7.2890  z 0.01239  lr 1.02e-03  |grad| 0.89  mem 67.3GB  tok/s 4,610
+[23:53:00] step    70/2000  ce 7.2720  z 0.01299  lr 1.19e-03  |grad| 1.06  mem 67.3GB  tok/s 4,621
+[23:55:20] step    80/2000  ce 7.2375  z 0.01323  lr 1.36e-03  |grad| 0.81  mem 67.3GB  tok/s 4,630
+[23:57:47] step    90/2000  ce 6.9799  z 0.01319  lr 1.53e-03  |grad| 0.83  mem 67.3GB  tok/s 4,612
+[00:00:12] step   100/2000  ce 6.9417  z 0.01333  lr 1.70e-03  |grad| 0.82  mem 67.3GB  tok/s 4,602
+[00:02:38] step   110/2000  ce 6.6526  z 0.01313  lr 1.70e-03  |grad| 0.61  mem 67.3GB  tok/s 4,590
+[00:05:00] step   120/2000  ce 6.6429  z 0.01397  lr 1.70e-03  |grad| 1.12  mem 67.3GB  tok/s 4,593
+[00:07:21] step   130/2000  ce 6.7053  z 0.01305  lr 1.70e-03  |grad| 0.53  mem 67.3GB  tok/s 4,597
+[00:09:40] step   140/2000  ce 6.5642  z 0.01277  lr 1.70e-03  |grad| 0.61  mem 67.3GB  tok/s 4,604
+[00:12:00] step   150/2000  ce 6.4545  z 0.01333  lr 1.70e-03  |grad| 0.55  mem 67.3GB  tok/s 4,609
+[00:14:10] step   160/2000  ce 6.2298  z 0.01319  lr 1.70e-03  |grad| 0.43  mem 67.3GB  tok/s 4,634
+[00:16:20] step   170/2000  ce 6.2418  z 0.01296  lr 1.70e-03  |grad| 0.43  mem 67.3GB  tok/s 4,657
+[00:18:30] step   180/2000  ce 6.5372  z 0.01277  lr 1.69e-03  |grad| 0.44  mem 67.3GB  tok/s 4,677
+[00:20:40] step   190/2000  ce 5.9721  z 0.01321  lr 1.69e-03  |grad| 0.39  mem 67.3GB  tok/s 4,695
+[00:22:49] step   200/2000  ce 6.0487  z 0.01314  lr 1.69e-03  |grad| 0.43  mem 67.3GB  tok/s 4,712
+[00:24:59] step   210/2000  ce 6.1544  z 0.01256  lr 1.69e-03  |grad| 0.49  mem 67.3GB  tok/s 4,727
+[00:27:09] step   220/2000  ce 5.8427  z 0.01291  lr 1.69e-03  |grad| 0.55  mem 67.3GB  tok/s 4,741
+[00:29:19] step   230/2000  ce 6.2857  z 0.01294  lr 1.68e-03  |grad| 0.41  mem 67.3GB  tok/s 4,753
+[00:31:28] step   240/2000  ce 5.9584  z 0.01264  lr 1.68e-03  |grad| 0.59  mem 67.3GB  tok/s 4,765
+[00:33:38] step   250/2000  ce 5.7071  z 0.01322  lr 1.68e-03  |grad| 0.56  mem 67.3GB  tok/s 4,776
+[00:33:42]   [ckpt @ 250] -> checkpoint_zloss_seed0.pt
+[00:35:51] step   260/2000  ce 6.0338  z 0.01249  lr 1.68e-03  |grad| 0.36  mem 67.3GB  tok/s 4,781
+[00:38:01] step   270/2000  ce 5.8617  z 0.01316  lr 1.67e-03  |grad| 0.46  mem 67.3GB  tok/s 4,790
+[00:40:11] step   280/2000  ce 5.9137  z 0.01299  lr 1.67e-03  |grad| 0.39  mem 67.3GB  tok/s 4,799
+[00:42:21] step   290/2000  ce 5.7212  z 0.01330  lr 1.67e-03  |grad| 0.42  mem 67.3GB  tok/s 4,807
+[00:44:31] step   300/2000  ce 5.5808  z 0.01344  lr 1.66e-03  |grad| 0.32  mem 67.3GB  tok/s 4,815
+[00:46:41] step   310/2000  ce 5.7468  z 0.01315  lr 1.66e-03  |grad| 0.53  mem 67.3GB  tok/s 4,822
+[00:48:50] step   320/2000  ce 5.6307  z 0.01364  lr 1.65e-03  |grad| 0.38  mem 67.3GB  tok/s 4,829
+[00:51:00] step   330/2000  ce 5.5413  z 0.01308  lr 1.65e-03  |grad| 0.39  mem 67.3GB  tok/s 4,835
+[00:53:10] step   340/2000  ce 5.3886  z 0.01321  lr 1.65e-03  |grad| 0.35  mem 67.3GB  tok/s 4,841
+[00:55:20] step   350/2000  ce 5.4090  z 0.01343  lr 1.64e-03  |grad| 0.52  mem 67.3GB  tok/s 4,847
+[00:57:30] step   360/2000  ce 5.4091  z 0.01326  lr 1.64e-03  |grad| 0.34  mem 67.3GB  tok/s 4,852
+[00:59:39] step   370/2000  ce 5.4787  z 0.01324  lr 1.63e-03  |grad| 0.32  mem 67.3GB  tok/s 4,858
+[01:01:49] step   380/2000  ce 5.6625  z 0.01319  lr 1.63e-03  |grad| 0.41  mem 67.3GB  tok/s 4,862
+[01:03:59] step   390/2000  ce 5.2899  z 0.01354  lr 1.62e-03  |grad| 0.36  mem 67.3GB  tok/s 4,867
+[01:06:09] step   400/2000  ce 5.4457  z 0.01322  lr 1.62e-03  |grad| 0.35  mem 67.3GB  tok/s 4,871
+[01:08:19] step   410/2000  ce 5.4883  z 0.01312  lr 1.61e-03  |grad| 0.29  mem 67.3GB  tok/s 4,875
+[01:10:28] step   420/2000  ce 5.1992  z 0.01332  lr 1.61e-03  |grad| 0.34  mem 67.3GB  tok/s 4,880
+[01:12:38] step   430/2000  ce 5.1989  z 0.01395  lr 1.60e-03  |grad| 0.35  mem 67.3GB  tok/s 4,883
+[01:14:48] step   440/2000  ce 5.2525  z 0.01334  lr 1.59e-03  |grad| 0.38  mem 67.3GB  tok/s 4,887
+[01:16:58] step   450/2000  ce 4.9156  z 0.01410  lr 1.59e-03  |grad| 0.29  mem 67.3GB  tok/s 4,890
+[01:19:08] step   460/2000  ce 5.1068  z 0.01367  lr 1.58e-03  |grad| 0.32  mem 67.3GB  tok/s 4,894
+[01:21:18] step   470/2000  ce 4.9159  z 0.01385  lr 1.57e-03  |grad| 0.29  mem 67.3GB  tok/s 4,897
+[01:23:28] step   480/2000  ce 5.0140  z 0.01374  lr 1.57e-03  |grad| 0.32  mem 67.3GB  tok/s 4,900
+[01:25:37] step   490/2000  ce 5.3311  z 0.01358  lr 1.56e-03  |grad| 0.39  mem 67.3GB  tok/s 4,903
+[01:27:47] step   500/2000  ce 5.1099  z 0.01370  lr 1.55e-03  |grad| 0.31  mem 67.3GB  tok/s 4,906
+[01:27:58]   [eval @ 500] val PPL=160.41
+[01:28:01]   [ckpt @ 500] -> checkpoint_zloss_seed0.pt
+[01:30:11] step   510/2000  ce 5.0392  z 0.01345  lr 1.55e-03  |grad| 0.29  mem 67.3GB  tok/s 4,898
+[01:32:21] step   520/2000  ce 5.0125  z 0.01358  lr 1.54e-03  |grad| 0.34  mem 67.3GB  tok/s 4,901
+[01:34:31] step   530/2000  ce 4.9791  z 0.01355  lr 1.53e-03  |grad| 0.33  mem 67.3GB  tok/s 4,904
+[01:36:40] step   540/2000  ce 5.0465  z 0.01357  lr 1.53e-03  |grad| 0.31  mem 67.3GB  tok/s 4,906
+[01:38:50] step   550/2000  ce 5.2380  z 0.01355  lr 1.52e-03  |grad| 0.40  mem 67.3GB  tok/s 4,909
+[01:41:00] step   560/2000  ce 4.8711  z 0.01371  lr 1.51e-03  |grad| 0.33  mem 67.3GB  tok/s 4,911
+[01:43:10] step   570/2000  ce 4.8080  z 0.01405  lr 1.50e-03  |grad| 0.29  mem 67.3GB  tok/s 4,914
+[01:45:20] step   580/2000  ce 4.7039  z 0.01393  lr 1.49e-03  |grad| 0.25  mem 67.3GB  tok/s 4,916
+[01:47:29] step   590/2000  ce 4.8557  z 0.01438  lr 1.49e-03  |grad| 0.30  mem 67.3GB  tok/s 4,918
+[01:49:39] step   600/2000  ce 4.7591  z 0.01374  lr 1.48e-03  |grad| 0.30  mem 67.3GB  tok/s 4,920
+[01:51:49] step   610/2000  ce 4.8586  z 0.01394  lr 1.47e-03  |grad| 0.26  mem 67.3GB  tok/s 4,922
+[01:53:59] step   620/2000  ce 4.6345  z 0.01423  lr 1.46e-03  |grad| 0.27  mem 67.3GB  tok/s 4,924
+[01:56:09] step   630/2000  ce 4.6623  z 0.01408  lr 1.45e-03  |grad| 0.32  mem 67.3GB  tok/s 4,926
+[01:58:18] step   640/2000  ce 4.5181  z 0.01405  lr 1.44e-03  |grad| 0.26  mem 67.3GB  tok/s 4,928
+[02:00:28] step   650/2000  ce 4.5792  z 0.01434  lr 1.43e-03  |grad| 0.29  mem 67.3GB  tok/s 4,930
+[02:02:38] step   660/2000  ce 4.7095  z 0.01387  lr 1.42e-03  |grad| 0.31  mem 67.3GB  tok/s 4,932
+[02:04:48] step   670/2000  ce 4.5661  z 0.01415  lr 1.42e-03  |grad| 0.24  mem 67.3GB  tok/s 4,934
+[02:06:57] step   680/2000  ce 4.6708  z 0.01430  lr 1.41e-03  |grad| 0.35  mem 67.3GB  tok/s 4,935
+[02:09:07] step   690/2000  ce 4.7617  z 0.01367  lr 1.40e-03  |grad| 0.43  mem 67.3GB  tok/s 4,937
+[02:11:17] step   700/2000  ce 4.6025  z 0.01390  lr 1.39e-03  |grad| 0.26  mem 67.3GB  tok/s 4,938
+[02:13:27] step   710/2000  ce 4.6759  z 0.01419  lr 1.38e-03  |grad| 0.30  mem 67.3GB  tok/s 4,940
+[02:15:37] step   720/2000  ce 4.6576  z 0.01394  lr 1.37e-03  |grad| 0.26  mem 67.3GB  tok/s 4,941
+[02:17:46] step   730/2000  ce 4.3196  z 0.01467  lr 1.36e-03  |grad| 0.30  mem 67.3GB  tok/s 4,943
+[02:19:56] step   740/2000  ce 4.7062  z 0.01388  lr 1.35e-03  |grad| 0.26  mem 67.3GB  tok/s 4,944
+[02:22:06] step   750/2000  ce 4.6926  z 0.01467  lr 1.34e-03  |grad| 0.32  mem 67.3GB  tok/s 4,946
+[02:22:09]   [ckpt @ 750] -> checkpoint_zloss_seed0.pt
+[02:24:19] step   760/2000  ce 4.6040  z 0.01408  lr 1.33e-03  |grad| 0.27  mem 67.3GB  tok/s 4,945
+[02:26:29] step   770/2000  ce 4.5499  z 0.01381  lr 1.32e-03  |grad| 0.28  mem 67.3GB  tok/s 4,947
+[02:28:39] step   780/2000  ce 4.4470  z 0.01423  lr 1.31e-03  |grad| 0.26  mem 67.3GB  tok/s 4,948
+[02:30:49] step   790/2000  ce 4.4456  z 0.01428  lr 1.30e-03  |grad| 0.28  mem 67.3GB  tok/s 4,949
+[02:32:59] step   800/2000  ce 4.5035  z 0.01402  lr 1.29e-03  |grad| 0.26  mem 67.3GB  tok/s 4,950
+[02:35:08] step   810/2000  ce 5.0211  z 0.01345  lr 1.28e-03  |grad| 0.28  mem 67.3GB  tok/s 4,952
+[02:37:18] step   820/2000  ce 4.3915  z 0.01400  lr 1.27e-03  |grad| 0.31  mem 67.3GB  tok/s 4,953
+[02:39:28] step   830/2000  ce 4.6118  z 0.01391  lr 1.26e-03  |grad| 0.25  mem 67.3GB  tok/s 4,954
+[02:41:38] step   840/2000  ce 4.5168  z 0.01401  lr 1.24e-03  |grad| 0.24  mem 67.3GB  tok/s 4,955
+[02:43:47] step   850/2000  ce 4.2292  z 0.01441  lr 1.23e-03  |grad| 0.25  mem 67.3GB  tok/s 4,956
+[02:45:57] step   860/2000  ce 4.3506  z 0.01402  lr 1.22e-03  |grad| 0.24  mem 67.3GB  tok/s 4,957
+[02:48:07] step   870/2000  ce 4.5254  z 0.01380  lr 1.21e-03  |grad| 0.24  mem 67.3GB  tok/s 4,958
+[02:50:17] step   880/2000  ce 4.4127  z 0.01394  lr 1.20e-03  |grad| 0.25  mem 67.3GB  tok/s 4,959
+[02:52:27] step   890/2000  ce 4.5192  z 0.01391  lr 1.19e-03  |grad| 0.23  mem 67.3GB  tok/s 4,960
+[02:54:36] step   900/2000  ce 4.2808  z 0.01452  lr 1.18e-03  |grad| 0.22  mem 67.3GB  tok/s 4,961
+[02:56:46] step   910/2000  ce 4.5637  z 0.01382  lr 1.17e-03  |grad| 0.23  mem 67.3GB  tok/s 4,962
+[02:58:56] step   920/2000  ce 4.4689  z 0.01452  lr 1.16e-03  |grad| 0.22  mem 67.3GB  tok/s 4,963
+[03:01:06] step   930/2000  ce 4.2103  z 0.01433  lr 1.15e-03  |grad| 0.22  mem 67.3GB  tok/s 4,964
+[03:03:15] step   940/2000  ce 4.3300  z 0.01428  lr 1.13e-03  |grad| 0.22  mem 67.3GB  tok/s 4,965
+[03:05:25] step   950/2000  ce 4.5546  z 0.01405  lr 1.12e-03  |grad| 0.24  mem 67.3GB  tok/s 4,966
+[03:07:35] step   960/2000  ce 4.4218  z 0.01406  lr 1.11e-03  |grad| 0.23  mem 67.3GB  tok/s 4,967
+[03:09:45] step   970/2000  ce 4.1795  z 0.01412  lr 1.10e-03  |grad| 0.23  mem 67.3GB  tok/s 4,967
+[03:11:55] step   980/2000  ce 4.2625  z 0.01408  lr 1.09e-03  |grad| 0.23  mem 67.3GB  tok/s 4,968
+[03:14:04] step   990/2000  ce 4.2801  z 0.01433  lr 1.08e-03  |grad| 0.28  mem 67.3GB  tok/s 4,969
+[03:16:14] step  1000/2000  ce 4.3621  z 0.01406  lr 1.07e-03  |grad| 0.24  mem 67.3GB  tok/s 4,970
+[03:16:23]   [eval @ 1000] val PPL=72.14
+[03:16:27]   [ckpt @ 1000] -> checkpoint_zloss_seed0.pt
+[03:18:36] step  1010/2000  ce 4.3276  z 0.01402  lr 1.06e-03  |grad| 0.21  mem 67.3GB  tok/s 4,966
+[03:20:46] step  1020/2000  ce 4.0953  z 0.01488  lr 1.04e-03  |grad| 0.24  mem 67.3GB  tok/s 4,967
+[03:22:56] step  1030/2000  ce 4.3411  z 0.01460  lr 1.03e-03  |grad| 0.22  mem 67.3GB  tok/s 4,968
+[03:25:06] step  1040/2000  ce 4.2703  z 0.01440  lr 1.02e-03  |grad| 0.23  mem 67.3GB  tok/s 4,968
+[03:27:16] step  1050/2000  ce 4.3482  z 0.01421  lr 1.01e-03  |grad| 0.21  mem 67.3GB  tok/s 4,969
+[03:29:25] step  1060/2000  ce 4.4744  z 0.01354  lr 9.99e-04  |grad| 0.23  mem 67.3GB  tok/s 4,970
+[03:31:35] step  1070/2000  ce 4.1825  z 0.01422  lr 9.87e-04  |grad| 0.22  mem 67.3GB  tok/s 4,971
+[03:33:45] step  1080/2000  ce 4.0534  z 0.01452  lr 9.76e-04  |grad| 0.22  mem 67.3GB  tok/s 4,971
+[03:35:55] step  1090/2000  ce 4.1747  z 0.01459  lr 9.64e-04  |grad| 0.23  mem 67.3GB  tok/s 4,972
+[03:38:05] step  1100/2000  ce 4.1044  z 0.01433  lr 9.53e-04  |grad| 0.23  mem 67.3GB  tok/s 4,973
+[03:40:14] step  1110/2000  ce 4.2232  z 0.01407  lr 9.42e-04  |grad| 0.22  mem 67.3GB  tok/s 4,973
+[03:42:24] step  1120/2000  ce 4.2131  z 0.01440  lr 9.30e-04  |grad| 0.64  mem 67.3GB  tok/s 4,974
+[03:44:34] step  1130/2000  ce 4.1184  z 0.01425  lr 9.19e-04  |grad| 0.21  mem 67.3GB  tok/s 4,975
+[03:46:44] step  1140/2000  ce 4.3211  z 0.01405  lr 9.08e-04  |grad| 0.21  mem 67.3GB  tok/s 4,975
+[03:48:53] step  1150/2000  ce 4.2383  z 0.01391  lr 8.96e-04  |grad| 0.22  mem 67.3GB  tok/s 4,976
+[03:51:03] step  1160/2000  ce 3.9016  z 0.01466  lr 8.85e-04  |grad| 0.20  mem 67.3GB  tok/s 4,977
+[03:53:13] step  1170/2000  ce 4.3133  z 0.01385  lr 8.74e-04  |grad| 0.22  mem 67.3GB  tok/s 4,977
+[03:55:23] step  1180/2000  ce 4.1812  z 0.01415  lr 8.63e-04  |grad| 0.22  mem 67.3GB  tok/s 4,978
+[03:57:32] step  1190/2000  ce 4.1671  z 0.01431  lr 8.52e-04  |grad| 0.21  mem 67.3GB  tok/s 4,979
+[03:59:42] step  1200/2000  ce 4.2992  z 0.01417  lr 8.41e-04  |grad| 0.22  mem 67.3GB  tok/s 4,979
+[04:01:52] step  1210/2000  ce 4.1563  z 0.01407  lr 8.30e-04  |grad| 0.23  mem 67.3GB  tok/s 4,980
+[04:04:02] step  1220/2000  ce 4.1907  z 0.01390  lr 8.19e-04  |grad| 0.21  mem 67.3GB  tok/s 4,980
+[04:06:12] step  1230/2000  ce 4.0750  z 0.01405  lr 8.08e-04  |grad| 0.23  mem 67.3GB  tok/s 4,981
+[04:08:21] step  1240/2000  ce 3.9469  z 0.01445  lr 7.97e-04  |grad| 0.21  mem 67.3GB  tok/s 4,981
+[04:10:31] step  1250/2000  ce 4.0471  z 0.01407  lr 7.86e-04  |grad| 0.21  mem 67.3GB  tok/s 4,982
+[04:10:35]   [ckpt @ 1250] -> checkpoint_zloss_seed0.pt
+[04:12:44] step  1260/2000  ce 4.1543  z 0.01406  lr 7.75e-04  |grad| 0.18  mem 67.3GB  tok/s 4,981
+[04:14:54] step  1270/2000  ce 4.0771  z 0.01416  lr 7.65e-04  |grad| 0.20  mem 67.3GB  tok/s 4,982
+[04:17:04] step  1280/2000  ce 3.8164  z 0.01475  lr 7.54e-04  |grad| 0.20  mem 67.3GB  tok/s 4,982
+[04:19:14] step  1290/2000  ce 3.9883  z 0.01442  lr 7.43e-04  |grad| 0.20  mem 67.3GB  tok/s 4,983
+[04:21:23] step  1300/2000  ce 4.1518  z 0.01431  lr 7.33e-04  |grad| 0.22  mem 67.3GB  tok/s 4,983
+[04:23:33] step  1310/2000  ce 4.0765  z 0.01411  lr 7.22e-04  |grad| 0.22  mem 67.3GB  tok/s 4,984
+[04:25:43] step  1320/2000  ce 4.3524  z 0.01371  lr 7.12e-04  |grad| 0.22  mem 67.3GB  tok/s 4,984
+[04:27:53] step  1330/2000  ce 4.3287  z 0.01375  lr 7.02e-04  |grad| 0.19  mem 67.3GB  tok/s 4,985
+[04:30:02] step  1340/2000  ce 4.1193  z 0.01410  lr 6.92e-04  |grad| 0.20  mem 67.3GB  tok/s 4,985
+[04:32:12] step  1350/2000  ce 4.0145  z 0.01396  lr 6.82e-04  |grad| 0.20  mem 67.3GB  tok/s 4,986
+[04:34:22] step  1360/2000  ce 4.1343  z 0.01423  lr 6.72e-04  |grad| 0.19  mem 67.3GB  tok/s 4,986
+[04:36:32] step  1370/2000  ce 4.1639  z 0.01405  lr 6.62e-04  |grad| 0.19  mem 67.3GB  tok/s 4,987
+[04:38:42] step  1380/2000  ce 4.0238  z 0.01424  lr 6.52e-04  |grad| 0.19  mem 67.3GB  tok/s 4,987
+[04:40:52] step  1390/2000  ce 4.1131  z 0.01410  lr 6.42e-04  |grad| 0.19  mem 67.3GB  tok/s 4,988
+[04:43:01] step  1400/2000  ce 4.0590  z 0.01392  lr 6.33e-04  |grad| 0.20  mem 67.3GB  tok/s 4,988
+[04:45:11] step  1410/2000  ce 4.2682  z 0.01392  lr 6.23e-04  |grad| 0.21  mem 67.3GB  tok/s 4,989
+[04:47:21] step  1420/2000  ce 4.0538  z 0.01399  lr 6.14e-04  |grad| 0.21  mem 67.3GB  tok/s 4,989
+[04:49:30] step  1430/2000  ce 3.9884  z 0.01399  lr 6.04e-04  |grad| 0.20  mem 67.3GB  tok/s 4,989
+[04:51:40] step  1440/2000  ce 4.2053  z 0.01378  lr 5.95e-04  |grad| 0.19  mem 67.3GB  tok/s 4,990
+[04:53:50] step  1450/2000  ce 4.1068  z 0.01395  lr 5.86e-04  |grad| 0.18  mem 67.3GB  tok/s 4,990
+[04:56:00] step  1460/2000  ce 4.0384  z 0.01398  lr 5.77e-04  |grad| 0.19  mem 67.3GB  tok/s 4,991
+[04:58:10] step  1470/2000  ce 3.8524  z 0.01437  lr 5.68e-04  |grad| 0.20  mem 67.3GB  tok/s 4,991
+[05:00:20] step  1480/2000  ce 4.1924  z 0.01401  lr 5.60e-04  |grad| 0.19  mem 67.3GB  tok/s 4,991
+[05:02:30] step  1490/2000  ce 4.1144  z 0.01394  lr 5.51e-04  |grad| 0.18  mem 67.3GB  tok/s 4,992
+[05:04:39] step  1500/2000  ce 4.0549  z 0.01392  lr 5.43e-04  |grad| 0.20  mem 67.3GB  tok/s 4,992
+[05:04:48]   [eval @ 1500] val PPL=53.53
+[05:04:52]   [ckpt @ 1500] -> checkpoint_zloss_seed0.pt
+[05:07:01] step  1510/2000  ce 4.1913  z 0.01400  lr 5.34e-04  |grad| 0.18  mem 67.3GB  tok/s 4,989
+[05:09:11] step  1520/2000  ce 4.0741  z 0.01398  lr 5.26e-04  |grad| 0.19  mem 67.3GB  tok/s 4,990
+[05:11:21] step  1530/2000  ce 4.1906  z 0.01392  lr 5.18e-04  |grad| 0.23  mem 67.3GB  tok/s 4,990
+[05:13:31] step  1540/2000  ce 3.9439  z 0.01426  lr 5.10e-04  |grad| 0.19  mem 67.3GB  tok/s 4,991
+[05:15:40] step  1550/2000  ce 4.0778  z 0.01405  lr 5.02e-04  |grad| 0.18  mem 67.3GB  tok/s 4,991
+[05:17:50] step  1560/2000  ce 3.8617  z 0.01445  lr 4.95e-04  |grad| 0.22  mem 67.3GB  tok/s 4,991
+[05:20:00] step  1570/2000  ce 4.0190  z 0.01414  lr 4.87e-04  |grad| 0.19  mem 67.3GB  tok/s 4,992
+[05:22:10] step  1580/2000  ce 4.0216  z 0.01413  lr 4.80e-04  |grad| 0.19  mem 67.3GB  tok/s 4,992
+[05:24:20] step  1590/2000  ce 4.0353  z 0.01402  lr 4.73e-04  |grad| 0.18  mem 67.3GB  tok/s 4,992
+[05:26:29] step  1600/2000  ce 3.8447  z 0.01446  lr 4.65e-04  |grad| 0.19  mem 67.3GB  tok/s 4,993
+[05:28:39] step  1610/2000  ce 4.1669  z 0.01390  lr 4.59e-04  |grad| 0.18  mem 67.3GB  tok/s 4,993
+[05:30:49] step  1620/2000  ce 3.7910  z 0.01437  lr 4.52e-04  |grad| 0.18  mem 67.3GB  tok/s 4,993
+[05:32:59] step  1630/2000  ce 3.8990  z 0.01438  lr 4.45e-04  |grad| 0.17  mem 67.3GB  tok/s 4,994
+[05:35:09] step  1640/2000  ce 3.9496  z 0.01406  lr 4.39e-04  |grad| 0.18  mem 67.3GB  tok/s 4,994
+[05:37:18] step  1650/2000  ce 3.9760  z 0.01398  lr 4.32e-04  |grad| 0.18  mem 67.3GB  tok/s 4,995
+[05:39:28] step  1660/2000  ce 3.8975  z 0.01423  lr 4.26e-04  |grad| 0.18  mem 67.3GB  tok/s 4,995
+[05:41:38] step  1670/2000  ce 3.8891  z 0.01414  lr 4.20e-04  |grad| 0.19  mem 67.3GB  tok/s 4,995
+[05:43:48] step  1680/2000  ce 3.6800  z 0.01450  lr 4.14e-04  |grad| 0.19  mem 67.3GB  tok/s 4,995
+[05:45:57] step  1690/2000  ce 3.6286  z 0.01577  lr 4.09e-04  |grad| 0.21  mem 67.3GB  tok/s 4,996
+[05:48:07] step  1700/2000  ce 4.2057  z 0.01463  lr 4.03e-04  |grad| 0.20  mem 67.3GB  tok/s 4,996
+[05:50:17] step  1710/2000  ce 3.8912  z 0.01452  lr 3.98e-04  |grad| 0.18  mem 67.3GB  tok/s 4,996
+[05:52:27] step  1720/2000  ce 4.1786  z 0.01386  lr 3.93e-04  |grad| 0.17  mem 67.3GB  tok/s 4,997
+[05:54:37] step  1730/2000  ce 3.6772  z 0.01455  lr 3.88e-04  |grad| 0.19  mem 67.3GB  tok/s 4,997
+[05:56:46] step  1740/2000  ce 4.1404  z 0.01388  lr 3.83e-04  |grad| 0.19  mem 67.3GB  tok/s 4,997
+[05:58:56] step  1750/2000  ce 3.8384  z 0.01428  lr 3.78e-04  |grad| 0.19  mem 67.3GB  tok/s 4,998
+[05:58:59]   [ckpt @ 1750] -> checkpoint_zloss_seed0.pt
+[06:01:09] step  1760/2000  ce 3.8945  z 0.01430  lr 3.74e-04  |grad| 0.18  mem 67.3GB  tok/s 4,997
+[06:03:19] step  1770/2000  ce 4.2927  z 0.01354  lr 3.69e-04  |grad| 0.18  mem 67.3GB  tok/s 4,997
+[06:05:29] step  1780/2000  ce 3.7995  z 0.01430  lr 3.65e-04  |grad| 0.19  mem 67.3GB  tok/s 4,998
+[06:07:39] step  1790/2000  ce 3.7634  z 0.01451  lr 3.61e-04  |grad| 0.18  mem 67.3GB  tok/s 4,998
+[06:09:48] step  1800/2000  ce 3.9829  z 0.01406  lr 3.57e-04  |grad| 0.19  mem 67.3GB  tok/s 4,998
+[06:11:58] step  1810/2000  ce 3.9224  z 0.01412  lr 3.54e-04  |grad| 0.17  mem 67.3GB  tok/s 4,999
+[06:14:08] step  1820/2000  ce 3.9008  z 0.01420  lr 3.50e-04  |grad| 0.17  mem 67.3GB  tok/s 4,999
+[06:16:17] step  1830/2000  ce 3.6337  z 0.01459  lr 3.47e-04  |grad| 0.19  mem 67.3GB  tok/s 4,999
+[06:18:27] step  1840/2000  ce 3.7561  z 0.01408  lr 3.44e-04  |grad| 0.17  mem 67.3GB  tok/s 4,999
+[06:20:37] step  1850/2000  ce 3.8518  z 0.01422  lr 3.41e-04  |grad| 0.18  mem 67.3GB  tok/s 5,000
+[06:22:47] step  1860/2000  ce 3.9735  z 0.01419  lr 3.38e-04  |grad| 0.17  mem 67.3GB  tok/s 5,000
+[06:24:57] step  1870/2000  ce 3.6388  z 0.01475  lr 3.36e-04  |grad| 0.18  mem 67.3GB  tok/s 5,000
+[06:27:06] step  1880/2000  ce 4.0862  z 0.01374  lr 3.34e-04  |grad| 0.17  mem 67.3GB  tok/s 5,001
+[06:29:16] step  1890/2000  ce 3.5614  z 0.01476  lr 3.31e-04  |grad| 0.17  mem 67.3GB  tok/s 5,001
+[06:31:26] step  1900/2000  ce 4.0440  z 0.01372  lr 3.29e-04  |grad| 0.18  mem 67.3GB  tok/s 5,001
+[06:33:36] step  1910/2000  ce 3.8464  z 0.01441  lr 3.28e-04  |grad| 0.17  mem 67.3GB  tok/s 5,001
+[06:35:46] step  1920/2000  ce 3.7480  z 0.01440  lr 3.26e-04  |grad| 0.17  mem 67.3GB  tok/s 5,002
+[06:37:55] step  1930/2000  ce 3.9336  z 0.01390  lr 3.25e-04  |grad| 0.17  mem 67.3GB  tok/s 5,002
+[06:40:05] step  1940/2000  ce 3.9352  z 0.01394  lr 3.23e-04  |grad| 0.18  mem 67.3GB  tok/s 5,002
+[06:42:15] step  1950/2000  ce 4.0186  z 0.01390  lr 3.22e-04  |grad| 0.18  mem 67.3GB  tok/s 5,002
+[06:44:25] step  1960/2000  ce 3.6722  z 0.01430  lr 3.22e-04  |grad| 0.17  mem 67.3GB  tok/s 5,003
+[06:46:35] step  1970/2000  ce 3.7973  z 0.01430  lr 3.21e-04  |grad| 0.17  mem 67.3GB  tok/s 5,003
+[06:48:44] step  1980/2000  ce 3.8975  z 0.01419  lr 3.20e-04  |grad| 0.18  mem 67.3GB  tok/s 5,003
+[06:50:54] step  1990/2000  ce 3.5142  z 0.01455  lr 3.20e-04  |grad| 0.17  mem 67.3GB  tok/s 5,003
+[06:53:04] step  2000/2000  ce 3.9428  z 0.01369  lr 3.20e-04  |grad| 0.18  mem 67.3GB  tok/s 5,003
+[06:53:13]   [eval @ 2000] val PPL=47.03
+[06:53:16]   [ckpt @ 2000] -> checkpoint_zloss_seed0.pt
+[06:53:20] DONE

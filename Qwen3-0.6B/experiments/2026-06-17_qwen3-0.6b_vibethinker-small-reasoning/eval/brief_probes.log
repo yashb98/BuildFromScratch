@@ -1,0 +1,5 @@
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[brief-probes] suite methodology=text-lm-v2; SEQ=1024 STRIDE=512 MAX_WINDOWS=200 FLOOR_WINDOWS=66
+[brief-probes] forgetting_fineweb_edu (fineweb_edu_sample10bt_heldout): base=24.5514 target=24.7331 delta=+0.1817 floor=8.0155 -> not significant (39s)
+[brief-probes] reasoning_openr1 (openr1_math_220k_heldout): base=17.6035 target=14.2217 delta=-3.3818 floor=4.4291 -> not significant (44s)
+BRIEF PROBES COMPLETE -> /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/eval/brief_probes_results.json

@@ -1,0 +1,65 @@
+{
+  "run_id": "2026-06-21_qwen3-0.6b_arch-subdrill-p2",
+  "model_dir": "Qwen3-0.6B",
+  "technique_slug": "arch-subcomponent-drill",
+  "objective": "pretrain-ablation",
+  "framework": "pytorch",
+  "purpose": "Phase 2: attribute the Phase-1 'arch' driver (BPB wikitext +0.1179 CI[0.100,0.135], code +0.3049 CI[0.259,0.351], significant; run 2026-06-18_qwen3-0.6b_imu1-deconfound-p1) to its 3 single-variable IMU-1 flags — use_value_residual / use_layernorm_scaling / use_head_gating.",
+  "prior_run_id": "2026-06-18_qwen3-0.6b_imu1-deconfound-p1",
+  "budget": {
+    "steps_per_cell": 2000,
+    "tokens_per_cell": 131072000,
+    "new_cells": 9,
+    "total_new_tokens": 1179648000,
+    "source": "parity with Phase-1 de-confound proxy (run 2026-06-18; user-approved 2000-step proxy)"
+  },
+  "control_reuse": {
+    "arm": "baseline",
+    "reused_run_id": "2026-06-18_qwen3-0.6b_imu1-deconfound-p1",
+    "cells": ["baseline_seed0", "baseline_seed1", "baseline_seed2"],
+    "mechanism": "symlinked checkpoints; identical optimizer(adamw 1.7e-3)/schedule(cosine)/budget(2000 steps)/seed/data -> §C13 control-reuse, NOT retrained",
+    "note": "baseline re-scored in-cohort by score_cohort.py for zero cross-run drift"
+  },
+  "arm_plan": {
+    "arms": ["vr", "ln", "hg"],
+    "reused_control": "baseline",
+    "seeds": [0, 1, 2],
+    "optimizer": "adamw 1.7e-3 (all arms)",
+    "schedule": "cosine warmup 100 -> floor 3.2e-4 (all arms)",
+    "single_variable": {
+      "vr": "--value_residual 1 (use_value_residual only)",
+      "ln": "--layernorm_scaling 1 (use_layernorm_scaling only; parameter-free)",
+      "hg": "--head_gating 1 (use_head_gating only)"
+    }
+  },
+  "impl_check": {
+    "py_compile": "pass (train_subdrill.py, score_cohort.py, verdict.py)",
+    "cpu_dry_run": "pass — each arm header shows exactly one flag on (vr/ln/hg), baseline all off",
+    "diff": "copy of Phase-1 train_ablation.py + 4-line flag-split (vr/ln/hg as independent CLI flags; --arch imu1 still = bundle for back-compat); no arch_on remaining"
+  },
+  "smoke": {
+    "result": "pass",
+    "detail": "GPU smoke vr/ln/hg each build+train+checkpoint+exit0 (no_compile, mb1 seq512); no NaN/traceback",
+    "logs": ["train_smoke_vr.log", "train_smoke_ln.log", "train_smoke_hg.log"]
+  },
+  "resume_roundtrip": {
+    "result": "pass",
+    "detail": "vr smoke ckpt@4 -> --resume -> 'RESUMED from smoke_vr.pt @ step 5' -> DONE",
+    "resume_cmd": "bash Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/run_arms.sh"
+  },
+  "probe": {
+    "tokens_per_sec": 5940,
+    "peak_mem_gb": 61.1,
+    "pct_of_pool": 0.51,
+    "source": "Phase-1 arch arm MEASURED (identical trainer/config mb4+compile seq4096; the bundle has >= params than any single sub-flag, so this is a conservative upper bound)"
+  },
+  "eta_hours": 52,
+  "confound_check": {
+    "n_vars": 1,
+    "iso_flop": true,
+    "detail": "iso-FLOP at real config: vr +84 params (ratio 1.000000), ln +0 (1.000000), hg +458,752/+0.077% (ratio 1.000430) — all within the 5% gate"
+  },
+  "guards": "verified",
+  "sentinel": "preflight-pass (mem 88%, no trainers); per-cell watch armed by run_arms.sh at --kill-at 0.83 (under 0.85 safe_cuda cap)",
+  "evidence_path": "Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/c5_evidence.json"
+}

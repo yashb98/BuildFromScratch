@@ -1,0 +1,20 @@
+===== CELL mix_seed0 (08:17:07) --init_from /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt =====
+[FAIL] mix_seed0 rc=143
+===== CELL mix_seed0 (11:21:05) --resume checkpoint_mix_seed0.pt =====
+run_arms.sh: line 27: init: unbound variable
+[FAIL] mix_seed0 rc=1
+===== CELL mix_seed0 (11:24:42) --resume checkpoint_mix_seed0.pt =====
+[FAIL] mix_seed0 rc=143
+===== CELL mix_seed0 (12:49:34) --resume checkpoint_mix_seed0.pt =====
+[done] mix_seed0
+===== CELL fineweb_seed0 (14:56:08) --init_from /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt =====
+[done] fineweb_seed0
+===== CELL mix_seed1 (21:02:43) --init_from /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt =====
+[done] mix_seed1
+===== CELL fineweb_seed1 (03:05:51) --init_from /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt =====
+[done] fineweb_seed1
+===== CELL mix_seed2 (09:07:45) --init_from /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt =====
+[done] mix_seed2
+===== CELL fineweb_seed2 (15:14:37) --init_from /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt =====
+[done] fineweb_seed2
+ALL 6 CELLS COMPLETE (21:17:04)

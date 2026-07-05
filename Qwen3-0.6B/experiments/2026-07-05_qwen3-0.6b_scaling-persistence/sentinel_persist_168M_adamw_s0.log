@@ -1,0 +1,1 @@
+[2026-07-05T17:14:59Z] [sentinel] armed: pid=2426888 kill_at=0.80 interval=30s grace=60s start_ticks=54585081 marker=/home/yashb98/Downloads/BuildFromScratch/research/loop_state.json.sentinel_kill

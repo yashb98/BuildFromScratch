@@ -123,6 +123,17 @@ def test_liveness_non_int_pid_treated_as_dead(tmp_path):
     assert sentinel.liveness(str(s)) == 4
 
 
+def test_liveness_null_pid_fails_open(tmp_path):
+    # Regression: an in-flight run with NO recorded pid (null/missing) is an
+    # INCONSISTENT state we cannot probe — fail OPEN (exit 0), NOT exit 4, so the
+    # */30 recovery cron does not spam `/research-loop resume` every 30 min.
+    s = tmp_path / "s.json"
+    s.write_text(json.dumps({"in_flight_run": "r", "train_pid": None}))
+    assert sentinel.liveness(str(s)) == 0
+    s.write_text(json.dumps({"in_flight_run": "r"}))   # key absent entirely
+    assert sentinel.liveness(str(s)) == 0
+
+
 # ---------------------------------------------------- watch: disarm vs kill
 
 def test_watch_disarms_cleanly_on_dead_pid(tmp_path):
@@ -202,6 +213,118 @@ def test_watch_escalates_to_sigkill_after_grace(tmp_path, monkeypatch):
     assert marker.exists()
     log = logf.read_text()
     assert "survived" in log and "SIGKILL" in log     # escalation path taken
+
+
+# ------------------------------------------- pgrep self-match regression (#1 MLOps blocker)
+# 2026-06-17 digest, Health: the GPU-free watcher's `pgrep -f 'train.*\.py'`
+# self-matched its OWN command line (the pattern appears in pgrep's argv and in
+# the shell wrapper that launched it), so it always reported a trainer and the
+# loop never closed. These pin that the watcher (a) never counts itself / its
+# probe / its ancestors, and (b) DOES detect a real trainer and reports idle
+# when none exist.
+
+def test_self_pid_set_includes_self():
+    pids = sentinel.self_pid_set()
+    assert os.getpid() in pids
+    # the test process has at least one ancestor (the shell / pytest launcher)
+    assert len(pids) >= 1
+    assert all(isinstance(p, int) and p > 0 for p in pids)
+
+
+def test_is_probe_flags_pgrep_self_match():
+    # The exact self-matching command line from the digest.
+    assert sentinel.is_probe(["pgrep", "-f", "train.*\\.py"]) is True
+    assert sentinel.is_probe(["bash", "-c", "pgrep -f 'train.*\\.py'"]) is True
+    assert sentinel.is_probe(["python3", "sentinel.py", "preflight"]) is True
+    assert sentinel.is_probe(["python", "-c", "import safe_cuda"]) is True
+    # a genuine trainer argv is NOT a probe
+    assert sentinel.is_probe(["python3", "train.py", "--lr", "3e-4"]) is False
+
+
+def test_is_trainer_rejects_self_and_probe():
+    me = os.getpid()
+    self_pids = {me}
+    # (a) the watcher's own pgrep child carrying the pattern -> NOT a trainer
+    assert sentinel.is_trainer(424242, ["pgrep", "-f", "train.*\\.py"],
+                               self_pids) is False
+    # the sentinel process itself, even with the pattern in argv -> NOT a trainer
+    assert sentinel.is_trainer(424243, ["python3", "sentinel.py", "preflight"],
+                               self_pids) is False
+    # our own PID, even with a perfectly trainer-shaped argv -> excluded by PID
+    assert sentinel.is_trainer(me, ["python3", "train.py"], self_pids) is False
+    # an ancestor PID (e.g. the launching shell that carries the pattern)
+    assert sentinel.is_trainer(99, ["bash", "-c", "pgrep -f train.py"],
+                               {me, 99}) is False
+
+
+def test_is_trainer_detects_real_trainer():
+    self_pids = {os.getpid()}
+    # (b) a real launched training job IS detected
+    assert sentinel.is_trainer(
+        555, ["python3", "train.py", "--lr", "3e-4"], self_pids) is True
+    assert sentinel.is_trainer(
+        556, ["/usr/bin/python3", "/x/pretrain.py"], self_pids) is True
+    assert sentinel.is_trainer(
+        557, ["torchrun", "--nproc_per_node=8", "train_qwen.py"], self_pids) is True
+    # a launcher without the trainer pattern is NOT counted
+    assert sentinel.is_trainer(
+        558, ["python3", "serve.py"], self_pids) is False
+    # 'train' as a substring of a non-launcher arg (e.g. a browser URL) -> no
+    assert sentinel.is_trainer(
+        559, ["firefox", "https://x/train_schedule"], self_pids) is False
+    # empty argv (raced exit) -> no
+    assert sentinel.is_trainer(560, [], self_pids) is False
+
+
+def test_find_trainers_does_not_count_itself(monkeypatch):
+    # END-TO-END self-match guard: pgrep returns ONLY this process's own PID
+    # (exactly what `pgrep -f sentinel`-style self-match yields). The watcher
+    # must report ZERO trainers, not count its own probe.
+    me = os.getpid()
+
+    def fake_run(cmd, *a, **k):
+        # pgrep self-matches -> returns our own PID; nvidia-smi has no apps.
+        out = f"{me}\n" if cmd[0] == "pgrep" else ""
+        return types.SimpleNamespace(stdout=out)
+
+    monkeypatch.setattr(sentinel.subprocess, "run", fake_run)
+    monkeypatch.setattr(sentinel, "_proc_argv",
+                        lambda pid: ["python3", "sentinel.py", "preflight"])
+    hits = sentinel.find_trainers([])
+    assert hits == [], f"watcher counted itself: {hits}"
+
+
+def test_find_trainers_detects_real_then_idle(monkeypatch):
+    # A REAL matching process (a live sleeper we pretend is a trainer) is
+    # detected; when pgrep returns nothing, the watcher reports idle.
+    child = _sleeper(30)
+    try:
+        def fake_run_hit(cmd, *a, **k):
+            out = f"{child.pid}\n" if cmd[0] == "pgrep" else ""
+            return types.SimpleNamespace(stdout=out)
+        monkeypatch.setattr(sentinel.subprocess, "run", fake_run_hit)
+        monkeypatch.setattr(
+            sentinel, "_proc_argv",
+            lambda pid: ["python3", "train.py", "--lr", "3e-4"])
+        hits = sentinel.find_trainers([])
+        assert any(str(child.pid) in h for h in hits), hits
+    finally:
+        child.kill()
+        child.wait()
+
+    # No matches -> idle (empty hit list).
+    monkeypatch.setattr(sentinel.subprocess, "run",
+                        lambda *a, **k: types.SimpleNamespace(stdout=""))
+    assert sentinel.find_trainers([]) == []
+
+
+def test_find_trainers_pgrep_unavailable_notes(monkeypatch):
+    def boom(*a, **k):
+        raise OSError("no pgrep")
+    monkeypatch.setattr(sentinel.subprocess, "run", boom)
+    notes = []
+    assert sentinel.find_trainers(notes) == []
+    assert any("pgrep unavailable" in n for n in notes)
 
 
 # ---------------------------------------------------- preflight health gate

@@ -1,0 +1,5 @@
+[22:15:40] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0 | vr=False ln=False hg=True | steps=2 seed=0 tok/step=512
+[22:15:41] optimizer split: 225 / 113 param tensors
+[22:15:44]   loaded cached tokens from tokcache_2001024_300000_seed0_Qwen3-0.6B-Base.pt (2,001,024 train + 300,000 val)
+[22:15:48]   [ckpt @ 2] -> smoke_hg.pt
+[22:15:53] DONE

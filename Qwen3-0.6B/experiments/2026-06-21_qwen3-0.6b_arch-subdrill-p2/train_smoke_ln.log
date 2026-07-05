@@ -1,0 +1,5 @@
+[22:15:11] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0 | vr=False ln=True hg=False | steps=2 seed=0 tok/step=512
+[22:15:11] optimizer split: 197 / 113 param tensors
+[22:15:24]   streamed 2,005,429 train + 301,253 val tokens in 8.0s; decontam dropped 0/451 val docs (report -> results/decontam_report.json)
+[22:15:28]   [ckpt @ 2] -> smoke_ln.pt
+[22:15:32] DONE

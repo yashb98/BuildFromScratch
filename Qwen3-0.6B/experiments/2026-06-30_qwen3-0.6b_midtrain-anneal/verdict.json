@@ -1,0 +1,292 @@
+{
+  "suite_version": "text-lm-v2",
+  "headline_corpus": "code_py",
+  "treatment": "mix",
+  "control": "fineweb",
+  "corpora": {
+    "code_py": {
+      "control_bpb": [
+        2.1236686842342434,
+        2.123956958820996,
+        2.1231696571893144
+      ],
+      "control_mean": 2.1235984334148514,
+      "control_sem": 0.00022997271434608727,
+      "treatment_bpb": [
+        1.8520767996817127,
+        1.8549603788780968,
+        1.8489356408739377
+      ],
+      "treatment_mean": 1.851990939811249,
+      "treatment_sem": 0.0017397218113544197,
+      "improvement_bpb": 0.27160749360360237,
+      "ci95": [
+        0.2640563484201071,
+        0.2791586387870976
+      ],
+      "significant": true,
+      "warning": null
+    },
+    "wikitext2_val": {
+      "control_bpb": [
+        1.2220495106247666,
+        1.2217141153037034,
+        1.2221947823819987
+      ],
+      "control_mean": 1.2219861361034896,
+      "control_sem": 0.00014232879481392772,
+      "treatment_bpb": [
+        1.2057266908865,
+        1.20695819006153,
+        1.206059363080966
+      ],
+      "treatment_mean": 1.2062480813429988,
+      "treatment_sem": 0.00036781267485109956,
+      "improvement_bpb": 0.01573805476049084,
+      "ci95": [
+        0.014040993622104418,
+        0.01743511589887726
+      ],
+      "significant": true,
+      "warning": null
+    }
+  },
+  "short_ctx_non_regression": {
+    "mix/code_py": {
+      "base_bpb": 2.128595386220801,
+      "arm_mean": 1.851990939811249,
+      "arm_ci95": [
+        1.8445055210103387,
+        1.8594763586121594
+      ],
+      "delta_vs_base": 0.27660444640955184,
+      "regressed": false
+    },
+    "mix/wikitext2_val": {
+      "base_bpb": 1.2256204566076285,
+      "arm_mean": 1.2062480813429988,
+      "arm_ci95": [
+        1.2046655111334548,
+        1.2078306515525428
+      ],
+      "delta_vs_base": 0.01937237526462976,
+      "regressed": false
+    },
+    "fineweb/code_py": {
+      "base_bpb": 2.128595386220801,
+      "arm_mean": 2.1235984334148514,
+      "arm_ci95": [
+        2.122608940687665,
+        2.1245879261420377
+      ],
+      "delta_vs_base": 0.004996952805949473,
+      "regressed": false
+    },
+    "fineweb/wikitext2_val": {
+      "base_bpb": 1.2256204566076285,
+      "arm_mean": 1.2219861361034896,
+      "arm_ci95": [
+        1.2213737447259385,
+        1.2225985274810407
+      ],
+      "delta_vs_base": 0.0036343205041389215,
+      "regressed": false
+    }
+  },
+  "ecl_ladder": {
+    "suite": "ecl-ladder-v1 (passkey, eval_longcontext loader)",
+    "n_per_rung_per_cell": 40,
+    "base": {
+      "per_rung_accuracy": {
+        "512": 0.2,
+        "1024": 0.2,
+        "2048": 0.2,
+        "4096": 0.025,
+        "6144": 0.7,
+        "8192": 0.35
+      },
+      "per_rung_wilson95": {
+        "512": [
+          0.10499989725437703,
+          0.347573063463995
+        ],
+        "1024": [
+          0.10499989725437703,
+          0.347573063463995
+        ],
+        "2048": [
+          0.10499989725437703,
+          0.347573063463995
+        ],
+        "4096": [
+          0.0044268315026814095,
+          0.1288136896347409
+        ],
+        "6144": [
+          0.5456998118185507,
+          0.8192515477025347
+        ],
+        "8192": [
+          0.2213452887317629,
+          0.5049411916274231
+        ]
+      },
+      "ecl_rel085": 8192,
+      "ecl_abs05": 6144
+    },
+    "arms": {
+      "mix": {
+        "per_rung_pooled": {
+          "512": {
+            "acc": 0.8166666666666667,
+            "wilson95": [
+              0.7379908648282967,
+              0.8756969964398578
+            ]
+          },
+          "1024": {
+            "acc": 0.4,
+            "wilson95": [
+              0.31676408120837146,
+              0.4894397520753693
+            ]
+          },
+          "2048": {
+            "acc": 0.225,
+            "wilson95": [
+              0.15949154668383533,
+              0.3075689948464516
+            ]
+          },
+          "4096": {
+            "acc": 0.4,
+            "wilson95": [
+              0.31676408120837146,
+              0.4894397520753693
+            ]
+          },
+          "6144": {
+            "acc": 0.7083333333333334,
+            "wilson95": [
+              0.6215576502025923,
+              0.7821843637896146
+            ]
+          },
+          "8192": {
+            "acc": 0.45,
+            "wilson95": [
+              0.3639173508387461,
+              0.5391845658031243
+            ]
+          }
+        },
+        "ecl_rel085": [
+          6144,
+          6144,
+          512
+        ],
+        "ecl_abs05": [
+          6144,
+          6144,
+          6144
+        ]
+      },
+      "fineweb": {
+        "per_rung_pooled": {
+          "512": {
+            "acc": 0.30833333333333335,
+            "wilson95": [
+              0.232727369889163,
+              0.39582997723800684
+            ]
+          },
+          "1024": {
+            "acc": 0.2,
+            "wilson95": [
+              0.13824476478840259,
+              0.28036673506281956
+            ]
+          },
+          "2048": {
+            "acc": 0.2,
+            "wilson95": [
+              0.13824476478840259,
+              0.28036673506281956
+            ]
+          },
+          "4096": {
+            "acc": 0.4,
+            "wilson95": [
+              0.31676408120837146,
+              0.4894397520753693
+            ]
+          },
+          "6144": {
+            "acc": 0.7,
+            "wilson95": [
+              0.6128485756752643,
+              0.7747437577572543
+            ]
+          },
+          "8192": {
+            "acc": 0.4083333333333333,
+            "wilson95": [
+              0.3245613454748446,
+              0.4977921683685844
+            ]
+          }
+        },
+        "ecl_rel085": [
+          8192,
+          8192,
+          8192
+        ],
+        "ecl_abs05": [
+          6144,
+          6144,
+          6144
+        ]
+      }
+    },
+    "ladder_regressed_cells": []
+  },
+  "significance_verdict": "win",
+  "c25_gate": {
+    "verdict": "win",
+    "completeness": {
+      "stage": "mid-training",
+      "known": true,
+      "complete": true,
+      "required": [
+        "effective_context_length_ruler",
+        "short_ctx_non_regression",
+        "anneal_gain_vs_iso_token_control"
+      ],
+      "present": [
+        "anneal_gain_vs_iso_token_control",
+        "effective_context_length_ruler",
+        "short_ctx_non_regression"
+      ],
+      "missing_hard": [],
+      "disallowed_sole_signal": [],
+      "report_missing": [
+        "figure"
+      ],
+      "verdict_cap": null,
+      "registry_version": "v1",
+      "researched_on": "2026-06-22"
+    },
+    "significance_verdict": "win",
+    "why": "HARD-complete and significant (\u00a7C25.3.5)"
+  },
+  "final_verdict": "win",
+  "constant_lr_anchor": {
+    "source": "Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/verdict.json",
+    "regime": "full continued-train at normal LR (NOT an anneal) \u2014 upper-bound reference only",
+    "code_py_improvement_bpb": 0.5904307914737172,
+    "code_py_ci95": [
+      0.5531974784151051,
+      0.6276641045323293
+    ]
+  }
+}

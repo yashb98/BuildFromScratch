@@ -1,0 +1,56 @@
+{
+  "suite_version": "text-lm-v2",
+  "headline_corpus": "wikitext2_val",
+  "axes": {
+    "treatment": {
+      "wikitext2_val": {
+        "baseline_bpb": [
+          1.5192052377472585,
+          1.508491419732289,
+          1.5194476389429863
+        ],
+        "baseline_mean": 1.515714765474178,
+        "baseline_sem": 0.0036123506827305443,
+        "treatment_bpb": [
+          1.5250151380948063,
+          1.5245278304592795,
+          1.5267854226896937
+        ],
+        "treatment_mean": 1.5254427970812598,
+        "treatment_sem": 0.0006858935355256286,
+        "improvement_bpb": -0.0097280316070818,
+        "ci95": [
+          -0.025549693563240664,
+          0.006093630349077065
+        ],
+        "significant": false,
+        "warning": null
+      },
+      "code_py": {
+        "baseline_bpb": [
+          2.6395702101427325,
+          2.623405988373192,
+          2.6526390143417036
+        ],
+        "baseline_mean": 2.638538404285876,
+        "baseline_sem": 0.008454602677705559,
+        "treatment_bpb": [
+          1.9271201439812065,
+          1.9249338418500914,
+          1.9532478831101971
+        ],
+        "treatment_mean": 1.9351006229804983,
+        "treatment_sem": 0.009095553252612812,
+        "improvement_bpb": 0.7034377813053776,
+        "ci95": [
+          0.6639233630446848,
+          0.7429521995660704
+        ],
+        "significant": true,
+        "warning": null
+      }
+    }
+  },
+  "drivers": [],
+  "overall_verdict": "recipe-level (no single axis clears the seed-noise floor)"
+}

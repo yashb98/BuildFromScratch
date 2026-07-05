@@ -1,0 +1,80 @@
+{
+  "suite_version": "text-lm-v2",
+  "date": "2026-06-16 22:29:25",
+  "objective": "pretrain-ablation",
+  "model_dir": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B",
+  "tokenizer_repo": "Qwen/Qwen3-0.6B-Base",
+  "target_ckpt": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/checkpoint_prope25_2tpp_.pt",
+  "baseline_ckpt": null,
+  "self_floor": true,
+  "ppl": {
+    "wikitext2_val": {
+      "corpus_id": "wikitext2_raw_v1_val",
+      "target": 38.079604272040854,
+      "n_tokens": 204600
+    },
+    "code_py": {
+      "corpus_id": "codeparrot_clean_valid",
+      "target": 447.30146774857917,
+      "n_tokens": 204600
+    }
+  },
+  "noise_floor": {
+    "wikitext2_val": {
+      "subsample_ppls": [
+        35.39637273494403,
+        37.10037797135576,
+        35.516435065138296
+      ],
+      "floor_abs": 1.7040052364117315,
+      "floor_pct": 4.732770052771617
+    },
+    "code_py": {
+      "subsample_ppls": [
+        614.559636493184,
+        335.2048602883236,
+        315.66084627088736
+      ],
+      "floor_abs": 298.89879022229667,
+      "floor_pct": 70.86126223013082
+    }
+  },
+  "generations": [
+    {
+      "prompt": "def fibonacci(n):",
+      "target": "def fibonacci(n):1345-30, 2007, in: S. R. G. S. P. (ed.), The Language of the English Language, 2nd ed., New York: Oxford University Press, 2006, pp. 299"
+    },
+    {
+      "prompt": "The Pythagorean theorem states",
+      "target": "The Pythagorean theorem states that the ratio of the number of sides in a triangle must equal the number of sides in a triangle. The Pythagorean theorem states that the ratio of the number of sides in a triangle must equal the number of sides in a triangle. The Pythagorean theorem states that the ratio of the number"
+    },
+    {
+      "prompt": "The capital of France is",
+      "target": "The capital of France is the city of Bonneville, located in the center of the Rhine. The city is surrounded by large areas of the Rhine, with the cities of Strasbourg and Toulouse being the most important. In 2014, the city of Bonneville was the 11"
+    },
+    {
+      "prompt": "In Python, a list comprehension is",
+      "target": "In Python, a list comprehension is the first step in the learning process, in which a child is asked to perform a task, as in the following:\nLet's assume a child is asked to perform a task and the child is asked to perform the task as in the following:\nThis child is asked to work out a list of ten"
+    },
+    {
+      "prompt": "Once upon a time, a small robot",
+      "target": "Once upon a time, a small robot was used to do the same job, but it was very hard to remember where it was going.\nOne day, it was spotted by a drone. It went around and took a picture of the robot. The robot was so close that it would be able to fly by it. It was like a"
+    },
+    {
+      "prompt": "The three branches of the United States government are",
+      "target": "The three branches of the United States government are the Supreme Court, the Supreme Court, and the Supreme Court of the United States and the Supreme Court of the United States.\nAlthough the Supreme Court is the supreme court of the United States, there are several other courts with jurisdiction in the United States. These include the Supreme Court of the United States and"
+    },
+    {
+      "prompt": "To compute the average of a list of numbers, you",
+      "target": "To compute the average of a list of numbers, you can use the following methods:\n- The first method is to calculate the number you want to compute.\n- The second method is to calculate the number you want to compute, and the third method is to calculate the number you want to compute.\n- The third method is to work out the number you want"
+    },
+    {
+      "prompt": "Water boils at a temperature of",
+      "target": "Water boils at a temperature of 365 degrees F (56 degrees C), and a thickness of 10 feet (3.8 meters). The temperature of the water at the bottom of the well is 150 degrees F (47 degrees C), which is the highest temperature of the water at the"
+    }
+  ],
+  "forgetting": {},
+  "not_run": {
+    "forgetting": "not run \u2014 N/A (objective != finetune or no base)"
+  }
+}

@@ -1,0 +1,50 @@
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[20:35:04] [vibethinker_sft] loss-oracle check OK: masked_chunked_ce=4.414680 == masked_sft_nll=4.414680
+[20:35:04] [vibethinker_sft] tok/step=524,288 steps=238 token_budget=124,780,544 warmup=11 peak_lr=5e-05 end_lr=8e-08 global_batch=128
+[20:35:04] [vibethinker_sft] loading SFT shard stream + meta...
+[20:35:05] [vibethinker_sft] 30,517 windows of 4096; 121,796,969 response (trained) tokens of 125,000,592 total (97.4% trained)
+[20:35:05] [vibethinker_sft] loading base checkpoint /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[20:35:12] [vibethinker_sft] base loaded strict=True (base PPL on FineWeb-Edu was 28.650247632362024); params=596,049,920
+[20:35:25] [vibethinker_sft] baseline held-out reasoning PPL=14.262 (159582 resp toks)
+[20:35:25] [vibethinker_sft] training to 238 steps (start 0); micro_batch=4 x grad_accum=32 windows/step
+[20:47:15] [vibethinker_sft] step 10/238 loss 2.5944 lr 4.55e-05 |grad| 0.55 mem 52.4GB tok/s 7,382 tok 5.2M ETA 4.50h
+[20:58:53] [vibethinker_sft] step 20/238 loss 2.6841 lr 4.98e-05 |grad| 0.47 mem 52.4GB tok/s 7,445 tok 10.5M ETA 4.26h
+[20:58:57] [vibethinker_sft] [ckpt @ 20] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[21:10:34] [vibethinker_sft] step 30/238 loss 2.5121 lr 4.91e-05 |grad| 0.44 mem 52.4GB tok/s 7,459 tok 15.7M ETA 4.06h
+[21:22:54] [vibethinker_sft] step 40/238 loss 2.4169 lr 4.80e-05 |grad| 0.41 mem 52.4GB tok/s 7,360 tok 21.0M ETA 3.92h
+[21:23:07] [vibethinker_sft] [eval @ 40] reasoning PPL=12.865 (Δ vs base -1.397)
+[21:23:11] [vibethinker_sft] [ckpt @ 40] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[21:35:57] [vibethinker_sft] step 50/238 loss 2.3654 lr 4.65e-05 |grad| 0.39 mem 52.4GB tok/s 7,217 tok 26.2M ETA 3.79h
+[21:48:47] [vibethinker_sft] step 60/238 loss 2.2874 lr 4.45e-05 |grad| 0.38 mem 52.4GB tok/s 7,146 tok 31.5M ETA 3.63h
+[21:48:51] [vibethinker_sft] [ckpt @ 60] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[22:01:26] [vibethinker_sft] step 70/238 loss 2.7157 lr 4.21e-05 |grad| 0.39 mem 52.4GB tok/s 7,111 tok 36.7M ETA 3.44h
+[22:14:11] [vibethinker_sft] step 80/238 loss 2.5660 lr 3.95e-05 |grad| 0.37 mem 52.4GB tok/s 7,078 tok 41.9M ETA 3.25h
+[22:14:23] [vibethinker_sft] [eval @ 80] reasoning PPL=12.096 (Δ vs base -2.166)
+[22:14:27] [vibethinker_sft] [ckpt @ 80] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[22:26:59] [vibethinker_sft] step 90/238 loss 2.4153 lr 3.65e-05 |grad| 0.37 mem 52.4GB tok/s 7,049 tok 47.2M ETA 3.06h
+[22:39:27] [vibethinker_sft] step 100/238 loss 2.4481 lr 3.33e-05 |grad| 0.37 mem 52.4GB tok/s 7,045 tok 52.4M ETA 2.85h
+[22:39:31] [vibethinker_sft] [ckpt @ 100] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[22:52:00] [vibethinker_sft] step 110/238 loss 2.5009 lr 3.00e-05 |grad| 0.37 mem 52.4GB tok/s 7,037 tok 57.7M ETA 2.65h
+[23:04:28] [vibethinker_sft] step 120/238 loss 2.5642 lr 2.66e-05 |grad| 0.37 mem 52.4GB tok/s 7,035 tok 62.9M ETA 2.44h
+[23:04:41] [vibethinker_sft] [eval @ 120] reasoning PPL=11.749 (Δ vs base -2.513)
+[23:04:44] [vibethinker_sft] [ckpt @ 120] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[23:17:11] [vibethinker_sft] step 130/238 loss 2.4744 lr 2.31e-05 |grad| 0.38 mem 52.4GB tok/s 7,022 tok 68.2M ETA 2.24h
+[23:29:39] [vibethinker_sft] step 140/238 loss 2.4412 lr 1.97e-05 |grad| 0.39 mem 52.4GB tok/s 7,021 tok 73.4M ETA 2.03h
+[23:29:42] [vibethinker_sft] [ckpt @ 140] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[23:42:10] [vibethinker_sft] step 150/238 loss 2.5264 lr 1.64e-05 |grad| 0.36 mem 52.4GB tok/s 7,019 tok 78.6M ETA 1.83h
+[23:54:37] [vibethinker_sft] step 160/238 loss 2.4762 lr 1.33e-05 |grad| 0.36 mem 52.4GB tok/s 7,018 tok 83.9M ETA 1.62h
+[23:54:50] [vibethinker_sft] [eval @ 160] reasoning PPL=11.618 (Δ vs base -2.644)
+[23:54:53] [vibethinker_sft] [ckpt @ 160] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[00:07:21] [vibethinker_sft] step 170/238 loss 2.7241 lr 1.03e-05 |grad| 0.37 mem 52.4GB tok/s 7,009 tok 89.1M ETA 1.41h
+[00:19:48] [vibethinker_sft] step 180/238 loss 2.2457 lr 7.70e-06 |grad| 0.37 mem 52.4GB tok/s 7,010 tok 94.4M ETA 1.21h
+[00:19:52] [vibethinker_sft] [ckpt @ 180] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[00:32:19] [vibethinker_sft] step 190/238 loss 2.4312 lr 5.39e-06 |grad| 0.37 mem 52.4GB tok/s 7,008 tok 99.6M ETA 1.00h
+[00:44:48] [vibethinker_sft] step 200/238 loss 2.5558 lr 3.45e-06 |grad| 0.36 mem 52.4GB tok/s 7,008 tok 104.9M ETA 0.79h
+[00:45:00] [vibethinker_sft] [eval @ 200] reasoning PPL=11.596 (Δ vs base -2.666)
+[00:45:04] [vibethinker_sft] [ckpt @ 200] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[00:57:31] [vibethinker_sft] step 210/238 loss 2.4385 lr 1.93e-06 |grad| 0.36 mem 52.4GB tok/s 7,001 tok 110.1M ETA 0.58h
+[01:09:59] [vibethinker_sft] step 220/238 loss 2.2564 lr 8.50e-07 |grad| 0.37 mem 52.4GB tok/s 7,001 tok 115.3M ETA 0.37h
+[01:10:03] [vibethinker_sft] [ckpt @ 220] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[01:22:31] [vibethinker_sft] step 230/238 loss 2.3686 lr 2.33e-07 |grad| 0.38 mem 52.4GB tok/s 7,000 tok 120.6M ETA 0.17h
+[01:32:33] [vibethinker_sft] [ckpt @ 238] saved Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt
+[01:32:45] [vibethinker_sft] DONE in 297.3 min; reasoning PPL 14.26208621850191 -> 11.596 (eval-harness does the §C10 scoring + the §C13 FineWeb-Edu forgetting probe)

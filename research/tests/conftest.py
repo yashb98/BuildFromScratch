@@ -12,9 +12,11 @@ from pathlib import Path
 import pytest
 
 # sentinel.py lives at the repo root; ledger.py at research/ledger/;
-# eval_stats.py at research/.
+# eval_stats.py / eval_metrics.py / posttrain_losses.py at research/;
+# the harness-search framework at research/harness_search/.
 REPO_ROOT = Path(__file__).resolve().parents[2]
-for _p in (REPO_ROOT, REPO_ROOT / "research", REPO_ROOT / "research" / "ledger"):
+for _p in (REPO_ROOT, REPO_ROOT / "research", REPO_ROOT / "research" / "ledger",
+           REPO_ROOT / "research" / "harness_search"):
     _s = str(_p)
     if _s not in sys.path:
         sys.path.insert(0, _s)

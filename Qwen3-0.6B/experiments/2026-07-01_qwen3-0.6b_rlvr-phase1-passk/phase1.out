@@ -1,0 +1,11 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+== sft_seed0 (checkpoint_sft_seed0.pt)
+   gsm8k: pass@1=0.0112 CI[0.0059,0.0212] pass@k={1: 0.01125, 8: 0.07} solved=7/100 (1895s)
+   math500_l13: pass@1=0.0150 CI[0.0069,0.0323] pass@k={1: 0.015, 8: 0.1} solved=5/50 (900s)
+== base (checkpoint_qwen3_baseline2tpp.pt)
+   gsm8k: pass@1=0.0063 CI[0.0027,0.0145] pass@k={1: 0.00625, 8: 0.05} solved=5/100 (1919s)
+   math500_l13: pass@1=0.0225 CI[0.0119,0.0422] pass@k={1: 0.0225, 8: 0.14} solved=7/50 (913s)
+
+DECISION: GO (SFT solved 12 items; rule: GO iff >= 3)
+DONE

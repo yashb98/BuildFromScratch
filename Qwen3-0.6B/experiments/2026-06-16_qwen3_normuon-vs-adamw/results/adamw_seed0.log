@@ -1,0 +1,46 @@
+[22:31:45] [adamw_seed0] start: optimizer=adamw seed=0 steps=3 tok_budget=196,608 peak_lr=0.0024 normuon_lr=0.011 wd=0.1
+[22:31:56]   streamed 2,196,616 train + 301,253 val tokens in 8.5s; decontam dropped 0/451 val docs (report -> results/decontam_report.json)
+[22:31:57] [adamw_seed0] 536 train windows of 4096
+[22:32:03] [adamw_seed0] param split: 196 2D->adamw | 114 rest->AdamW
+[22:32:20] [adamw_seed0] baseline (random-init) val PPL=184184.11
+[22:33:09] [adamw_seed0] DONE in 0.8 min; fineweb-val PPL 184184.11 -> 42347.94 (the eval-harness does the real scoring)
+[22:33:10] [adamw_seed0] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/results/checkpoint_adamw_seed0.pt
+[22:43:00] [adamw_seed0] start: optimizer=adamw seed=0 steps=640 tok_budget=41,943,040 peak_lr=0.0024 normuon_lr=0.011 wd=0.1
+[22:44:04]   streamed 43,953,291 train + 301,253 val tokens in 61.3s; decontam dropped 0/451 val docs (report -> results/decontam_report.json)
+[22:44:06] [adamw_seed0] 10,728 train windows of 4096
+[22:44:13] [adamw_seed0] param split: 196 2D->adamw | 114 rest->AdamW
+[22:44:29] [adamw_seed0] baseline (random-init) val PPL=184184.11
+[22:47:47] [adamw_seed0] step 20/640 loss 8.1831 lr 9.60e-04 |grad| 0.91 tok/s 6,657 mem 52.4GB
+[22:51:00] [adamw_seed0] step 40/640 loss 7.7927 lr 1.92e-03 |grad| 0.75 tok/s 6,723 mem 52.4GB
+[22:54:18] [adamw_seed0] step 60/640 loss 7.3338 lr 2.40e-03 |grad| 1.00 tok/s 6,683 mem 52.4GB
+[22:57:37] [adamw_seed0] step 80/640 loss 6.9377 lr 2.39e-03 |grad| 0.89 tok/s 6,666 mem 52.4GB
+[23:00:45] [adamw_seed0] step 100/640 loss 6.7080 lr 2.36e-03 |grad| 0.49 tok/s 6,719 mem 52.4GB
+[23:03:53] [adamw_seed0] step 120/640 loss 6.5343 lr 2.33e-03 |grad| 0.46 tok/s 6,760 mem 52.4GB
+[23:06:48] [adamw_seed0] step 140/640 loss 6.2464 lr 2.28e-03 |grad| 0.47 tok/s 6,856 mem 52.4GB
+[23:09:43] [adamw_seed0] step 160/640 loss 6.5183 lr 2.22e-03 |grad| 0.51 tok/s 6,930 mem 52.4GB
+[23:12:38] [adamw_seed0] step 180/640 loss 6.0742 lr 2.16e-03 |grad| 0.59 tok/s 6,988 mem 52.4GB
+[23:15:33] [adamw_seed0] step 200/640 loss 6.1847 lr 2.08e-03 |grad| 0.43 tok/s 7,034 mem 52.4GB
+[23:18:28] [adamw_seed0] step 220/640 loss 6.1504 lr 1.99e-03 |grad| 0.47 tok/s 7,073 mem 52.4GB
+[23:21:24] [adamw_seed0] step 240/640 loss 5.7420 lr 1.90e-03 |grad| 0.33 tok/s 7,105 mem 52.4GB
+[23:24:19] [adamw_seed0] step 260/640 loss 5.7344 lr 1.80e-03 |grad| 0.35 tok/s 7,133 mem 52.4GB
+[23:27:14] [adamw_seed0] step 280/640 loss 5.7257 lr 1.69e-03 |grad| 0.41 tok/s 7,158 mem 52.4GB
+[23:30:09] [adamw_seed0] step 300/640 loss 5.7065 lr 1.58e-03 |grad| 0.34 tok/s 7,179 mem 52.4GB
+[23:33:04] [adamw_seed0] step 320/640 loss 5.6274 lr 1.47e-03 |grad| 0.38 tok/s 7,198 mem 52.4GB
+[23:35:59] [adamw_seed0] step 340/640 loss 5.4801 lr 1.35e-03 |grad| 0.43 tok/s 7,214 mem 52.4GB
+[23:38:54] [adamw_seed0] step 360/640 loss 5.5274 lr 1.24e-03 |grad| 0.37 tok/s 7,228 mem 52.4GB
+[23:41:49] [adamw_seed0] step 380/640 loss 5.3740 lr 1.13e-03 |grad| 0.31 tok/s 7,241 mem 52.4GB
+[23:44:44] [adamw_seed0] step 400/640 loss 5.5340 lr 1.01e-03 |grad| 0.34 tok/s 7,253 mem 52.4GB
+[23:47:39] [adamw_seed0] step 420/640 loss 5.3421 lr 9.05e-04 |grad| 0.27 tok/s 7,264 mem 52.4GB
+[23:50:34] [adamw_seed0] step 440/640 loss 5.3081 lr 8.02e-04 |grad| 0.25 tok/s 7,274 mem 52.4GB
+[23:53:29] [adamw_seed0] step 460/640 loss 5.2700 lr 7.04e-04 |grad| 0.29 tok/s 7,283 mem 52.4GB
+[23:56:24] [adamw_seed0] step 480/640 loss 5.2639 lr 6.13e-04 |grad| 0.26 tok/s 7,292 mem 52.4GB
+[23:59:19] [adamw_seed0] step 500/640 loss 5.1440 lr 5.30e-04 |grad| 0.25 tok/s 7,300 mem 52.4GB
+[00:02:14] [adamw_seed0] step 520/640 loss 5.0507 lr 4.57e-04 |grad| 0.28 tok/s 7,307 mem 52.4GB
+[00:05:09] [adamw_seed0] step 540/640 loss 5.1685 lr 3.92e-04 |grad| 0.22 tok/s 7,313 mem 52.4GB
+[00:08:04] [adamw_seed0] step 560/640 loss 5.0176 lr 3.39e-04 |grad| 0.22 tok/s 7,319 mem 52.4GB
+[00:10:59] [adamw_seed0] step 580/640 loss 4.9752 lr 2.96e-04 |grad| 0.23 tok/s 7,325 mem 52.4GB
+[00:13:54] [adamw_seed0] step 600/640 loss 4.8966 lr 2.66e-04 |grad| 0.22 tok/s 7,330 mem 52.4GB
+[00:16:49] [adamw_seed0] step 620/640 loss 5.1130 lr 2.47e-04 |grad| 0.23 tok/s 7,335 mem 52.4GB
+[00:19:44] [adamw_seed0] step 640/640 loss 5.1467 lr 2.40e-04 |grad| 0.24 tok/s 7,340 mem 52.4GB
+[00:19:59] [adamw_seed0] DONE in 95.5 min; fineweb-val PPL 184184.11 -> 147.42 (the eval-harness does the real scoring)
+[00:20:00] [adamw_seed0] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/results/checkpoint_adamw_seed0.pt

@@ -1,0 +1,46 @@
+===== SMOKE arm=baseline =====
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[12:29:00] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0 | vr=False ln=False hg=False | steps=6 seed=0 tok/step=65,536
+[12:29:00] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[12:29:15]   streamed 2,393,529 train + 301,253 val tokens in 9.7s; decontam dropped 0/451 val docs (report -> results/decontam_report.json)
+[12:31:25]   [ckpt @ 6] -> smoke_baseline.pt
+[12:31:29] DONE
+===== SMOKE arm=wsd =====
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[12:31:49] ARM arch=faithful schedule=wsd optimizer=adamw zloss=0.0 | vr=False ln=False hg=False | steps=6 seed=0 tok/step=65,536
+[12:31:49] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[12:31:52]   loaded cached tokens from tokcache_2393216_300000_seed0_Qwen3-0.6B-Base.pt (2,393,216 train + 300,000 val)
+[12:33:54]   [ckpt @ 6] -> smoke_wsd.pt
+[12:33:57] DONE
+===== SMOKE arm=zloss =====
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[12:34:06] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0001 | vr=False ln=False hg=False | steps=6 seed=0 tok/step=65,536
+[12:34:07] optimizer split: 197 / 113 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[12:34:09]   loaded cached tokens from tokcache_2393216_300000_seed0_Qwen3-0.6B-Base.pt (2,393,216 train + 300,000 val)
+[12:36:34]   [ckpt @ 6] -> smoke_zloss.pt
+[12:36:38] DONE
+===== SMOKE arm=arch =====
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[12:36:53] ARM arch=imu1 schedule=cosine optimizer=adamw zloss=0.0 | vr=True ln=True hg=True | steps=6 seed=0 tok/step=65,536
+[12:36:54] optimizer split: 225 / 197 param tensors
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[12:36:57]   loaded cached tokens from tokcache_2393216_300000_seed0_Qwen3-0.6B-Base.pt (2,393,216 train + 300,000 val)
+[12:39:01]   [ckpt @ 6] -> smoke_arch.pt
+[12:39:05] DONE
+===== RESUME round-trip (baseline: resume smoke_baseline.pt, continue to 10) =====
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[12:39:14] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0 | vr=False ln=False hg=False | steps=10 seed=0 tok/step=65,536
+[12:39:14] optimizer split: 197 / 113 param tensors
+[12:39:18] RESUMED from smoke_baseline.pt @ step 7
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[12:39:33]   streamed 2,656,184 train + 301,253 val tokens in 10.5s; decontam dropped 0/451 val docs (report -> results/decontam_report.json)
+[12:40:50] step    10/10  ce 7.7657  lr 3.20e-04  |grad| 2.34  mem 75.6GB  tok/s 3,435
+[12:40:53]   [ckpt @ 10] -> smoke_baseline_resumed.pt
+[12:40:57] DONE
+===== SMOKE SUMMARY =====
+resume: resume-loaded (rc=0)
+checkpoints: 5/5
+VERDICT: SMOKE-PASS

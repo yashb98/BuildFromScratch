@@ -1,0 +1,41 @@
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+[05:14:58] [normuon_seed1] start: optimizer=normuon seed=1 steps=640 tok_budget=41,943,040 peak_lr=0.0024 normuon_lr=0.011 wd=0.1
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[05:15:00]   loaded cached tokens from tokcache_43943040_300000_seed0_Qwen3-0.6B-Base.pt (43,943,040 train + 300,000 val)
+[05:15:00] [normuon_seed1] 10,728 train windows of 4096
+[05:15:06] [normuon_seed1] param split: 196 2D->normuon | 114 rest->AdamW
+[05:15:22] [normuon_seed1] baseline (random-init) val PPL=185606.27
+[05:18:42] [normuon_seed1] step 20/640 loss 7.7367 lr 9.60e-04 |grad| 1.59 tok/s 6,563 mem 52.4GB
+[05:21:58] [normuon_seed1] step 40/640 loss 6.7338 lr 1.92e-03 |grad| 0.84 tok/s 6,616 mem 52.4GB
+[05:25:15] [normuon_seed1] step 60/640 loss 6.6146 lr 2.40e-03 |grad| 0.47 tok/s 6,633 mem 52.4GB
+[05:28:31] [normuon_seed1] step 80/640 loss 6.2186 lr 2.39e-03 |grad| 0.46 tok/s 6,643 mem 52.4GB
+[05:31:48] [normuon_seed1] step 100/640 loss 6.1649 lr 2.36e-03 |grad| 0.38 tok/s 6,647 mem 52.4GB
+[05:35:05] [normuon_seed1] step 120/640 loss 5.6050 lr 2.33e-03 |grad| 0.48 tok/s 6,649 mem 52.4GB
+[05:38:22] [normuon_seed1] step 140/640 loss 5.6848 lr 2.28e-03 |grad| 0.37 tok/s 6,650 mem 52.4GB
+[05:41:39] [normuon_seed1] step 160/640 loss 5.5047 lr 2.22e-03 |grad| 0.31 tok/s 6,651 mem 52.4GB
+[05:44:55] [normuon_seed1] step 180/640 loss 5.2834 lr 2.16e-03 |grad| 0.30 tok/s 6,652 mem 52.4GB
+[05:48:12] [normuon_seed1] step 200/640 loss 5.2653 lr 2.08e-03 |grad| 0.31 tok/s 6,654 mem 52.4GB
+[05:51:28] [normuon_seed1] step 220/640 loss 4.8956 lr 1.99e-03 |grad| 0.31 tok/s 6,655 mem 52.4GB
+[05:54:45] [normuon_seed1] step 240/640 loss 5.2790 lr 1.90e-03 |grad| 0.24 tok/s 6,657 mem 52.4GB
+[05:58:01] [normuon_seed1] step 260/640 loss 5.0876 lr 1.80e-03 |grad| 0.27 tok/s 6,658 mem 52.4GB
+[06:01:18] [normuon_seed1] step 280/640 loss 4.6378 lr 1.69e-03 |grad| 0.26 tok/s 6,659 mem 52.4GB
+[06:04:43] [normuon_seed1] step 300/640 loss 4.7805 lr 1.58e-03 |grad| 0.24 tok/s 6,640 mem 52.4GB
+[06:08:20] [normuon_seed1] step 320/640 loss 4.5474 lr 1.47e-03 |grad| 0.23 tok/s 6,598 mem 52.4GB
+[06:11:51] [normuon_seed1] step 340/640 loss 4.4501 lr 1.35e-03 |grad| 0.21 tok/s 6,575 mem 52.4GB
+[06:15:16] [normuon_seed1] step 360/640 loss 4.3237 lr 1.24e-03 |grad| 0.22 tok/s 6,565 mem 52.4GB
+[06:18:33] [normuon_seed1] step 380/640 loss 4.5736 lr 1.13e-03 |grad| 0.22 tok/s 6,570 mem 52.4GB
+[06:21:49] [normuon_seed1] step 400/640 loss 4.2727 lr 1.01e-03 |grad| 0.23 tok/s 6,575 mem 52.4GB
+[06:25:06] [normuon_seed1] step 420/640 loss 4.3789 lr 9.05e-04 |grad| 0.21 tok/s 6,579 mem 52.4GB
+[06:28:22] [normuon_seed1] step 440/640 loss 4.0086 lr 8.02e-04 |grad| 0.19 tok/s 6,583 mem 52.4GB
+[06:31:39] [normuon_seed1] step 460/640 loss 4.1109 lr 7.04e-04 |grad| 0.18 tok/s 6,586 mem 52.4GB
+[06:34:56] [normuon_seed1] step 480/640 loss 4.2158 lr 6.13e-04 |grad| 0.18 tok/s 6,589 mem 52.4GB
+[06:38:13] [normuon_seed1] step 500/640 loss 4.5803 lr 5.30e-04 |grad| 0.17 tok/s 6,592 mem 52.4GB
+[06:41:29] [normuon_seed1] step 520/640 loss 3.8685 lr 4.57e-04 |grad| 0.18 tok/s 6,595 mem 52.4GB
+[06:44:46] [normuon_seed1] step 540/640 loss 3.9975 lr 3.92e-04 |grad| 0.17 tok/s 6,597 mem 52.4GB
+[06:48:03] [normuon_seed1] step 560/640 loss 4.0744 lr 3.39e-04 |grad| 0.15 tok/s 6,600 mem 52.4GB
+[06:51:19] [normuon_seed1] step 580/640 loss 4.1321 lr 2.96e-04 |grad| 0.16 tok/s 6,602 mem 52.4GB
+[06:54:36] [normuon_seed1] step 600/640 loss 3.9227 lr 2.66e-04 |grad| 0.15 tok/s 6,604 mem 52.4GB
+[06:57:53] [normuon_seed1] step 620/640 loss 4.3166 lr 2.47e-04 |grad| 0.16 tok/s 6,606 mem 52.4GB
+[07:01:10] [normuon_seed1] step 640/640 loss 3.9022 lr 2.40e-04 |grad| 0.17 tok/s 6,608 mem 52.4GB
+[07:01:24] [normuon_seed1] DONE in 106.0 min; fineweb-val PPL 185606.27 -> 60.10 (the eval-harness does the real scoring)
+[07:01:25] [normuon_seed1] saved /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/results/checkpoint_normuon_seed1.pt

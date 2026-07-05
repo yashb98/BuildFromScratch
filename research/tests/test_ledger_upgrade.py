@@ -70,3 +70,70 @@ def test_sweep_parent_then_child(ledger_path):
     d = reload(ledger_path)
     child = [r for r in d["runs"] if r["run_id"].endswith("seed0")][0]
     assert child["parent_id"] == "2026-06-15_qwen3_sweep0"
+
+
+# --- §C18 single-variable WIN gate (the confounded-headline run-waster) ---------
+
+def test_win_requires_single_variable_iso_flop(ledger_path):
+    assert run(ledger_path, "add-technique", "--slug", "norm", "--title", "N") == 0
+    # a recorded win with NO confound_check is rejected (confounded / non-comparable)
+    assert run(ledger_path, "add-run", "--run-id", "2026-06-15_qwen3_w0",
+               "--type", "ablation", "--technique-slug", "norm",
+               "--set", "verdict=win") == 2
+    # a win on a multi-variable BUNDLE is rejected as a bare win (cf. IMU-1 honesty)
+    assert run(ledger_path, "add-run", "--run-id", "2026-06-15_qwen3_w1",
+               "--type", "ablation", "--technique-slug", "norm", "--set", "verdict=win",
+               "--set", 'confound_check={"n_vars":6,"iso_flop":true}') == 2
+    # a single-variable, FLOP-matched win is accepted
+    assert run(ledger_path, "add-run", "--run-id", "2026-06-15_qwen3_w2",
+               "--type", "ablation", "--technique-slug", "norm", "--set", "verdict=win",
+               "--set", 'confound_check={"n_vars":1,"iso_flop":true}') == 0
+    # a bundle recorded as INCONCLUSIVE is fine (the honest path stays open)
+    assert run(ledger_path, "add-run", "--run-id", "2026-06-15_qwen3_w3",
+               "--type", "ablation", "--technique-slug", "norm",
+               "--set", "verdict=inconclusive",
+               "--set", 'confound_check={"n_vars":6,"iso_flop":true}') == 0
+
+
+def test_orphan_launch_run_rejected(ledger_path):
+    # §C8 referential integrity: a launch-bearing run with an unknown technique -> 3
+    assert run(ledger_path, "add-run", "--run-id", "2026-06-15_qwen3_o0",
+               "--type", "ablation", "--technique-slug", "ghost") == 3
+    # a free-floating eval with an unknown slug still only warns (exit 0)
+    assert run(ledger_path, "add-run", "--run-id", "2026-06-15_qwen3_o1",
+               "--type", "eval", "--technique-slug", "ghost") == 0
+
+
+def test_predicted_win_prob_range(ledger_path):
+    assert run(ledger_path, "add-technique", "--slug", "p", "--title", "P") == 0
+    assert run(ledger_path, "update-technique", "p", "--set", "predicted_win_prob=1.5") == 2
+    assert run(ledger_path, "update-technique", "p", "--set", "predicted_win_prob=0.42") == 0
+    t = [t for t in reload(ledger_path)["techniques"] if t["slug"] == "p"][0]
+    assert t["predicted_win_prob"] == 0.42
+
+
+def test_daily_backup_snapshot(ledger_path):
+    run(ledger_path, "add-technique", "--slug", "b", "--title", "B")
+    run(ledger_path, "add-technique", "--slug", "b2", "--title", "B2")
+    snaps = list((ledger_path.parent / "backups").glob(f"{ledger_path.stem}-*.json"))
+    assert len(snaps) == 1  # ONE per-day snapshot, not one per mutation
+
+
+def test_ledger_lock_serializes(ledger_path):
+    import threading
+    fd1 = ledger.acquire_lock(ledger_path)
+    assert fd1 is not None
+    got = []
+
+    def grab():
+        fd2 = ledger.acquire_lock(ledger_path)  # must BLOCK until fd1 releases
+        got.append(fd2)
+        ledger.release_lock(fd2)
+
+    t = threading.Thread(target=grab)
+    t.start()
+    t.join(timeout=0.5)
+    assert t.is_alive()              # still blocked: the lock is exclusive
+    ledger.release_lock(fd1)
+    t.join(timeout=2.0)
+    assert not t.is_alive() and got and got[0] is not None

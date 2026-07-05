@@ -1,0 +1,8 @@
+[12:27:27] ARM arch=imu1 schedule=cosine optimizer=adamw zloss=0.0 | vr=True ln=True hg=True | steps=5 seed=0 tok/step=65,536
+[12:27:27] optimizer split: 17 / 15 param tensors
+[12:27:28] step     1/5  ce 6.2994  lr 1.70e-05  |grad| 1.74  mem 0.0GB  tok/s 592,712
+[12:27:28] step     2/5  ce 6.2507  lr 3.40e-05  |grad| 1.76  mem 0.0GB  tok/s 830,587
+[12:27:28] step     3/5  ce 6.2273  lr 5.10e-05  |grad| 1.73  mem 0.0GB  tok/s 977,625
+[12:27:28] step     4/5  ce 6.2651  lr 6.80e-05  |grad| 1.72  mem 0.0GB  tok/s 935,329
+[12:27:28] step     5/5  ce 6.2845  lr 8.50e-05  |grad| 1.73  mem 0.0GB  tok/s 1,042,028
+[12:27:28] DONE (dry run OK)

@@ -1,0 +1,35 @@
+[08:34:22] [sft_seed2] loss-oracle check OK: masked_chunked_ce=4.414680 == masked_sft_nll=4.414680
+[08:34:22] [sft_seed2] tok/step=524,288 steps=238 token_budget=124,780,544 warmup=11 peak_lr=5e-05 end_lr=8e-08 global_batch=128
+[08:34:22] [sft_seed2] loading SFT shard stream + meta...
+[08:34:24] [sft_seed2] 30,517 windows of 4096; 121,796,969 response (trained) tokens of 125,000,592 total (97.4% trained)
+[08:34:24] [sft_seed2] loading base checkpoint /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt
+[08:34:31] [sft_seed2] base loaded strict=True (base PPL on FineWeb-Edu was 28.650247632362024); params=596,049,920
+[08:34:44] [sft_seed2] baseline held-out reasoning PPL=14.262 (159582 resp toks)
+[08:34:44] [sft_seed2] training to 238 steps (start 0); micro_batch=4 x grad_accum=32 windows/step
+[08:46:27] [sft_seed2] step 10/238 loss 2.7993 lr 4.55e-05 |grad| 0.56 mem 52.4GB tok/s 7,464 tok 5.2M ETA 4.45h
+[08:58:06] [sft_seed2] step 20/238 loss 2.4999 lr 4.98e-05 |grad| 0.47 mem 52.4GB tok/s 7,478 tok 10.5M ETA 4.25h
+[09:09:46] [sft_seed2] step 30/238 loss 2.4670 lr 4.91e-05 |grad| 0.45 mem 52.4GB tok/s 7,483 tok 15.7M ETA 4.05h
+[09:21:26] [sft_seed2] step 40/238 loss 2.7550 lr 4.80e-05 |grad| 0.40 mem 52.4GB tok/s 7,485 tok 21.0M ETA 3.85h
+[09:33:05] [sft_seed2] step 50/238 loss 2.3010 lr 4.65e-05 |grad| 0.39 mem 52.4GB tok/s 7,488 tok 26.2M ETA 3.66h
+[09:44:54] [sft_seed2] step 60/238 loss 2.5831 lr 4.45e-05 |grad| 0.39 mem 52.4GB tok/s 7,473 tok 31.5M ETA 3.47h
+[09:57:28] [sft_seed2] step 70/238 loss 2.4279 lr 4.21e-05 |grad| 0.39 mem 52.4GB tok/s 7,394 tok 36.7M ETA 3.31h
+[10:09:20] [sft_seed2] step 80/238 loss 2.4580 lr 3.95e-05 |grad| 0.38 mem 52.4GB tok/s 7,390 tok 41.9M ETA 3.11h
+[10:21:02] [sft_seed2] step 90/238 loss 2.4380 lr 3.65e-05 |grad| 0.37 mem 52.4GB tok/s 7,399 tok 47.2M ETA 2.91h
+[10:32:43] [sft_seed2] step 100/238 loss 2.6852 lr 3.33e-05 |grad| 0.38 mem 52.4GB tok/s 7,406 tok 52.4M ETA 2.71h
+[10:32:47] [sft_seed2] [ckpt @ 100] saved checkpoint_sft_seed2.pt
+[10:44:31] [sft_seed2] step 110/238 loss 2.4257 lr 3.00e-05 |grad| 0.37 mem 52.4GB tok/s 7,407 tok 57.7M ETA 2.52h
+[10:56:15] [sft_seed2] step 120/238 loss 2.5672 lr 2.66e-05 |grad| 0.37 mem 52.4GB tok/s 7,410 tok 62.9M ETA 2.32h
+[11:08:03] [sft_seed2] step 130/238 loss 2.1463 lr 2.31e-05 |grad| 0.36 mem 52.4GB tok/s 7,409 tok 68.2M ETA 2.12h
+[11:19:48] [sft_seed2] step 140/238 loss 2.6073 lr 1.97e-05 |grad| 0.38 mem 52.4GB tok/s 7,412 tok 73.4M ETA 1.93h
+[11:31:32] [sft_seed2] step 150/238 loss 2.3966 lr 1.64e-05 |grad| 0.35 mem 52.4GB tok/s 7,414 tok 78.6M ETA 1.73h
+[11:43:16] [sft_seed2] step 160/238 loss 2.4647 lr 1.33e-05 |grad| 0.34 mem 52.4GB tok/s 7,416 tok 83.9M ETA 1.53h
+[11:55:04] [sft_seed2] step 170/238 loss 2.6194 lr 1.03e-05 |grad| 0.37 mem 52.4GB tok/s 7,415 tok 89.1M ETA 1.34h
+[12:06:48] [sft_seed2] step 180/238 loss 2.3437 lr 7.70e-06 |grad| 0.36 mem 52.4GB tok/s 7,417 tok 94.4M ETA 1.14h
+[12:19:09] [sft_seed2] step 190/238 loss 2.6782 lr 5.39e-06 |grad| 0.36 mem 52.4GB tok/s 7,398 tok 99.6M ETA 0.94h
+[12:30:57] [sft_seed2] step 200/238 loss 2.3119 lr 3.45e-06 |grad| 0.37 mem 52.4GB tok/s 7,399 tok 104.9M ETA 0.75h
+[12:31:00] [sft_seed2] [ckpt @ 200] saved checkpoint_sft_seed2.pt
+[12:42:49] [sft_seed2] step 210/238 loss 2.7822 lr 1.93e-06 |grad| 0.38 mem 52.4GB tok/s 7,397 tok 110.1M ETA 0.55h
+[12:54:44] [sft_seed2] step 220/238 loss 2.5094 lr 8.50e-07 |grad| 0.38 mem 52.4GB tok/s 7,394 tok 115.3M ETA 0.35h
+[13:06:42] [sft_seed2] step 230/238 loss 2.4473 lr 2.33e-07 |grad| 0.36 mem 52.4GB tok/s 7,390 tok 120.6M ETA 0.16h
+[13:16:30] [sft_seed2] [ckpt @ 238] saved checkpoint_sft_seed2.pt
+[13:16:43] [sft_seed2] DONE in 282.0 min; reasoning PPL 14.26208621850191 -> 11.594 (eval-harness does the §C10 scoring + the §C13 FineWeb-Edu forgetting probe)

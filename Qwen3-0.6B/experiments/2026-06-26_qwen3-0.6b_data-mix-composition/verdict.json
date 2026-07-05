@@ -1,0 +1,104 @@
+{
+  "suite_version": "text-lm-v2",
+  "headline_corpus": "wikitext2_val",
+  "axes": {
+    "dclm": {
+      "wikitext2_val": {
+        "baseline_bpb": [
+          1.5192052377472585,
+          1.508491419732289,
+          1.5194476389429863
+        ],
+        "baseline_mean": 1.515714765474178,
+        "baseline_sem": 0.0036123506827305443,
+        "treatment_bpb": [
+          1.5250151380948063,
+          1.5245278304592795,
+          1.5267854226896937
+        ],
+        "treatment_mean": 1.5254427970812598,
+        "treatment_sem": 0.0006858935355256286,
+        "improvement_bpb": -0.0097280316070818,
+        "ci95": [
+          -0.025549693563240664,
+          0.006093630349077065
+        ],
+        "significant": false,
+        "warning": null
+      },
+      "code_py": {
+        "baseline_bpb": [
+          2.6395702101427325,
+          2.623405988373192,
+          2.6526390143417036
+        ],
+        "baseline_mean": 2.638538404285876,
+        "baseline_sem": 0.008454602677705559,
+        "treatment_bpb": [
+          1.9271201439812065,
+          1.9249338418500914,
+          1.9532478831101971
+        ],
+        "treatment_mean": 1.9351006229804983,
+        "treatment_sem": 0.009095553252612812,
+        "improvement_bpb": 0.7034377813053776,
+        "ci95": [
+          0.6639233630446848,
+          0.7429521995660704
+        ],
+        "significant": true,
+        "warning": null
+      }
+    },
+    "mix": {
+      "wikitext2_val": {
+        "baseline_bpb": [
+          1.5192052377472585,
+          1.508491419732289,
+          1.5194476389429863
+        ],
+        "baseline_mean": 1.515714765474178,
+        "baseline_sem": 0.0036123506827305443,
+        "treatment_bpb": [
+          1.5019029789483926,
+          1.504694865302714,
+          1.492285350199533
+        ],
+        "treatment_mean": 1.4996277314835467,
+        "treatment_sem": 0.0037586158597607533,
+        "improvement_bpb": 0.016087033990631383,
+        "ci95": [
+          -0.0005010071851609399,
+          0.032675075166423706
+        ],
+        "significant": false,
+        "warning": null
+      },
+      "code_py": {
+        "baseline_bpb": [
+          2.6395702101427325,
+          2.623405988373192,
+          2.6526390143417036
+        ],
+        "baseline_mean": 2.638538404285876,
+        "baseline_sem": 0.008454602677705559,
+        "treatment_bpb": [
+          2.0498830273156794,
+          2.050014838147228,
+          2.0444249729735695
+        ],
+        "treatment_mean": 2.0481076128121587,
+        "treatment_sem": 0.001841713030433276,
+        "improvement_bpb": 0.5904307914737172,
+        "ci95": [
+          0.5531974784151051,
+          0.6276641045323293
+        ],
+        "significant": true,
+        "warning": null
+      }
+    }
+  },
+  "drivers": [],
+  "overall_verdict": "recipe-level (no single axis clears the seed-noise floor)"
+}

@@ -1,0 +1,11 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+grid: 6 rungs × 40 samples (paired across checkpoints)
+  base: 512:0.20 1024:0.20 2048:0.20 4096:0.03 6144:0.70 8192:0.35 | ECL rel=8192 abs=6144 (477s)
+  fineweb_seed0: 512:0.38 1024:0.20 2048:0.20 4096:0.40 6144:0.70 8192:0.40 | ECL rel=8192 abs=6144 (478s)
+  fineweb_seed1: 512:0.30 1024:0.20 2048:0.20 4096:0.40 6144:0.70 8192:0.42 | ECL rel=8192 abs=6144 (490s)
+  fineweb_seed2: 512:0.25 1024:0.20 2048:0.20 4096:0.40 6144:0.70 8192:0.40 | ECL rel=8192 abs=6144 (488s)
+  mix_seed0: 512:0.72 1024:0.40 2048:0.23 4096:0.40 6144:0.70 8192:0.45 | ECL rel=6144 abs=6144 (455s)
+  mix_seed1: 512:0.85 1024:0.40 2048:0.23 4096:0.40 6144:0.72 8192:0.45 | ECL rel=6144 abs=6144 (459s)
+  mix_seed2: 512:0.88 1024:0.40 2048:0.23 4096:0.40 6144:0.70 8192:0.45 | ECL rel=512 abs=6144 (455s)
+DONE -> ecl_ladder.json

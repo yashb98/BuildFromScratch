@@ -1,0 +1,9 @@
+[07:59:14] ARM arch=faithful schedule=cooldown optimizer=adamw zloss=0.0 | vr=False ln=False hg=False | steps=3 seed=0 tok/step=65,536
+[07:59:14] optimizer split: 197 / 113 param tensors
+[07:59:15] INIT-FROM base weights Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt (strict load OK; fresh optimizer; cooldown @ step 1)
+[07:59:28]   streamed 598,588 train + 301,253 val tokens in 6.9s; decontam dropped 0/451 val docs (report -> results/decontam_report.json)
+[07:59:28] DATA=mix(50/50 dclm+FineWeb): 1,196,608 train (598,304 dclm + 598,304 fw) + 300,000 val
+[07:59:48] step     1/3  ce 3.4179  lr 2.50e-04  |grad| 0.22  mem 75.6GB  tok/s 3,184
+[08:00:06] step     2/3  ce 3.5695  lr 9.09e-05  |grad| 0.23  mem 78.0GB  tok/s 3,443
+[08:00:24] step     3/3  ce 3.4471  lr 2.50e-05  |grad| 0.20  mem 78.0GB  tok/s 3,508
+[08:00:28] DONE

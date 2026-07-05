@@ -1,0 +1,7 @@
+[01:16:56] ARM arch=faithful schedule=cosine optimizer=adamw zloss=0.0 | vr=False ln=False hg=False | steps=4 seed=0 tok/step=512
+[01:16:56] optimizer split: 197 / 113 param tensors
+[01:17:08]   streamed 501,992 train + 301,253 val tokens in 6.6s; decontam dropped 0/451 val docs (report -> results/decontam_report.json)
+[01:17:08] DATA=mix(50/50 dclm+FineWeb): 1,002,048 train (501,024 dclm + 501,024 fw) + 300,000 val
+[01:17:12]   [ckpt @ 2] -> smoke_mix.pt
+[01:17:16]   [ckpt @ 4] -> smoke_mix.pt
+[01:17:20] DONE

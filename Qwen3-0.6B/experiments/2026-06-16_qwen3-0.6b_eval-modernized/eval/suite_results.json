@@ -1,0 +1,80 @@
+{
+  "suite_version": "text-lm-v2",
+  "date": "2026-06-16 22:28:07",
+  "objective": "pretrain-ablation",
+  "model_dir": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B",
+  "tokenizer_repo": "Qwen/Qwen3-0.6B-Base",
+  "target_ckpt": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/checkpoint_imu1_2tpp_step18000.pt",
+  "baseline_ckpt": null,
+  "self_floor": true,
+  "ppl": {
+    "wikitext2_val": {
+      "corpus_id": "wikitext2_raw_v1_val",
+      "target": 27.79954726958199,
+      "n_tokens": 204600
+    },
+    "code_py": {
+      "corpus_id": "codeparrot_clean_valid",
+      "target": 129.422726138489,
+      "n_tokens": 204600
+    }
+  },
+  "noise_floor": {
+    "wikitext2_val": {
+      "subsample_ppls": [
+        25.755529642211368,
+        26.821871615057137,
+        26.76835924832206
+      ],
+      "floor_abs": 1.0663419728457697,
+      "floor_pct": 4.03175405737262
+    },
+    "code_py": {
+      "subsample_ppls": [
+        191.86020898513135,
+        92.92390858205447,
+        79.93710025446617
+      ],
+      "floor_abs": 111.92310873066518,
+      "floor_pct": 92.06191188914765
+    }
+  },
+  "generations": [
+    {
+      "prompt": "def fibonacci(n):",
+      "target": "def fibonacci(n): n = 2, r = 3, n = 10, and r = 23.\nn = 2, r = 3, n = 10, and r = 22.\nn = 2, r = 3, n = 1"
+    },
+    {
+      "prompt": "The Pythagorean theorem states",
+      "target": "The Pythagorean theorem states that the ratio of the squares of two sides x + y = 1/2 is a multiple of the square root of 2, and therefore, one of the solutions to the equation is 1. In fact, if we have the first equation that has a solution of 2, then"
+    },
+    {
+      "prompt": "The capital of France is",
+      "target": "The capital of France is the seat of the government of the Kingdom of France. The capital of France is the seat of the government of the Kingdom of France. The capital of France is the seat of the government of the Kingdom of France. The capital of France is the seat of the government of the Kingdom of France.\nThe"
+    },
+    {
+      "prompt": "In Python, a list comprehension is",
+      "target": "In Python, a list comprehension is the process of understanding the contents of a list. This is done by first collecting and organizing a list of items in a given directory and then searching for items in the directory with a given keyword. For example, if we wanted to search for the first item in the list, we would first search for"
+    },
+    {
+      "prompt": "Once upon a time, a small robot",
+      "target": "Once upon a time, a small robot was sent to the planet by someone who was looking for a good job in the future. He was so impressed by the robot that he decided to build one for everyone, and it was so successful that he had to start a company that would build their robots again so they could keep working for another ten"
+    },
+    {
+      "prompt": "The three branches of the United States government are",
+      "target": "The three branches of the United States government are the executive branch, legislative branch, and judicial branch. The executive branch of the government is a branch of the federal government.\nThe legislative branch has the authority to make laws and to pass laws. The legislative branch is also known as the legislative branch of the United States government.\nThe executive branch of the"
+    },
+    {
+      "prompt": "To compute the average of a list of numbers, you",
+      "target": "To compute the average of a list of numbers, you must have the same list of numbers, in order. A list of numbers is always called a list.\nThere are several types of data, and these have different values, and you can write them differently. You can use the lists in Python for storing the data of a list. Let's suppose that"
+    },
+    {
+      "prompt": "Water boils at a temperature of",
+      "target": "Water boils at a temperature of 325\u00b0C\n- The chemical composition of the water is in the form of a salt\n- The solubility of the sodium ions is low\n- The boiling point of the water is less than 24\u00b0C\n- The boiling point of water in the presence of water is"
+    }
+  ],
+  "forgetting": {},
+  "not_run": {
+    "forgetting": "not run \u2014 N/A (objective != finetune or no base)"
+  }
+}

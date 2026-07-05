@@ -1,0 +1,16 @@
+{
+  "run_id": "2026-07-05_qwen3-0.6b_scaling-persistence",
+  "lifecycle_stage": "scaling",
+  "objective": "pretrain-ablation",
+  "question": "Does NorMuon's +0.474 BPB win over AdamW (2D weights, fixed N=596M) PERSIST or converge with token budget? Closes IMU-1 RESULT.md Limitation #3 (no >=3-budget scaling curve).",
+  "design": "Single-variable persistence sweep. Reuse train_ablation.py (the exact IMU-1 single-variable trainer: only the 196 2D-weight updates differ between arms; embeddings/1D are AdamW wd=0 in both, split seed 0 fixed). Vary ONLY --steps. Arms adamw@2.4e-3 vs normuon@0.011, paired by seed.",
+  "cells_core": "42M (reuse existing IMU-1 3-seed cohort) + 168M x{adamw,normuon}x3 seeds + 420M x{adamw,normuon}x2 seeds. 840M is a later extension.",
+  "reused": "42M rung = the existing 2026-06-16_qwen3_normuon-vs-adamw cohort (+0.474 wikitext / +0.502 code, 3 seeds) — not retrained.",
+  "score": "BPB gap (AdamW - NorMuon) per budget on wikitext-2 + code (text-lm-v2), across-seed CI per point, then scaling_ladder.fit_gap_trend() -> does the gap trend to 0?",
+  "confounds_controlled": "single variable (optimizer on 2D weights); iso-config within a budget; fixed data split. OPEN caveat carried: AdamW LR held fixed across budgets (per-horizon LR check to be added at the largest rung, per RESULT.md Limitation #1).",
+  "safety": "one GPU job at a time (armed to fire only after RLVR verdict.json frees the GPU); safe_cuda.guard(0.85) inside train_ablation.py; sentinel watch --kill-at 0.80 per cell; smoke-first (1 step); chunked CE (152k vocab); .done markers = cell-level resumability (trainer has no mid-run resume, so cells kept <=~27h).",
+  "cost": "~4 GPU-days core (3-budget); ~10.5 for the full 4-budget curve. Compute-bound (GB10 273 GB/s bandwidth does not bite for training fwd+bwd; see research/references/gb10_vs_colab_feasibility_2026-07-05.md).",
+  "honesty": "report achieved tok/s only, never %-of-peak MFU (GB10 peak estimated, §C24). A measured convergence (win compresses) is a PASSING result, not a failure.",
+  "driver": "run_ladder.sh (armed PID-tracked). Scorer score_ladder.py to be added before cells finish.",
+  "plan": "research/scaling/plan.md ; cells: research/scaling/ladder_plan.json ; ledger proposal: scaling-persistence-ladder"
+}

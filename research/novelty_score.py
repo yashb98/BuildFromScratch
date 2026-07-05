@@ -75,7 +75,12 @@ def composite_mu(s: dict, weights: dict = None) -> float:
            + w["pen_blast"] * _g(s, "blast", 0.0)
            + w["pen_isolate"] * (1.0 - _g(s, "isolate", 1.0))
            + w["pen_power"] * (1.0 - _g(s, "power", 1.0)))
-    return _clamp(value - pen)
+    # MULTIPLICATIVE penalty (not subtractive): a penalty SHRINKS μ proportionally
+    # rather than driving it to exactly 0. The old `value - pen` zeroed ~79% of
+    # gate-passing ideas (pen routinely exceeded value), collapsing the bandit to
+    # insertion order. (isolate/power are also hard gates in passes_gates; here
+    # they act as soft penalties — the tests assert they reduce μ.)
+    return _clamp(value * (1.0 - _clamp(pen)))
 
 
 def aggregate_sigma(s: dict, weights: dict = None) -> float:

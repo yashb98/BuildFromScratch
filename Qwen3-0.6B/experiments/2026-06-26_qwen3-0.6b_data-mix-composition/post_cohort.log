@@ -1,0 +1,69 @@
+[2026-06-26 01:17:39] watcher armed (waiting for cohort.done)
+[2026-06-26 01:18:36] watcher armed (waiting for cohort.done)
+[2026-06-26 17:13:44] cohort.done detected -> scoring 12 cells
+PREFLIGHT OK mem_available=85% disk_free=3284GB load1=1.04 cores=20 trainers=none
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Repo card metadata block was not found. Setting CardData to empty.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (262210 > 131072). Running this sequence through the model will result in indexing errors
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+loading corpora (once)...
+  fineweb_seed0: wikitext bpb=1.5192 ppl=87.90 | code bpb=2.6396  (33s)
+  fineweb_seed1: wikitext bpb=1.5085 ppl=85.17 | code bpb=2.6234  (32s)
+  fineweb_seed2: wikitext bpb=1.5194 ppl=87.96 | code bpb=2.6526  (31s)
+  dclm_seed0: wikitext bpb=1.5250 ppl=89.42 | code bpb=1.9271  (33s)
+  dclm_seed1: wikitext bpb=1.5245 ppl=89.29 | code bpb=1.9249  (33s)
+  dclm_seed2: wikitext bpb=1.5268 ppl=89.89 | code bpb=1.9532  (32s)
+  mix_seed0: wikitext bpb=2.7691 ppl=3494.50 | code bpb=3.7955  (30s)
+  mix_seed1: wikitext bpb=2.7664 ppl=3466.91 | code bpb=3.7909  (30s)
+  mix_seed2: wikitext bpb=2.7683 ppl=3486.22 | code bpb=3.8337  (30s)
+DONE -> /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/cohort_bpb.json
+==========================================================================
+IMU-1 DE-CONFOUND — per-axis across-seed verdict (headline: wikitext2_val, lower BPB better)
+==========================================================================
+
+[+dclm] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +dclm   seeds [1.525, 1.5245, 1.5268] mean=1.5254±0.0007
+        Δ(baseline−+dclm) = -0.0097 bpb  95% CI [-0.0255, +0.0061]  significant=False
+
+[+mix] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +mix   seeds [2.7691, 2.7664, 2.7683] mean=2.7679±0.0008
+        Δ(baseline−+mix) = -1.2522 bpb  95% CI [-1.2681, -1.2363]  significant=False
+
+==========================================================================
+DRIVERS: none  ->  recipe-level (no single axis clears the seed-noise floor)
+==========================================================================
+[2026-06-26 17:18:37] PIPELINE DONE -> verdict.json ready; signalling pipeline.done
+[2026-06-26 17:23:24] watcher armed (waiting for cohort.done)
+[2026-06-27 09:23:31] cohort.done detected -> scoring 12 cells
+PREFLIGHT OK mem_available=85% disk_free=3284GB load1=0.17 cores=20 trainers=none
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Repo card metadata block was not found. Setting CardData to empty.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (262210 > 131072). Running this sequence through the model will result in indexing errors
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+loading corpora (once)...
+  fineweb_seed0: wikitext bpb=1.5192 ppl=87.90 | code bpb=2.6396  (33s)
+  fineweb_seed1: wikitext bpb=1.5085 ppl=85.17 | code bpb=2.6234  (33s)
+  fineweb_seed2: wikitext bpb=1.5194 ppl=87.96 | code bpb=2.6526  (32s)
+  dclm_seed0: wikitext bpb=1.5250 ppl=89.42 | code bpb=1.9271  (33s)
+  dclm_seed1: wikitext bpb=1.5245 ppl=89.29 | code bpb=1.9249  (31s)
+  dclm_seed2: wikitext bpb=1.5268 ppl=89.89 | code bpb=1.9532  (30s)
+  mix_seed0: wikitext bpb=1.5019 ppl=83.53 | code bpb=2.0499  (30s)
+  mix_seed1: wikitext bpb=1.5047 ppl=84.22 | code bpb=2.0500  (30s)
+  mix_seed2: wikitext bpb=1.4923 ppl=81.20 | code bpb=2.0444  (30s)
+DONE -> /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/cohort_bpb.json
+==========================================================================
+IMU-1 DE-CONFOUND — per-axis across-seed verdict (headline: wikitext2_val, lower BPB better)
+==========================================================================
+
+[+dclm] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +dclm   seeds [1.525, 1.5245, 1.5268] mean=1.5254±0.0007
+        Δ(baseline−+dclm) = -0.0097 bpb  95% CI [-0.0255, +0.0061]  significant=False
+
+[+mix] baseline seeds [1.5192, 1.5085, 1.5194] mean=1.5157±0.0036
+        +mix   seeds [1.5019, 1.5047, 1.4923] mean=1.4996±0.0038
+        Δ(baseline−+mix) = +0.0161 bpb  95% CI [-0.0005, +0.0327]  significant=False
+
+==========================================================================
+DRIVERS: none  ->  recipe-level (no single axis clears the seed-noise floor)
+==========================================================================
+[2026-06-27 09:28:24] PIPELINE DONE -> verdict.json ready; signalling pipeline.done

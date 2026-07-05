@@ -1,0 +1,6 @@
+===== 2026-07-05 13:01:09 scaling-persistence ladder armed (waiting for GPU to free) =====
+[17:13:43] RLVR verdict seen — GPU freeing
+PREFLIGHT OK mem_available=89% disk_free=3225GB load1=1.34 cores=20 trainers=none
+[17:13:48] smoke: train_ablation.py --steps 1
+[17:14:59] smoke OK
+[2026-07-05 17:14:59] START persist_168M_adamw_s0 steps=2564 (~168M tok)

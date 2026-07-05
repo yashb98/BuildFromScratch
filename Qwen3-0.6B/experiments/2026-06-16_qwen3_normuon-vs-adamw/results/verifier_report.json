@@ -1,0 +1,37 @@
+{
+  "verifier": "§C19 read-only WIN-VERIFIER",
+  "verified_on": "2026-06-18",
+  "run_id": "2026-06-16_qwen3_normuon-vs-adamw",
+  "run_dir": "Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw",
+  "headline_corpus": "wikitext2_val",
+  "metric": "bits_per_byte (text-lm-v2)",
+  "direction": "lower_is_better",
+  "raw_per_seed_bpb": {
+    "adamw": [2.104968341587527, 2.1024156720231573, 2.122067396176223],
+    "normuon": [1.6499040351714187, 1.6248421813688168, 1.631728687474182]
+  },
+  "recomputed": {
+    "adamw_mean": 2.1098171365956357,
+    "normuon_mean": 1.6354916346714725,
+    "improvement_bpb": 0.47432550192416323,
+    "pooled_sem": 0.009692344625751213,
+    "welch_df": 3.8610499345338067,
+    "t_df_floored": 3,
+    "t_crit": 3.182,
+    "ci95": [0.4434844613250229, 0.5051665425233036],
+    "method": "two-sample Welch-Satterthwaite Student-t CI on the difference of means; cross-checked with a fully independent stdlib reimplementation (NOT re-read from verdict.json)"
+  },
+  "recorded_ci": [0.4434844613250229, 0.5051665425233036],
+  "recomputed_ci": [0.4434844613250229, 0.5051665425233036],
+  "ci_match": true,
+  "ci_excludes_zero": true,
+  "single_variable": true,
+  "single_variable_evidence": "train_ablation.py build_optims() is the ONLY divergence between arms: the 196 2D non-embed matrices route to AdamW@2.4e-3 vs NorMuon@0.011; the 114 embedding/1D params are AdamW@2.4e-3 wd=0 in BOTH arms; 2D wd=0.1 in both; identical Qwen3Config, fixed data split seed 0, identical 640-step cosine schedule, seq=4096, micro_batch=4, grad_accum=4. Per-optimizer tuned LR is the standard fair optimizer comparison (and the LR sweep shows no AdamW LR closes the gap). Ledger confound_check.n_vars=1.",
+  "iso_flop": true,
+  "iso_flop_evidence": "Both arms run identical 640 steps x 65,536 tok = 41,943,040 tok/cell through the identical model architecture (forward+backward FLOPs match by construction, the 6N+12LHQT convention). NorMuon's Newton-Schulz orthogonalization is optimizer-state compute, not train-FLOP; measured throughput is near-identical (adamw 6657 vs normuon 6654 tok/s; MFU 0.2909 vs 0.2907), well within the 5% tolerance. Ledger confound_check.iso_flop=true. NOTE: a numeric metrics.train_flops field is not stored in any results JSON; iso-FLOP holds by construction + the recorded confound_check flag.",
+  "seeds_ge_3": true,
+  "seeds_evidence": "3 seeds/arm (adamw_seed{0,1,2}, normuon_seed{0,1,2}); identical seed set across arms; arms fully disjoint (worst NorMuon 1.6499 << best AdamW 1.6499... vs best AdamW 2.1024). 6/6 cells completed rc=0 (supervisor.log).",
+  "forgetting_ood_caveat": "Not a finetune (random-init pretrain ablation), so the §C13 catastrophic-forgetting probe does not apply. In-training fineweb-val PPL corroborates the eval-side gap (AdamW 147/145/156 vs NorMuon 61/60/60). Decontam dropped 0/451 val docs; eval corpora (wikitext-2, codeparrot) are independent public sources, no train->eval leak. Honest scaling caveat retained (RESULT.md Limitation #3): 42M tok is the early-training regime that flatters Muon-family optimizers; no scaling curve, so the gap may compress substantially at scale. Seeds vary init+shuffle on a FIXED data split, so the SEM under-estimates fully-randomized seed variance (CI robust by ~15x margin regardless).",
+  "verdict": "PASS",
+  "rationale": "Independent re-derivation of the headline from the RAW per-seed BPB values reproduces the recorded wikitext-2 result bit-for-bit: AdamW mean 2.1098, NorMuon mean 1.6355, improvement +0.4743, two-sample Welch-t 95% CI [+0.4435, +0.5052] (df 3.86 floored to 3, t=3.182), computed both via research/eval_stats.seed_delta_significant and a fully independent stdlib Welch-Satterthwaite implementation; the CI excludes 0. The ablation is single-variable (only the 2D-weight optimizer differs; everything else byte-identical, ledger confound_check.n_vars=1) and iso-FLOP (identical 42M-tok budget through the identical architecture; near-identical measured throughput/MFU; ledger confound_check.iso_flop=true). seeds>=3 per arm with disjoint arms. All five PASS conditions (CI reproduced, single_variable, iso_flop, seeds>=3, CI excludes 0) are met. The win is correctly scoped in RESULT.md to an early-training (42M-tok) optimizer-speed signal on one architecture with an un-re-tuned foreign-wd AdamW baseline and a fixed-split seed design - it is a verified, manuscript-eligible result under those caveats, not a steady-state or at-scale claim. Minor: metrics.train_flops is not stored as a numeric field (iso-FLOP rests on construction + the recorded confound_check flag) - a documentation gap, not a verification failure."
+}

@@ -1,0 +1,14 @@
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+loaded faithful base (596,049,920 params)
+
+=== EFFECTIVE-CONTEXT DIAGNOSTIC (faithful base) ===
+  len   512: passkey acc 0.33  ██████
+  len  1024: passkey acc 0.33  ██████
+  len  2048: passkey acc 0.33  ██████
+  len  4096: passkey acc 0.08  █
+  len  6144: passkey acc 0.58  ███████████
+  len  8192: passkey acc 0.25  █████
+
+  effective context length (acc>=0.5): 6144
+  accuracy at trained_len 4096: 0.08
+  GATE: FAIL -> context-extension MOOT — base collapses before its trained window; propose-only

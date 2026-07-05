@@ -1,0 +1,149 @@
+[2026-06-27 23:18:31] watcher armed
+[2026-06-27 23:18:31] supervisor gone, no cohort.done -> needs_resume
+[2026-06-27 23:27:52] FIXED scorer armed
+[2026-06-29 10:50:15] final_watcher armed (advisory score_verdict + corrected held-out reasoning_eval)
+[2026-06-30 00:08:39] cohort.done -> [1/2] advisory in-loop scorer
+{
+  "sft_final_ppl": [
+    11.596,
+    11.594,
+    11.594
+  ],
+  "ctrl_final_ppl": [
+    12.274,
+    12.274,
+    12.272
+  ],
+  "base_ppl": 14.262,
+  "sft_vs_control": {
+    "improvement_ppl": 0.6786666666666665,
+    "ci95": [
+      0.6760494287672351,
+      0.681283904566098
+    ],
+    "significant": true,
+    "warning": null,
+    "CONFOUND": "in-loop control PPL is over ALL tokens, SFT PPL over RESPONSE tokens only \u2014 NOT directly comparable; re-score both arms on one fixed response-masked held-out set via /eval-harness before trusting this. Advisory, not the verdict."
+  },
+  "sft_vs_base": {
+    "improvement_ppl": 2.6673333333333336,
+    "ci95": [
+      2.664464666666666,
+      2.670202000000001
+    ],
+    "significant": true,
+    "note": "base is a single frozen number repeated x3 -> CI reflects SFT seed-variance only (a sanity check, not a true paired test)"
+  },
+  "headline": "SFT reasoning PPL 11.59 (3 seeds) vs base 14.26, control 12.27; SFT-vs-control significant=True",
+  "overall_verdict": "directional (in-loop) \u2014 SFT's in-loop PPL beats the control's, but the two are scored over different token sets (see CONFOUND); confirm via /eval-harness on one fixed response-masked held-out set before calling it a win"
+}
+[2026-06-30 00:08:39] -> [2/2] corrected HELD-OUT reasoning verdict (GPU)
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+base {"reasoning_ppl_full": 14.7133, "reasoning_full_toks": 232852, "reasoning_ppl_masked": 14.1267, "reasoning_resp_toks": 228529, "resp_frac": 0.9812, "forgetting_ppl": 21.4954}
+sft_seed0 {"reasoning_ppl_full": 12.0672, "reasoning_full_toks": 232852, "reasoning_ppl_masked": 11.5732, "reasoning_resp_toks": 228529, "resp_frac": 0.9812, "forgetting_ppl": 21.6526}
+ctrl_seed0 {"reasoning_ppl_full": 12.0621, "reasoning_full_toks": 232852, "reasoning_ppl_masked": 11.5835, "reasoning_resp_toks": 228529, "resp_frac": 0.9812, "forgetting_ppl": 21.6606}
+sft_seed1 {"reasoning_ppl_full": 12.0664, "reasoning_full_toks": 232852, "reasoning_ppl_masked": 11.5722, "reasoning_resp_toks": 228529, "resp_frac": 0.9812, "forgetting_ppl": 21.6509}
+ctrl_seed1 {"reasoning_ppl_full": 12.0605, "reasoning_full_toks": 232852, "reasoning_ppl_masked": 11.5819, "reasoning_resp_toks": 228529, "resp_frac": 0.9812, "forgetting_ppl": 21.6605}
+sft_seed2 {"reasoning_ppl_full": 12.0664, "reasoning_full_toks": 232852, "reasoning_ppl_masked": 11.5723, "reasoning_resp_toks": 228529, "resp_frac": 0.9812, "forgetting_ppl": 21.6523}
+ctrl_seed2 {"reasoning_ppl_full": 12.0583, "reasoning_full_toks": 232852, "reasoning_ppl_masked": 11.5799, "reasoning_resp_toks": 228529, "resp_frac": 0.9812, "forgetting_ppl": 21.6601}
+{
+  "arms": {
+    "base": {
+      "reasoning_ppl_full": 14.7133,
+      "reasoning_full_toks": 232852,
+      "reasoning_ppl_masked": 14.1267,
+      "reasoning_resp_toks": 228529,
+      "resp_frac": 0.9812,
+      "forgetting_ppl": 21.4954
+    },
+    "sft_seed0": {
+      "reasoning_ppl_full": 12.0672,
+      "reasoning_full_toks": 232852,
+      "reasoning_ppl_masked": 11.5732,
+      "reasoning_resp_toks": 228529,
+      "resp_frac": 0.9812,
+      "forgetting_ppl": 21.6526
+    },
+    "ctrl_seed0": {
+      "reasoning_ppl_full": 12.0621,
+      "reasoning_full_toks": 232852,
+      "reasoning_ppl_masked": 11.5835,
+      "reasoning_resp_toks": 228529,
+      "resp_frac": 0.9812,
+      "forgetting_ppl": 21.6606
+    },
+    "sft_seed1": {
+      "reasoning_ppl_full": 12.0664,
+      "reasoning_full_toks": 232852,
+      "reasoning_ppl_masked": 11.5722,
+      "reasoning_resp_toks": 228529,
+      "resp_frac": 0.9812,
+      "forgetting_ppl": 21.6509
+    },
+    "ctrl_seed1": {
+      "reasoning_ppl_full": 12.0605,
+      "reasoning_full_toks": 232852,
+      "reasoning_ppl_masked": 11.5819,
+      "reasoning_resp_toks": 228529,
+      "resp_frac": 0.9812,
+      "forgetting_ppl": 21.6605
+    },
+    "sft_seed2": {
+      "reasoning_ppl_full": 12.0664,
+      "reasoning_full_toks": 232852,
+      "reasoning_ppl_masked": 11.5723,
+      "reasoning_resp_toks": 228529,
+      "resp_frac": 0.9812,
+      "forgetting_ppl": 21.6523
+    },
+    "ctrl_seed2": {
+      "reasoning_ppl_full": 12.0583,
+      "reasoning_full_toks": 232852,
+      "reasoning_ppl_masked": 11.5799,
+      "reasoning_resp_toks": 228529,
+      "resp_frac": 0.9812,
+      "forgetting_ppl": 21.6601
+    }
+  },
+  "headline_metric": "reasoning_ppl_masked",
+  "eval": {
+    "reasoning_set": "held-out OpenR1-Math eval split (66 docs, seeded split + 13-gram dedup vs train)",
+    "forgetting_set": "held-out FineWeb-Edu (sample-10BT)",
+    "masking": "response (prompt_len reconstructed from eval_docs)"
+  },
+  "sft_vs_control": {
+    "improvement_ppl": 0.009199999999999875,
+    "ci95": [
+      0.004514755051701214,
+      0.013885244948298535
+    ],
+    "significant": true,
+    "warning": null
+  },
+  "sft_vs_control_fullseq": {
+    "improvement_ppl": -0.006366666666670184,
+    "ci95": [
+      -0.011243400000003543,
+      -0.0014899333333368266
+    ],
+    "significant": false,
+    "note": "robustness cross-check (exact, tokenizer-free)"
+  },
+  "overall_verdict": "directional \u2014 masked and full-sequence comparisons disagree on significance; treat as not-yet-separable",
+  "sft_vs_base": {
+    "improvement_ppl": 2.5541333333333327,
+    "ci95": [
+      2.552765066538768,
+      2.5555016001278976
+    ],
+    "significant": true,
+    "note": "base repeated x3 -> reflects SFT seed-variance only (sanity check, not a paired test)"
+  },
+  "forgetting": {
+    "base_ppl": 21.4954,
+    "sft_mean": 21.6519,
+    "ctrl_mean": 21.6604,
+    "note": "held-out FineWeb-Edu PPL; >> base = catastrophic forgetting (\u00a7C13)"
+  }
+}
+[2026-06-30 00:14:41] DONE -> reasoning_verdict.json

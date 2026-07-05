@@ -12,8 +12,11 @@ sequence-dependent term. We use the form the §C5.3 launch probe records:
     flops_per_token = 6*N  +  12 * L * H * Q * T
 
 where N = non-embedding parameter count, L = layers, H = attention heads,
-Q = head_dim, T = sequence length (so H*Q = d_model). The 12·L·d_model·T term is
-the QKᵀ + AV cost over fwd+bwd; it is the part that makes a longer-context or
+Q = head_dim, T = sequence length. NOTE: H*Q is the attention projection width,
+which need NOT equal d_model — Qwen3-0.6B has H*Q = 16*128 = 2048 vs d_model 1024
+(independent head_dim), so the code uses n_heads*head_dim, never d_model. The
+12·L·H·Q·T term is the QKᵀ + AV cost over fwd+bwd; it is the part that makes a
+longer-context or
 deeper arm cost more FLOPs at the SAME token budget — which is exactly why
 "token-matched" is not "FLOP-matched" and why §C18 compares train_flops, not
 tokens.

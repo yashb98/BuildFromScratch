@@ -1,0 +1,126 @@
+{
+  "suite_version": "text-lm-v2",
+  "date": "2026-06-18 01:34:59",
+  "objective": "finetune",
+  "model_dir": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B",
+  "tokenizer_repo": "Qwen/Qwen3-0.6B-Base",
+  "target_ckpt": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/checkpoint_vibethinker_sft.pt",
+  "baseline_ckpt": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt",
+  "self_floor": false,
+  "ppl": {
+    "wikitext2_val": {
+      "corpus_id": "wikitext2_raw_v1_val",
+      "target": 37.07894502462442,
+      "n_tokens": 204600,
+      "bpb": 1.2262516108542694,
+      "n_bytes": 869710,
+      "baseline": 37.010055463333096,
+      "delta_abs": 0.0688895612913214,
+      "delta_pct": 0.18613741705837816,
+      "significant": false,
+      "label": "not significant"
+    },
+    "code_py": {
+      "corpus_id": "codeparrot_clean_valid",
+      "target": 425.68436811662434,
+      "n_tokens": 204600,
+      "bpb": 2.1180793367598745,
+      "n_bytes": 843643,
+      "baseline": 438.67295146042875,
+      "delta_abs": -12.988583343804407,
+      "delta_pct": -2.9608808340160597,
+      "significant": false,
+      "label": "not significant"
+    }
+  },
+  "noise_floor": {
+    "wikitext2_val": {
+      "subsample_ppls": [
+        34.515039640447775,
+        35.818943542451656,
+        34.523399282567354
+      ],
+      "floor_abs": 1.3039039020038814,
+      "floor_pct": 3.7305067264099483
+    },
+    "code_py": {
+      "subsample_ppls": [
+        587.2734909608519,
+        339.3460241079212,
+        306.7095650988764
+      ],
+      "floor_abs": 280.56392586197546,
+      "floor_pct": 68.24551460924874
+    }
+  },
+  "generations": [
+    {
+      "prompt": "def fibonacci(n):",
+      "target": "def fibonacci(n): The word \u201cs\u201d is also used in the same sense as \u201cs\u201d and \u201cn.\u201d\nWhy is the word \u201cs\u201d a noun? Because the noun has a number of different meanings. Let\u2019s see.\n- The first meaning is \u201cthe person who lives in the city.\u201d\n- The",
+      "baseline": "def fibonacci(n): The word \u201cclimbing\u201d is a verb that means to slay or kill.\n- \u201cThe word \u201cclimbing\u201d means to slay or kill, with a sharp or pointed object.\n- \u201cThe word \u201cclimbing\u201d means to slay or kill, with a sharp"
+    },
+    {
+      "prompt": "The Pythagorean theorem states",
+      "target": "The Pythagorean theorem states that the ratio of the squares of two points x + 1 is 2 and that a square of two points x + 1 is 2.3344212743969247474566186024.",
+      "baseline": "The Pythagorean theorem states that the ratio of the number of sides in a triangle must be equal to the number of sides in the opposite triangle:\nLet be the number of sides in the triangle, and then the ratio of the number of sides in the opposite triangle:\nLet be the number of sides in the opposite triangle, and"
+    },
+    {
+      "prompt": "The capital of France is",
+      "target": "The capital of France is the city of Paris, with the capital at Paris. A city of France is the capital and the capital of the United States. The capital of the United States is Washington, D.C. With a population of over 2.7 million, it is the 16th largest city in the",
+      "baseline": "The capital of France is the city of Paris, with a population of about 30,000. The capital was founded in 1806. The city's capital, Paris, was the site of the famous meeting of the B\u00e9l\u00e9d\u00e9ric L'Homme, a French army who were assass"
+    },
+    {
+      "prompt": "In Python, a list comprehension is",
+      "target": "In Python, a list comprehension is the ability to recognize the relationships between variables in a data set and to use them to develop a plan to solve the problem.\nA data model is a structure for storing, organizing and summarizing data. It typically provides information about the data set, their type, and relationships between variables. For example,",
+      "baseline": "In Python, a list comprehension is the ability to learn about an object, a process, or a system in a specific order.\nThe ability to perform tasks or processes in a particular order is called the dictionary skill. The dictionary skill is the ability to use the dictionary in a way that can be learned by a learner. For example,"
+    },
+    {
+      "prompt": "Once upon a time, a small robot",
+      "target": "Once upon a time, a small robot, which can do anything with a human hand, can walk around, and if it doesn't get near to the robot, it's a bot. But if the robot doesn't get near the robot, it can't get around. If the robot doesn't get near the robot, it can't",
+      "baseline": "Once upon a time, a small robot, like the old-arch, can get away with making a smooth, gentle and pleasant sound.\nWhy is the robot so quiet? It has a soft, smooth, and sweet sound. With the robot, you can make a smooth, gentle sound with a gentle touch.\nWhere does the robot come"
+    },
+    {
+      "prompt": "The three branches of the United States government are",
+      "target": "The three branches of the United States government are the executive branch, the legislative branch, and the legislative branch. The Senate is the supreme branch of government. The executive branch is the body of the executive branch of the United States government. The legislative branch is the branch of government that controls the executive branch of the United States government. The legislative branch",
+      "baseline": "The three branches of the United States government are the executive branch, the legislative branch, and the legislative branch. The Senate is the supreme branch of the federal government. Each branch of the federal government has one representative, and each branch has one vote. The legislative branch is the body within the government that maintains the authority of the president, who is"
+    },
+    {
+      "prompt": "To compute the average of a list of numbers, you",
+      "target": "To compute the average of a list of numbers, you can compute the total number of each set in a row.\nFor example, you can compute a total of 242,000 rows, which is 241,000 rows. That is 7.7 million rows, so 7.7 million rows is",
+      "baseline": "To compute the average of a list of numbers, you can get the total number of digits, in this case 1102011021.\nSo if you want to know how many whole numbers there are in the list, you can use the fraction formula to get it.\nThis formula is so easy to understand that you can use"
+    },
+    {
+      "prompt": "Water boils at a temperature of",
+      "target": "Water boils at a temperature of 300 degrees F (50 degrees C) and a water temperature of 300 degrees F (50 degrees C) at a pressure of 1,100 psig. The water is distilled at a temperature of 30 degrees F (50 degrees C",
+      "baseline": "Water boils at a temperature of 300 degrees F (50 degrees C) and a water temperature of 300 degrees F (50 degrees C) at a pressure of 1,100 psig. In fact, the first water boils were constructed in the 1970s and"
+    }
+  ],
+  "forgetting": {
+    "wikitext2_val": {
+      "corpus_id": "wikitext2_raw_v1_val",
+      "base_ppl": 37.010055463333096,
+      "target_ppl": 37.07894502462442,
+      "retention_delta_abs": 0.0688895612913214,
+      "retention_delta_pct": 0.18613741705837816,
+      "floor_abs": 1.3039039020038814,
+      "significant": false,
+      "label": "retained"
+    },
+    "code_py": {
+      "corpus_id": "codeparrot_clean_valid",
+      "base_ppl": 438.67295146042875,
+      "target_ppl": 425.68436811662434,
+      "retention_delta_abs": -12.988583343804407,
+      "retention_delta_pct": -2.9608808340160597,
+      "floor_abs": 280.56392586197546,
+      "significant": false,
+      "label": "retained"
+    },
+    "summary": "retained"
+  },
+  "not_run": {},
+  "bpb": 1.2262516108542694,
+  "headline_ppl": 37.07894502462442,
+  "noise_floor_abs": 1.3039039020038814,
+  "headline_corpus": "wikitext2_raw_v1_val"
+}

@@ -1,0 +1,31 @@
+{
+  "run_id": "2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb",
+  "model_dir": "Qwen3-0.6B",
+  "lifecycle_stage": "data",
+  "objective": "pretrain-ablation",
+  "framework": "pytorch",
+  "purpose": "Data-selection A/B (bitter-lesson lever toward the 13.40 anchor): does training on dclm-edu (a different-lineage edu filter) beat FineWeb-Edu at IDENTICAL tokens? Single-variable: only the training data slice changes; same model/arch/optimizer/schedule/budget/seed.",
+  "control_reuse": {
+    "arm": "control",
+    "reused_run_id": "2026-06-18_qwen3-0.6b_imu1-deconfound-p1",
+    "cells": ["control_seed0", "control_seed1", "control_seed2"],
+    "mechanism": "symlinked Phase-1 baseline_seed{0,1,2}.pt (faithful AdamW 1.7e-3 cosine, 2000 steps, FineWeb-Edu) — identical config/budget/seed -> §C13 control-reuse, NOT retrained"
+  },
+  "arm_plan": {
+    "arms": ["control(FineWeb-Edu, reused)", "treatment(dclm-edu)"],
+    "seeds": [0, 1, 2],
+    "new_cells": 3,
+    "single_variable": "data slice only (--data fineweb vs --data dclm); arch=faithful, optimizer=adamw 1.7e-3, schedule=cosine, 2000 steps all"
+  },
+  "data": {
+    "treatment": "research/datasets/data-selection-dclm-edu (150,107,480 train + 748,210 eval tokens, dclm-edu sha dbad8ad7, 13-gram-decontam vs wikitext/code, 0 dropped)",
+    "control": "FineWeb-Edu sample-10BT stream (the existing pretrain data)"
+  },
+  "budget": {"steps_per_cell": 2000, "tokens_per_cell": 131072000, "new_cells": 3, "source": "parity with Phase-1 de-confound proxy"},
+  "confound_check": {"n_vars": 1, "iso_flop": true, "detail": "identical model (596M) + identical token budget; only DATA differs -> train_flops identical, ratio 1.000"},
+  "smoke": {"result": "pass", "detail": "dclm treatment arm GPU smoke (4 steps): DATA=dclm-edu 150M loaded, trains, checkpoints, exit 0"},
+  "probe": {"tokens_per_sec": 6800, "peak_mem_gb": 52.4, "source": "faithful build measured (same model/config; dclm uses in-memory tokens, no streaming overhead)"},
+  "eta_hours": 16,
+  "guards": "verified (train_dataarm.py carries safe_cuda + chunked CE + --resume)",
+  "verdict_metric": "OOD-BPB (wikitext2_val + code_py) via eval-harness + text-lm-v3 downstream; across-seed 95% CI (treatment vs control). Pre-registered: this is a data-SELECTION delta at fixed tokens, NOT an anchor-closing claim."
+}

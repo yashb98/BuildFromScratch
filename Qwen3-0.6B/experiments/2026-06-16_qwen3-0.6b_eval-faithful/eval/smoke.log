@@ -1,0 +1,2 @@
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+SMOKE OK -> suite=text-lm-v2 objective=pretrain-ablation ppl=414.3988 (n=2046, tiny max_windows; NOT a result)

@@ -1,0 +1,5 @@
+[17:15:02] [persist_168M_adamw_s0] start: optimizer=adamw seed=0 steps=2564 tok_budget=168,034,304 peak_lr=0.0024 normuon_lr=0.011 wd=0.1
+[17:18:46]   streamed 170,034,630 train + 301,253 val tokens in 220.4s; decontam dropped 0/451 val docs (report -> results/decontam_report.json)
+[17:18:54] [persist_168M_adamw_s0] 41,512 train windows of 4096
+[17:19:01] [persist_168M_adamw_s0] param split: 196 2D->adamw | 114 rest->AdamW
+[17:19:17] [persist_168M_adamw_s0] baseline (random-init) val PPL=184184.11

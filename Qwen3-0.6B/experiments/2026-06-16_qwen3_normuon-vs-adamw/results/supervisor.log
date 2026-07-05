@@ -1,0 +1,14 @@
+[2026-06-16T22:42:57+00:00] ==== ablation cohort start: steps=640, 6 cells (2 arms x 3 seeds) ====
+[2026-06-16T22:42:57+00:00] RUN  adamw_seed0  attempt 1  (steps=640)
+[2026-06-17T00:20:02+00:00] DONE adamw_seed0 (rc=0)
+[2026-06-17T00:20:02+00:00] RUN  adamw_seed1  attempt 1  (steps=640)
+[2026-06-17T01:54:31+00:00] DONE adamw_seed1 (rc=0)
+[2026-06-17T01:54:31+00:00] RUN  adamw_seed2  attempt 1  (steps=640)
+[2026-06-17T03:29:17+00:00] DONE adamw_seed2 (rc=0)
+[2026-06-17T03:29:17+00:00] RUN  normuon_seed0  attempt 1  (steps=640)
+[2026-06-17T05:14:56+00:00] DONE normuon_seed0 (rc=0)
+[2026-06-17T05:14:56+00:00] RUN  normuon_seed1  attempt 1  (steps=640)
+[2026-06-17T07:01:27+00:00] DONE normuon_seed1 (rc=0)
+[2026-06-17T07:01:27+00:00] RUN  normuon_seed2  attempt 1  (steps=640)
+[2026-06-17T08:46:48+00:00] DONE normuon_seed2 (rc=0)
+[2026-06-17T08:46:48+00:00] ==== cohort complete: 6/6 cells ok in 603 min ====

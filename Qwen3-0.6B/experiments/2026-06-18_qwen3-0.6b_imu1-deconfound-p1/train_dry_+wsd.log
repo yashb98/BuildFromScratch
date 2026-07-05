@@ -1,0 +1,8 @@
+[12:27:24] ARM arch=faithful schedule=wsd optimizer=adamw zloss=0.0 | vr=False ln=False hg=False | steps=5 seed=0 tok/step=65,536
+[12:27:24] optimizer split: 15 / 9 param tensors
+[12:27:24] step     1/5  ce 6.3061  lr 1.70e-05  |grad| 1.86  mem 0.0GB  tok/s 715,392
+[12:27:24] step     2/5  ce 6.2625  lr 3.40e-05  |grad| 1.89  mem 0.0GB  tok/s 1,000,103
+[12:27:24] step     3/5  ce 6.3004  lr 5.10e-05  |grad| 1.77  mem 0.0GB  tok/s 1,165,692
+[12:27:24] step     4/5  ce 6.1969  lr 6.80e-05  |grad| 1.86  mem 0.0GB  tok/s 1,130,979
+[12:27:24] step     5/5  ce 6.3064  lr 8.50e-05  |grad| 1.82  mem 0.0GB  tok/s 1,219,920
+[12:27:24] DONE (dry run OK)

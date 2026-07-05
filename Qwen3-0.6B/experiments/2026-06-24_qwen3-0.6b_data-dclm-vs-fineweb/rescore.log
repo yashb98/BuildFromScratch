@@ -1,0 +1,12 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Repo card metadata block was not found. Setting CardData to empty.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (262210 > 131072). Running this sequence through the model will result in indexing errors
+[safe_cuda] capped CUDA at 85% of 129 GB unified pool (~109 GB); over-allocation now errors cleanly.
+loading corpora (once)...
+  control_seed0: wikitext bpb=1.5192 ppl=87.90 | code bpb=2.6396  (36s)
+  control_seed1: wikitext bpb=1.5085 ppl=85.17 | code bpb=2.6234  (35s)
+  control_seed2: wikitext bpb=1.5194 ppl=87.96 | code bpb=2.6526  (35s)
+  treatment_seed0: wikitext bpb=1.5250 ppl=89.42 | code bpb=1.9271  (32s)
+  treatment_seed1: wikitext bpb=1.5245 ppl=89.29 | code bpb=1.9249  (32s)
+  treatment_seed2: wikitext bpb=1.5268 ppl=89.89 | code bpb=1.9532  (32s)
+DONE -> /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/cohort_bpb.json

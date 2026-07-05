@@ -1,0 +1,12 @@
+{
+  "split_seed": 0,
+  "val_fraction": 0.02,
+  "ngram_n": 13,
+  "overlap_threshold": 0.8,
+  "n_train_docs": 4000,
+  "n_val_docs_raw": 451,
+  "docs_dropped": 0,
+  "n_val_docs_kept": 451,
+  "method": "doc-disjoint seeded-hash split + 13-gram word-overlap decontam",
+  "train_sample_docs_for_index": 4000
+}

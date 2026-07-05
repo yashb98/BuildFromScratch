@@ -1,0 +1,28 @@
+  [settle] MemAvailable 105G before vr_seed0
+===== CELL vr_seed0  (22:18:21)  =====
+[done] vr_seed0
+  [settle] MemAvailable 105G before vr_seed1
+===== CELL vr_seed1  (03:47:03)  =====
+[done] vr_seed1
+  [settle] MemAvailable 104G before vr_seed2
+===== CELL vr_seed2  (09:15:07)  =====
+[done] vr_seed2
+  [settle] MemAvailable 104G before ln_seed0
+===== CELL ln_seed0  (14:45:01)  =====
+[done] ln_seed0
+  [settle] MemAvailable 103G before ln_seed1
+===== CELL ln_seed1  (20:03:53)  =====
+[done] ln_seed1
+  [settle] MemAvailable 103G before ln_seed2
+===== CELL ln_seed2  (01:22:16)  =====
+[done] ln_seed2
+  [settle] MemAvailable 103G before hg_seed0
+===== CELL hg_seed0  (06:40:02)  =====
+[done] hg_seed0
+  [settle] MemAvailable 103G before hg_seed1
+===== CELL hg_seed1  (12:13:23)  =====
+[done] hg_seed1
+  [settle] MemAvailable 102G before hg_seed2
+===== CELL hg_seed2  (17:49:28)  =====
+[done] hg_seed2
+ALL 9 CELLS COMPLETE (23:22:00)

@@ -1,0 +1,42 @@
+{
+  "extractor": "math-acc-v1",
+  "band_seed": 20260701,
+  "temp": 0.8,
+  "n_samples": 2,
+  "max_new_tokens": 16,
+  "go_rule": "GO iff SFT solved_items >= 3 across the band (pre-registered)",
+  "checkpoints": {
+    "sft_seed0": {
+      "gsm8k": {
+        "extractor_version": "math-acc-v1",
+        "n_items": 1,
+        "n_samples": 2,
+        "pass1_wilson_ci": {
+          "acc": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576197724933469
+        },
+        "passk_chen2021": {
+          "1": 0.0
+        },
+        "solved_items": 0,
+        "wall_s": 1
+      },
+      "math500_l13": {
+        "extractor_version": "math-acc-v1",
+        "n_items": 1,
+        "n_samples": 2,
+        "pass1_wilson_ci": {
+          "acc": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576197724933469
+        },
+        "passk_chen2021": {
+          "1": 0.0
+        },
+        "solved_items": 0,
+        "wall_s": 0
+      }
+    }
+  }
+}

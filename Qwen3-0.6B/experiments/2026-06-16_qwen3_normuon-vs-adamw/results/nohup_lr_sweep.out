@@ -1,0 +1,8 @@
+[2026-06-17T11:15:40+00:00] ==== AdamW confirmatory LR sweep start: 3 LRs x 1 seed @ 42M tok, wd=0.1 ====
+[2026-06-17T11:15:40+00:00] RUN  adamw_lr17_seed0  lr=1.7e-3  attempt 1
+[2026-06-17T12:51:02+00:00] DONE adamw_lr17_seed0 (rc=0, ckpt present)
+[2026-06-17T12:51:02+00:00] RUN  adamw_lr35_seed0  lr=3.5e-3  attempt 1
+[2026-06-17T14:28:25+00:00] DONE adamw_lr35_seed0 (rc=0, ckpt present)
+[2026-06-17T14:28:25+00:00] RUN  adamw_lr48_seed0  lr=4.8e-3  attempt 1
+[2026-06-17T16:03:25+00:00] DONE adamw_lr48_seed0 (rc=0, ckpt present)
+[2026-06-17T16:03:25+00:00] ==== sweep complete: 3/3 ok in 287 min ====
