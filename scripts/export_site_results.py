@@ -123,7 +123,9 @@ def export_parity_replay():
         notes=("Replay lines reconstructed deterministically from verify_run.py "
                "print statements + the committed results/verify.json values; "
                "per-stage timings omitted (never recorded; total wall time "
-               f"{v['total_seconds']}s). Every number is the recorded one."),
+               f"{v['total_seconds']}s). Every number is the recorded one; the "
+               "output path is shown repo-relative (the script prints it "
+               "absolute)."),
         derived_from=[rel(src), rel(runner)])
 
 
@@ -149,13 +151,15 @@ def export_arch_axis():
         "qwen3.arch_axis", "comparison",
         unit="ΔBPB vs faithful baseline (wikitext-2)",
         entries=entries,
+        direction="higher_is_better",
         notes=("Phase-1 de-confound: 2000 steps / 131,072,000 tokens per cell, "
                "3 paired seeds, iso-FLOP (ratio 1.00042), text-lm-v2, Welch-t "
                "95% CI. seeds[] are paired per-seed deltas (baseline - treatment). "
                f"Only arch survives; drivers={v['drivers']}. code_py deltas: "
                f"arch +{code['arch']:.4f} (sig), wsd +{code['wsd']:.4f} (n.s.), "
                f"zloss {code['zloss']:+.4f} (n.s.)."),
-        derived_from=[rel(src), rel(src.parent / "cohort_bpb.json")])
+        derived_from=[rel(src), rel(src.parent / "cohort_bpb.json"),
+                      rel(src.parent / "c5_evidence.json")])
 
 
 def export_arch_subdrill():
@@ -184,6 +188,7 @@ def export_arch_subdrill():
         "qwen3.arch_subdrill", "comparison",
         unit="ΔBPB vs faithful baseline (wikitext-2)",
         entries=entries,
+        direction="higher_is_better",
         notes=("Phase-2 sub-drill of the Phase-1 arch bundle; same budget, "
                "baseline checkpoints reused and re-scored in-cohort. All three "
                "flags individually significant on both corpora. Additivity: "
@@ -208,7 +213,8 @@ def export_normuon():
         notes=("EARLY-TRAINING scope: 640 steps / 41,943,040 tokens per cell "
                "(~28x under the 1.19B full budget), 3 seeds, Welch-t 95% CI. "
                "Defended by an AdamW LR sweep (1.7e-3/3.5e-3/4.8e-3) whose "
-               "spread is ~10x smaller than the gap. Not a scale claim. "
+               "spread is ~10x smaller than the gap. Not a scale claim; seeds vary "
+               "init+shuffle on a fixed data split. "
                f"code_py: +{c['improvement_bpb']:.4f} "
                f"[{c['ci95'][0]:.4f}, {c['ci95'][1]:.4f}], significant."),
         derived_from=[rel(src), rel(src.parent / "cohort_bpb.json"),
@@ -256,6 +262,7 @@ def export_mix():
         "qwen3.mix", "comparison",
         unit="ΔBPB vs FineWeb-Edu baseline (code_py)",
         entries=entries,
+        direction="higher_is_better",
         notes=("Data-composition curve: the 50/50 dclm+FineWeb mix keeps "
                f"{frac:.0%} of the pure-dclm code win while holding English "
                f"(mix wikitext-2 {mix_wt['improvement_bpb']:+.4f} "
@@ -279,7 +286,8 @@ def export_anneal():
         notes=("Mid-training anneal (1-sqrt cooldown 2.5e-4 -> 2.5e-5, 2300 "
                "steps x 65,536 tok) on the 50/50 premium mix vs an iso-token "
                "fineweb-only control that absorbs the LR-decay confound: the "
-               "data, not the schedule, carries the win. wikitext-2 also "
+               "data, not the schedule, carries the win. wikitext-2 (the "
+               "pre-registered SECONDARY endpoint, expected null) also came out "
                f"significant: {wt['improvement_bpb']:+.4f} "
                f"[{wt['ci95'][0]:.4f}, {wt['ci95'][1]:.4f}]. 3 seeds, "
                f"Welch-t 95% CI. final_verdict: {v['final_verdict']}."),
@@ -377,6 +385,7 @@ def export_sft_null():
         "qwen3.sft_null", "comparison",
         unit="ΔPPL, SFT vs control (positive = SFT better)",
         entries=entries,
+        direction="higher_is_better",
         notes=("The Win That Was Not: the in-loop +0.68 PPL 'win' scores SFT "
                "on RESPONSE tokens but the control on ALL tokens (verdict.json "
                "flags the CONFOUND itself). One fixed held-out set collapses "
@@ -414,7 +423,8 @@ def export_grpo_null():
                f"{m['rft_pass1']}. Verdict {v['verdict']!r} (n=1 seed, capped "
                "by pre-registration); proceed_to_phase3="
                f"{v['proceed_to_phase3']}. At ~1% reward the learning signal "
-               "is too sparse at 0.6B."),
+               "is too sparse at 0.6B. RFT sits nominally above the floor but CIs "
+               "overlap (n.s.)."),
         derived_from=[rel(src), rel(passk_grpo), rel(phase1)])
 
 

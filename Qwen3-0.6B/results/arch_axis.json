@@ -46,11 +46,13 @@
    "significant": false
   }
  ],
+ "direction": "higher_is_better",
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:39:00Z",
+ "generated_at": "2026-07-07T15:40:52Z",
  "notes": "Phase-1 de-confound: 2000 steps / 131,072,000 tokens per cell, 3 paired seeds, iso-FLOP (ratio 1.00042), text-lm-v2, Welch-t 95% CI. seeds[] are paired per-seed deltas (baseline - treatment). Only arch survives; drivers=['arch']. code_py deltas: arch +0.3049 (sig), wsd +0.0361 (n.s.), zloss -0.0007 (n.s.).",
  "derived_from": [
   "Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/verdict.json",
-  "Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/cohort_bpb.json"
+  "Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/cohort_bpb.json",
+  "Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/c5_evidence.json"
  ]
 }

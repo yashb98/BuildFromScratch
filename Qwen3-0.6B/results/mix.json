@@ -32,8 +32,9 @@
    "significant": true
   }
  ],
+ "direction": "higher_is_better",
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:39:00Z",
+ "generated_at": "2026-07-07T15:40:52Z",
  "notes": "Data-composition curve: the 50/50 dclm+FineWeb mix keeps 84% of the pure-dclm code win while holding English (mix wikitext-2 +0.0161 [-0.0005, 0.0327] n.s. vs dclm -0.0097 n.s./worse). Best-of-both; this mix is the data carried into mid-training. 3 seeds, Welch-t 95% CI, seeds[] are paired per-seed deltas.",
  "derived_from": [
   "Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/verdict.json",

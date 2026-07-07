@@ -149,7 +149,7 @@
   }
  ],
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:39:00Z",
+ "generated_at": "2026-07-07T15:40:52Z",
  "notes": "Long-context passkey ladder (ecl-ladder-v1), rungs 512-8192, 5 depths x 8 keys = 40 probes per rung per cell; anneal arms pooled over 3 seeds (n=120/rung), base is a single checkpoint (n=40/rung). Wilson 95% CIs. The 4096 dip is BASE-ONLY (0.025 at its own trained length; both annealed arms hold 0.400 there) and unexplained — see paper §13. All three lines bump at 6144. Per-seed detail in ecl_ladder.json.",
  "derived_from": [
   "Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/verdict.json",

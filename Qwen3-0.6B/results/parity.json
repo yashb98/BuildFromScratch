@@ -4,7 +4,7 @@
  "unit": "max |Δlogits|",
  "value": 0.0,
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:39:00Z",
+ "generated_at": "2026-07-07T15:40:52Z",
  "notes": "fp32, prompt 'The capital of France is' (input 1x5), vs Qwen/Qwen3-0.6B-Base; relative error 0.0, argmax match True (' Paris', id 12095), tolerance 0.001, single deterministic CPU probe.",
  "derived_from": [
   "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/verify.json"
