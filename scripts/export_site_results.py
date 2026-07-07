@@ -238,7 +238,8 @@ def export_dclm():
                "(2000 steps / 131,072,000 per cell, 3 seeds, Welch-t 95% CI). "
                f"English is a null: wikitext-2 {wt['improvement_bpb']:+.4f} "
                f"[{wt['ci95'][0]:.4f}, {wt['ci95'][1]:.4f}], n.s. "
-               "Data beat architecture by an order of magnitude."),
+               "~2.3x the whole architecture bundle on the same corpus "
+               "(code BPB +0.3049)."),
         derived_from=[rel(src), rel(src.parent / "cohort_bpb.json")])
 
 

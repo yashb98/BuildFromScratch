@@ -13,8 +13,8 @@
   0.6993911312315064
  ],
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:40:52Z",
- "notes": "Largest single attributed effect in the study: code BPB 2.6385 -> 1.9351 at matched tokens (2000 steps / 131,072,000 per cell, 3 seeds, Welch-t 95% CI). English is a null: wikitext-2 -0.0097 [-0.0255, 0.0061], n.s. Data beat architecture by an order of magnitude.",
+ "generated_at": "2026-07-07T19:00:23Z",
+ "notes": "Largest single attributed effect in the study: code BPB 2.6385 -> 1.9351 at matched tokens (2000 steps / 131,072,000 per cell, 3 seeds, Welch-t 95% CI). English is a null: wikitext-2 -0.0097 [-0.0255, 0.0061], n.s. ~2.3x the whole architecture bundle on the same corpus (code BPB +0.3049).",
  "derived_from": [
   "Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/verdict.json",
   "Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/cohort_bpb.json"

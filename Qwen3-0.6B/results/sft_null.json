@@ -48,7 +48,7 @@
  ],
  "direction": "higher_is_better",
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:40:52Z",
+ "generated_at": "2026-07-07T19:00:23Z",
  "notes": "The Win That Was Not: the in-loop +0.68 PPL 'win' scores SFT on RESPONSE tokens but the control on ALL tokens (verdict.json flags the CONFOUND itself). One fixed held-out set collapses it to +0.009, and the exact full-sequence cross-check flips sign (n.s.). overall_verdict: 'directional — masked and full-sequence comparisons disagree on significance; treat as not-yet-separable'. 3 seeds per arm, ~125M math-reasoning tokens each; seeds[] are paired per-seed deltas.",
  "derived_from": [
   "Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/verdict.json",

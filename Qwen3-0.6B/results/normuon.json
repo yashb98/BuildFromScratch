@@ -13,7 +13,7 @@
   0.49033870870204077
  ],
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:40:52Z",
+ "generated_at": "2026-07-07T19:00:23Z",
  "notes": "EARLY-TRAINING scope: 640 steps / 41,943,040 tokens per cell (~28x under the 1.19B full budget), 3 seeds, Welch-t 95% CI. Defended by an AdamW LR sweep (1.7e-3/3.5e-3/4.8e-3) whose spread is ~10x smaller than the gap. Not a scale claim; seeds vary init+shuffle on a fixed data split. code_py: +0.5016 [0.4560, 0.5471], significant.",
  "derived_from": [
   "Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/results/verdict.json",

@@ -33,7 +33,7 @@
   }
  ],
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:40:52Z",
+ "generated_at": "2026-07-07T19:00:23Z",
  "notes": "Single-run, in-loop comparison (n=1, descriptive). The ratio pairs are load-bearing and must never be conflated: 2.14x at ~30,000x less data (1.19B vs 36T tokens) and 3.5x at ~275,000x less data (131M vs 36T). Computed: 28.65/13.4 = 2.1381; 46.31/13.4 = 3.4560.",
  "derived_from": [
   "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/original_vs_repro.txt",

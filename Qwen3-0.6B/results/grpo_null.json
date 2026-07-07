@@ -30,7 +30,7 @@
  ],
  "direction": "higher_is_better",
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:40:52Z",
+ "generated_at": "2026-07-07T19:00:23Z",
  "notes": "Pre-registered null, confirmed: GRPO beats neither the SFT floor nor the random-reward gate (both false on gsm8k AND math500_l13). pass@8 gsm8k: sft 0.07, grpo 0.07, random 0.06, rft 0.11; math500_l13 pass@1: sft 0.015, grpo 0.0225, random 0.015, rft 0.0175. Verdict 'directional' (n=1 seed, capped by pre-registration); proceed_to_phase3=False. At ~1% reward the learning signal is too sparse at 0.6B. RFT sits nominally above the floor but CIs overlap (n.s.).",
  "derived_from": [
   "Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/verdict.json",
