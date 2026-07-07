@@ -47,7 +47,7 @@
   }
  ],
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:27:50Z",
+ "generated_at": "2026-07-07T15:39:00Z",
  "notes": "Phase-2 sub-drill of the Phase-1 arch bundle; same budget, baseline checkpoints reused and re-scored in-cohort. All three flags individually significant on both corpora. Additivity: sum vr+ln+hg = 0.0947 vs measured bundle 0.1179 (residual +0.0232 = interactions + seed noise); code_py sum 0.2099 vs bundle 0.3049 (residual +0.0951). seeds[] are paired per-seed deltas.",
  "derived_from": [
   "Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/verdict.json",

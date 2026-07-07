@@ -1457,7 +1457,7 @@
   }
  ],
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:27:50Z",
+ "generated_at": "2026-07-07T15:39:00Z",
  "notes": "Train CE loss vs tokens seen, 1.19B-token build (n=1, in-loop, descriptive). Sampled every 50 steps. Overlay partner: qwen3.loss_curve_faithful (AdamW baseline, same token grid). Parsed from the log's every-50-step 'ce' lines.",
  "derived_from": [
   "Qwen3-0.6B/builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/qwen3_imu1_2tpp_train.log"

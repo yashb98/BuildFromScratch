@@ -1205,7 +1205,7 @@
   }
  ],
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:27:50Z",
+ "generated_at": "2026-07-07T15:39:00Z",
  "notes": "GRPO per-step mean reward over 300 steps (16 prompts x G=8, T=0.8, lr 1e-6): flat at ~0.9% (overall 0.0092, first-50 0.0091 vs last-50 0.0080). mean_reward is the fraction verifier-correct (the 0.1 parseable-wrong shaping term is not logged). DAPO kept_groups mean 13.5/16. Random-reward contrast arm sits at ~0.50. n=1 seed.",
  "derived_from": [
   "Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/health_grpo_seed0.jsonl"

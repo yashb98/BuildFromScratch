@@ -46,7 +46,7 @@
   }
  ],
  "generated_by": "scripts/export_site_results.py",
- "generated_at": "2026-07-07T15:27:50Z",
+ "generated_at": "2026-07-07T15:39:00Z",
  "notes": "Replay lines reconstructed deterministically from verify_run.py print statements + the committed results/verify.json values; per-stage timings omitted (never recorded; total wall time 30.0s). Every number is the recorded one.",
  "derived_from": [
   "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/verify.json",
