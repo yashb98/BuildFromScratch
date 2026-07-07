@@ -1,0 +1,23 @@
+{
+  "prepared_for": "research/rlvr/plan.md Phase-1 pass@k go/no-go",
+  "consumer": "research.eval_math_acc.run_math_acc (extractor math-acc-v1)",
+  "ngram_n": 13,
+  "flag_threshold": 0.5,
+  "decontam_target": "35924 OpenR1 SFT problems (of 35231 used uuids)",
+  "sft_decontam_status": "done",
+  "rerun_vs_sft_online": "HF_HUB_OFFLINE=0 python3 research/datasets/math-eval-v1/prepare_math_eval.py  (fetches OpenR1 problems online for the vs-SFT check)",
+  "index_13grams": 1138279,
+  "gsm8k_test": {
+    "n": 1319,
+    "contaminated": 0,
+    "clean": 1319
+  },
+  "math500": {
+    "n": 500,
+    "contaminated": 0,
+    "clean": 500
+  },
+  "max_overlap_gsm8k": 0.0,
+  "max_overlap_math500": 0.0588,
+  "smoke_limit": null
+}

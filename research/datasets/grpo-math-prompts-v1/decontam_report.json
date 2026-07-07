@@ -1,0 +1,22 @@
+{
+  "prepared_for": "research/rlvr/plan.md P1 (GRPO prompt set) \u2014 unlocked by Phase-1 GO 2026-07-02",
+  "extractor": "math-acc-v1",
+  "ngram_n": 13,
+  "flag_threshold": 0.5,
+  "eval_decontam": "vs math-eval-v1 (gsm8k_test+math500) \u2014 overlaps DROPPED from *_clean",
+  "sft_flag_status": "done",
+  "gsm8k_train": {
+    "n": 7473,
+    "eval_dropped": 2,
+    "clean": 7471,
+    "sft_flagged": 0
+  },
+  "math_l13_train": {
+    "n": 3502,
+    "eval_dropped": 12,
+    "clean": 3490,
+    "sft_flagged": 7,
+    "load_error": null
+  },
+  "smoke_limit": null
+}

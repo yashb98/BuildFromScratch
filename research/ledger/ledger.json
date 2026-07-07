@@ -1,0 +1,1573 @@
+{
+  "schema_version": 1,
+  "techniques": [
+    {
+      "slug": "block-text-diffusion",
+      "title": "Block text diffusion LM head (DiffusionGemma-style parallel denoising decode)",
+      "modality": "text",
+      "source_url": "https://blog.google/innovation-and-ai/technology/developers-tools/diffusion-gemma-faster-text-generation/",
+      "paper_date": "2026-06-10",
+      "first_seen": "2026-06-12",
+      "status": "proposal",
+      "score": 10.0,
+      "brief_path": "research/briefs/block-text-diffusion.md",
+      "run_ids": [],
+      "objective": "finetune",
+      "taxonomy": [
+        "architecture: diffusion-LM (block/masked discrete diffusion); training-stage: base->adapted; modality: text; context/position: bidirectional-within-block + RoPE; size-band: SLM/mid"
+      ],
+      "taste_score": 3.0
+    },
+    {
+      "slug": "minimax-sparse-attention",
+      "title": "MiniMax Sparse Attention (MSA): per-GQA-group top-k KV-block selection",
+      "modality": "text-lm",
+      "source_url": "https://arxiv.org/abs/2606.13392",
+      "paper_date": "2026-06-10",
+      "first_seen": "2026-06-12",
+      "status": "candidate",
+      "score": 9.0,
+      "brief_path": null,
+      "run_ids": [],
+      "objective": "any",
+      "taxonomy": [],
+      "taste_score": null
+    },
+    {
+      "slug": "hrm-text-architecture",
+      "title": "Hierarchical Reasoning Model architecture for text LMs (HRM-Text-1B)",
+      "modality": "text-lm",
+      "source_url": "https://huggingface.co/sapientinc/HRM-Text-1B",
+      "paper_date": "2026-05-17",
+      "first_seen": "2026-06-12",
+      "status": "candidate",
+      "score": 8.0,
+      "brief_path": null,
+      "run_ids": [],
+      "objective": "any",
+      "taxonomy": [],
+      "taste_score": null
+    },
+    {
+      "slug": "opd-sparse-updates",
+      "title": "Subnetwork-only on-policy distillation (sparse, FFN-heavy OPD updates)",
+      "modality": "text-lm",
+      "source_url": "https://arxiv.org/abs/2606.13657",
+      "paper_date": "2026-06-11",
+      "first_seen": "2026-06-12",
+      "status": "candidate",
+      "score": 7.0,
+      "brief_path": null,
+      "run_ids": [],
+      "objective": "any",
+      "taxonomy": [],
+      "taste_score": null
+    },
+    {
+      "slug": "influcoder-data-attribution",
+      "title": "Influcoder: encoder-distilled gradient-influence data filtering",
+      "modality": "dataset",
+      "source_url": "https://arxiv.org/abs/2606.13668",
+      "paper_date": "2026-06-11",
+      "first_seen": "2026-06-12",
+      "status": "candidate",
+      "score": 7.0,
+      "brief_path": null,
+      "run_ids": [],
+      "objective": "any",
+      "taxonomy": [],
+      "taste_score": null
+    },
+    {
+      "slug": "zeta-dual-whitening",
+      "title": "Zeta: Dual Whitening for Matrix Optimization (Muon variant)",
+      "modality": "text",
+      "source_url": "http://arxiv.org/abs/2606.14187",
+      "paper_date": "2026-06-12",
+      "first_seen": "2026-06-16",
+      "status": "briefed",
+      "objective": "pretrain-ablation",
+      "taxonomy": [
+        "decoder-only",
+        "optimizer",
+        "SLM",
+        "base",
+        "text"
+      ],
+      "score": 7.0,
+      "taste_score": 7.5,
+      "brief_path": "research/briefs/zeta-dual-whitening.md",
+      "run_ids": []
+    },
+    {
+      "slug": "pc-layer-preconditioning",
+      "title": "PC Layer: Polynomial Weight Preconditioning for LLM Pre-Training",
+      "modality": "text",
+      "source_url": "http://arxiv.org/abs/2606.06470",
+      "paper_date": "2026-06-04",
+      "first_seen": "2026-06-16",
+      "status": "candidate",
+      "objective": "pretrain-ablation",
+      "taxonomy": [
+        "decoder-only",
+        "optimizer",
+        "SLM"
+      ],
+      "score": 7.0,
+      "taste_score": null,
+      "brief_path": null,
+      "run_ids": []
+    },
+    {
+      "slug": "webgraphmix-data-selection",
+      "title": "WebGraphMix: Pretraining Data Selection via Web Graph Centrality",
+      "modality": "text",
+      "source_url": "http://arxiv.org/abs/2606.11499",
+      "paper_date": "2026-06-09",
+      "first_seen": "2026-06-16",
+      "status": "candidate",
+      "objective": "pretrain-ablation",
+      "taxonomy": [
+        "data-efficiency",
+        "SLM"
+      ],
+      "score": 7.0,
+      "taste_score": null,
+      "brief_path": null,
+      "run_ids": []
+    },
+    {
+      "slug": "normuon-optimizer",
+      "title": "NorMuon optimizer (Newton-Schulz orthogonalized + per-neuron 2nd-moment) for 2D hidden weights vs AdamW",
+      "modality": null,
+      "source_url": "https://arxiv.org/abs/2510.05491",
+      "paper_date": "2025-10-06",
+      "first_seen": "2026-06-16",
+      "status": "briefed",
+      "objective": "pretrain-ablation",
+      "taxonomy": [],
+      "score": null,
+      "taste_score": null,
+      "brief_path": null,
+      "run_ids": [
+        "2026-06-16_qwen3_normuon-vs-adamw"
+      ]
+    },
+    {
+      "slug": "vibethinker-small-reasoning",
+      "title": "VibeThinker-3B: Spectrum-to-Signal verifiable-reasoning post-training (curriculum SFT + multi-domain RL + offline self-distillation) for small LMs",
+      "modality": "text-lm",
+      "source_url": "https://arxiv.org/abs/2606.16140",
+      "paper_date": "2026-06-15",
+      "first_seen": "2026-06-17",
+      "status": "briefed",
+      "objective": "finetune",
+      "taxonomy": [
+        "architecture: decoder-only",
+        "training-stage: reasoning (RLVR/GRPO)",
+        "modality: text",
+        "specialization: code+math",
+        "size-band: SLM/tiny",
+        "context/position: RoPE/GQA",
+        "openness: fully-open"
+      ],
+      "score": 10.0,
+      "taste_score": 6.0,
+      "brief_path": "research/briefs/vibethinker-small-reasoning.md",
+      "run_ids": [
+        "2026-06-17_qwen3-0.6b_openr1-math-220k",
+        "2026-06-17_qwen3-0.6b_vibethinker-small-reasoning",
+        "2026-07-01_qwen3-0.6b_rlvr-phase1-passk",
+        "2026-07-02_qwen3-0.6b_grpo-prompts-dataprep",
+        "2026-07-02_qwen3-0.6b_grpo-phase2"
+      ]
+    },
+    {
+      "slug": "variable-width-transformers",
+      "title": "Variable-Width Transformers (width varies across depth as a scaling lever)",
+      "modality": "text-lm",
+      "source_url": "https://arxiv.org/abs/2606.18246",
+      "paper_date": "2026-06-16",
+      "first_seen": "2026-06-17",
+      "status": "candidate",
+      "objective": "pretrain-ablation",
+      "taxonomy": [
+        "decoder-only",
+        "tiny-edge",
+        "base",
+        "pretrain"
+      ],
+      "score": 8.0,
+      "taste_score": null,
+      "brief_path": null,
+      "run_ids": []
+    },
+    {
+      "slug": "opsd-self-distillation",
+      "title": "OPSD: On-policy self-distillation from the self-future for diffusion LLMs",
+      "modality": "text-lm",
+      "source_url": "https://arxiv.org/abs/2606.18195",
+      "paper_date": "2026-06-15",
+      "first_seen": "2026-06-17",
+      "status": "candidate",
+      "objective": "finetune",
+      "taxonomy": [
+        "diffusion-lm",
+        "distillation",
+        "post-train"
+      ],
+      "score": 8.0,
+      "taste_score": null,
+      "brief_path": null,
+      "run_ids": []
+    },
+    {
+      "slug": "ternary-mamba",
+      "title": "Ternary Mamba: grouped quantization-aware training of W1.58A16 state-space models",
+      "modality": "text-lm",
+      "source_url": "https://arxiv.org/abs/2606.18114",
+      "paper_date": "2026-06-16",
+      "first_seen": "2026-06-17",
+      "status": "candidate",
+      "objective": "pretrain-ablation",
+      "taxonomy": [
+        "ssm",
+        "mamba",
+        "tiny-edge",
+        "quant-aware-training"
+      ],
+      "score": 7.0,
+      "taste_score": null,
+      "brief_path": null,
+      "run_ids": []
+    },
+    {
+      "slug": "hybrid-attention-rethink",
+      "title": "Rethinking the role of efficient attention in hybrid attention-SSM architectures",
+      "modality": "text-lm",
+      "source_url": "https://arxiv.org/abs/2606.15378",
+      "paper_date": "2026-06-12",
+      "first_seen": "2026-06-17",
+      "status": "candidate",
+      "objective": "any",
+      "taxonomy": [
+        "hybrid",
+        "ssm",
+        "attention",
+        "position-scheme"
+      ],
+      "score": 6.0,
+      "taste_score": null,
+      "brief_path": null,
+      "run_ids": []
+    },
+    {
+      "slug": "fastcontext-long-context-sft",
+      "title": "FastContext: SFT+RL recipe turning a small base model into a parallel-tool repo-exploration subagent (citations as compact file:line)",
+      "modality": "text",
+      "source_url": "https://arxiv.org/abs/2606.14066",
+      "paper_date": "2026-06-12",
+      "first_seen": "2026-06-17",
+      "status": "candidate",
+      "objective": "finetune",
+      "taxonomy": [
+        "finetune",
+        "sft",
+        "rl",
+        "code",
+        "decoder-only"
+      ],
+      "score": 8.0,
+      "taste_score": null,
+      "brief_path": null,
+      "run_ids": []
+    },
+    {
+      "slug": "arch-subcomponent-drill",
+      "title": "Phase-2 arch sub-component drill (value-residual / layernorm-scaling / head-gating)",
+      "modality": "text",
+      "source_url": null,
+      "paper_date": null,
+      "first_seen": "2026-06-21",
+      "status": "done",
+      "objective": "pretrain-ablation",
+      "taxonomy": [
+        "architecture",
+        "decoder-only",
+        "base",
+        "text",
+        "SLM"
+      ],
+      "score": null,
+      "taste_score": 8.0,
+      "brief_path": "research/decisions/2026-06-21_lifecycle-completion-plan.md",
+      "run_ids": [
+        "2026-06-21_qwen3-0.6b_arch-subdrill-p2"
+      ],
+      "note": "Phase-2 follow-on to the attributed arch driver (Phase-1 verdict.json: arch is the sole BPB driver); splits the bundle into its 3 single-variable flags."
+    },
+    {
+      "slug": "midtrain-anneal-premium-mix",
+      "title": "Mid-training anneal: premium 50/50 mix cooldown vs iso-token control",
+      "modality": null,
+      "source_url": null,
+      "paper_date": null,
+      "first_seen": "2026-06-30",
+      "status": "briefed",
+      "objective": "pretrain-ablation",
+      "taxonomy": [
+        "training-stage",
+        "data"
+      ],
+      "score": null,
+      "taste_score": null,
+      "brief_path": "research/midtraining/plan.md",
+      "run_ids": [
+        "2026-06-30_qwen3-0.6b_midtrain-anneal"
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "2026-06-16_qwen3-faithful_eval-first",
+      "type": "eval",
+      "model_dir": "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b",
+      "technique_slug": null,
+      "budget": null,
+      "probe": null,
+      "smoke": null,
+      "framework": "pytorch",
+      "eta_hours": null,
+      "started": "2026-06-16",
+      "ended": null,
+      "status": "done",
+      "verdict": null,
+      "metrics": {
+        "suite_version": "text-lm-v2",
+        "ppl": 37.0101,
+        "bpb": 1.2256,
+        "noise_floor_abs": 1.3039,
+        "wikitext2_val": {
+          "ppl": 37.0101,
+          "bpb": 1.2256
+        },
+        "code_py": {
+          "ppl": 438.673,
+          "bpb": 2.1286
+        }
+      },
+      "artifacts_dir": null,
+      "lineage": {
+        "git_commit": "86e79f3",
+        "env": null,
+        "dataset_id": "Salesforce/wikitext + codeparrot/codeparrot-clean-valid",
+        "dataset_revision": "b08601e0...+4db92d2e...",
+        "data_hash": null,
+        "artifact_sha256": "checkpoint_qwen3_baseline2tpp.pt@step18150"
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-16_qwen3-faithful_eval-first.md",
+      "objective": "pretrain-ablation"
+    },
+    {
+      "run_id": "2026-06-16_qwen3_normuon-vs-adamw",
+      "type": "ablation",
+      "model_dir": "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b",
+      "technique_slug": "normuon-optimizer",
+      "budget": {
+        "tokens_per_cell": 41943040,
+        "cells": 6,
+        "total_tokens": 251658240,
+        "source": "6-cell cohort (2 arms x 3 seeds), 640 steps x 65536 tok"
+      },
+      "probe": {
+        "tokens_per_sec": 5944,
+        "tokens_per_sec_adamw_est": 7000,
+        "peak_mem_gb": 52.4
+      },
+      "smoke": null,
+      "framework": "pytorch",
+      "eta_hours": 11,
+      "started": "2026-06-16",
+      "ended": "2026-06-17",
+      "status": "done",
+      "verdict": "win",
+      "metrics": {
+        "suite_version": "text-lm-v2",
+        "headline_metric": "wikitext2_val_bpb",
+        "verdict": "win",
+        "wikitext_bpb_adamw_mean": 2.1098,
+        "wikitext_bpb_normuon_mean": 1.6355,
+        "wikitext_improvement_bpb": 0.4743,
+        "wikitext_ci95": [
+          0.4435,
+          0.5052
+        ],
+        "wikitext_significant": true,
+        "code_improvement_bpb": 0.5016,
+        "code_ci95": [
+          0.456,
+          0.5471
+        ],
+        "code_significant": true,
+        "n_seeds_per_arm": 3,
+        "systems": {
+          "mfu": 0.2909,
+          "mfu_normuon": 0.2907,
+          "achieved_tflops": 36.36,
+          "device_peak_tflops": 125.0,
+          "peak_is_estimated": true,
+          "n_params_nonembed": 440467456,
+          "tokens_per_sec_adamw": 6657,
+          "tokens_per_sec_normuon": 6654
+        },
+        "caveats": "LR confound RESOLVED via matched-config sweep (NorMuon vs AdamW-at-its-best). Remaining: 42M-tok early-training regime (gap may narrow at scale; no scaling curve); seeds share fixed data split (CI under-estimates full variance); single arch.",
+        "design": "NorMuon vs AdamW on 2D hidden weights; identical faithful Qwen3-0.6B arch, fixed decontaminated data split (seed 0), 640 steps x 65536 tok = 42M tok/cell, 3 seeds/arm",
+        "adamw_lr_sweep_wikitext_bpb": {
+          "1.7e-3": 2.1246,
+          "2.4e-3": 2.1098,
+          "3.5e-3": 2.1223,
+          "4.8e-3": 2.1569
+        },
+        "adamw_lr_optimum": "2.4e-3 (confirmed best at matched config; spread ~0.047 bpb ~10x < the 0.474 gap)"
+      },
+      "artifacts_dir": null,
+      "lineage": {
+        "git_commit": "41824a5",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-16_qwen3_normuon-vs-adamw.md",
+      "objective": "pretrain-ablation",
+      "confound_check": {
+        "n_vars": 1,
+        "iso_flop": true
+      }
+    },
+    {
+      "run_id": "2026-06-16_qwen3-0.6b_eval-faithful",
+      "type": "eval",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": null,
+      "budget": null,
+      "probe": null,
+      "smoke": null,
+      "framework": null,
+      "eta_hours": null,
+      "started": "2026-06-16",
+      "ended": null,
+      "status": "done",
+      "verdict": null,
+      "metrics": {},
+      "artifacts_dir": null,
+      "lineage": {
+        "git_commit": "41824a5",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-16_qwen3-0.6b_eval-faithful.md",
+      "objective": "pretrain-ablation",
+      "suite_version": "text-lm-v2",
+      "self_floor": true,
+      "wikitext2_ppl": 37.01,
+      "wikitext2_floor_abs": 1.3,
+      "code_ppl": 438.67,
+      "code_corpus_id": "codeparrot_clean_valid",
+      "code_floor_abs": 280.56
+    },
+    {
+      "run_id": "2026-06-16_qwen3-0.6b_eval-modernized",
+      "type": "eval",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": null,
+      "budget": null,
+      "probe": null,
+      "smoke": null,
+      "framework": null,
+      "eta_hours": null,
+      "started": "2026-06-16",
+      "ended": null,
+      "status": "done",
+      "verdict": null,
+      "metrics": {},
+      "artifacts_dir": null,
+      "lineage": {
+        "git_commit": "41824a5",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-16_qwen3-0.6b_eval-modernized.md",
+      "objective": "pretrain-ablation",
+      "suite_version": "text-lm-v2",
+      "self_floor": true,
+      "wikitext2_ppl": 27.8,
+      "wikitext2_floor_abs": 1.07,
+      "code_ppl": 129.42,
+      "code_corpus_id": "codeparrot_clean_valid",
+      "code_floor_abs": 111.92
+    },
+    {
+      "run_id": "2026-06-16_qwen3-0.6b_eval-prope25",
+      "type": "eval",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": null,
+      "budget": null,
+      "probe": null,
+      "smoke": null,
+      "framework": null,
+      "eta_hours": null,
+      "started": "2026-06-16",
+      "ended": null,
+      "status": "done",
+      "verdict": null,
+      "metrics": {},
+      "artifacts_dir": null,
+      "lineage": {
+        "git_commit": "41824a5",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-16_qwen3-0.6b_eval-prope25.md",
+      "objective": "pretrain-ablation",
+      "suite_version": "text-lm-v2",
+      "self_floor": true,
+      "wikitext2_ppl": 38.08,
+      "wikitext2_floor_abs": 1.7,
+      "code_ppl": 447.3,
+      "code_corpus_id": "codeparrot_clean_valid",
+      "code_floor_abs": 298.9
+    },
+    {
+      "run_id": "2026-06-16_qwen3-0.6b_eval-prope10",
+      "type": "eval",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": null,
+      "budget": null,
+      "probe": null,
+      "smoke": null,
+      "framework": null,
+      "eta_hours": null,
+      "started": "2026-06-16",
+      "ended": null,
+      "status": "done",
+      "verdict": null,
+      "metrics": {},
+      "artifacts_dir": null,
+      "lineage": {
+        "git_commit": "41824a5",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-16_qwen3-0.6b_eval-prope10.md",
+      "objective": "pretrain-ablation",
+      "suite_version": "text-lm-v2",
+      "self_floor": true,
+      "wikitext2_ppl": 69.63,
+      "wikitext2_floor_abs": 3.67,
+      "code_ppl": 1356.31,
+      "code_corpus_id": "codeparrot_clean_valid",
+      "code_floor_abs": 690.96,
+      "note": "step-4000 checkpoint; run stopped early at ~step 5400 (undertrained vs 18150-step peers)"
+    },
+    {
+      "run_id": "2026-06-17_qwen3-0.6b_openr1-math-220k",
+      "type": "dataset-prep",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": "vibethinker-small-reasoning",
+      "budget": {
+        "tokens": 125000000,
+        "source": "research/briefs/vibethinker-small-reasoning.md"
+      },
+      "probe": null,
+      "smoke": null,
+      "framework": null,
+      "eta_hours": null,
+      "started": "2026-06-17",
+      "ended": "2026-06-17",
+      "status": "done",
+      "verdict": null,
+      "metrics": {
+        "train_tokens": 125000592,
+        "eval_tokens": 232918,
+        "eval_docs_kept": 66,
+        "forgetting_tokens": 167242,
+        "forgetting_docs": 202,
+        "docs_dropped": 0,
+        "fertility": 1.92,
+        "n_train_samples": 35512,
+        "shards": 3
+      },
+      "artifacts_dir": "research/datasets/math-reasoning-openr1-math-220k/",
+      "lineage": {
+        "git_commit": "41824a5",
+        "env": null,
+        "dataset_id": "open-r1/OpenR1-Math-220k",
+        "dataset_revision": "e4e141ec9dea9f8326f4d347be56105859b2bd68",
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-17_qwen3-0.6b_openr1-math-220k.md",
+      "objective": "finetune"
+    },
+    {
+      "run_id": "2026-06-17_qwen3-0.6b_vibethinker-small-reasoning",
+      "type": "finetune",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": "vibethinker-small-reasoning",
+      "budget": {
+        "tokens": 125000000,
+        "source": "brief vibethinker-small-reasoning \u00a7C5.2/Addendum"
+      },
+      "probe": {
+        "tokens_per_sec": 7465.3,
+        "peak_mem_gb": 52.39
+      },
+      "smoke": "pass",
+      "framework": "pytorch",
+      "eta_hours": 4.65,
+      "started": "2026-06-17",
+      "ended": "2026-06-18",
+      "status": "done",
+      "verdict": "inconclusive",
+      "metrics": {
+        "suite_version": "text-lm-v2",
+        "objective": "finetune",
+        "forgetting_verdict": "retained",
+        "forgetting_wikitext_ppl": {
+          "base": 37.01,
+          "sft": 37.08,
+          "delta_pct": 0.2,
+          "significant": false
+        },
+        "forgetting_code_ppl": {
+          "base": 438.67,
+          "sft": 425.68,
+          "delta_pct": -3.0,
+          "significant": false
+        },
+        "forgetting_wikitext_bpb": {
+          "base": 1.2256,
+          "sft": 1.2263
+        },
+        "reasoning_openr1_ppl": {
+          "base": 14.26,
+          "sft": 11.6,
+          "delta_pct": -18.7,
+          "note": "in-loop held-out OpenR1-Math reasoning PPL"
+        },
+        "outcome": "reasoning improved -18.7% PPL with NO significant general-ability regression (retained on wikitext + code); n=1, PPL-based (not benchmark accuracy, not seed-gated)",
+        "forgetting_fineweb_edu": {
+          "corpus_id": "fineweb_edu_sample10bt_heldout",
+          "base_ppl": 24.5514,
+          "target_ppl": 24.7331,
+          "delta_abs": 0.1817,
+          "delta_pct": 0.74,
+          "floor_abs": 8.0155,
+          "significant": false,
+          "label": "retained",
+          "base_ppl_claim_readme": 28.65,
+          "note": "\u00a7C13 forgetting probe vs the corpus the base was pretrained on; sub-floor \u2192 retained; SFT PPL below both measured-base 24.55 and README-claim 28.65"
+        },
+        "reasoning_openr1_heldout": {
+          "corpus_id": "openr1_math_220k_heldout",
+          "base_ppl": 17.6035,
+          "target_ppl": 14.2217,
+          "delta_abs": -3.3818,
+          "delta_pct": -19.21,
+          "floor_abs": 4.4291,
+          "significant": false,
+          "label": "not significant",
+          "note": "eval-harness held-out reasoning PPL via text-lm-v2 machinery; -19.2% directional gain but below the single-checkpoint corpus-partition floor 4.43 and n=1 (no seed cohort) \u2192 not a \u00a7C17 win"
+        },
+        "verdict_basis": "inconclusive: n=1 SFT (no seed cohort) cannot clear \u00a7C17 seeds>=3 paired-CI bar; reasoning -19.2% is a promising single-run signal not a significant win; FineWeb-Edu forgetting probe PASSES (retained, sub-floor). Forgetting is not a loss.",
+        "eval_suite_version": "text-lm-v2",
+        "eval_brief_probes_path": "Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/eval/brief_probes_results.json"
+      },
+      "artifacts_dir": "Qwen3-0.6B/experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results",
+      "lineage": {
+        "git_commit": "41824a5",
+        "env": null,
+        "dataset_id": "open-r1/OpenR1-Math-220k",
+        "dataset_revision": "e4e141ec9dea9f8326f4d347be56105859b2bd68",
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning.md",
+      "objective": "finetune"
+    },
+    {
+      "run_id": "2026-06-18_qwen3-0.6b_imu1-deconfound-p1",
+      "type": "ablation",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": null,
+      "budget": {
+        "steps_per_cell": 2000,
+        "tokens_per_cell": 131072000,
+        "cells": 12,
+        "total_tokens": 1572864000,
+        "source": "2000-step proxy Phase 1"
+      },
+      "probe": {
+        "tokens_per_sec": 7444,
+        "peak_mem_gb": 52.4
+      },
+      "smoke": "pass",
+      "framework": "pytorch",
+      "eta_hours": 58.7,
+      "started": "2026-06-18",
+      "ended": "2026-06-21",
+      "status": "done",
+      "verdict": "directional",
+      "metrics": {},
+      "artifacts_dir": "Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1",
+      "lineage": {
+        "git_commit": "bdc5ec6",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-18_qwen3-0.6b_imu1-deconfound-p1.md",
+      "objective": "pretrain-ablation",
+      "arm_plan": {
+        "arms": [
+          "baseline",
+          "wsd",
+          "zloss",
+          "arch"
+        ],
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "optimizer": "adamw"
+      },
+      "confound_check": {
+        "n_vars": 1,
+        "iso_flop": true
+      },
+      "resume_roundtrip": "pass",
+      "guards": "verified",
+      "evidence_path": "Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/c5_evidence.json",
+      "train_pid": 3720974,
+      "sentinel_pid": 2276710,
+      "current_arm": "zloss_seed0",
+      "resume_cmd": "bash Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/run_arms.sh",
+      "log_paths": [
+        "run_arms.log",
+        "run_baseline_seed0.log"
+      ],
+      "resume_note": "mb4+compile restored after 4 sentinel kills; raised per-cohort sentinel to kill-at 0.83 (safe_cuda 0.85 backstop) since snap-confined Firefox is unfreeable; mb4 spike 80.7% now clears the guard; zero confound (identical to baseline/wsd)",
+      "note": "closed retroactively 2026-07-01: cohort.done 2026-06-21; verdict.json drivers=[arch] overall=attributed (wsd/zloss n.s.); ledger entry had been left status=running"
+    },
+    {
+      "run_id": "2026-06-21_qwen3-0.6b_arch-subdrill-p2",
+      "type": "ablation",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": "arch-subcomponent-drill",
+      "budget": {
+        "steps_per_cell": 2000,
+        "tokens_per_cell": 131072000,
+        "new_cells": 9,
+        "source": "parity with Phase-1 de-confound proxy (2026-06-18)"
+      },
+      "probe": {
+        "tokens_per_sec": 5940,
+        "peak_mem_gb": 61.1,
+        "source": "Phase-1 arch arm measured (identical trainer/config; >= params)"
+      },
+      "smoke": "pass",
+      "framework": "pytorch",
+      "eta_hours": 52,
+      "started": "2026-06-21",
+      "ended": null,
+      "status": "done",
+      "verdict": "directional",
+      "metrics": {},
+      "artifacts_dir": "Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2",
+      "lineage": {
+        "git_commit": "59519ca",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-21_qwen3-0.6b_arch-subdrill-p2.md",
+      "objective": "pretrain-ablation",
+      "arm_plan": {
+        "arms": [
+          "vr",
+          "ln",
+          "hg"
+        ],
+        "reused_control": "baseline",
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "optimizer": "adamw 1.7e-3",
+        "schedule": "cosine"
+      },
+      "confound_check": {
+        "n_vars": 1,
+        "iso_flop": true
+      },
+      "control_reuse": {
+        "arm": "baseline",
+        "reused_run_id": "2026-06-18_qwen3-0.6b_imu1-deconfound-p1",
+        "mechanism": "symlink, not retrained"
+      },
+      "guards": "verified",
+      "resume_roundtrip": "pass",
+      "prior_run_id": "2026-06-18_qwen3-0.6b_imu1-deconfound-p1",
+      "evidence_path": "Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/c5_evidence.json",
+      "train_pid": 1629305,
+      "current_arm": "vr_seed0",
+      "log_paths": [
+        "run_arms.log",
+        "run_vr_seed0.log",
+        "sentinel.log",
+        "post_cohort.log"
+      ],
+      "resume_cmd": "bash Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/run_arms.sh",
+      "watcher_pid": 1629306,
+      "lifecycle_stage": "architecture",
+      "eval_items_present": [
+        "iso_flop",
+        "seed_ci_bpb",
+        "single_axis_isolation",
+        "suite_version",
+        "downstream_battery",
+        "per_task_bpb_gold"
+      ],
+      "incomplete_eval": [
+        "ladder_3rung_trend (rented multi-scale)",
+        "cross_data_mix (rented)",
+        "kv_ttft_itl_pareto (hg touches attention)"
+      ],
+      "downstream_confirmed": "v3 LAMBADA+BPB-gold confirm vr<ln<hg all below baseline (2026-06-24); on-corpus-X directional"
+    },
+    {
+      "run_id": "2026-06-24_qwen3-06b_dclm-edu-dataprep",
+      "type": "dataset-prep",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": null,
+      "budget": null,
+      "probe": null,
+      "smoke": null,
+      "framework": null,
+      "eta_hours": null,
+      "started": "2026-06-24",
+      "ended": "2026-06-24",
+      "status": "done",
+      "verdict": null,
+      "metrics": {},
+      "artifacts_dir": "research/datasets/data-selection-dclm-edu",
+      "lineage": {
+        "git_commit": "6cc8571",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-24_qwen3-06b_dclm-edu-dataprep.md",
+      "objective": "pretrain-ablation",
+      "dataset": {
+        "id": "HuggingFaceTB/dclm-edu",
+        "revision": "dbad8ad71224482740cd9c9d353591adbf62fe04",
+        "license": "cc-by-4.0"
+      },
+      "stats": {
+        "train_tokens": 150107480,
+        "eval_tokens": 748210,
+        "shards": 4,
+        "docs_dropped_decontam": 0,
+        "wall_clock_s": 267
+      },
+      "purpose": "treatment slice for data-selection A/B (dclm-edu vs FineWeb-Edu control), fixed-token, OOD-BPB",
+      "method": "direct parquet download (streaming throttled) + local Qwen-tokenize + 13-gram decontam vs wikitext/code",
+      "note": "closed retroactively 2026-07-01: shards + eval_tokens.bin on disk since 2026-06-24 17:53, consumed by data-dclm-vs-fineweb + midtrain-anneal"
+    },
+    {
+      "run_id": "2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb",
+      "type": "ablation",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": null,
+      "budget": null,
+      "probe": null,
+      "smoke": "pass",
+      "framework": "pytorch",
+      "eta_hours": 16,
+      "started": "2026-06-24",
+      "ended": null,
+      "status": "done",
+      "verdict": "directional",
+      "metrics": {
+        "wikitext_delta_bpb": -0.0097,
+        "wikitext_ci": [
+          -0.0255,
+          0.0061
+        ],
+        "wikitext_sig": false,
+        "code_delta_bpb": 0.7034,
+        "code_ci": [
+          0.6639,
+          0.743
+        ],
+        "code_sig": true,
+        "code_ppl_control": 1890,
+        "code_ppl_treatment": 247
+      },
+      "artifacts_dir": "Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb",
+      "lineage": {
+        "git_commit": "6cc8571",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb.md",
+      "objective": "pretrain-ablation",
+      "lifecycle_stage": "data",
+      "confound_check": {
+        "n_vars": 1,
+        "iso_flop": true
+      },
+      "arm_plan": {
+        "arms": [
+          "control(reused)",
+          "treatment(dclm)"
+        ],
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "new_cells": 3
+      },
+      "guards": "verified",
+      "evidence_path": "Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/c5_evidence.json",
+      "train_pid": 430248,
+      "headline": "dclm-edu vs FineWeb-Edu @ fixed 131M tok: NULL on English (CI crosses 0), LARGE significant win on CODE (-0.70 bpb, PPL 1890->247). Not more-code (dclm has ~none); FineWeb-Edu prose-filter is unusually bad at code structure.",
+      "eval_items_present": [
+        "single_axis_isolation",
+        "seed_ci_bpb",
+        "decontam_report",
+        "downstream_or_bpb",
+        "figure",
+        "provenance_sha_license",
+        "doc_disjoint_split"
+      ],
+      "incomplete_eval": [
+        "second_lr_recheck (single budget)",
+        "tokenizer_fertility (not measured)"
+      ]
+    },
+    {
+      "run_id": "2026-06-26_qwen3-0.6b_data-mix-composition",
+      "type": "ablation",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": null,
+      "budget": null,
+      "probe": null,
+      "smoke": "pass",
+      "framework": "pytorch",
+      "eta_hours": null,
+      "started": "2026-06-26",
+      "ended": null,
+      "status": "done",
+      "verdict": "directional",
+      "metrics": {},
+      "artifacts_dir": "Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition",
+      "lineage": {
+        "git_commit": "61c9b51",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-26_qwen3-0.6b_data-mix-composition.md",
+      "objective": "pretrain-ablation",
+      "lifecycle_stage": "data",
+      "confound_check": {
+        "n_vars": 1,
+        "iso_flop": true
+      },
+      "arm_plan": {
+        "arms": [
+          "fineweb(reused)",
+          "dclm(reused)",
+          "mix(new 50/50)"
+        ],
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "new_cells": 3
+      },
+      "purpose": "data-composition curve: does a 50/50 FineWeb-Edu+dclm-edu mix keep English AND gain code (no tradeoff)?",
+      "train_pid": 2523752,
+      "note": "mix re-run after fixing token-level-shuffle bug (was destroying sequence structure)",
+      "headline": "50/50 mix = BEST OF BOTH: English on par with FineWeb (\u0394+0.016 n.s.), code recovers +0.59 of dclm s +0.70 win (mix 2.05 between FineWeb 2.64 and dclm 1.94). No English tradeoff; ~84% of the code gain."
+    },
+    {
+      "run_id": "2026-06-27_qwen3-0.6b_sft-3seed",
+      "type": "finetune",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": null,
+      "budget": null,
+      "probe": null,
+      "smoke": "pass",
+      "framework": "pytorch",
+      "eta_hours": 30,
+      "started": "2026-06-27",
+      "ended": null,
+      "status": "done",
+      "verdict": "directional",
+      "metrics": {
+        "suite_version": "text-lm-v2",
+        "eval_harness_note": "1 representative seed/arm scored on the standard suite (held-out \u03c3\u22480.001 across seeds; full 3-seed CI is the in-domain reasoning_verdict.json)",
+        "wikitext2_ppl": {
+          "base": 37.01,
+          "sft_seed0": 37.082,
+          "ctrl_seed0": 37.084,
+          "floor_abs": 1.304,
+          "label": "retained (\u0394+0.07 sub-floor)"
+        },
+        "code_ppl": {
+          "base": 438.673,
+          "sft_seed0": 425.689,
+          "ctrl_seed0": 425.594,
+          "floor_abs": 280.564,
+          "label": "retained (sub-floor)"
+        },
+        "forgetting_wikitext2": "retained",
+        "forgetting_code": "retained",
+        "forgetting_fineweb_edu_reasoning_eval": {
+          "base": 21.495,
+          "sft_mean": 21.652,
+          "ctrl_mean": 21.66,
+          "label": "retained (~0.7%)"
+        },
+        "heldout_reasoning_ppl_masked": {
+          "base": 14.127,
+          "sft_mean": 11.573,
+          "ctrl_mean": 11.582
+        },
+        "sft_vs_control_masked": {
+          "improvement_ppl": 0.0092,
+          "ci95": [
+            0.0045,
+            0.0139
+          ],
+          "significant": true
+        },
+        "sft_vs_control_fullseq": {
+          "improvement_ppl": -0.0064,
+          "ci95": [
+            -0.011,
+            -0.0015
+          ],
+          "significant": false
+        },
+        "sft_vs_base_masked": {
+          "improvement_ppl": 2.554,
+          "pct": 18.1
+        },
+        "headline": "SFT (response-masked) does NOT separate from the iso-FLOP --no_mask control on held-out reasoning (masked +0.009 sig / full-seq -0.006 nonsig -> directional). The ~18% reasoning-PPL gain over base is from the extra math tokens, not the masking. No catastrophic forgetting (wikitext/code/FineWeb-Edu all retained)."
+      },
+      "artifacts_dir": "Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed",
+      "lineage": {
+        "git_commit": "b95c019",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-06-27_qwen3-0.6b_sft-3seed.md",
+      "objective": "finetune",
+      "lifecycle_stage": "sft",
+      "arm_plan": {
+        "arms": [
+          "sft-masked",
+          "ctrl-no_mask"
+        ],
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "new_cells": 6
+      },
+      "purpose": "n=1 SFT -> 3-seed CI verdict + iso-FLOP control",
+      "train_pid": 3857373,
+      "current_cell": "sft_seed0",
+      "note": "stepping confirmed (step10 loss2.59 7294 tok/s ETA4.55h/cell); fixed scorer armed"
+    },
+    {
+      "run_id": "2026-06-30_qwen3-0.6b_midtrain-anneal",
+      "type": "ablation",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": "midtrain-anneal-premium-mix",
+      "budget": null,
+      "probe": {
+        "tokens_per_sec": 6885,
+        "peak_mem_gb": 57.4,
+        "pct_pool": 48,
+        "source": "mb4+compile data-mix ref; mb6 measured slower+89.7GB=75% (unified-mem thrash), mb2 5613"
+      },
+      "smoke": "pass",
+      "framework": "pytorch",
+      "eta_hours": 36,
+      "started": "2026-06-30",
+      "ended": "2026-07-01",
+      "status": "done",
+      "verdict": "win",
+      "metrics": {
+        "suite_version": "text-lm-v2",
+        "headline": "code_py_bpb_treatment_vs_iso_token_control",
+        "code_py_bpb": {
+          "control_mean": 2.1236,
+          "treatment_mean": 1.852,
+          "improvement": 0.2716,
+          "ci95": [
+            0.2641,
+            0.2792
+          ],
+          "significant": true,
+          "n_seeds": 3
+        },
+        "wikitext2_bpb": {
+          "control_mean": 1.222,
+          "treatment_mean": 1.2062,
+          "improvement": 0.0157,
+          "ci95": [
+            0.014,
+            0.0174
+          ],
+          "significant": true,
+          "n_seeds": 3
+        },
+        "short_ctx_non_regression": "pass \u2014 all 4 arm/corpus cells improved vs un-annealed base",
+        "c25_cap": "directional (effective_context_length_ruler missing \u2014 loader build-backlog)"
+      },
+      "artifacts_dir": "Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal",
+      "lineage": {
+        "git_commit": "ac8e332",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": 2220,
+        "gpu_hours": 36.7
+      },
+      "detail_md": "research/ledger/runs/2026-06-30_qwen3-0.6b_midtrain-anneal.md",
+      "objective": "pretrain-ablation",
+      "lifecycle_stage": "mid-training",
+      "arm_plan": {
+        "arms": [
+          "mix-treatment",
+          "fineweb-control"
+        ],
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "new_cells": 6
+      },
+      "note": "anneal cooldown from faithful base; headline code_py BPB treatment-vs-control 3-seed CI; honest null expected English/downstream",
+      "confound_check": {
+        "n_vars": 1,
+        "iso_flop": true,
+        "evidence": "single variable = DATA (mix vs fineweb), identical base ckpt + cooldown schedule + 2300 steps x 65,536 tok = 150.7M consumed tokens per cell (iso-FLOP exact by construction); \u00a7C5 evidence in c5_evidence.json"
+      }
+    },
+    {
+      "run_id": "2026-07-01_qwen3-0.6b_rlvr-phase1-passk",
+      "type": "eval",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": "vibethinker-small-reasoning",
+      "budget": null,
+      "probe": null,
+      "smoke": null,
+      "framework": "pytorch",
+      "eta_hours": null,
+      "started": "2026-07-01",
+      "ended": "2026-07-02",
+      "status": "done",
+      "verdict": null,
+      "metrics": {
+        "extractor": "math-acc-v1",
+        "band": "100 gsm8k_test_clean + 50 math500_clean L<=3, seed 20260701, n=8 @ T=0.8, max_new=256",
+        "sft_seed0": {
+          "gsm8k": {
+            "pass1": {
+              "acc": 0.01125,
+              "ci_low": 0.0059297687461997645,
+              "ci_high": 0.021241582744848563
+            },
+            "pass8": 0.07,
+            "solved": 7
+          },
+          "math500_l13": {
+            "pass1": {
+              "acc": 0.015,
+              "ci_low": 0.006892291919440893,
+              "ci_high": 0.03233463358482672
+            },
+            "pass8": 0.1,
+            "solved": 5
+          }
+        },
+        "base": {
+          "gsm8k": {
+            "pass1": {
+              "acc": 0.00625,
+              "ci_low": 0.0026724940266688486,
+              "ci_high": 0.014546646226436234
+            },
+            "solved": 5
+          },
+          "math500_l13": {
+            "pass1": {
+              "acc": 0.0225,
+              "ci_low": 0.011881583530495034,
+              "ci_high": 0.04220265755875813
+            },
+            "solved": 7
+          }
+        },
+        "decision": "GO",
+        "go_rule": "GO iff SFT solved_items >= 3 across the band (pre-registered)",
+        "honest_read": "GO fires on absolute solvability (12 items) \u2014 NOT on SFT>base: CIs overlap everywhere and base BEATS sft on math500_l13 (14% vs 10% pass@8). GRPO ceiling = sharpening pass@1 toward the ~7-10% pass@8 band; random-reward control mandatory."
+      },
+      "artifacts_dir": "Qwen3-0.6B/experiments/2026-07-01_qwen3-0.6b_rlvr-phase1-passk",
+      "lineage": {
+        "git_commit": "ac8e332",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-07-01_qwen3-0.6b_rlvr-phase1-passk.md",
+      "objective": "finetune",
+      "lifecycle_stage": "rlvr",
+      "note": "rlvr Phase-1 pass@k go/no-go (plan.md Phase 1, pre-registered rule in run_phase1_passk.py). DECISION: GO -> P1 prompt-set prep unlocked; Phase-2 GRPO training remains behind the needs-approval rlvr-method-plan proposal."
+    },
+    {
+      "run_id": "2026-07-02_qwen3-0.6b_grpo-prompts-dataprep",
+      "type": "dataset-prep",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": "vibethinker-small-reasoning",
+      "budget": null,
+      "probe": null,
+      "smoke": null,
+      "framework": null,
+      "eta_hours": null,
+      "started": "2026-07-02",
+      "ended": "2026-07-02",
+      "status": "done",
+      "verdict": null,
+      "metrics": {
+        "gsm8k_train_clean": 7471,
+        "math_l13_train_clean": 3490,
+        "eval_overlap_dropped": 14,
+        "sft_overlap_flagged": 7,
+        "extractor": "math-acc-v1"
+      },
+      "artifacts_dir": "research/datasets/grpo-math-prompts-v1",
+      "lineage": {
+        "git_commit": "ac8e332",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-07-02_qwen3-0.6b_grpo-prompts-dataprep.md",
+      "objective": "finetune",
+      "lifecycle_stage": "rlvr",
+      "note": "P1 of rlvr plan (unlocked by Phase-1 GO): GRPO training prompts, eval-decontaminated (drops) + SFT-flagged (kept). Phase-2 GRPO training still needs-approval."
+    },
+    {
+      "run_id": "2026-07-02_qwen3-0.6b_grpo-phase2",
+      "type": "finetune",
+      "model_dir": "Qwen3-0.6B",
+      "technique_slug": "vibethinker-small-reasoning",
+      "budget": null,
+      "probe": null,
+      "smoke": "pass",
+      "framework": "pytorch",
+      "eta_hours": 88,
+      "started": "2026-07-02",
+      "ended": null,
+      "status": "done",
+      "verdict": "directional",
+      "metrics": {
+        "proceed_to_phase3": false,
+        "conclusion": "PREDICTED NULL CONFIRMED: GRPO does not beat the SFT floor; GRPO does not beat the random-reward gate. At ~1% base pass@1 there is nothing for RL to sharpen (GRPO training reward flat at ~0.9% correct with no trend [first-50 0.0091 vs last-50 0.0080]; RFT's 352 collected completions, ~0.9% of 38,400 rollouts, were too few to separate from the floor). Do NOT spend the multi-seed cohort; the reasoning gain lives in SFT/distillation, not RL at this scale.",
+        "comparison": [
+          {
+            "set": "gsm8k",
+            "sft_pass1": 0.0112,
+            "grpo_pass1": 0.01,
+            "random_pass1": 0.01,
+            "rft_pass1": 0.015,
+            "sft_pass8": 0.07,
+            "grpo_pass8": 0.07,
+            "random_pass8": 0.06,
+            "rft_pass8": 0.11,
+            "grpo_pass1_ci": [
+              0.0051,
+              0.0196
+            ],
+            "sft_pass1_ci": [
+              0.0059,
+              0.0212
+            ],
+            "grpo_beats_sft_floor": false,
+            "grpo_beats_random_gate": false
+          },
+          {
+            "set": "math500_l13",
+            "sft_pass1": 0.015,
+            "grpo_pass1": 0.0225,
+            "random_pass1": 0.015,
+            "rft_pass1": 0.0175,
+            "sft_pass8": 0.1,
+            "grpo_pass8": 0.16,
+            "random_pass8": 0.1,
+            "rft_pass8": 0.12,
+            "grpo_pass1_ci": [
+              0.0119,
+              0.0422
+            ],
+            "sft_pass1_ci": [
+              0.0069,
+              0.0323
+            ],
+            "grpo_beats_sft_floor": false,
+            "grpo_beats_random_gate": false
+          }
+        ]
+      },
+      "artifacts_dir": "Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2",
+      "lineage": {
+        "git_commit": "ac8e332",
+        "env": null,
+        "dataset_id": null,
+        "dataset_revision": null,
+        "data_hash": null,
+        "artifact_sha256": null
+      },
+      "cost": {
+        "wall_clock_min": null,
+        "gpu_hours": null
+      },
+      "detail_md": "research/ledger/runs/2026-07-02_qwen3-0.6b_grpo-phase2.md",
+      "objective": "finetune",
+      "lifecycle_stage": "rlvr",
+      "note": "measured pace 362s/step (no-KV-cache decode dominates) -> revised ETA ~88h total (grpo ~30h + random ~30h + rft ~26h + evals); launched 2026-07-02 07:39"
+    }
+  ],
+  "proposals": [
+    {
+      "slug": "build-north-mini-code-moe",
+      "kind": "new-build",
+      "md_path": "research/proposals/build-north-mini-code-moe.md",
+      "created": "2026-06-17",
+      "status": "open"
+    },
+    {
+      "slug": "build-sana-wm-world-model",
+      "kind": "new-build",
+      "md_path": "research/proposals/build-sana-wm-world-model.md",
+      "created": "2026-06-17",
+      "status": "open"
+    },
+    {
+      "slug": "block-text-diffusion",
+      "kind": "new-build",
+      "md_path": "research/proposals/block-text-diffusion.md",
+      "created": "2026-06-17",
+      "status": "open"
+    },
+    {
+      "slug": "midtrain-context-extension",
+      "kind": "needs-approval",
+      "md_path": "research/midtraining/plan.md",
+      "created": "2026-06-27",
+      "status": "open",
+      "reason": "Step-0 diagnostic GATE FAILED: faithful base shows no clean passkey retrieval up to its trained 4096 (acc 0.08-0.33, noisy) -> context-extension MOOT/propose-only at 596M/1.19B (research predicted this). The ~0.3-GPU-day diagnostic saved ~1.5-2 GPU-days."
+    },
+    {
+      "slug": "rlvr-method-plan",
+      "kind": "needs-approval",
+      "md_path": "research/rlvr/plan.md",
+      "created": "2026-07-01",
+      "status": "accepted",
+      "researched_on": "2026-07-01",
+      "stage": "rlvr",
+      "reason": "\u00a7C27 rlvr method-research (stage-method-research wf_5cf3b0d7-5f1, 3-persona adversarially verified). HONEST verdict: at 0.6B on a ~10x-undertrained SFT base, RLVR is a methodology/negative-result artifact, not a reasoning win \u2014 RL only sharpens pass@k the base already has, and ours is near-floor; the reasoning lives in SFT/distillation. NOT runnable today: decision metric (held-out GSM8K/MATH-500 exact-match pass@1+pass@k) does NOT exist + GRPO prompt/eval sets not on disk. Prereqs P1-P4 (dataset-forge GSM8K+MATH bands, MATH-500 eval, build math-acc-v1 exact-match/passk in eval-harness, pin+fuzz extractor) then Phase-1 pass@k go/no-go (~0.3 GPU-day, STOP if pass@k~0). Matched control = iso-compute rejection-sampling SFT + REQUIRED random-reward gate (Spurious Rewards, Qwen lineage). On-box ~3-5 GPU-days; multi-seed CI cohort off-box/propose-only.",
+      "note": "user accepted Phase 2 (exploratory Dr.GRPO + iso-compute RFT + random-reward gate) 2026-07-02"
+    },
+    {
+      "slug": "preference-dpo-plan",
+      "kind": "needs-approval",
+      "md_path": "research/preference/plan.md",
+      "created": "2026-07-01",
+      "status": "open",
+      "note": "\u00a7C27 preference-stage plan (wf_5b68bd62-487, 3-persona + adversarial): DPO-vs-chosen-SFT on UltraFeedback in SFT plain format; ~2.5 GPU-days; claim ceiling = narrow win on pref-acc + KL-frontier; judge item off-box or verdict capped directional"
+    },
+    {
+      "slug": "next-step-verdict-2026-07",
+      "kind": "needs-approval",
+      "md_path": "research/decisions/2026-07-05_next-step-verdict.md",
+      "created": "2026-07-05",
+      "status": "open",
+      "reason": "Honest strategic verdict (3-persona adversarial, all cores survived red-team): STOP post-training on the ~2-tok/param base (it IS the ceiling; SFT-directional + RLVR-null are the same ~1% capability). Rank: (1) ship loop end-to-end + honest 2-wins paper [cheap/CPU], (2) RENT multi-GPU scaling ladder = NorMuon/IMU-1 persistence + correctness-gated MFU report [THE hinge, ~2-8k, the un-fakeable Scaling credential], (3) write the CCE Triton kernel. Make compute-vs-loss the object of study."
+    },
+    {
+      "slug": "next-step-verdict-v2-onbox",
+      "kind": "needs-approval",
+      "md_path": "research/decisions/2026-07-05_next-step-verdict-v2-onbox.md",
+      "created": "2026-07-05",
+      "status": "open",
+      "reason": "ON-BOX no-rent verdict (4-persona Anthropic+GDM, all cores survived). Frontier-Pre-training-RE(Scaling) does NOT survive no-rent -> PIVOT to RS/RE-via-Fellows (small honest scaling+muP study, spine=RLVR-null+SFT-confound) + research-infra ML-Eng (ship the loop) + kernels hedge. Ranked on-box: #1 SHIP THE LOOP end-to-end + 2-wins paper (loop has NEVER run: 1 hand-made digest, stale PID); #2 persistence-first fixed-N token sweep (does IMU-1 +0.474 persist?) + 1-D L(C) frontier (NOT 2-D, unidentifiable on a ray); #3 CCE kernel (correctness-first, win=memory). STOP all post-training on the 596M base."
+    },
+    {
+      "slug": "scaling-persistence-ladder",
+      "kind": "big-run",
+      "md_path": "research/scaling/plan.md",
+      "created": "2026-07-05",
+      "status": "open",
+      "reason": "QUEUED on-box scaling stage (persistence-first). Closes the IMU-1 RESULT.md Limitation #3 (no >=3-budget scaling curve): does NorMuon +0.474 BPB win persist or vanish with budget? Reuse train_ablation.py at fixed N=596M, sweep tokens 42M(reuse)/168M/420M/840M x {adamw,normuon} x seeds, fit_gap_trend. ~10.5 GPU-days full (or ~4 for 3-budget). Fires after RLVR closes + explicit go; NOT auto-armed (10-day commitment). Cells: research/scaling/ladder_plan.json."
+    }
+  ],
+  "never_repeat": [],
+  "papers": [
+    {
+      "slug": "qwen3-imu1-matched-compute",
+      "title": "Reproduce, Then Modernize: A Matched-Compute Study of a 2026 Architecture-and-Optimizer Recipe on a Bit-Exact Qwen3-0.6B",
+      "status": "abandoned",
+      "venue": "arxiv",
+      "arxiv_id": null,
+      "run_ids": [
+        "2026-06-08_qwen3-0.6b_faithful-baseline",
+        "2026-06-08_qwen3-0.6b_imu1-modernized"
+      ],
+      "md_path": "research/papers/qwen3-imu1-matched-compute/",
+      "created": "2026-06-15",
+      "updated": "2026-06-19",
+      "notes": "SUPERSEDED by qwen3-0.6b-study (consolidated single-model study)"
+    },
+    {
+      "slug": "qwen3-0.6b-study",
+      "title": "Reproduce, Then Attribute: A Controlled Study of the LLM Training Lifecycle on a Bit-Exact Qwen3-0.6B Reproduction",
+      "status": "packaged",
+      "venue": "arxiv",
+      "arxiv_id": null,
+      "run_ids": [
+        "2026-06-16_qwen3_normuon-vs-adamw",
+        "2026-06-17_qwen3-0.6b_vibethinker-small-reasoning",
+        "2026-06-18_qwen3-0.6b_imu1-deconfound-p1"
+      ],
+      "md_path": "research/papers/qwen3-0.6b-study/",
+      "created": "2026-06-19",
+      "updated": "2026-07-07",
+      "notes": "Full-lifecycle refresh finalized 2026-07-07: 34-page PDF (tectonic, clean glyphs), 26 verified refs, arxiv_package.tar.gz (35 files, standalone-compile verified), SUBMISSION.md dossier, report page published as Artifact https://claude.ai/code/artifact/17f80f4a-bb77-43d4-a11f-55fa8d07a41e (18/18 fragments adversarially verified vs LaTeX source), distribution kit slots filled. Human steps remaining: share artifact, push repo, arXiv endorsement+submit, post HN/r-ML/X."
+    }
+  ]
+}
