@@ -25,7 +25,9 @@ matching, and a held-out noise floor — and is rewritten to exactly what the
 evidence supports.
 
 **1 · Reproduction (done).** Faithful Qwen3-0.6B trained from scratch lands
-within **2.14×** of the original's perplexity using **~275,000× less data**.
+within **2.14×** of the original's perplexity using **~30,000× less data**
+(1.19B vs 36T tokens); an earlier 131M-token probe sat at 3.5× with ~275,000×
+less data — each ~10× more data roughly halves the gap.
 
 **2 · Architecture + optimizer — the "IMU-1" study (done).** A three-build
 experiment (faithful baseline / modernized *IMU-1* bundle / exploratory
@@ -86,10 +88,14 @@ with the Chen-2021 estimator, on decontaminated GSM8K + MATH-500) and tested it.
 - **Phase-1 go/no-go** — the SFT'd base is **near the floor** (GSM8K pass@1 **1.1%** /
   pass@8 7%; MATH-500-L1–3 pass@1 **1.5%** / pass@8 10%), barely clearing the
   pre-registered GO threshold.
-- **Phase-2 GRPO** (Dr.GRPO, 300 steps) — reward stayed **flat at ~0** the entire run
-  (no gradient — almost every rollout group is all-wrong). An **iso-compute
-  rejection-sampling control** collected **0** verifier-correct completions; a
-  **random-reward control** trained at ~0.5 (proving the pipeline works).
+- **Phase-2 GRPO** (Dr.GRPO, 300 steps) — training reward stayed **flat at ~0.9%
+  correct with no learning trend** (first-50 mean 0.0091 vs last-50 0.0080); gradient
+  did flow (~13.5/16 groups kept by DAPO dynamic sampling, mostly on the format
+  reward), but correctness never moved. The **iso-compute rejection-sampling
+  control** collected **352** verifier-correct completions (~0.9% of 38,400
+  rollouts) — too few for its masked-SFT pass to separate from the floor
+  (nominally above on pass@8, CIs overlap); a **random-reward control** trained
+  at ~0.5 mean reward (proving the pipeline works).
 - **Verdict: GRPO beats neither the SFT floor nor the random-reward gate** (pass@1
   Wilson CIs overlap on both corpora) → **directional null, exactly as predicted**.
   The reasoning capability lives in SFT/distillation, not RL at this scale — the gate

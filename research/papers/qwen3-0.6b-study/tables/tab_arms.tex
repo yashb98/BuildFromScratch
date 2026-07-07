@@ -1,0 +1,40 @@
+% tab_arms.tex -- three builds at matched 1.19B-token compute
+% Sources (re-read 2026-07-06):
+%   in-loop val PPLs: builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/qwen3_imu1_2tpp_train.log (line 381),
+%     builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_train.log (line 396),
+%     builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/qwen3_prope25_2tpp_train.log (line 378),
+%     builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/phase_b_driver.log (RoPE-0.10 arm Terminated at step 5450)
+%   text-lm-v2 suite: experiments/2026-06-16_qwen3-0.6b_eval-{modernized,faithful,prope25}/eval/suite_results.json
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+ & In-loop val PPL & \multicolumn{2}{c}{wikitext-2 (text-lm-v2)} & \multicolumn{2}{c}{code\_py (text-lm-v2)} \\
+\cmidrule(lr){3-4} \cmidrule(l){5-6}
+Build & (FineWeb-Edu, $n{=}1$) & PPL & floor & PPL & floor \\
+\midrule
+Modernized (IMU-1)            & 23.52 & 27.80 & 1.07  & 129.42 & 111.92 \\
+Faithful (baseline)           & 28.65 & 37.01 & 1.30  & 438.67 & 280.56 \\
+Exploratory (partial-RoPE 0.25) & 29.54 & 38.08 & 1.70  & 447.30 & 298.90 \\
+\bottomrule
+\end{tabular}
+\caption{The three Qwen3-0.6B builds at matched compute: each trained
+$18{,}150$ steps $\times$ $65{,}536$ tok $= 1{,}189{,}478{,}400$
+($\approx$1.19B) FineWeb-Edu tokens at sequence length 4096 (identical data,
+schedule shape, and held-out val set). ``In-loop val PPL'' is the trainer's
+own FineWeb-Edu validation eval -- a single run per build ($n{=}1$, no
+variance estimate, no suite stamp; the IMU-1 value is the last eval, at step
+18{,}000 of 18{,}150). The right four columns are the independent
+\texttt{text-lm-v2} eval-harness pass on the same checkpoints (204{,}600
+tokens per corpus) with its subsample noise floor (\texttt{floor\_abs});
+they confirm the ordering on both corpora, but the code\_py floors are
+68--92\% of the measurement (floor\_pct 92.1/68.2/70.9), so the code-PPL
+gaps should be read as directional only. A fourth arm (partial-RoPE 0.10)
+died at step 5{,}450/18{,}150 (last-eval PPL 50.71) and is excluded.
+Sources: \texttt{qwen3\_imu1\_2tpp\_train.log},
+\texttt{qwen3\_baseline2tpp\_train.log},
+\texttt{qwen3\_prope25\_2tpp\_train.log}, \texttt{phase\_b\_driver.log},
+and the three per-build \texttt{suite\_results.json} files.}
+\label{tab:arms}
+\end{table}

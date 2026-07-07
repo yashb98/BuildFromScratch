@@ -1,0 +1,46 @@
+[
+  {
+    "request": {
+      "title": "Measuring Mathematical Problem Solving With the MATH Dataset",
+      "arxiv_id": null,
+      "doi": null
+    },
+    "errors": [
+      "dblp('Measuring Mathematical Problem Solving With the MATH Dataset'): HTTP 500 for https://dblp.org/search/publ/api?q=Measuring+Mathematical+Problem+Solving+With+the+MATH+Dataset&format=json&h=5",
+      "semanticscholar('Measuring Mathematical Problem Solving With the MATH Dataset'): HTTP 429 for https://api.semanticscholar.org/graph/v1/paper/search?query=Measuring+Mathematical+Problem+Solving+With+the+MATH+Dataset&limit=5&fields=title%2Cauthors%2Cyear%2Cvenue%2CexternalIds"
+    ]
+  },
+  {
+    "request": {
+      "title": "Evaluating Large Language Models Trained on Code",
+      "arxiv_id": null,
+      "doi": null
+    },
+    "errors": [
+      "dblp('Evaluating Large Language Models Trained on Code'): HTTP 500 for https://dblp.org/search/publ/api?q=Evaluating+Large+Language+Models+Trained+on+Code&format=json&h=5",
+      "semanticscholar('Evaluating Large Language Models Trained on Code'): HTTP 429 for https://api.semanticscholar.org/graph/v1/paper/search?query=Evaluating+Large+Language+Models+Trained+on+Code&limit=5&fields=title%2Cauthors%2Cyear%2Cvenue%2CexternalIds"
+    ]
+  },
+  {
+    "request": {
+      "title": "Landmark Attention: Random-Access Infinite Context Length for Transformers",
+      "arxiv_id": null,
+      "doi": null
+    },
+    "errors": [
+      "dblp('Landmark Attention: Random-Access Infinite Context Length for Transformers'): HTTP 500 for https://dblp.org/search/publ/api?q=Landmark+Attention%3A+Random-Access+Infinite+Context+Length+for+Transformers&format=json&h=5",
+      "semanticscholar('Landmark Attention: Random-Access Infinite Context Length for Transformers'): HTTP 429 for https://api.semanticscholar.org/graph/v1/paper/search?query=Landmark+Attention%3A+Random-Access+Infinite+Context+Length+for+Transformers&limit=5&fields=title%2Cauthors%2Cyear%2Cvenue%2CexternalIds"
+    ]
+  },
+  {
+    "request": {
+      "title": "OLMo 2 Furious",
+      "arxiv_id": null,
+      "doi": null
+    },
+    "errors": [
+      "dblp('OLMo 2 Furious'): HTTP 500 for https://dblp.org/search/publ/api?q=OLMo+2+Furious&format=json&h=5",
+      "semanticscholar('OLMo 2 Furious'): HTTP 429 for https://api.semanticscholar.org/graph/v1/paper/search?query=OLMo+2+Furious&limit=5&fields=title%2Cauthors%2Cyear%2Cvenue%2CexternalIds"
+    ]
+  }
+]

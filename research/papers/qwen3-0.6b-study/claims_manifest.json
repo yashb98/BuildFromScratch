@@ -1,0 +1,98 @@
+{
+ "paper": "qwen3-0.6b-study",
+ "title": "Reproduce, Then Attribute: A Controlled Study of the LLM Training Lifecycle on a Bit-Exact Qwen3-0.6B Reproduction",
+ "audited": "2026-07-06",
+ "headline": "A bit-exact 0.6B reproduction carried through the full training lifecycle: two attributed wins under single-variable iso-FLOP controls (the modernized-bundle de-confound; the mid-training premium-data anneal), three honest nulls (SFT response-masking, GRPO-at-scale, context extension), and the evidence-gating methodology that caught two of the project's own recorded claims being wrong.",
+ "blocking_check": "PASS \u2014 every headline component is BACKED (multi-seed CI + iso-FLOP where comparative; bit-exact where reproductive); no headline rests on a LIMITATION.",
+ "BACKED": [
+  {
+   "claim": "Qwen3-0.6B repro bit-exact vs HF (max|\u0394logits|=0.0, argmax match; single-prompt fp32 protocol stated)",
+   "src": "builds/.../results/verify.json"
+  },
+  {
+   "claim": "SmolLM2-135M repro bit-exact (max|\u0394logits|=0.0; 134,515,008 params)",
+   "src": "SmolLM2-134(base)/results/{verify output,param_count.log}"
+  },
+  {
+   "claim": "De-confound p1: architecture-bundle axis is the sole driver (+0.1179 BPB wikitext CI[0.1005,0.1354], 3 seeds, iso-FLOP); WSD and z-loss NOT significant",
+   "src": "experiments/2026-06-18_imu1-deconfound-p1/verdict.json",
+   "suite": "text-lm-v2"
+  },
+  {
+   "claim": "De-confound p2: value-residual +0.0355, layernorm-scaling +0.0337, head-gating +0.0256 BPB \u2014 each individually significant (3 seeds, iso-FLOP)",
+   "src": "experiments/2026-06-21_arch-subdrill-p2/verdict.json",
+   "suite": "text-lm-v2"
+  },
+  {
+   "claim": "Data composition: dclm-edu code_py +0.7034; 50/50 mix +0.5904 CI[0.5532,0.6277] sig (=83.9% of the dclm code effect) while mix wikitext2 +0.0161 NOT significant (English retained)",
+   "src": "experiments/2026-06-26_data-mix-composition/verdict.json",
+   "suite": "text-lm-v2"
+  },
+  {
+   "claim": "Mid-training anneal: mix cooldown beats iso-token fineweb control on code_py +0.2716 CI[0.2641,0.2792] sig n=3; control\u2248base (+0.0050) \u2014 the LR-decay confound eaten; \u00a7C25 HARD-complete \u2192 win; \u00a7C18 confound_check recorded",
+   "src": "experiments/2026-06-30_midtrain-anneal/verdict.json + ledger.json",
+   "suite": "text-lm-v2"
+  },
+  {
+   "claim": "ECL ladder: no rung regression; both arms fix the base 4096-dip (0.03\u21920.40); mix pooled 512-rung 0.82 vs base 0.20 (n=40/rung/cell, Wilson)",
+   "src": "experiments/2026-06-30_midtrain-anneal/ecl_ladder.json"
+  },
+  {
+   "claim": "SFT: held-out masked reasoning PPL base 14.127 \u2192 SFT 11.573 / control 11.582; masking does NOT separate from iso-FLOP control (masked +0.009 sig, full-seq \u22120.006 n.s. \u2192 directional); no catastrophic forgetting",
+   "src": "experiments/2026-06-27_sft-3seed/reasoning_verdict.json"
+  },
+  {
+   "claim": "The eval-token confound: in-loop 0.68-PPL 'win' collapsed to ~0.01 on one fixed held-out response-masked set",
+   "src": "experiments/2026-06-27_sft-3seed/ + ledger run md"
+  },
+  {
+   "claim": "RLVR: Phase-1 gate (SFT pass@1 1.1%/1.5%, pass@8 7%/10%); Phase-2 GRPO beats neither the SFT floor nor the random-reward gate (CIs overlap); training reward flat ~0.9% no trend; RFT 352/38,400 correct \u2192 cannot separate; pre-registered null confirmed",
+   "src": "experiments/2026-07-01_rlvr-phase1-passk/phase1_passk.json + 2026-07-02_grpo-phase2/verdict.json",
+   "suite": "math-acc-v1"
+  },
+  {
+   "claim": "Context-extension gated off at step 0: base passkey 0.083 at its own 4096 window (threshold 0.5)",
+   "src": "experiments/2026-06-27_midtraining/step0_diagnostic.json"
+  }
+ ],
+ "LIMITATION": [
+  {
+   "claim": "2.14\u00d7 of original PPL at ~30,000\u00d7 less data (1.19B vs 36T); 3.5\u00d7 at ~275,000\u00d7 (131M)",
+   "caveat": "n=1, in-loop trainer eval (not suite-stamped); descriptive only"
+  },
+  {
+   "claim": "Three-build headline 17.9% PPL (23.52 vs 28.65)",
+   "caveat": "n=1 PPL; superseded by the de-confound's 3-seed BPB CIs \u2014 reported as motivation, not result"
+  },
+  {
+   "claim": "Anneal English +0.0157 sig",
+   "caveat": "pre-registration said expected-null; reported as exploratory violation, not a claim"
+  },
+  {
+   "claim": "The 4096-dip anomaly and its repair by the anneal",
+   "caveat": "mechanism unexplained; passkey probe n=40/rung; flagged as open question"
+  },
+  {
+   "claim": "GRPO cohort verdict",
+   "caveat": "n=1 seed \u2192 directional by \u00a7C25 (pre-registered cap); multi-seed cohort deliberately not spent"
+  },
+  {
+   "claim": "RFT nominally above floor (gsm8k pass@8 0.11 vs 0.07)",
+   "caveat": "n.s., CIs overlap"
+  },
+  {
+   "claim": "Throughput ~7,167-7,480 tok/s; GB10 MFU",
+   "caveat": "GB10 peak is estimated \u2192 MFU never quoted as exact (\u00a7C24)"
+  }
+ ],
+ "DROPPED": [
+  {
+   "claim": "'2.14\u00d7 with ~275,000\u00d7 less data' as one pairing",
+   "reason": "contradicted \u2014 mixes two runs; READMEs corrected 2026-07-06"
+  },
+  {
+   "claim": "'RFT collected 0 verifier-correct completions' / 'GRPO no gradient signal'",
+   "reason": "contradicted \u2014 smoke-log misread; verdict.json + README corrected 2026-07-06 (352 collected; 13.5/16 groups carried gradient)"
+  }
+ ]
+}

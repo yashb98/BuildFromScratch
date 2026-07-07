@@ -1,0 +1,32 @@
+% tab_sft.tex -- SFT (response-masked) vs iso-FLOP --no_mask control vs base, with the confounded
+% in-loop advisory numbers shown next to the corrected held-out re-score.
+% Sources in Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/:
+%   verdict.json (in-loop advisory, CONFOUND key), reasoning_verdict.json (corrected held-out + full-seq + forgetting),
+%   eval/sft_seed0/suite_results.json + eval/ctrl_seed0/suite_results.json (standard suite, text-lm-v2), c5_evidence.json (recipe).
+\begin{table}[t]
+\centering
+\caption{SFT at 596M: response-masked SFT vs.\ an iso-FLOP \texttt{--no\_mask} continued-pretrain control (identical data, LR schedule, and token budget; masking is the only variable) vs.\ the base.
+Recipe: $\approx$125M OpenR1-Math tokens (one pass, 125{,}000{,}592 prepared), peak LR $5\times10^{-5}$ cosine $\rightarrow 8\times10^{-8}$, 5\% warmup, $n{=}3$ seeds per arm.
+The in-loop comparison (top block) is \textbf{confounded --- advisory only}: the SFT arm was scored on \emph{response tokens only} while the control was scored on \emph{all tokens}, so its 0.68-PPL ``significant'' gap is not a like-for-like number.
+Re-scored on one fixed held-out response-masked set (66 OpenR1-Math docs, 228{,}529 response tokens, 13-gram dedup vs.\ train), the gap collapses to $+0.009$ PPL; the exact tokenizer-free full-sequence cross-check flips sign ($-0.006$, control ahead, n.s.\ for improvement), so the masked and full-sequence comparisons disagree and the verdict of record is \emph{directional} (not-yet-separable), while both arms improve $\approx$18\% over base.
+Seed spread within each arm: SFT $0.001$, control $0.004$ PPL.
+Forgetting probe: held-out FineWeb-Edu PPL; wikitext-2/code retention is within the noise floor on the standard suite (\texttt{text-lm-v2}, representative seed).
+Source files: \texttt{verdict.json}, \texttt{reasoning\_verdict.json}, \texttt{suite\_results.json}, \texttt{c5\_evidence.json} (2026-06-27 sft-3seed).}
+\label{tab:sft}
+\footnotesize
+\begin{tabular}{lcccc}
+\toprule
+Evaluation (PPL, lower is better) & Base & SFT ($n{=}3$) & Control ($n{=}3$) & SFT $-$ Control (95\% CI) \\
+\midrule
+\multicolumn{5}{l}{\emph{In-loop advisory --- CONFOUNDED: SFT scored on response tokens, control on all tokens}} \\
+In-loop train-window proxy & 14.262 & 11.595 & 12.273 & $+0.679$ $[+0.676,\,+0.681]$ (not comparable) \\
+\midrule
+\multicolumn{5}{l}{\emph{Corrected: one fixed held-out response-masked set (verdict of record)}} \\
+Held-out masked reasoning PPL & 14.127 & 11.573 & 11.582 & $+0.009$ $[+0.005,\,+0.014]$ sig.\ \\
+Full-sequence cross-check     & 14.713 & 12.067 & 12.060 & $-0.006$ $[-0.011,\,-0.001]$ n.s.\ (control ahead) \\
+\midrule
+\multicolumn{5}{l}{\emph{Catastrophic-forgetting probe (held-out FineWeb-Edu; higher $=$ more forgetting)}} \\
+FineWeb-Edu PPL & 21.495 & 21.652 & 21.660 & retained ($+0.16$ vs.\ base, $\approx$0.7\%) \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,130 @@
+{
+  "run_id": "2026-07-02_qwen3-0.6b_grpo-phase2",
+  "type": "finetune",
+  "model_dir": "Qwen3-0.6B",
+  "technique_slug": "vibethinker-small-reasoning",
+  "budget": null,
+  "probe": null,
+  "smoke": "pass",
+  "framework": "pytorch",
+  "eta_hours": 88,
+  "started": "2026-07-02",
+  "ended": null,
+  "status": "done",
+  "verdict": "directional",
+  "metrics": {
+    "proceed_to_phase3": false,
+    "conclusion": "PREDICTED NULL CONFIRMED: GRPO does not beat the SFT floor; GRPO does not beat the random-reward gate. At ~1% base pass@1 there is nothing for RL to sharpen (GRPO training reward flat at ~0.9% correct with no trend [first-50 0.0091 vs last-50 0.0080]; RFT's 352 collected completions, ~0.9% of 38,400 rollouts, were too few to separate from the floor). Do NOT spend the multi-seed cohort; the reasoning gain lives in SFT/distillation, not RL at this scale.",
+    "comparison": [
+      {
+        "set": "gsm8k",
+        "sft_pass1": 0.0112,
+        "grpo_pass1": 0.01,
+        "random_pass1": 0.01,
+        "rft_pass1": 0.015,
+        "sft_pass8": 0.07,
+        "grpo_pass8": 0.07,
+        "random_pass8": 0.06,
+        "rft_pass8": 0.11,
+        "grpo_pass1_ci": [
+          0.0051,
+          0.0196
+        ],
+        "sft_pass1_ci": [
+          0.0059,
+          0.0212
+        ],
+        "grpo_beats_sft_floor": false,
+        "grpo_beats_random_gate": false
+      },
+      {
+        "set": "math500_l13",
+        "sft_pass1": 0.015,
+        "grpo_pass1": 0.0225,
+        "random_pass1": 0.015,
+        "rft_pass1": 0.0175,
+        "sft_pass8": 0.1,
+        "grpo_pass8": 0.16,
+        "random_pass8": 0.1,
+        "rft_pass8": 0.12,
+        "grpo_pass1_ci": [
+          0.0119,
+          0.0422
+        ],
+        "sft_pass1_ci": [
+          0.0069,
+          0.0323
+        ],
+        "grpo_beats_sft_floor": false,
+        "grpo_beats_random_gate": false
+      }
+    ]
+  },
+  "artifacts_dir": "Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2",
+  "lineage": {
+    "git_commit": "ac8e332",
+    "env": null,
+    "dataset_id": null,
+    "dataset_revision": null,
+    "data_hash": null,
+    "artifact_sha256": null
+  },
+  "cost": {
+    "wall_clock_min": null,
+    "gpu_hours": null
+  },
+  "detail_md": "research/ledger/runs/2026-07-02_qwen3-0.6b_grpo-phase2.md",
+  "objective": "finetune",
+  "lifecycle_stage": "rlvr",
+  "note": "measured pace 362s/step (no-KV-cache decode dominates) -> revised ETA ~88h total (grpo ~30h + random ~30h + rft ~26h + evals); launched 2026-07-02 07:39"
+}
+{
+  "verdict": "directional",
+  "proceed_to_phase3": false,
+  "conclusion": "PREDICTED NULL CONFIRMED: GRPO does not beat the SFT floor; GRPO does not beat the random-reward gate. At ~1% base pass@1 there is nothing for RL to sharpen (GRPO training reward flat at ~0.9% correct with no trend [first-50 0.0091 vs last-50 0.0080]; RFT's 352 collected completions, ~0.9% of 38,400 rollouts, were too few to separate from the floor). Do NOT spend the multi-seed cohort; the reasoning gain lives in SFT/distillation, not RL at this scale.",
+  "rows": [
+    {
+      "set": "gsm8k",
+      "sft_pass1": 0.0112,
+      "grpo_pass1": 0.01,
+      "random_pass1": 0.01,
+      "rft_pass1": 0.015,
+      "sft_pass8": 0.07,
+      "grpo_pass8": 0.07,
+      "random_pass8": 0.06,
+      "rft_pass8": 0.11,
+      "grpo_pass1_ci": [
+        0.0051,
+        0.0196
+      ],
+      "sft_pass1_ci": [
+        0.0059,
+        0.0212
+      ],
+      "grpo_beats_sft_floor": false,
+      "grpo_beats_random_gate": false
+    },
+    {
+      "set": "math500_l13",
+      "sft_pass1": 0.015,
+      "grpo_pass1": 0.0225,
+      "random_pass1": 0.015,
+      "rft_pass1": 0.0175,
+      "sft_pass8": 0.1,
+      "grpo_pass8": 0.16,
+      "random_pass8": 0.1,
+      "rft_pass8": 0.12,
+      "grpo_pass1_ci": [
+        0.0119,
+        0.0422
+      ],
+      "sft_pass1_ci": [
+        0.0069,
+        0.0323
+      ],
+      "grpo_beats_sft_floor": false,
+      "grpo_beats_random_gate": false
+    }
+  ]
+}
+ledger updated

@@ -70,7 +70,8 @@ no seed CI, no downstream evals — a scaling/sanity reading, not a defended cla
 **What the evidence supports (and what it doesn't):**
 
 1. **Reproduction (directional):** the faithful baseline reaches **2.14× the original's PPL** with
-   ~275,000× less data; each ~10× data roughly halves the gap (n=1, but the scaling trend is robust).
+   **~30,000× less data** (1.19B vs 36T tokens); the earlier 131M-token probe sat at **3.5× with
+   ~275,000× less data** — each ~10× data roughly halves the gap (n=1, but the trend is robust).
 2. **The de-confounded win (defensible):** the IMU-1 bundle's improvement over our own faithful
    baseline is **attributable to NorMuon (optimizer) + the architecture modules** — both proven at
    3 seeds, iso-FLOP, on BPB with CIs excluding 0; **WSD and z-loss are NOT significant**. The

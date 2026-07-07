@@ -1,0 +1,568 @@
+{
+ "paper": "qwen3-0.6b-study",
+ "built": "2026-07-06",
+ "note": "Phase-0 full-lifecycle refresh (supersedes 2026-06-19 manifest). Collected by workflow wf_21fad822-9f9 (6 clusters, 105 file reads); every claim re-verified in Phase 1 before use.",
+ "clusters": {
+  "repro-verify": [
+   {
+    "claim": "The Qwen3-0.6B reproduction is verified bit-exact against HF weights (max |\u0394logits| = 0.0, argmax agreement).",
+    "value": "\"max_abs_error\": 0.0, \"relative_error\": 0.0, \"argmax_match\": true, \"passed\": true (dtype float32, tolerance 0.001, prompt \"The capital of France is\", hf_next_token_id 12095 = our_next_token_id 12095, token \" Paris\")",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/verify.json",
+    "key_or_line": "max_abs_error / relative_error / argmax_match / passed",
+    "status": "found",
+    "suite_version": "",
+    "note": "Note the recorded verification is a single-prompt (1x5 input) fp32 logits comparison vs repo Qwen/Qwen3-0.6B-Base. 'Bit-exact' is fair for max_abs_error exactly 0.0."
+   },
+   {
+    "claim": "The reproduction's parameter count is 596,049,920.",
+    "value": "596,049,920 (architecture_plan.md forward-calc table row '| **Total** | **596,049,920** |', line 60; test_model.py line 79 'expected = 596_049_920' asserted within 1%)",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/architecture_plan.md",
+    "key_or_line": "line 60: | **Total** | **596,049,920** |",
+    "status": "found",
+    "suite_version": "",
+    "note": "CAVEAT for the report: Qwen3-0.6B/README.md line 240 cites 'verify.json' as the evidence for this param count, but verify.json contains NO param field \u2014 the on-disk bases are the architecture_plan.md forward-calc and the test_model.py within-1% assertion (plus model.py:306 which only prints 'Expected: ~596,049,920'). I independently recomputed from the config (28 x 15,730,944 per-layer + 155,582,464 tied embedding + 1,024 final norm) = 596,049,920 exact, so the number is correct; only the README's file citation is off."
+   },
+   {
+    "claim": "The faithful base was trained on ~1.19B FineWeb-Edu tokens at sequence length 4096.",
+    "value": "token_budget=1,189,478,400; args seq_len: 4096, micro_batch: 4, grad_accum: 4, steps: 18150, tok/step=65,536, peak_lr 0.0024, dtype bfloat16, seed 0; data line: 'Streaming FineWeb-Edu sample-10BT...' then 'streamed 1,191,478,748 train + 300,012 val tokens'",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_train.log",
+    "key_or_line": "log lines 2-6: args={...'seq_len': 4096...} / tok/step=65,536 steps=18,150 token_budget=1,189,478,400 / Streaming FineWeb-Edu sample-10BT",
+    "status": "found",
+    "suite_version": "",
+    "note": "Exact consumed budget is 1,189,478,400 tokens (also stated in qwen3_baseline2tpp_after.txt line 1 'after 1,189,478,400 tokens (smoke=False)' and build README line 162 '1,189,478,400 (~1.19B)'). Training completed in 2663.1 min, peak mem 52.4 GB."
+   },
+   {
+    "claim": "The faithful base lands within 2.14x of the original Qwen3-0.6B PPL using ~275,000x less data.",
+    "value": "2.14x half IS file-backed: 28.65 (qwen3_baseline2tpp_after.txt line 2 'val PPL: 185810.49 -> 28.65') / 13.400 (original_vs_repro.txt line 2 'ORIGINAL Qwen3-0.6B-Base (36T tok) val PPL = 13.400') = 2.138; build README line 165 '| Gap vs original (13.40) | **2.14\u00d7** |'. BUT ~275,000x belongs to a DIFFERENT run: original_vs_repro.txt line 7 pairs '~275,000x less data (36T vs 131M)' with the 131M-token Phase A best repro (lr24 46.310, gap 3.5x), and the build README line 189 says of the 2.14x run: 'The token budget is ~30,000\u00d7 smaller than the real run; a 2.14\u00d7 PPL gap at 1.19B tokens is the expected, honest outcome.'",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/original_vs_repro.txt",
+    "key_or_line": "line 7: 'Best reproduction: lr24 = 46.310 vs original 13.400 => 3.5x higher PPL (expected: 36T vs 131M tokens = ~275,000x less data)'; plus build README lines 154/165/189",
+    "status": "contradicted",
+    "suite_version": "",
+    "note": "The PAIRING as written in the top-level README (line 28: 'within **2.14\u00d7** ... using **~275,000\u00d7 less data**') and Qwen3-0.6B/README.md lines 72-73 mixes two runs: 2.14x is the 1.19B-token Phase B run (36T/1.189B \u2248 30,300x less data, README's own '~30,000x'), while ~275,000x is the 131M-token Phase A run whose gap was 3.5x. Correct report phrasing: '3.5x gap at ~275,000x less data (131M tok); 2.14x gap at ~30,000x less data (1.19B tok)'. Both PPLs come from identical eval code on the same 300k-token FineWeb-Edu val slice (50 windows x 4096, 204,800 tok scored)."
+   },
+   {
+    "claim": "Baseline training throughput is ~7,300 tok/s on the GB10.",
+    "value": "'Current Qwen3 PyTorch build: **~7,300 tok/s** with `torch.compile`, micro_batch=4 @ seq 4096 (measured).' (jax_vs_pytorch_tradeoffs.md line 43). Underlying artifacts: throughput_probe.json compiled pass tokens_per_second = 7167.4 (uncompiled 3787.5, speedup 1.89, peak_mem_gb 52.4); Phase B train log sustained 7,444-7,482 tok/s (final line: 'step 18150/18150 ... tok/s 7,444'); Phase A lr30 log ~7,272-7,316 tok/s; build README line 167 quotes '~7,480 tok/s'",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/jax_vs_pytorch_tradeoffs.md",
+    "key_or_line": "line 43; and /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/throughput_probe.json key passes[1].tokens_per_second = 7167.4",
+    "status": "found",
+    "suite_version": "",
+    "note": "'~7,300' appears only as a rounded figure in jax_vs_pytorch_tradeoffs.md/CLAUDE.md; no single artifact reads exactly 7,300. For the report prefer the artifact values: 7,167.4 tok/s (50-step compiled probe, throughput_probe.json) or ~7,44x-7,48x sustained over the full 2 TPP run (qwen3_baseline2tpp_train.log). Both configs identical: compile on, micro_batch=4, seq 4096."
+   },
+   {
+    "claim": "Faithful-baseline eval numbers with suite_version: final FineWeb-Edu val PPL 28.65; eval-harness suite PPLs wikitext2 37.01 and code 438.67 under text-lm-v2.",
+    "value": "In-loop final val PPL: 'val PPL: 185810.49 -> 28.65' (qwen3_baseline2tpp_after.txt line 2 \u2014 NO suite_version; train-loop eval on FineWeb-Edu val, 204,800 tok). Suite-stamped numbers: suite_version 'text-lm-v2', date 2026-06-16 22:26:53, target_ckpt checkpoint_qwen3_baseline2tpp.pt \u2014 ppl.wikitext2_val.target = 37.010055463333096 (corpus wikitext2_raw_v1_val, n_tokens 204600); ppl.code_py.target = 438.67295146042875 (corpus codeparrot_clean_valid, n_tokens 204600); noise_floor.wikitext2_val.floor_abs = 1.3039039020038814 (floor_pct 3.7305), noise_floor.code_py.floor_abs = 280.56392586197546 (floor_pct 68.2455)",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3-0.6b_eval-faithful/eval/suite_results.json",
+    "key_or_line": "suite_version; ppl.wikitext2_val.target; ppl.code_py.target; noise_floor.*.floor_abs",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Do NOT stamp 28.65 with a suite_version \u2014 it is the in-loop trainer eval (qwen3_baseline2tpp_after.txt / _train.log), not an eval-harness number. baseline_ckpt: null, self_floor: true in the suite file. Random-init baseline PPL 185810.49 (expected ~vocab 151,936) is also file-backed in the train log."
+   },
+   {
+    "claim": "The SmolLM2 reproduction has exactly 134,515,008 parameters.",
+    "value": "'params: 134,515,008    (target 134,515,008)' + 'tied:   True' (param_count.log lines 1-2); summary.json: \"Param count (unique)\": \"134,515,008   (target 134,515,008  \u2713)\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/SmolLM2-134(base)/results/param_count.log",
+    "key_or_line": "line 1: params: 134,515,008    (target 134,515,008)",
+    "status": "found",
+    "suite_version": "",
+    "note": "Also in /home/yashb98/Downloads/BuildFromScratch/SmolLM2-134(base)/results/summary.json key 'Param count (unique)' and README.md line 270/294 (per-component sum totals 134,515,008)."
+   },
+   {
+    "claim": "The SmolLM2 reproduction is verified bit-exact vs HuggingFaceTB/SmolLM2-135M (max |\u0394logits| = 0.0).",
+    "value": "'max |\u0394logits| = 0.000e+00' / 'relative = 0.000e+00' / HF next token ' the' = ours / '\u2713 Architecture parity verified.' (parity.log lines 6-11); comparison_with_hf.md: final-logits parity CPU max|\u0394| = 0.00e+00, per-layer (30 layers) CPU max|\u0394| = 0.00e+00 everywhere, greedy generation 5/5 exact; summary.json \"max |\u0394logits| vs HF\": \"0.000e+00\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/SmolLM2-134(base)/results/parity.log",
+    "key_or_line": "line 6: max |\u0394logits| = 0.000e+00",
+    "status": "found",
+    "suite_version": "",
+    "note": "Precision caveat for the report: bit-exactness holds on CPU fp32; on GPU the same weights show max|\u0394| = 4.72e-05 (logits) / 1.95e-03 (hidden state @ layer 14) attributed to SDPA kernel-dispatch reduction-order noise \u2014 see /home/yashb98/Downloads/BuildFromScratch/SmolLM2-134(base)/results/comparison_with_hf.md summary table. Adjacent report-worthy: PPL wikitext-2 val ours 15.371 = HF 15.371 (summary.json)."
+   },
+   {
+    "claim": "(Adjacent) Original Qwen3-0.6B-Base scores val PPL 13.400 on the identical 300k-token FineWeb-Edu val slice; best 131M-token Phase A repro (lr24) = 46.310, a 3.5x gap.",
+    "value": "'ORIGINAL  Qwen3-0.6B-Base (36T tok)   val PPL =   13.400  (204,800 tok, 21s)'; 'REPRO  lr24 (131M tok, from scratch) val PPL = 46.310  gap x 3.5' (also lr17 46.892 x3.5, lr30 49.276 x3.7)",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/original_vs_repro.txt",
+    "key_or_line": "lines 2-7 (dated 2026-06-09 16:51:36; val=300,000 tokens, 50 windows x 4096)",
+    "status": "found",
+    "suite_version": "",
+    "note": "This is the denominator file for every gap-to-original ratio. Three-build matched-compute table (Qwen3-0.6B/README.md lines 61-63): IMU-1 23.52 (1.76x), faithful 28.65 (2.14x), partial-RoPE-0.25 29.54 (2.20x; results_overview/plots/README.md says 2.21x \u2014 29.54/13.40 = 2.204, so 2.20x is the correct rounding)."
+   },
+   {
+    "claim": "(Adjacent) Mid-training PPL descent and run stats of the faithful 2 TPP run.",
+    "value": "eval @ 18000: val PPL=28.66; final AFTER val PPL=28.65 (BEFORE 185810.49); 'Training complete in 2663.1 min.'; mem 52.4GB flat throughout; build README line 167 gives the full descent 60.10 (@2k) -> ... -> 28.65 (final)",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_train.log",
+    "key_or_line": "tail lines: '[eval @ 18000] val PPL=28.66', 'Training complete in 2663.1 min.', 'AFTER val PPL=28.65'",
+    "status": "found",
+    "suite_version": "",
+    "note": "Also file-backed nearby: phase_b_driver.log tail shows the [4/4] partial-RoPE-10 arm 'Terminated' at step 5450/18150 (the 0.10 variant that died incomplete, matching the README). A new decontam_report.json exists under the same results/ dir (13-gram word-overlap decontam, doc-disjoint seeded-hash split, docs_dropped: 0, n_val_docs_kept: 451). NOTE: the task asked to check builds/2026-06-08_reproduce-faithful_qwen3-0.6b/c5_evidence.json \u2014 no such file exists in the build dir (c5_evidence.json exists only under experiments/, e.g. 2026-06-27_qwen3-0.6b_sft-3seed/)."
+   }
+  ],
+  "imu1-deconfound": [
+   {
+    "claim": "The modernized IMU-1 bundle beats the faithful baseline by 17.9% at matched compute (final val PPL 23.52 vs 28.65, both 18,150 steps / ~1.19B tokens / 2 tokens-per-param on FineWeb-Edu with an identical held-out val set).",
+    "value": "faithful 28.65 (final) \u00b7 modernized (IMU-1 NorMuon) 23.52 (final); 17.9% stated as 'IMU-1 bundle beat the faithful baseline by 17.9%' and arithmetically (28.65-23.52)/28.65 = 17.91%",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/comparison/README.md",
+    "key_or_line": "lines 7-8 of the results table ('| faithful (baseline) | 28.65 | final |' / '| modernized (IMU-1 NorMuon) | 23.52 | final |'); 17.9% at /home/yashb98/Downloads/BuildFromScratch/README.md line 33 and Qwen3-0.6B/README.md lines 11, 241",
+    "status": "found",
+    "suite_version": "",
+    "note": "Raw log provenance: 28.65 = 'AFTER val PPL=28.65' at builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_train.log line 396; 23.52 = '[eval @ 18000] val PPL=23.52' at builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/qwen3_imu1_2tpp_train.log line 381 \u2014 NOTE 23.52 is the LAST eval (step 18000 of 18150; run completed to 18150 with no later eval), README labels it 'final'. CAVEAT the repo itself states: Qwen3-0.6B/README.md line 77 says 'the bundle's \u221217.9% PPL number itself is n=1 and directional'. These PPLs are in-loop val PPL, NOT eval-harness numbers (no suite_version on the logs)."
+   },
+   {
+    "claim": "The exploratory partial-RoPE 0.25 build lost to the faithful baseline (final val PPL 29.54 vs 28.65).",
+    "value": "29.54 ('DONE  final val PPL=29.54'); README table: 'exploratory partial-RoPE 0.25 | 29.54 | final'; ranking modernized < faithful < partial-RoPE 0.25 < partial-RoPE 0.10 (50.71, died incomplete at step 5450/18150)",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/qwen3_prope25_2tpp_train.log",
+    "key_or_line": "final line '[08:05:04] DONE  final val PPL=29.54' (line 378); also builds/comparison/README.md line 9",
+    "status": "found",
+    "suite_version": "",
+    "note": "Adjacent report-worthy: partial-RoPE 0.10 arm = 50.71 last-eval, died incomplete at step 5450/18150 (~30%), 'no final' (comparison/README.md line 10). Eval-harness independently confirms the ordering on wikitext-2 (see separate claim below)."
+   },
+   {
+    "claim": "NorMuon-vs-AdamW single-variable iso-FLOP ablation (42M tokens, 3 seeds/arm): NorMuon on the 2D hidden weights improves BPB by +0.4743 on wikitext-2 (95% CI [+0.4435, +0.5052]) and +0.5016 on code (95% CI [+0.4560, +0.5471]), significant; verdict WIN (scoped as an early-training optimization-speed signal, not a scale claim).",
+    "value": "wikitext2_val: adamw_mean 2.1098171365956357 vs normuon_mean 1.6354916346714725, improvement_bpb 0.47432550192416323, ci95 [0.4434844613250229, 0.5051665425233036], significant true, df 3.8610499345338067, n [3,3]; code_py: adamw_mean 3.3846985755955523 vs normuon_mean 2.8831399238053073, improvement_bpb 0.5015586517902451, ci95 [0.4559911731303807, 0.5471261304501094], significant true, df 3.988970056422409, n [3,3]; verdict \"win\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/results/verdict.json",
+    "key_or_line": "by_corpus.wikitext2_val.{improvement_bpb,ci95,significant,df,n}, by_corpus.code_py.{...}, verdict, suite_version",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "RESULT.md (same dir) header: 'Verdict: WIN (scoped)'. Headline (\u00a71): fixed 42M-token iso-FLOP budget, 640 steps \u00d7 65,536 tok = 41,943,040 tok/cell, 6 cells; 196 2D matrices AdamW@2.4e-3 vs NorMuon@0.011, embeddings/1D AdamW in both arms; explicitly 'an early-training optimization-speed signal at one architecture and one budget; we do NOT claim it holds at scale'. Seeds vary init+shuffle on a FIXED data split (seed 0) \u2014 CI is under-estimated vs fully-randomized (RESULT.md \u00a74.4). Throughput: AdamW ~7,340 tok/s, NorMuon ~6,664 tok/s (~9% overhead); MFU \u224829% flagged approximate (estimated GB10 peak)."
+   },
+   {
+    "claim": "The matched-config AdamW LR sweep shows AdamW is flat within seed noise across 1.7e-3\u20133.5e-3 and no AdamW LR comes within ~10x of closing the NorMuon gap (full LR spread ~0.047 bpb vs the +0.474 gap), so the result is 'NorMuon vs AdamW-anywhere-in-a-reasonable-LR-range', not an undertuned baseline.",
+    "value": "lr_sweep_bpb.json: 1.7e-3 wikitext_bpb 2.124645242917025 / code_bpb 3.36670692543473; 3.5e-3 wikitext_bpb 2.1223452336564987 / code_bpb 3.484039905578447; 4.8e-3 wikitext_bpb 2.156916637970004 / code_bpb 3.457733614887074; 2.4e-3 point = the 3-seed cohort mean 2.1098 (verdict.json). RESULT.md \u00a74.1: '1.7e-3 \u2192 2.1246, 2.4e-3 \u2192 2.1098, 3.5e-3 \u2192 2.1223, 4.8e-3 \u2192 2.1569 ... full AdamW LR spread is ~0.047 bpb, ~10\u00d7 smaller than NorMuon's +0.474 advantage'",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/results/lr_sweep_bpb.json",
+    "key_or_line": "keys \"1.7e-3\", \"3.5e-3\", \"4.8e-3\" (.wikitext_bpb/.code_bpb); narrative + 2.4e-3 anchor in RESULT.md lines 7 and 41",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Load-bearing caveat from RESULT.md \u00a74.1: the three off-baseline LR points are SINGLE-SEED (only 2.4e-3 has 3 seeds), so within-band ordering (1.7 vs 2.4 vs 3.5e-3, span 0.015 bpb inside the \u00b10.011 seed band) is unresolved; the 'no LR closes the gap' conclusion does not depend on it. wd held at 0.1 for both arms (not AdamW's own tuned 0.01) \u2014 RESULT.md \u00a74.2."
+   },
+   {
+    "claim": "De-confound Phase 1 (axes wsd/zloss/arch vs the faithful AdamW baseline, 3 seeds/arm, 2000-step proxy): only 'arch' is a significant driver \u2014 wikitext BPB +0.1179 CI[+0.1005, +0.1354] and code +0.3049 CI[+0.2588, +0.3511] \u2014 while wsd and zloss are not significant on either corpus; overall_verdict 'attributed' with drivers=[arch].",
+    "value": "arch: wikitext2_val improvement_bpb 0.11792615800601025 ci95 [0.10045055390862463, 0.13540176210339586] significant=true; code_py improvement_bpb 0.3049240450045283 ci95 [0.2587722809820044, 0.3510758090270522] significant=true. wsd: wikitext +0.02445100663943567 ci95 [-0.017262911764197773, +0.06616492504306912] significant=false; code +0.03613565282082609 ci95 [-0.06492886457337839, +0.13720017021503056] significant=false. zloss: wikitext -0.003374986704193006 ci95 [-0.017536542115922118, +0.010786568707536106] significant=false; code -0.0007094693010314401 ci95 [-0.052240000161460506, +0.050821061559397626] significant=false. drivers [\"arch\"]; overall_verdict \"attributed\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/verdict.json",
+    "key_or_line": "axes.{wsd,zloss,arch}.{wikitext2_val,code_py}.{improvement_bpb,ci95,significant}, drivers, overall_verdict, suite_version, headline_corpus",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "n_seeds=3 per arm (3-element baseline_bpb/treatment_bpb arrays; c5_evidence.json arm_plan.seeds=[0,1,2]). Budget per c5_evidence.json: 2000 steps/cell \u00d7 65,536 tok = 131,072,000 tok/cell, 12 cells, 1,572,864,000 total tokens; iso-FLOP confirmed (arch adds +0.077% params, fpt ratio 1.00042, within the 5% gate); baseline arm verified bit-exact vs faithful model.py (max|\u0394logits|=0.0). Baseline mean wikitext BPB 1.515714765474178 (SEM 0.0036123506827305443), code 2.638538404285876 (SEM 0.008454602677705559)."
+   },
+   {
+    "claim": "Phase 2 arch sub-drill: each of the three IMU-1 arch flags \u2014 value-residual (vr), layernorm-scaling (ln), head-gating (hg) \u2014 is individually significant on BPB on BOTH corpora vs the reused Phase-1 baseline; drivers=[vr,ln,hg], overall_verdict 'attributed'.",
+    "value": "vr: wikitext improvement_bpb 0.035502910568182555 ci95 [0.011595720478729928, 0.05941010065763518] sig=true; code 0.10715460338422833 ci95 [0.0492464984813345, 0.16506270828712216] sig=true. ln: wikitext 0.03367590105393914 ci95 [0.017509206440970627, 0.04984259566690765] sig=true; code 0.06055088208493942 ci95 [0.01983113346350228, 0.10127063070637655] sig=true. hg: wikitext 0.025562479271331817 ci95 [0.01251982603769344, 0.03860513250497019] sig=true; code 0.04215309989332772 ci95 [0.00805499069515924, 0.07625120909149619] sig=true. drivers [\"vr\",\"ln\",\"hg\"]; overall_verdict \"attributed\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/verdict.json",
+    "key_or_line": "axes.{vr,ln,hg}.{wikitext2_val,code_py}.{improvement_bpb,ci95,significant}, drivers, overall_verdict, suite_version",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "n_seeds=3 per arm (seeds [0,1,2] per c5_evidence.json). Baseline is \u00a7C13 CONTROL-REUSE from Phase 1 (symlinked checkpoints, identical optimizer/schedule/budget/seed/data, re-scored in-cohort by score_cohort.py \u2014 same baseline seed BPBs as p1: 1.5192052377472585 / 1.508491419732289 / 1.5194476389429863). Budget: 9 new cells \u00d7 131,072,000 tok = 1,179,648,000 new tokens. Iso-FLOP: vr +84 params (ratio 1.000000), ln +0 (1.000000), hg +458,752 / +0.077% (ratio 1.000430) \u2014 all within the 5% gate (c5_evidence.json confound_check). Sum of the three single-flag wikitext effects \u2248 0.0947 vs the bundled arch effect 0.1179."
+   },
+   {
+    "claim": "All cross-run comparable numbers in this cluster carry the eval-harness suite_version stamp 'text-lm-v2' and n=3 seeds per arm.",
+    "value": "suite_version = \"text-lm-v2\" stamped in: normuon results/verdict.json (+ n:[3,3] per corpus) and results/cohort_bpb.json; p1 verdict.json + cohort_bpb.json; p2 verdict.json + cohort_bpb.json; and the three build-checkpoint suite_results.json files (eval-faithful/-modernized/-prope25). Seeds: 3 per arm everywhere (3-element seed BPB arrays; c5_evidence arm_plan.seeds=[0,1,2]; verdict.json n=[3,3])",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/verdict.json",
+    "key_or_line": "suite_version (top-level key, value \"text-lm-v2\") in each listed file; n in normuon verdict.json by_corpus.*.n",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Exception worth flagging in the report: the three-build 23.52/28.65/29.54 headline PPLs themselves are IN-LOOP training-log val PPLs (n=1, no suite_version) \u2014 NOT eval-harness numbers. The eval-harness text-lm-v2 pass on those checkpoints exists separately (next claim) and confirms the ordering."
+   },
+   {
+    "claim": "Independent eval-harness (text-lm-v2) scoring of the three build checkpoints confirms the ordering on wikitext-2: modernized 27.80 < faithful 37.01 < partial-RoPE-0.25 38.08 PPL (and code_py 129.42 < 438.67 < 447.30).",
+    "value": "faithful: ppl.wikitext2_val.target 37.010055463333096, ppl.code_py.target 438.67295146042875 (noise floor wikitext floor_abs 1.3039039020038814); modernized (checkpoint_imu1_2tpp_step18000.pt): 27.79954726958199 / 129.422726138489 (wikitext floor_abs 1.0663419728457697); prope25: 38.079604272040854 / 447.30146774857917 (wikitext floor_abs 1.7040052364117315); all n_tokens 204600, suite_version text-lm-v2, dated 2026-06-16",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3-0.6b_eval-modernized/eval/suite_results.json",
+    "key_or_line": "ppl.wikitext2_val.target and ppl.code_py.target in each of eval-faithful/eval/suite_results.json, eval-modernized/eval/suite_results.json, eval-prope25/eval/suite_results.json",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Report-worthy adjacent numbers, not in the candidate list. These wikitext-2 PPLs differ from the in-loop FineWeb-Edu val PPLs (23.52/28.65/29.54) because corpus and tokenized windows differ \u2014 they are the independent-corpus confirmation, not a restatement. code_py noise floors are huge (floor_pct 68-92%), so the code-PPL gap ordering should be quoted with that caveat. The faithful/modernized/prope25 gap on wikitext (37.01\u219227.80) is 24.9% relative \u2014 larger than the in-loop 17.9%."
+   },
+   {
+    "claim": "RESULT.md's stated link between the two studies: the bundled IMU-1 result (\u221217.9% PPL at 1.19B tokens) could not attribute the gain, and the 42M-token single-variable run isolates the optimizer axis; the faithful 1.19B baseline's wikitext BPB anchor is 1.2256.",
+    "value": "'The project's IMU-1 matched-compute result (NorMuon bundled with ~5 other changes ... at 1.19B tokens, \u221217.9% PPL) had to mark optimizer attribution as an explicit limitation' (\u00a73); 'faithful baseline Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/ (wikitext BPB 1.2256 @ 1.19B tok)' (\u00a76); '$the same NorMuon inside the full IMU-1 bundle at 1.19B gave only \u221217.9% PPL' (\u00a74.3)",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-16_qwen3_normuon-vs-adamw/RESULT.md",
+    "key_or_line": "lines 37 (\u00a73), 45 (\u00a74.3), 75 (\u00a76 evidence-files paragraph)",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Decontamination stamp for the normuon run: 'decontam dropped 0/451 val docs' (RESULT.md line 71; results/decontam_report.json exists on disk). Pinned eval corpora revs: wikitext-2-raw-v1 rev b08601e04326c79dfdd32d625aee71d232d685c3; codeparrot-clean-valid rev 4db92d2ec0c1b4c41eeb439cfae16854511d9dcd; n_bytes 869,710 (wikitext) / 843,643 (code) \u2014 identical across all cells in every cohort_bpb.json in this cluster."
+   }
+  ],
+  "data-mix": [
+   {
+    "claim": "dclm-edu vs FineWeb-Edu head-to-head: on code_py, dclm-edu improves BPB by +0.7034 (95% CI [+0.6639, +0.7430]), significant, n=3 seeds paired vs reused FineWeb-Edu controls.",
+    "value": "improvement_bpb = 0.7034377813053776; ci95 = [0.6639233630446848, 0.7429521995660704]; significant = true; baseline_mean = 2.638538404285876; treatment_mean = 1.9351006229804983; 3 seeds per arm",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/verdict.json",
+    "key_or_line": "axes.treatment.code_py.{improvement_bpb, ci95, significant}",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Code PPL context from cohort_bpb.json same dir: control seeds ~1889.7/1804.4/1961.6 vs dclm ~246.6/245.1/265.8 (cells.control_seed*.code_py.ppl vs cells.treatment_seed*.code_py.ppl)."
+   },
+   {
+    "claim": "dclm-edu vs FineWeb-Edu head-to-head: on wikitext2_val (English), dclm-edu is directionally worse by -0.0097 BPB (95% CI [-0.0255, +0.0061]), NOT significant.",
+    "value": "improvement_bpb = -0.0097280316070818; ci95 = [-0.025549693563240664, 0.006093630349077065]; significant = false; baseline_mean = 1.515714765474178; treatment_mean = 1.5254427970812598",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/verdict.json",
+    "key_or_line": "axes.treatment.wikitext2_val.{improvement_bpb, ci95, significant}",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Ledger verdict for this run is 'directional'. verdict.json overall_verdict string reads 'recipe-level (no single axis clears the seed-noise floor)' \u2014 a template string that sits oddly beside code_py significant=true; the per-corpus keys are the authoritative numbers."
+   },
+   {
+    "claim": "The 50/50 mix captures ~84% of the pure-dclm code win: mix code improvement 0.5904307914737172 / dclm code improvement 0.7034377813053776 = 0.8394 (83.94%).",
+    "value": "0.5904307914737172 / 0.7034377813053776 = 0.8393504118844001 -> 83.94% ~ '~84%'",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/verdict.json",
+    "key_or_line": "axes.mix.code_py.improvement_bpb (numerator) and axes.dclm.code_py.improvement_bpb (denominator, same file; also in 2026-06-24 verdict.json axes.treatment.code_py.improvement_bpb)",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "The '~84%' phrasing appears in /home/yashb98/Downloads/BuildFromScratch/README.md line 41: 'mix** to be best-of-both \u2014 it keeps English while capturing ~84% of the code win.' Ratio verified by computation from the two verdict values. Both improvements are vs the SAME FineWeb-Edu baseline (baseline_mean 2.638538404285876), so the ratio of improvements is well-defined."
+   },
+   {
+    "claim": "50/50 mix arm on code_py: BPB improvement +0.5904, 95% CI [+0.5532, +0.6277], significant, n=3.",
+    "value": "improvement_bpb = 0.5904307914737172; ci95 = [0.5531974784151051, 0.6276641045323293]; significant = true; treatment_bpb has 3 seed entries [2.0498830273156794, 2.050014838147228, 2.0444249729735695]; treatment_mean = 2.0481076128121587",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/verdict.json",
+    "key_or_line": "axes.mix.code_py.{improvement_bpb, ci95, significant, treatment_bpb}",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Claimed rounded values (+0.5904, [+0.5532, +0.6277]) match the file at 4 decimals. Mix code PPL per seed in cohort_bpb.json: 350.2985/350.4305/344.8764."
+   },
+   {
+    "claim": "50/50 mix arm on wikitext2_val: BPB improvement +0.0161, 95% CI [-0.0005, +0.0327], NOT significant (English is preserved, no regression).",
+    "value": "improvement_bpb = 0.016087033990631383; ci95 = [-0.0005010071851609399, 0.032675075166423706]; significant = false; treatment_mean = 1.4996277314835467 vs baseline_mean = 1.515714765474178",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/verdict.json",
+    "key_or_line": "axes.mix.wikitext2_val.{improvement_bpb, ci95, significant}",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Claimed rounded values match. Note the CI lower bound is -0.0005 (barely crosses zero) and the point estimate is a slight English IMPROVEMENT over the pure-FineWeb baseline \u2014 'keeps English' is if anything conservative."
+   },
+   {
+    "claim": "The first mix run was invalid due to a token-level shuffle that destroyed sequence structure; the fix makes the mix sequence-preserving (coherent halves concatenated, DataLoader shuffles at the packed-sequence level).",
+    "value": "Fix commit a576baa94afde60b7212c78778a0bb18d2968bbe ('Fix mix-arm data bug: token-level shuffle destroyed sequence structure (caught by implausible verdict)') removes the line 'np.random.default_rng(args.seed).shuffle(tr)   # interleave the two sources' and adds the comment: 'concatenate the two COHERENT halves; the mix happens at the SEQUENCE level \u2014 PackedTextDataset packs seq_len windows (each from one source, coherent) and DataLoader(shuffle=True) randomizes their order. Do NOT shuffle tokens here: that destroys all sequence structure \u2192 token soup \u2192 garbage. (Verified bug, fixed.)'",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/train_dataarm.py",
+    "key_or_line": "lines 231-234 (comment above np.concatenate at line 235); DataLoader(..., shuffle=True) at lines 244-245; git commit a576baa in /home/yashb98/Downloads/BuildFromScratch",
+    "status": "found",
+    "suite_version": "",
+    "note": "Commit message evidence: broken run had mix 2x WORSE than BOTH pure arms (wikitext 2.77 vs ~1.52; code 3.81 vs 1.93/2.64) \u2014 physically implausible for a blend, which flagged the bug; 30-step probe after fix: CE descends 11.65->8.04 vs flat ~11 for token-soup; broken cohort cleared and re-run launched. Run-log confirmation of sequence-preserving load: run_mix_seed0.log line 6: 'DATA=mix(50/50 dclm+FineWeb): 132,072,000 train (66,036,000 dclm + 66,036,000 fw) + 300,000 val'."
+   },
+   {
+    "claim": "Iso-token/iso-FLOP budget: every arm (FineWeb control, dclm treatment, 50/50 mix) trains 2000 steps at 65,536 tokens/step (seq_len 4096 x micro_batch 4 x grad_accum 4) = 131,072,000 tokens per cell, 3 seeds per arm, only the data variable differs.",
+    "value": "run_arms.sh (both dirs): STEPS=2000; WARMUP=100; c5_evidence.json: budget.steps_per_cell = 2000, budget.tokens_per_cell = 131072000, budget.new_cells = 3; confound_check = {n_vars: 1, iso_flop: true, detail: 'identical model (596M) + identical token budget; only DATA differs -> train_flops identical, ratio 1.000'}; train_dataarm.py defaults: --seq_len 4096, --micro_batch 4, --grad_accum 4 (4096*4*4=65,536; 2000*65,536=131,072,000)",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/c5_evidence.json",
+    "key_or_line": "budget.{steps_per_cell, tokens_per_cell, new_cells}; confound_check; also run_arms.sh line 9 'PY=python3; STEPS=2000; WARMUP=100' in both experiment dirs; train_dataarm.py lines 137-139 and 164 in the mix dir",
+    "status": "found",
+    "suite_version": "",
+    "note": "run_arms.sh headers: dclm exp \u2014 '2000-step proxy (~131M tok consumed of the 150M slice, ~5h/cell)'; mix exp \u2014 '2000-step proxy (~131M tok/cell)'. Mix loads 132,072,000 tokens (token_budget + 1M buffer, split 66,036,000/66,036,000) but consumes 131,072,000. dclm dataset provenance (c5): research/datasets/data-selection-dclm-edu, 150,107,480 train + 748,210 eval tokens, sha dbad8ad7, 13-gram decontam vs wikitext/code, 0 dropped."
+   },
+   {
+    "claim": "Both experiments' results are stamped with the versioned eval suite and use control-arm reuse per \u00a7C13 (FineWeb baseline = 2026-06-18 imu1-deconfound-p1 baseline checkpoints; mix experiment also reuses the dclm arm from 2026-06-24).",
+    "value": "suite_version = 'text-lm-v2' in verdict.json AND cohort_bpb.json of both experiments; control checkpoints are symlinks: checkpoint_control_seed{0,1,2}.pt -> ../2026-06-18_qwen3-0.6b_imu1-deconfound-p1/checkpoint_baseline_seed{0,1,2}.pt (dclm exp) and checkpoint_dclm_seed{0,1,2}.pt -> ../2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/checkpoint_treatment_seed{0,1,2}.pt (mix exp)",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/verdict.json",
+    "key_or_line": "suite_version (top-level key, both verdict.json and cohort_bpb.json in both dirs); symlink targets visible via ls -la in both experiment dirs",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Ledger (research/ledger/ledger.json) records both runs with verdict='directional'. CAVEAT for the manifest: the mix experiment dir has NO c5_evidence.json (find returned nothing) and its ledger run entry has empty metrics \u2014 the repo convention says c5_evidence.json + verdict.json must both exist; the mix run's budget/confound evidence lives only in run_arms.sh + the reused dclm-exp c5_evidence.json. Eval-set sizes per corpus per cell: n_tokens=204,600; wikitext2 n_bytes=869,710; code_py n_bytes=843,643 (cohort_bpb.json)."
+   }
+  ],
+  "midtrain": [
+   {
+    "claim": "The premium-mix anneal beats the iso-token control on code_py by +0.2716 BPB, 95% CI [+0.2641, +0.2792], significant, n=3 seeds per arm.",
+    "value": "improvement_bpb 0.27160749360360237, ci95 [0.2640563484201071, 0.2791586387870976], significant: true; treatment_mean 1.851990939811249 vs control_mean 2.1235984334148514; 3 per-seed values per arm",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/verdict.json",
+    "key_or_line": "corpora.code_py.{improvement_bpb,ci95,significant,control_mean,treatment_mean}",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "n=3 explicit in ledger.json runs[14].metrics.code_py_bpb.n_seeds=3 and c5_evidence.json arm_plan.seeds=[0,1,2]. Per-seed BPBs also in cohort_bpb.json (mix: 1.8520767996817127/1.8549603788780968/1.8489356408739377; fineweb: 2.1236686842342434/2.123956958820996/2.1231696571893144)."
+   },
+   {
+    "claim": "wikitext2 improves +0.0157 BPB, CI [+0.0140, +0.0174], significant \u2014 violating the pre-registered expected honest null on English.",
+    "value": "improvement_bpb 0.01573805476049084, ci95 [0.014040993622104418, 0.01743511589887726], significant: true; pre-registration in c5_evidence.json: \"Expected: small code-BPB win only; null on English/downstream (pre-registered honest null, \u00a7C25)\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/verdict.json",
+    "key_or_line": "corpora.wikitext2_val.{improvement_bpb,ci95,significant}; pre-registration at c5_evidence.json key \"verdict_metric\"",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Ledger run md line 26-29 frames it exactly: \"pre-registered an expected honest null on English; the measured effect is small but significant (+0.0157 BPB \u2248 1.3% relative \u2014 same point size as the constant-LR sibling's +0.0161 n.s., made significant here by the anneal's much tighter seeds). Reported as-is.\""
+   },
+   {
+    "claim": "The iso-token control barely moved off the un-annealed base: +0.0050 code_py BPB and +0.0036 wikitext2 BPB \u2014 i.e. the LR-decay + 150M extra FineWeb tokens alone did ~nothing (the confound eaten).",
+    "value": "fineweb/code_py delta_vs_base 0.004996952805949473; fineweb/wikitext2_val delta_vs_base 0.0036343205041389215; both regressed: false; base BPB code_py 2.128595386220801, wikitext2 1.2256204566076285",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/verdict.json",
+    "key_or_line": "short_ctx_non_regression.\"fineweb/code_py\".delta_vs_base and short_ctx_non_regression.\"fineweb/wikitext2_val\".delta_vs_base",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Treatment-vs-base deltas adjacent in same block: mix/code_py +0.27660444640955184, mix/wikitext2_val +0.01937237526462976. Base cell scored under identical windows in cohort_bpb.json key cells.base."
+   },
+   {
+    "claim": "Recipe: 1-sqrt cooldown from peak LR 2.5e-4 to end LR 2.5e-5 (10% floor), 2300 steps x 65,536 tok = 150.7M tokens/cell, ~13% of the 1.19B-token pretrain.",
+    "value": "\"1-sqrt cooldown peak_lr 2.5e-4 -> end_lr 2.5e-5 (10% floor), warmup 46, 2300 steps x 65,536 tok = 150.7M tok/cell (~13% of 1.19B pretrain), mb4 x ga4, AdamW(0.9,0.95) wd 0.01, bf16 seq 4096, chunked fp32 CE, compile on\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/c5_evidence.json",
+    "key_or_line": "recipe",
+    "status": "found",
+    "suite_version": "",
+    "note": "Arithmetic checks: 2300 x 65,536 = 150,732,800 \u2248 150.7M. Same recipe restated in ledger run md lines 5-9 (\"~13% of the 1.19B pretrain, WSD band\"). Base ckpt = builds/2026-06-08_reproduce-faithful_qwen3-0.6b/checkpoint_qwen3_baseline2tpp.pt (c5_evidence.json key base_ckpt)."
+   },
+   {
+    "claim": "ECL passkey ladder: the base's anomalous 4096-rung accuracy (0.025, i.e. ~0.03) is fixed to 0.40 by both arms; mix pooled 512-rung 0.8167 (~0.82) vs base 0.20; no arm regresses vs base at any rung; n=40/rung/cell with Wilson 95% CIs.",
+    "value": "base per_rung_accuracy[4096]=0.025 (Wilson95 [0.0044268315026814095, 0.1288136896347409]); mix pooled 4096 acc=0.4 and fineweb pooled 4096 acc=0.4; mix pooled 512 acc=0.8166666666666667 (Wilson95 [0.7379908648282967, 0.8756969964398578]) vs base 512=0.2; n_per_rung_per_cell=40; ladder_regressed_cells=[]",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/verdict.json",
+    "key_or_line": "ecl_ladder.{base.per_rung_accuracy,arms.mix.per_rung_pooled,arms.fineweb.per_rung_pooled,n_per_rung_per_cell,ladder_regressed_cells}",
+    "status": "found",
+    "suite_version": "ecl-ladder-v1 (passkey, eval_longcontext loader)",
+    "note": "Exact base 4096 value is 0.025; the run md's table rounds it to 0.03 \u2014 do not quote 0.03 as exact. Per-seed detail in ecl_ladder.json (7 cells, lengths 512-8192, depths 0.1-0.9, rel_threshold 0.85, abs_threshold 0.5, trained_len 4096). Known footnote: mix_seed2 ecl_rel085_shortctx=512 is a definition artifact (512-rung acc 0.875 so high the 0.85x relative bar exceeds every other rung); ecl_abs05=6144 for every cell."
+   },
+   {
+    "claim": "Step-0 context-extension gate FAILED: the base scores passkey 0.083 at its own 4096 trained window vs threshold 0.5, so context extension stays propose-only.",
+    "value": "accuracy_at_trained_len 0.08333333333333333, trained_len 4096, threshold 0.5, gate \"FAIL\", verdict \"context-extension MOOT \u2014 base collapses before its trained window; propose-only\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_midtraining/step0_diagnostic.json",
+    "key_or_line": "accuracy_at_trained_len / threshold / gate / verdict",
+    "status": "found",
+    "suite_version": "",
+    "note": "Adjacent: effective_context_length 6144, per_length_accuracy {512:0.3333, 1024:0.3333, 2048:0.3333, 4096:0.0833, 6144:0.5833, 8192:0.25}, wall_clock_s 145. No suite_version stamp in this file. Cross-referenced in ledger run md lines 67-70."
+   },
+   {
+    "claim": "Robustness: excluding the twice-killed-and-resumed mix_seed0 cell entirely, the headline holds \u2014 code_py +0.2717, CI [+0.2333, +0.3100], significant.",
+    "value": "\"Robustness: excluding mix_seed0 entirely, the headline holds: code_py +0.2717, CI [+0.2333, +0.3100], significant (n=2 treatment, wide-CI warning).\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/research/ledger/runs/2026-06-30_qwen3-0.6b_midtrain-anneal.md",
+    "key_or_line": "lines 84-86 (Integrity notes / adversarial audit bullet on mix_seed0)",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Prose-only (ledger md), not in a JSON artifact; carries an explicit n=2-treatment wide-CI caveat. Context: mix_seed0 killed twice rc=143 external SIGTERM (NOT sentinel; pool 70-73% < 0.83 kill line), resume rebuilds shuffle with no fast-forward (conservative for treatment); mix_seed0 BPB 1.8521 not a within-arm outlier (range 1.8489-1.8550)."
+   },
+   {
+    "claim": "The \u00a7C18 confound_check (n_vars=1, iso_flop=true) is recorded in the ledger.json runs[] entry for this run.",
+    "value": "confound_check: {\"n_vars\": 1, \"iso_flop\": true, \"evidence\": \"single variable = DATA (mix vs fineweb), identical base ckpt + cooldown schedule + 2300 steps x 65,536 tok = 150.7M consumed tokens per cell (iso-FLOP exact by construction); \u00a7C5 evidence in c5_evidence.json\"}",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/research/ledger/ledger.json",
+    "key_or_line": "runs[14].confound_check (run_id 2026-06-30_qwen3-0.6b_midtrain-anneal)",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "CAUTION for the report: the same ledger entry's metrics.c25_cap still reads \"directional (effective_context_length_ruler missing \u2014 loader build-backlog)\" while the entry's verdict field is \"win\" \u2014 a stale sub-field predating the same-night ECL-ladder upgrade (documented in the run md, \u00a7C25 section, and consistent with verdict.json final_verdict=\"win\", c25_gate.completeness.missing_hard=[]). Ledger entry also stamps suite_version text-lm-v2, cost {wall_clock_min: 2220, gpu_hours: 36.7}, lineage git_commit ac8e332."
+   },
+   {
+    "claim": "(Adjacent) The constant-LR full continued-train sibling gave +0.5904 code_py BPB (CI [+0.5532, +0.6277]); the anneal retains ~46% of that effect.",
+    "value": "constant_lr_anchor.code_py_improvement_bpb 0.5904307914737172, code_py_ci95 [0.5531974784151051, 0.6276641045323293], regime \"full continued-train at normal LR (NOT an anneal) \u2014 upper-bound reference only\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/verdict.json",
+    "key_or_line": "constant_lr_anchor",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "The ~46% retention figure (0.2716/0.5904) is stated in the ledger run md line 33; source of anchor = Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/verdict.json."
+   },
+   {
+    "claim": "(Adjacent) \u00a7C25 gate: mid-training stage HARD-complete (all 3 required items present) \u2192 final_verdict win.",
+    "value": "c25_gate: verdict \"win\"; completeness: stage \"mid-training\", complete true, required=[effective_context_length_ruler, short_ctx_non_regression, anneal_gain_vs_iso_token_control], missing_hard=[], report_missing=[\"figure\"], registry_version \"v1\", researched_on \"2026-06-22\"; why \"HARD-complete and significant (\u00a7C25.3.5)\"; final_verdict \"win\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/verdict.json",
+    "key_or_line": "c25_gate + final_verdict",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "SOFT report item \"figure\" still missing (does not cap verdict). Iso-FLOP integrity note in run md: loaded pools differ ~0.7% in the control's favor (control 152.7M vs treatment 151.7M available) and the control lost anyway \u2014 conservative."
+   }
+  ],
+  "sft-confound": [
+   {
+    "claim": "On the fixed held-out response-masked reasoning set, PPL improves from base 14.127 to 11.573 (SFT) and 11.582 (iso-FLOP control), i.e. \u221218.1% / \u221218.0% vs base.",
+    "value": "base reasoning_ppl_masked = 14.1267; SFT seeds = 11.5732 / 11.5722 / 11.5723 (mean 11.573); ctrl seeds = 11.5835 / 11.5819 / 11.5799 (mean 11.582); ledger table: SFT \u22122.554 (\u221218.1%), control \u22122.545 (\u221218.0%) vs base 14.127",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/reasoning_verdict.json",
+    "key_or_line": "arms.base.reasoning_ppl_masked, arms.sft_seed{0,1,2}.reasoning_ppl_masked, arms.ctrl_seed{0,1,2}.reasoning_ppl_masked; percentages in research/ledger/runs/2026-06-27_qwen3-0.6b_sft-3seed.md table lines 31-36",
+    "status": "found",
+    "suite_version": "",
+    "note": "Rounded values 14.127/11.573/11.582 match the raw JSON exactly at 3 dp. Adjacent: full-sequence (unmasked) base PPL = 14.7133 (arms.base.reasoning_ppl_full); eval set = 66 held-out OpenR1-Math docs, 228,529 response tokens of 232,852 full tokens (resp_frac 0.9812), seeded split + 13-gram dedup vs train (eval.reasoning_set)."
+   },
+   {
+    "claim": "SFT\u2212control separation: masked comparison +0.009 PPL CI95 [0.0045, 0.0139] significant, but the full-sequence cross-check gives \u22120.006 CI95 [\u22120.011, \u22120.0015] not significant \u2014 the two disagree, so the verdict is directional.",
+    "value": "sft_vs_control.improvement_ppl = 0.009199999999999875, ci95 = [0.004514755051701214, 0.013885244948298535], significant = true; sft_vs_control_fullseq.improvement_ppl = -0.006366666666670184, ci95 = [-0.011243400000003543, -0.0014899333333368266], significant = false; overall_verdict = \"directional \u2014 masked and full-sequence comparisons disagree on significance; treat as not-yet-separable\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/reasoning_verdict.json",
+    "key_or_line": "sft_vs_control, sft_vs_control_fullseq, overall_verdict",
+    "status": "found",
+    "suite_version": "",
+    "note": "Full-seq significant=false despite a zero-excluding CI because seed_delta_significant uses direction='lower_is_better' \u2014 'significant' means significant IMPROVEMENT; the negative sign (control better) is scored n.s. in the favorable direction, exactly as the ledger's 'n.s.' states. fullseq entry carries note 'robustness cross-check (exact, tokenizer-free)'. Adjacent: sft_vs_base masked improvement = 2.5541333333333327, ci95 [2.552765066538768, 2.5555016001278976] (base repeated x3 \u2192 SFT seed-variance only, flagged as sanity check not a paired test)."
+   },
+   {
+    "claim": "The in-loop (advisory) verdict showed SFT beating the control by 0.68 PPL 'significant', but this was an eval-token confound (SFT scored on response tokens only, control on all tokens); re-scored on one fixed response-masked held-out set the gap collapses to ~0.01 PPL.",
+    "value": "verdict.json: sft_vs_control.improvement_ppl = 0.6786666666666665, ci95 [0.6760494287672351, 0.681283904566098], significant = true, with CONFOUND key: \"in-loop control PPL is over ALL tokens, SFT PPL over RESPONSE tokens only \u2014 NOT directly comparable... Advisory, not the verdict.\"; ledger md: \"the gap collapses 0.68 \u2192 ~0.01. The corrected verdict is the one of record.\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/verdict.json",
+    "key_or_line": "sft_vs_control.improvement_ppl + sft_vs_control.CONFOUND; narrative in research/ledger/runs/2026-06-27_qwen3-0.6b_sft-3seed.md blockquote lines 21-25; mechanism in score_verdict.py comment lines 50-54 and reasoning_eval.py docstring lines 4-9",
+    "status": "found",
+    "suite_version": "",
+    "note": "reasoning_eval.py docstring quantifies the confound precisely: masked SFT cells scored 14.262 over 159,582 RESPONSE tokens while the --no_mask control scored 15.083 over 163,840 ALL tokens (train-window proxy, per-arm training mask reused by sft_train.eval_reasoning_ce). In-loop raw values: sft_final_ppl [11.596, 11.594, 11.594], ctrl_final_ppl [12.274, 12.274, 12.272], base_ppl 14.262 (verdict.json). verdict.json overall_verdict already capped itself: \"directional (in-loop)... confirm via /eval-harness... before calling it a win\"."
+   },
+   {
+    "claim": "Catastrophic-forgetting probe: held-out FineWeb-Edu PPL base 21.495 vs SFT 21.652 vs control 21.660, and wikitext2/code retention within noise (retained).",
+    "value": "reasoning_verdict.json forgetting: base_ppl = 21.4954, sft_mean = 21.6519, ctrl_mean = 21.6604; suite_results.json (sft_seed0) forgetting: wikitext2_val base 37.010055463333096 \u2192 target 37.08215923564533 (\u0394 +0.0721037723122322, floor_abs 1.3039039020038814, label \"retained\"), code_py 438.67295146042875 \u2192 425.6893140677225 (\u0394 \u221212.983637392706271, floor_abs 280.56392586197546, label \"retained\"), summary \"retained\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/reasoning_verdict.json",
+    "key_or_line": "forgetting.{base_ppl,sft_mean,ctrl_mean}; retention detail in eval/sft_seed0/suite_results.json under forgetting.{wikitext2_val,code_py,summary}",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Claimed 21.495/21.652/21.660 are correct roundings of 21.4954/21.6519/21.6604. Ledger md line 60 states FineWeb-Edu retention as '+0.157 (~0.7%)' vs base \u2014 matches 21.6519\u221221.4954=0.1565. Control-arm suite file eval/ctrl_seed0/suite_results.json: wikitext2 37.084243181550235, code_py 425.59445853983783, same 'retained' labels. Suite results stamped suite_version=text-lm-v2, date 2026-06-30."
+   },
+   {
+    "claim": "Config: ~125M in-domain math (OpenR1-Math) tokens, 3 seeds per arm, peak_lr 5e-5 with cosine decay to 8e-8 (5% warmup), and an iso-FLOP --no_mask continued-pretrain control differing only in masking.",
+    "value": "c5_evidence.json recipe: \"faithful base; response-masked CE via posttrain_losses.masked_sft_nll; peak_lr 5e-5 cosine->8e-8, warmup 5%, mb4 x ga32 (global 128), AdamW(0.9,0.95) wd 0.01, ~125M tok, compile on\"; arm_plan: arms [\"sft (response-masked)\", \"ctrl (--no_mask continued-pretrain)\"], seeds [0,1,2], new_cells 6; single_variable: \"masking only\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/c5_evidence.json",
+    "key_or_line": "recipe, arm_plan.{arms,seeds}, single_variable",
+    "status": "found",
+    "suite_version": "",
+    "note": "Cross-checked in sft_train.py: --token_budget default 125_000_000 (line 243), docstring line 32 gives the exact prepared-set size 125,000,592 tokens (one pass); --peak_lr default 5e-5 (line 247), --end_lr 8e-8, --warmup_frac 0.05; --no_mask flag documented as 'iso-FLOP CONTROL: train on ALL tokens (no prompt mask) = continued-pretrain' (line 260). c5_evidence also states masked arm trains 24,934/25,553 tokens (97.6%) vs control 100% \u2014 the 619 prompt tokens are the only difference. Adjacent: MFU 0.3209, achieved 40.11 TFLOP/s at 7,344 tok/s with peak_is_estimated=true (never quote GB10 MFU as exact); eta_hours 30."
+   },
+   {
+    "claim": "Across-seed spread of the held-out masked reasoning PPL is ~0.001 within each arm (n=3).",
+    "value": "Ledger md line 38: \"Seed spread within each arm \u2248 0.001 PPL (n=3)\"; raw seeds \u2014 SFT: 11.5732/11.5722/11.5723 (max\u2212min = 0.0010), ctrl: 11.5835/11.5819/11.5799 (max\u2212min = 0.0036)",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/research/ledger/runs/2026-06-27_qwen3-0.6b_sft-3seed.md",
+    "key_or_line": "line 38 (\"Seed spread within each arm \u2248 0.001 PPL (n=3).\"); raw per-seed values in reasoning_verdict.json arms.{sft,ctrl}_seed{0,1,2}.reasoning_ppl_masked",
+    "status": "found",
+    "suite_version": "",
+    "note": "The '\u22480.001' holds exactly for the SFT arm (0.0010) but the control arm's range is 0.0036 \u2014 if the report quotes a per-arm spread, say '\u22640.004' or 'SFT 0.001 / ctrl 0.004' to stay strictly file-accurate. In-loop (train-proxy) spreads are similar: sft_final_ppl range 0.002, ctrl_final_ppl range 0.002 (verdict.json)."
+   },
+   {
+    "claim": "Standard-suite general-domain evals: SFT \u2248 control \u2248 base on wikitext2 and code, both within the noise floor (comparable numbers from eval-harness, suite text-lm-v2).",
+    "value": "wikitext2_val: base 37.010055463333096, SFT seed0 37.08215923564533, ctrl seed0 37.084243181550235, floor_abs 1.3039039020038814, label \"not significant\"; code_py (codeparrot_clean_valid): base 438.67295146042875, SFT 425.6893140677225, ctrl 425.59445853983783, floor_abs 280.56392586197546, label \"not significant\"; suite_version \"text-lm-v2\", date \"2026-06-30\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/eval/sft_seed0/suite_results.json",
+    "key_or_line": "suite_version; ppl.wikitext2_val.{baseline,target,significant,label}; ppl.code_py.{baseline,target,label}; noise_floor.*.floor_abs (ctrl values in eval/ctrl_seed0/suite_results.json)",
+    "status": "found",
+    "suite_version": "text-lm-v2",
+    "note": "Adjacent report-worthy: BPB stamped per corpus (SFT seed0 wikitext2 bpb 1.2262810302601945, code_py 2.1180834019517936; n_tokens 204,600 each). Only one representative seed per arm was run on the standard suite \u2014 the ledger md explicitly notes 'not run: ctrl/sft seeds 1\u20132 on the standard suite (representative-seed policy; in-domain 3-seed CI is in reasoning_verdict.json)' \u2014 a report should not imply 3-seed CIs on wikitext/code."
+   }
+  ],
+  "rlvr": [
+   {
+    "claim": "Phase-1 go/no-go: the SFT checkpoint scores GSM8K pass@1 1.1% (Wilson CI [0.6%, 2.1%]) and pass@8 7%.",
+    "value": "acc 0.01125, ci_low 0.0059297687461997645, ci_high 0.021241582744848563; passk_chen2021 {\"1\": 0.01125, \"8\": 0.07}; solved_items 7 of n_items 100, n_samples 8, temp 0.8, max_new_tokens 256, band_seed 20260701",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-01_qwen3-0.6b_rlvr-phase1-passk/phase1_passk.json",
+    "key_or_line": "checkpoints.sft_seed0.gsm8k.{pass1_wilson_ci,passk_chen2021,solved_items}",
+    "status": "found",
+    "suite_version": "math-acc-v1 (extractor_version)",
+    "note": "1.1%/[0.6,2.1] is rounded from 1.125%/[0.593,2.124]. Same numbers mirrored in ledger.json runs[].metrics for run 2026-07-01_qwen3-0.6b_rlvr-phase1-passk and in phase1.out."
+   },
+   {
+    "claim": "Phase-1: the SFT checkpoint scores MATH-500 L1-3 pass@1 1.5% / pass@8 10%.",
+    "value": "acc 0.015, ci [0.006892291919440893, 0.03233463358482672]; passk {\"1\": 0.015, \"8\": 0.1}; solved_items 5 of n_items 50",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-01_qwen3-0.6b_rlvr-phase1-passk/phase1_passk.json",
+    "key_or_line": "checkpoints.sft_seed0.math500_l13",
+    "status": "found",
+    "suite_version": "math-acc-v1 (extractor_version)",
+    "note": ""
+   },
+   {
+    "claim": "Phase-1: the pretrain base scores GSM8K 0.6% pass@1 / 5% pass@8.",
+    "value": "acc 0.00625, ci [0.0026724940266688486, 0.014546646226436234]; passk {\"1\": 0.00625, \"8\": 0.05}; solved_items 5/100",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-01_qwen3-0.6b_rlvr-phase1-passk/phase1_passk.json",
+    "key_or_line": "checkpoints.base.gsm8k",
+    "status": "found",
+    "suite_version": "math-acc-v1 (extractor_version)",
+    "note": "0.6% is rounded from 0.625%. Base ckpt = checkpoint_qwen3_baseline2tpp.pt (phase1.out)."
+   },
+   {
+    "claim": "Phase-1: the pretrain base scores MATH-500 L1-3 2.25% pass@1 / 14% pass@8.",
+    "value": "acc 0.0225, ci [0.011881583530495034, 0.04220265755875813]; passk {\"1\": 0.0225, \"8\": 0.14}; solved_items 7/50",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-01_qwen3-0.6b_rlvr-phase1-passk/phase1_passk.json",
+    "key_or_line": "checkpoints.base.math500_l13",
+    "status": "found",
+    "suite_version": "math-acc-v1 (extractor_version)",
+    "note": "REPORT-WORTHY nuance from ledger (runs[].metrics.honest_read, ledger.json ~line 1327): 'GO fires on absolute solvability (12 items) \u2014 NOT on SFT>base: CIs overlap everywhere and base BEATS sft on math500_l13 (14% vs 10% pass@8)'."
+   },
+   {
+    "claim": "Phase-1 pre-registered GO rule was 'SFT solved_items >= 3 across the band'; 12 items solved -> decision GO.",
+    "value": "\"go_rule\": \"GO iff SFT solved_items >= 3 across the band (pre-registered)\"; \"decision\": \"GO\"; \"solved_total_sft\": 12",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-01_qwen3-0.6b_rlvr-phase1-passk/phase1_passk.json",
+    "key_or_line": "go_rule / decision / solved_total_sft",
+    "status": "found",
+    "suite_version": "math-acc-v1 (extractor_version)",
+    "note": "12 = 7 (gsm8k) + 5 (math500_l13) SFT solved items. phase1.out prints 'DECISION: GO (SFT solved 12 items; rule: GO iff >= 3)'. NOTE: the phase-1 dir contains NO verdict.json/score_verdict.py \u2014 the rule lives in run_phase1_passk.py + phase1_passk.json; verdict artifacts are in the phase-2 dir."
+   },
+   {
+    "claim": "Phase-2 GRPO trained for 300 steps (16 prompts x G=8 rollouts @ T=0.8, cap 256).",
+    "value": "health_grpo_seed0.jsonl has exactly 300 step records (step 1..300); train_grpo.py --steps default=300; c5_evidence recipe: '300 steps x 16 prompts x G=8 @ T=0.8 cap 256'",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/health_grpo_seed0.jsonl",
+    "key_or_line": "300 lines, first {\"step\": 1, ...} last {\"step\": 300, ...}; c5_evidence.json .recipe",
+    "status": "found",
+    "suite_version": "",
+    "note": "Dr.GRPO: clip 0.2, k3-KL beta 3e-3, lr 1e-6 AdamW (train_grpo.py line 52: CLIP_EPS, BETA_KL, LR_GRPO, LR_RFT = 0.2, 3e-3, 1e-6, 1e-5). Measured pace ~362 s/step; ledger note gives revised ETA ~88 h total for the 3 arms."
+   },
+   {
+    "claim": "Phase-2 GRPO mean training reward stayed flat at ~0.9% verifier-correct over all 300 steps with no learning trend.",
+    "value": "overall mean of mean_reward = 0.009231 (min 0.0, max 0.0391); first-50 mean 0.00905, last-50 mean 0.007956; thirds 0.008737/0.009986/0.008970; OLS slope +5.8e-7/step (+0.0002 over 300 steps); kept_groups (DAPO) mean 13.49/16",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/health_grpo_seed0.jsonl",
+    "key_or_line": "mean_reward field across all 300 records (computed: mean/min/max/slope)",
+    "status": "found",
+    "suite_version": "",
+    "note": "SEMANTICS (train_grpo.py line 224): health mean_reward = n_correct/n_total = fraction of the 128 rollouts/step with reward exactly 1.0, NOT the shaped reward. verdict.json quotes 'overall 0.0092, first-50 0.0091 vs last-50 0.0080' \u2014 exact recompute gives first-50 0.00905 (rounding-boundary; 0.0090 or 0.0091 depending on rounding mode), last-50 0.0080 exact match. Do not report reward as 'flat at ~0' (README wording) \u2014 it is flat at ~0.9%."
+   },
+   {
+    "claim": "Phase-2 GRPO per-token k3 KL vs the frozen SFT reference stayed at ~1.7e-4 magnitude throughout.",
+    "value": "kl field: mean 1.709e-4, min 0.0 (step 1, policy==ref), max 2.03e-4, final step 300 = 1.74e-4",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/health_grpo_seed0.jsonl",
+    "key_or_line": "kl field across 300 records (computed stats); last line {\"step\": 300, ..., \"kl\": 0.000174}",
+    "status": "found",
+    "suite_version": "",
+    "note": "KL penalty coefficient BETA_KL=3e-3 (train_grpo.py line 52; c5_evidence flags it INFERRED, not paper-pinned). Random arm KL is the same magnitude (mean 1.699e-4)."
+   },
+   {
+    "claim": "The iso-generation-compute RFT control collected 0 verifier-correct completions (README wording).",
+    "value": "CONTRADICTED: train_rft_seed0.log final lines read '[14:52:11] RFT: 352 verifier-correct completions collected; masked-SFT pass' then '[14:52:31] RFT sft-pass 200/352' and '[14:52:51] DONE'. 352/38,400 rollouts = 0.917% \u2014 matching health_rft_seed0.jsonl overall mean_reward 0.009153 and the ~1% rollout-correct rate seen in supervision.",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/train_rft_seed0.log",
+    "key_or_line": "final 3 lines of the log ('RFT: 352 verifier-correct completions collected'); README.md lines 90-92 ('collected **0** verifier-correct completions')",
+    "status": "contradicted",
+    "suite_version": "",
+    "note": "Root cause on disk: the '0 collected' line at log line 3 is the July-2 SMOKE test (step 1/1); the real 300-step run collected 352. The CURRENT verdict.json (regenerated 2026-07-06 11:25:59) carries the correction: 'NOTE: an earlier draft misread the July-2 SMOKE log line (0 collected) as the real run; corrected 2026-07-06', and the ledger conclusion now says 'RFT's 352 collected completions, ~0.9% of 38,400 rollouts, were too few to separate from the floor'. README.md lines 89-92 still say 0 and MUST be fixed before the report cites it. per-step 'kept=0' in the RFT log is the DAPO kept_groups counter, which is not used in RFT mode \u2014 not a completions count."
+   },
+   {
+    "claim": "The random-reward (Spurious-Rewards) gate arm trained at reward ~0.5, proving the update pipeline works.",
+    "value": "health_random_seed0.jsonl mean_reward: overall mean 0.501406, min 0.375, max 0.5938, final step 0.5234; kept_groups mean 15.88/16; loss mean +0.0281",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/health_random_seed0.jsonl",
+    "key_or_line": "mean_reward field across 300 records (computed stats); train_random_seed0.log tail 'step 300/300 reward=0.5234 ... DONE'",
+    "status": "found",
+    "suite_version": "",
+    "note": "Reward = Bernoulli(0.5) content-blind (c5_evidence arm_plan); health mean_reward counts r==1.0 draws, hence ~0.5."
+   },
+   {
+    "claim": "Final paired eval, GSM8K: pass@1/pass@8 = SFT 1.12%/7%, GRPO 1.0%/7%, random 1.0%/6%, RFT 1.5%/11%; GRPO beats neither the SFT floor nor the random gate.",
+    "value": "verdict.json comparison[0]: sft_pass1 0.0112, grpo_pass1 0.01, random_pass1 0.01, rft_pass1 0.015; sft_pass8 0.07, grpo_pass8 0.07, random_pass8 0.06, rft_pass8 0.11; grpo_pass1_ci [0.0051, 0.0196], sft_pass1_ci [0.0059, 0.0212]; grpo_beats_sft_floor false, grpo_beats_random_gate false",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/verdict.json",
+    "key_or_line": "comparison[0] (set=gsm8k)",
+    "status": "found",
+    "suite_version": "math-acc-v1 (extractor field)",
+    "note": "Full-precision CIs in passk_*.json: grpo gsm8k acc 0.01 CI[0.005075687871617385, 0.01960761080994513] solved 7/100; random acc 0.01 CI[same] solved 6/100; rft acc 0.015 CI[0.008601110881191311, 0.02603439903831445] solved 11/100. 'Beat' = arm CI_low > comparator CI_high (score_verdict.py line 44, non-overlapping Wilson). Same band/seeds as Phase-1 (band_seed 20260701, n=8, T=0.8). Nuance: RFT is nominally the best arm on gsm8k (pass@8 0.11 vs sft 0.07) but CIs overlap \u2014 n.s. (verdict.json rft_arm)."
+   },
+   {
+    "claim": "Final paired eval, MATH-500 L1-3: pass@1/pass@8 = SFT 1.5%/10%, GRPO 2.25%/16%, random 1.5%/10%, RFT 1.75%/12%; both gates fail (CIs overlap).",
+    "value": "verdict.json comparison[1]: sft_pass1 0.015, grpo_pass1 0.0225, random_pass1 0.015, rft_pass1 0.0175; sft_pass8 0.1, grpo_pass8 0.16, random_pass8 0.1, rft_pass8 0.12; grpo_pass1_ci [0.0119, 0.0422], sft_pass1_ci [0.0069, 0.0323]; grpo_beats_sft_floor false, grpo_beats_random_gate false",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/verdict.json",
+    "key_or_line": "comparison[1] (set=math500_l13)",
+    "status": "found",
+    "suite_version": "math-acc-v1 (extractor field)",
+    "note": "Full precision (passk_grpo.json): grpo math500_l13 acc 0.0225 CI[0.011881583530495034, 0.04220265755875813], pass@8 0.16, solved 8/50 \u2014 identical pass@1 to the PRETRAIN base's Phase-1 math500 number, so the GRPO 'bump' does not even clear the base, let alone the CIs."
+   },
+   {
+    "claim": "Phase-2 verdict: directional (capped by design at n=1 seed per \u00a7C25), proceed_to_phase3 = false, pre-registered null confirmed.",
+    "value": "\"verdict\": \"directional\"; \"verdict_capped_reason\": \"n=1 seed; \u00a7C25 rlvr requires seed_ci (>=3 paired seeds) for a non-directional call\"; \"seeds\": 1; \"proceed_to_phase3\": false; conclusion: \"PREDICTED NULL CONFIRMED: GRPO does not beat the SFT floor; GRPO does not beat the random-reward gate. ... Do NOT spend the multi-seed cohort; the reasoning gain lives in SFT/distillation, not RL at this scale.\"",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/experiments/2026-07-02_qwen3-0.6b_grpo-phase2/verdict.json",
+    "key_or_line": "verdict / verdict_capped_reason / proceed_to_phase3 / conclusion",
+    "status": "found",
+    "suite_version": "math-acc-v1 (extractor field)",
+    "note": "IMPORTANT: verdict.json was REGENERATED at 2026-07-06 11:25:59 by the corrected score_verdict.py (the Jul-5 version on disk earlier in this session still said 'RFT collected 0'). Ledger run entry 2026-07-02_qwen3-0.6b_grpo-phase2 mirrors verdict=directional + the corrected conclusion, smoke='pass', eta_hours 88, git_commit ac8e332."
+   },
+   {
+    "claim": "The null was pre-registered before the run: plan.md \u00a71 predicts RLVR at 0.6B is a methodology/negative-result artifact whose most likely true outcome is a null-to-tiny delta the control battery should refuse to call a win.",
+    "value": "\u00a71 'HONEST verdict up front': 'At 0.6B on our ~10x-undertrained FineWeb-Edu\u2192SFT base, RLVR is a methodology/negative-result artifact, not a reasoning win.' ... 'The most likely *true* outcome is a null-or-tiny attributable Dr.GRPO gain that the control battery should correctly **refuse to call a win**'. Header: 'researched_on 2026-07-01'.",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/research/rlvr/plan.md",
+    "key_or_line": "section '## 1. HONEST verdict up front' (first two bold sentences) + title line 'researched_on 2026-07-01'",
+    "status": "found",
+    "suite_version": "",
+    "note": "Pre-dates the Phase-2 launch (started 2026-07-02 per ledger + c5_evidence preflight 'PASS 2026-07-02 07:35'). \u00a71 also pre-registers the Spurious-Rewards random-reward gate as mandatory for Qwen-lineage models."
+   },
+   {
+    "claim": "Decontamination: both eval sets are 0-flagged against the 35,924 OpenR1 SFT problems (13-gram index).",
+    "value": "\"decontam_target\": \"35924 OpenR1 SFT problems (of 35231 used uuids)\"; gsm8k_test {n 1319, contaminated 0, clean 1319}; math500 {n 500, contaminated 0, clean 500}; ngram_n 13, flag_threshold 0.5, index_13grams 1138279; max_overlap_gsm8k 0.0, max_overlap_math500 0.0588",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/research/datasets/math-eval-v1/decontam_report.json",
+    "key_or_line": "decontam_target / gsm8k_test / math500 / max_overlap_*",
+    "status": "found",
+    "suite_version": "",
+    "note": "smoke_limit null (full run, not a smoke)."
+   },
+   {
+    "claim": "Decontamination: 14 eval-overlapping prompts were dropped from the GRPO training prompt set.",
+    "value": "gsm8k_train {n 7473, eval_dropped 2, clean 7471, sft_flagged 0}; math_l13_train {n 3502, eval_dropped 12, clean 3490, sft_flagged 7} \u2014 total eval_dropped = 2 + 12 = 14",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/research/datasets/grpo-math-prompts-v1/decontam_report.json",
+    "key_or_line": "gsm8k_train.eval_dropped + math_l13_train.eval_dropped",
+    "status": "found",
+    "suite_version": "",
+    "note": "Ledger dataprep run 2026-07-02_qwen3-0.6b_grpo-prompts-dataprep stamps eval_overlap_dropped: 14 and sft_overlap_flagged: 7 explicitly. Overlaps were DROPPED from *_clean vs the eval sets; SFT overlaps flagged but kept."
+   },
+   {
+    "claim": "The answer extractor/verifier is pinned and version-stamped as math-acc-v1 in every result.",
+    "value": "research/eval_math_acc.py line 37: EXTRACTOR_VERSION = \"math-acc-v1\"; stamped as \"extractor_version\": \"math-acc-v1\" in every per-set block of phase1_passk.json and passk_{grpo,random,rft}.json, as \"extractor\": \"math-acc-v1\" at top level of all four + verdict.json, and in both ledger run metrics + both decontam reports",
+    "source_file": "/home/yashb98/Downloads/BuildFromScratch/research/eval_math_acc.py",
+    "key_or_line": "line 37 EXTRACTOR_VERSION = \"math-acc-v1\"",
+    "status": "found",
+    "suite_version": "math-acc-v1",
+    "note": "These math results carry extractor_version, not a 'suite_version' key (suite_version=text-lm-v2 stamps belong to the separate eval-harness PPL suite). Reward mapping per c5_evidence: 1.0 correct / 0.1 parseable-wrong / 0.0 unparseable via the pinned verifier."
+   }
+  ]
+ }
+}

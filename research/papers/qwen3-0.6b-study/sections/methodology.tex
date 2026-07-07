@@ -1,0 +1,126 @@
+\section{Evidence-Gated Methodology}\label{sec:method}
+
+This study is as much about method as about results. Every experiment was
+executed by an autonomous research loop on a single machine, governed by
+machine-checkable contracts that decide what may launch, what may be measured,
+and what a number is allowed to be called. The notation and verdict semantics
+defined here are used by all results sections.
+
+\subsection{The Unit of Claim}
+
+The atomic claim of this paper is a \emph{paired across-seed bits-per-byte
+(BPB) delta with a 95\% confidence interval, reported on at least two corpora,
+under a single-variable diff at iso-FLOP, scored by a versioned harness against
+a measured noise floor}. Each ingredient is defined below.
+
+\textbf{Metric.} For a model $m$ and a fixed evaluation corpus $C$ of byte
+length $B(C)$, tokenized by $m$'s own tokenizer into $x_1,\dots,x_N$,
+\begin{equation}
+\mathrm{BPB}(m,C) \;=\; \frac{1}{B(C)} \sum_{t=1}^{N} -\log_2 p_m\!\left(x_t \mid x_{<t}\right).
+\end{equation}
+Because the denominator is a property of the raw text rather than of any
+tokenization, BPB remains comparable when tokenizers differ and across corpora,
+unlike per-token perplexity. The harness scores fixed windows of 204{,}600
+tokens per corpus over 869{,}710 bytes of WikiText-2 and 843{,}643 bytes of
+held-out Python code, at pinned dataset revisions, with 13-gram decontamination
+against training data; per-checkpoint perplexities and noise floors on these
+corpora appear in Table~\ref{tab:arms}. Effects must be reported on both
+corpora: $\Delta_c = \mathrm{BPB}_{\mathrm{base}}(c) -
+\mathrm{BPB}_{\mathrm{treat}}(c)$, positive meaning improvement.
+
+\textbf{Single variable at iso-FLOP.} Two arms compare only if exactly one
+variable differs \emph{and} their training FLOPs, under the
+$6N + 12 \cdot L \cdot H \cdot Q \cdot T$ accounting of \citet{chowdhery2022palm},
+match within 5\%; comparisons at unequal compute conflate the variable with
+budget \citep{hoffmann2022training}. Token-matched is not FLOP-matched when the
+architecture or optimizer cost changes, so the check is computed, not assumed,
+and recorded with each run (the largest recorded mismatch among the pretraining
+comparisons is a FLOPs-per-token ratio of 1.00043; Table~\ref{tab:attrib}).
+Every comparison states its matched budget in tokens and steps
+(Table~\ref{tab:hparams}).
+
+\textbf{Paired seed test.} Both arms train the identical seed set
+$\{0,1,2\}$, varying initialization and data order. The effect is the
+difference of arm means with a Student-$t$ 95\% interval,
+$\Delta_c \pm t_{0.975,\nu}\sqrt{\mathrm{SEM}_b^2+\mathrm{SEM}_t^2}$, where
+$\nu$ is the Welch--Satterthwaite degrees of freedom floored to an integer
+(conservative at $n{=}3$, where a normal quantile would be too narrow). A delta
+is \emph{significant} only if the entire interval lies on the improving side of
+zero. A corpus-subsample noise floor -- the spread of the baseline checkpoint
+over three disjoint evaluation subsamples -- is retained as a secondary check;
+deltas below it are labeled not significant. The floors themselves motivate the
+design: on this suite the code-corpus perplexity floor is large
+(Table~\ref{tab:arms}), so single-checkpoint perplexity gaps on code are close
+to meaningless, whereas across-seed BPB intervals are not. Results are quoted
+as $+X$ BPB (95\% CI $[\mathrm{lo},\mathrm{hi}]$, 3 seeds, paired).
+
+\textbf{Versioned harness.} Cross-run comparable numbers come only from the
+evaluation harness, which stamps a suite version into every result:
+(text-lm-v2) for the BPB/perplexity suite, (math-acc-v1) for the pinned math
+answer-extractor and verifier, (ecl-ladder-v1) for the passkey context ladder.
+Any suite change bumps the version, so numbers with different stamps are never
+differenced. Perplexities printed by the training loop are labeled in-loop
+validation perplexity, single run, and are advisory only. This distinction is
+load-bearing: an in-loop 0.68-perplexity SFT ``win'' collapsed to $+0.009$
+(95\% CI $[0.0045, 0.0139]$) once re-scored on one fixed held-out token set
+(Figure~\ref{fig:sft-confound}).
+
+\subsection{Claim Classes and Verdict Caps}
+
+Verdicts take the values \emph{win}, \emph{loss}, \emph{inconclusive}, and
+\emph{directional}. Every run carries a lifecycle stage (data, architecture,
+mid-training, sft, rlvr, \dots), and a per-stage registry names the required
+(HARD) evaluation battery for that stage. A missing HARD item forces the
+verdict to directional regardless of the point estimate -- completeness gates
+significance, not the reverse. A single-seed run is never significance-testable
+and is likewise capped at directional; the RLVR cohort was run at one seed by
+pre-registered design and carries exactly this cap (Table~\ref{tab:rlvr}).
+Near-chance downstream results are reported with Wilson intervals as no-signal,
+never as wins, with pass@$k$ computed by the unbiased estimator of
+\citet{chen2021evaluating}.
+
+\subsection{Control Reuse and Pre-Registration}
+
+Baseline checkpoints are reused across experiments as symlinks and re-scored
+in-cohort, so every number in a comparison comes from the same evaluation pass
+of the same harness version: the architecture sub-drill reuses the de-confound
+baselines (Table~\ref{tab:attrib}), and the data-mix study reuses the dclm-edu
+arm (Table~\ref{tab:data}). Expected outcomes are written down before launch
+and bind in both directions. The RLVR plan, written 2026-07-01 before the
+2026-07-02 launch, predicted a null at this scale
+\citep{yue2025does} and mandated a random-reward control for Qwen-lineage
+models \citep{shao2025spurious}; the null was confirmed
+(Figure~\ref{fig:rlvr}). The mid-training anneal pre-registered an expected
+English null that the data violated -- $+0.0157$ BPB (95\% CI
+$[+0.0140, +0.0174]$, 3 seeds, paired; Table~\ref{tab:midtrain}) -- and the
+violation is reported as exploratory rather than promoted to a claim.
+
+\subsection{Launch Evidence and the Ledger}
+
+No budgeted GPU run starts until its evidence is recorded: a literature-sourced
+token budget, the arm~$\times$~seed plan, the confound check, a measured
+throughput probe with a derived ETA, and a passing smoke test that executes the
+exact training script for one step on a tiny batch and asserts a finite,
+descending loss, a checkpoint save-then-reload round trip, and exit code zero.
+The ledger is the append-only truth store: a single programmatic interface with
+atomic writes records techniques, runs, verdicts, suite stamps, and costs, and
+is the deduplication authority for what has already been tried. A resumable
+state machine executes the stages unattended -- preflight, scan, selection,
+briefing, data preparation, launch, evaluation, verdict -- and always ends by
+writing a digest, while irreversible actions (new model builds, compute spend,
+publication) remain human-gated.
+
+\subsection{Safety Envelope}
+
+All training ran on one NVIDIA GB10 with a unified CPU+GPU memory pool of
+$\approx$119~GB and no separate VRAM; over-allocation invokes the kernel
+OOM-killer and can take down the machine, so safety limits are part of the
+method. Three constraints apply to every job: (i) a per-process allocator guard
+caps GPU memory at a 0.85 fraction of the pool and is imported before the
+framework in every script; (ii) an independent watchdog process kills any
+unattended trainer at a 0.80 pool fraction -- strictly below the guard, so the
+watchdog fires first -- and only one trainer may run at a time; (iii)
+cross-entropy over the 151{,}936-token vocabulary is computed in chunked fp32,
+never materializing the full sequence-by-vocabulary logit matrix. Throughput
+and MFU figures are reported as approximate throughout, because the device peak
+for this hardware is an estimate.

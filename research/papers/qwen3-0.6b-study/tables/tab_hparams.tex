@@ -1,0 +1,76 @@
+% ---------------------------------------------------------------------
+% tab_hparams.tex -- per-stage hyperparameters for every experiment
+% stage in the paper. Every value is transcribed from the run's
+% c5_evidence.json recipe, the trainer's argparse defaults, or the
+% args/start line of the on-disk training log.
+% Provenance flags: R = reported in the cited source paper;
+% I = inferred (source gives a band, we picked a point);
+% C = chosen by us (no published value at this scale/budget).
+% ASCII only; requires only booktabs.
+% ---------------------------------------------------------------------
+\providecommand{\hpR}{\textsuperscript{R}}
+\providecommand{\hpI}{\textsuperscript{I}}
+\providecommand{\hpC}{\textsuperscript{C}}
+
+\begin{table}[t]
+\centering
+\caption{Per-stage training hyperparameters. Superscripts flag
+provenance: \hpR{} reported in the source paper (Qwen3 technical
+report LR shape; VibeThinker SFT stage-1; GRPO/DAPO/Dr.GRPO),
+\hpI{} inferred from a band in the source, \hpC{} chosen by us (no
+published value at this scale). Shared unless stated: AdamW betas
+$(0.9,0.95)$, eps $10^{-8}$, grad-clip 1.0, bf16, seq.\ len.\ 4096,
+chunked fp32 cross-entropy, one GB10 GPU; all part-(a) stages use
+65{,}536 tok/step (micro-batch 4 $\times$ grad-accum 4)\hpC. Each run
+directory records its full recipe in \texttt{c5\_evidence.json} before
+launch (contract C5); values are cross-checked against the
+\texttt{args} lines of the training logs. The optimizer A/B also ran a
+matched-config AdamW LR sweep $\{1.7,2.4,3.5,4.8\}\times10^{-3}$ (n=1
+off-baseline). GRPO Phase 2 is n=1 by design (verdict capped at
+directional).}
+\label{tab:hparams}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.05}
+
+% ---- (a) Pre-training and mid-training stages ------------------------
+\begin{tabular}{@{}lp{2.0cm}p{2.2cm}p{2.6cm}p{2.3cm}p{2.2cm}@{}}
+\toprule
+ & \textbf{Faithful 2TPP} & \textbf{Optimizer A/B} & \textbf{De-confound P1/P2} & \textbf{Data cells} & \textbf{Mid-train anneal} \\
+ & (06-08) & (06-16) & (06-18 / 06-21) & (06-24 / 06-26) & (06-30) \\
+\midrule
+Init            & random & random & random & random & 2TPP ckpt \\
+Data            & FineWeb-Edu\hpC & FineWeb-Edu\hpC & FineWeb-Edu\hpC & dclm-edu; 50/50 mix\hpC & dclm-edu, FineWeb\hpC \\
+Arms            & --- & AdamW vs NorMuon-2D & +WSD, +z-loss, +arch; VR, LNS, HG & dclm; mix (ctrl reused) & 50/50 mix vs FineWeb-only \\
+Optimizer       & AdamW\hpR & AdamW vs NorMuon\hpC & AdamW\hpR & AdamW\hpR & AdamW\hpR \\
+LR peak $\to$ end & 2.4e-3\hpC $\to$ 3.2e-4\hpR & 2.4e-3\hpC; NM 0.011\hpC{} ($\to$ 0.1x)\hpC & 1.7e-3\hpR $\to$ 3.2e-4\hpR & 1.7e-3\hpR $\to$ 3.2e-4\hpR & 2.5e-4\hpC $\to$ 2.5e-5\hpC \\
+Schedule        & cosine\hpR & cosine\hpR & cosine\hpR{} (WSD arm: WSD) & cosine\hpR & 1-sqrt decay\hpR{} (shape) \\
+Warmup (steps)  & 900\hpC & 50\hpC & 100\hpC & 100\hpC & 46\hpC \\
+Weight decay    & 0.01\hpR & 0.1 (2D)\hpC & 0.01\hpR & 0.01\hpR & 0.01\hpR \\
+Steps (tok)/cell & 18{,}150 (1.19B, 2~TPP\hpC) & 640 (41.9M\hpC) & 2{,}000 (131M\hpC) & 2{,}000 (131M\hpC) & 2{,}300 (151M\hpC) \\
+Cells (new)     & 1 & 6 & 12 / 9 & 3 / 3 & 6 \\
+Seeds           & 0 & 0--2 & 0--2 & 0--2 & 0--2 \\
+\bottomrule
+\end{tabular}
+
+\vspace{5pt}
+
+% ---- (b) Post-training stages ----------------------------------------
+\begin{tabular}{@{}lp{4.6cm}p{5.6cm}@{}}
+\toprule
+ & \textbf{SFT 3-seed} (06-27) & \textbf{GRPO Phase 2} (07-02) \\
+\midrule
+Init             & faithful 2TPP base (strict load) & SFT seed-0 ckpt (policy + frozen KL ref) \\
+Data             & OpenR1-Math-220k pairs\hpC & grpo-math-prompts-v1: GSM8K + MATH L1--3, 2:1 mix\hpC \\
+Arms             & masked SFT vs no-mask iso-FLOP control & Dr.GRPO vs random-reward vs RFT \\
+Optimizer / LR   & AdamW, 5e-5\hpR $\to$ 8e-8\hpR{} cosine & AdamW, 1e-6 const.\hpI{} (RFT: 1e-5\hpI) \\
+Warmup / wd      & 5\% (11 steps)\hpR{} / 0.01\hpC & none / 0.0\hpC \\
+Batch            & 524{,}288 tok/step (mb 4 x ga 32 = 128 seqs\hpR) & 16 prompts x G=8 rollouts / step\hpC \\
+Steps (budget)   & 238 (125M tok\hpC) & 300 (300 x 16 x 8 rollouts, cap 256 new tok\hpC) \\
+Sampling         & --- & T = 0.8\hpC, no KV cache (exact re-forward) \\
+Clip / KL        & --- & clip eps 0.2\hpR; k3-KL beta 3e-3\hpI \\
+Reward           & --- & math-acc-v1: 1.0 / 0.1 / 0.0\hpC; random arm Bernoulli(0.5) \\
+Seeds            & 0--2 & 0 (n=1, directional) \\
+\bottomrule
+\end{tabular}
+\end{table}

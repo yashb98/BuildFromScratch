@@ -1,0 +1,34 @@
+% tab_repro.tex -- reproduction verification gate
+% Sources (re-read 2026-07-06):
+%   Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/verify.json
+%   Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/architecture_plan.md (param total, line 60)
+%   SmolLM2-134(base)/results/param_count.log, parity.log, comparison_with_hf.md
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{@{}llrlll@{}}
+\toprule
+Model & HF reference & Params & $\max|\Delta\text{logits}|$ & Argmax & Device \\
+\midrule
+Qwen3-0.6B (ours) & \texttt{Qwen/Qwen3-0.6B-Base} & 596{,}049{,}920 & $0.0$ & match & CPU/GPU fp32 \\
+SmolLM2-135M (ours) & \texttt{HuggingFaceTB/SmolLM2-135M} & 134{,}515{,}008 & $0.0$ & match & CPU fp32 \\
+\quad (same weights, GPU) & & & $4.72\times10^{-5}$ & match & GPU fp32 \\
+\bottomrule
+\end{tabular}
+\caption{Reproduction verification against the HuggingFace reference weights.
+Each check is a deterministic single-prompt fp32 forward-logits comparison
+(tolerance $10^{-3}$; no training compute is compared, so no compute budget,
+seeds, or variance estimate applies, and no eval-suite stamp applies).
+Qwen3-0.6B: prompt ``The capital of France is'', identical next token
+(id 12095, `` Paris''), \texttt{max\_abs\_error} and \texttt{relative\_error}
+both exactly $0.0$ (\texttt{verify.json}); the parameter count is the
+forward-calculation total asserted by the build's unit test
+(\texttt{architecture\_plan.md}). SmolLM2-135M: bit-exact on CPU fp32
+($\max|\Delta| = 0.0$, identical next token `` the'',
+\texttt{parity.log}/\texttt{param\_count.log}); the same weights on GPU show
+$\max|\Delta| = 4.72\times10^{-5}$, attributed to SDPA kernel-dispatch
+reduction-order noise, not a weight or architecture difference
+(\texttt{comparison\_with\_hf.md}).}
+\label{tab:repro}
+\end{table}

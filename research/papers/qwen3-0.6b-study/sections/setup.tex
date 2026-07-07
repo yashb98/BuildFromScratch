@@ -1,0 +1,113 @@
+\section{Experimental Setup}\label{sec:setup}
+
+\paragraph{Model.}
+All experiments run on our from-scratch reproduction of Qwen3-0.6B-Base
+\citep{yang2025qwen3}: a pre-norm, decoder-only transformer
+\citep{vaswani2017attention} with 28 layers and hidden size 1{,}024.
+Attention is grouped-query \citep{ainslie2023gqa} with 16 query heads and
+8 key--value heads at an explicit head dimension of 128, set independently
+in the configuration (it is not hidden size divided by head count, which
+would give 64). Each block applies RMSNorm \citep{zhang2019root} with
+$\epsilon = 10^{-6}$ before attention and before a SwiGLU feed-forward
+network \citep{shazeer2020glu} of intermediate size 3{,}072; Qwen3
+additionally normalizes queries and keys per head (QK-norm, an RMSNorm
+over the 128-dimensional head axis) before rotary position embeddings
+\citep{su2021roformer} with base $\theta = 10^{6}$ and positions up to
+40{,}960. All projections are bias-free, and the input embedding is tied
+to the output head over a 151{,}936-entry vocabulary. Recomputed from
+this configuration, the model has exactly 596{,}049{,}920 parameters:
+28 blocks of 15{,}730{,}944 each, a tied embedding matrix of
+155{,}582{,}464, and a 1{,}024-parameter final norm
+(Table~\ref{tab:repro}). A second reproduction, SmolLM2-135M
+\citep{allal2025smollm2} with 134{,}515{,}008 parameters, shows that the
+verification protocol is not specific to one model family
+(Table~\ref{tab:repro}).
+
+\paragraph{Tokenizer.}
+We use the Qwen3 byte-level BPE tokenizer with vocabulary size
+151{,}936. Every perplexity in this paper is computed with the model's
+own tokenizer; cross-tokenizer perplexity comparisons are never made.
+Cross-corpus effects are reported in bits per byte (BPB), which
+normalizes cross-entropy by the UTF-8 byte count of the scored text and
+is tokenizer-independent.
+
+\paragraph{Data.}
+The pre-training corpus is FineWeb-Edu \citep{penedo2024fineweb}
+(\texttt{sample-10BT}), streamed and tokenized on the fly. The baseline
+consumes 1{,}189{,}478{,}400 training tokens (18{,}150 steps at
+65{,}536 tokens per step; Table~\ref{tab:hparams}), approximately
+2 tokens per parameter -- deliberately far below the compute-optimal
+ratio \citep{hoffmann2022training}, since the study optimizes for
+controlled comparisons rather than absolute quality. A held-out
+validation slice of 300{,}012 tokens is document-disjoint from training
+via a seeded hash split and screened by 13-gram overlap decontamination
+(0 of 451 validation documents dropped); the in-loop evaluator scores
+50 windows of 4{,}096 tokens (204{,}800 tokens) on this slice. The
+data-composition experiments add a dclm-edu slice \citep{li2024datacomp}
+of 150{,}107{,}480 training tokens, pinned by content hash
+(\texttt{dbad8ad7}) and decontaminated with the same 13-gram screen
+against both evaluation corpora (0 documents dropped). Supervised
+fine-tuning uses OpenR1-Math-220k pairs totalling 125{,}000{,}592
+tokens. The GRPO prompt set (\texttt{grpo-math-prompts-v1}) contains
+7{,}471 GSM8K and 3{,}490 MATH level 1--3 training prompts after
+dropping 14 prompts that overlapped the evaluation sets at the 13-gram
+level; 7 prompts overlapping the SFT set were flagged and kept. The math
+evaluation sets themselves (\texttt{math-eval-v1}) are decontaminated
+against all 35{,}924 OpenR1 SFT problems: 0 of 1{,}319 GSM8K test items
+and 0 of 500 MATH-500 items are flagged.
+
+\paragraph{Hardware.}
+Everything runs on one NVIDIA GB10 (Grace Blackwell) workstation whose
+CPU and GPU share a single $\approx$119 GB unified-memory pool with no
+separate VRAM. Training uses bfloat16 with \texttt{torch.compile} at
+sequence length 4{,}096; cross-entropy over the 151{,}936-entry
+vocabulary is computed in fp32 chunks, since materializing the full fp32
+logit matrix at this vocabulary size is infeasible in the shared pool.
+A 50-step probe measured 7{,}167.4 tokens/s compiled versus 3{,}787.5
+uncompiled (a 1.89$\times$ speedup), and the full baseline run sustained
+7{,}444--7{,}482 tokens/s at a flat 52.4 GB peak memory, completing in
+2{,}663.1 minutes. FLOP accounting follows the PaLM convention
+\citep{chowdhery2022palm}. Because the GB10's peak throughput is an
+estimate rather than a published figure, model FLOPs utilization is
+reported as approximate only and never as an exact number.
+
+\paragraph{Evaluation protocol.}
+Three versioned suites produce every cross-run comparable number, and
+each such number carries its suite stamp. (i) \textbf{text-lm-v2}:
+perplexity and BPB on the wikitext-2-raw-v1 validation split and
+codeparrot-clean-valid, both at pinned dataset revisions
+(\texttt{b08601e}, \texttt{4db92d2}), scoring 204{,}600 tokens per
+corpus per cell. The harness measures a per-corpus noise floor on the
+baseline checkpoint: 1.304 PPL (3.73\% relative) on wikitext-2 but
+280.6 PPL (68.2\% relative) on the code corpus (Table~\ref{tab:arms}).
+Code-perplexity orderings are therefore always quoted with this caveat,
+and comparative effects are instead reported as BPB improvements with
+paired 3-seed 95\% confidence intervals, where seeds vary initialization
+and data order; deltas below the floor or with an interval crossing zero
+are labeled not significant. (ii) \textbf{math-acc-v1}: a pinned answer
+extractor and verifier over GSM8K \citep{cobbe2021training} and MATH-500
+levels 1--3 \citep{hendrycks2021measuring}, with pass@$k$ computed by
+the unbiased estimator of \citet{chen2021evaluating} and Wilson 95\%
+intervals for pass@1, under a fixed sampling band (8 samples per item,
+temperature 0.8, 256 new tokens, fixed band seed) on 100 GSM8K and
+50 MATH-500 items. (iii) \textbf{ecl-ladder-v1}: passkey retrieval
+\citep{mohtashami2023landmark} across context rungs 512--8{,}192 at
+depths 0.1--0.9, with 40 probes per rung per cell and Wilson intervals,
+an effective-context-length measurement in the spirit of RULER
+\citep{hsieh2024ruler}. Trainer-internal perplexities are labeled
+throughout as in-loop validation perplexity, single run, not
+suite-stamped, and are advisory only. Comparative arms are
+single-variable and iso-FLOP by construction: two arms are compared only
+if exactly one variable differs and their training FLOPs match within
+5\%, with matched token and step budgets stated for every comparison.
+
+\paragraph{Hyperparameters.}
+Table~\ref{tab:hparams} consolidates the per-stage hyperparameters --
+optimizer, learning-rate schedule, warmup, weight decay, batch shape,
+token and step budgets, and seeds -- with each value flagged as reported
+in its source paper, inferred from a published band, or chosen by us
+where no published value exists at this scale. AdamW
+\citep{loshchilov2017decoupled} is the optimizer at every stage except
+the treatment arm of the optimizer A/B itself.
+
+\input{tables/tab_hparams}

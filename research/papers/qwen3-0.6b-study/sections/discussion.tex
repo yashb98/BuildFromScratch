@@ -1,0 +1,69 @@
+\section{Discussion}\label{sec:discussion}
+
+\paragraph{What transfers.}
+The portable output of this study is the evidence standard, not the effect
+sizes. The unit of claim -- a paired across-seed bits-per-byte delta with a
+95\% confidence interval on two corpora, under a single-variable diff at
+matched train FLOPs, scored by a versioned suite (Section~\ref{sec:method})
+-- is independent of scale and cheap relative to the training runs it
+disciplines. Two empirical regularities also seem worth carrying forward.
+First, bundle claims should be distrusted by default. The modernized bundle
+\citep{grigorev2026imu} supplied this study's motivating headline, a 17.9\%
+in-loop validation-perplexity gap at matched 1.19B-token compute (single
+runs, in-loop, not suite-stamped; Table~\ref{tab:arms}); under
+single-variable iso-FLOP re-tests it decomposed into three small,
+individually significant architecture effects of +0.0256 to +0.0355 BPB on
+wikitext-2 (each with a zero-excluding 95\% CI, 3 seeds, paired, 131M
+tokens per cell, text-lm-v2), one large early-training optimizer-speed
+effect (+0.4743 BPB, 95\% CI [+0.4435, +0.5052], 3 seeds, paired, 42M
+tokens per cell), and two components -- the WSD schedule and z-loss -- that
+contributed nothing measurable (Table~\ref{tab:attrib}). None of that
+structure was visible in the bundle run. Second, data interventions
+dominated at this scale. The largest attributed effect in the study is a
+data swap: dclm-edu over FineWeb-Edu at +0.7034 code BPB (95\% CI
+[+0.6639, +0.7430], 3 seeds, paired, 131M tokens per cell, text-lm-v2;
+Table~\ref{tab:data}), and the mid-training anneal added +0.2716 code BPB
+over its iso-token control (95\% CI [+0.2641, +0.2792], 3 seeds, paired,
+150.7M tokens per cell, text-lm-v2; Table~\ref{tab:midtrain}). The
+attributed architecture effects are an order of magnitude smaller
+(Table~\ref{tab:attrib}), the optimizer effect is scoped to optimization
+speed rather than converged quality, and the RL stage returned a
+pre-registered null: GRPO beat neither the SFT floor nor the random-reward
+gate, with training reward flat at $\approx$0.9\% (math-acc-v1, $n{=}1$
+seed, directional by design; Table~\ref{tab:rlvr}, Figure~\ref{fig:rlvr}).
+That null is consistent with the sharpen-not-expand reading of RLVR and
+with documented spurious-reward effects on Qwen-lineage models
+\citep{yue2025does, shao2025spurious} -- consistency, not confirmation,
+given the single seed.
+
+\paragraph{What does not transfer.}
+The effect sizes themselves. Every comparison in this paper lives between
+42M and 1.19B training tokens on one 596M-parameter architecture at
+$\approx$2 tokens per parameter, far below compute-optimal
+\citep{hoffmann2022training}. These are fixed-budget attributions; their
+sign and size may change with budget, architecture, or data mixture, and
+the paper makes no scale claim (Section~\ref{sec:limitations}).
+
+\paragraph{The cost of rigor.}
+Controls and seeds multiply compute. Computed from the recorded per-cell
+budgets (Table~\ref{tab:attrib}), the de-confound ran 12 Phase-1 cells at
+131,072,000 tokens each (1,572,864,000 tokens) plus nine Phase-2 cells at
+the same budget (1,179,648,000 tokens): $\approx$2.75B training tokens,
+roughly 2.3$\times$ the single 1.19B-token bundle run whose result they
+re-attributed. That multiple is the price of replacing ``the bundle won''
+with ``these components won, and these contributed nothing.'' Nulls cost
+the same as wins: the SFT and RLVR stages spent full multi-arm budgets to
+establish that nothing separable happened (Table~\ref{tab:sft},
+Table~\ref{tab:rlvr}).
+
+\paragraph{What an evidence-gated loop buys.}
+The gates run even when no one is looking for a specific error. None of
+the seven failures catalogued in Section~\ref{sec:failures} was caught by
+re-reading prose; all were caught mechanically -- an implausibility check
+on a blend scoring roughly twice the bits-per-byte of both its parents
+(Table~\ref{tab:data}), a fixed held-out set that collapsed an in-loop
+0.68-PPL ``win'' to +0.009 (Figure~\ref{fig:sft-confound}), and
+claim-to-file audits that corrected two already-recorded claims (a
+data-ratio pairing and a smoke-log misread) before writing. The same
+machinery that catches the errors validates the positive results; the
+discipline and the findings are one artifact.

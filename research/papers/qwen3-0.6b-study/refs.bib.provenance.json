@@ -1,0 +1,158 @@
+{
+  "yang2025qwen3": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2505.09388&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Qwen3 Technical Report"
+  },
+  "grigorev2026imu": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2602.02522&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "IMU-1: Sample-Efficient Pre-training of Small Language Models"
+  },
+  "li2025normuon": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2510.05491&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "NorMuon: Making Muon more efficient and scalable"
+  },
+  "loshchilov2017decoupled": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=1711.05101&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Decoupled Weight Decay Regularization"
+  },
+  "hoffmann2022training": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2203.15556&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Training Compute-Optimal Large Language Models"
+  },
+  "su2021roformer": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2104.09864&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "RoFormer: Enhanced Transformer with Rotary Position Embedding"
+  },
+  "shazeer2020glu": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2002.05202&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "GLU Variants Improve Transformer"
+  },
+  "zhang2019root": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=1910.07467&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Root Mean Square Layer Normalization"
+  },
+  "ainslie2023gqa": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2305.13245&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints"
+  },
+  "penedo2024fineweb": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2406.17557&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale"
+  },
+  "chowdhery2022palm": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2204.02311&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "PaLM: Scaling Language Modeling with Pathways"
+  },
+  "vaswani2017attention": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=1706.03762&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Attention Is All You Need"
+  },
+  "hu2024minicpm": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2404.06395&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "MiniCPM: Unveiling the Potential of Small Language Models with Scalable Training Strategies"
+  },
+  "xu2026vibethinker": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2606.16140&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "VibeThinker-3B: Exploring the Frontier of Verifiable Reasoning in Small Language Models"
+  },
+  "allal2025smollm2": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2502.02737&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "SmolLM2: When Smol Goes Big -- Data-Centric Training of a Small Language Model"
+  },
+  "li2024datacomp": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2406.11794&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "DataComp-LM: In search of the next generation of training sets for language models"
+  },
+  "liu2025understanding": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2503.20783&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Understanding R1-Zero-Like Training: A Critical Perspective"
+  },
+  "yu2025dapo": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2503.14476&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "DAPO: An Open-Source LLM Reinforcement Learning System at Scale"
+  },
+  "shao2025spurious": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2506.10947&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Spurious Rewards: Rethinking Training Signals in RLVR"
+  },
+  "yue2025does": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2504.13837&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?"
+  },
+  "hsieh2024ruler": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2404.06654&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "RULER: What's the Real Context Size of Your Long-Context Language Models?"
+  },
+  "cobbe2021training": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2110.14168&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Training Verifiers to Solve Math Word Problems"
+  },
+  "hendrycks2021measuring": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2103.03874&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Measuring Mathematical Problem Solving With the MATH Dataset"
+  },
+  "chen2021evaluating": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2107.03374&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Evaluating Large Language Models Trained on Code"
+  },
+  "mohtashami2023landmark": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2305.16300&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "Landmark Attention: Random-Access Infinite Context Length for Transformers"
+  },
+  "olmo20242": {
+    "source_api": "arxiv",
+    "url": "http://export.arxiv.org/api/query?id_list=2501.00656&max_results=1",
+    "accessed": "2026-07-06",
+    "resolved_title": "2 OLMo 2 Furious"
+  }
+}

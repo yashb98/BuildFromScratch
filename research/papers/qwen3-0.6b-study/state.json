@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "slug": "qwen3-0.6b-study",
+ "phase": 3,
+ "started": "2026-06-19",
+ "updated": "2026-07-07",
+ "scope": "full-lifecycle refresh",
+ "title": "Reproduce, Then Attribute: A Controlled Study of the LLM Training Lifecycle on a Bit-Exact Qwen3-0.6B Reproduction",
+ "pdf": "qwen3-0.6b-study.pdf"
+}

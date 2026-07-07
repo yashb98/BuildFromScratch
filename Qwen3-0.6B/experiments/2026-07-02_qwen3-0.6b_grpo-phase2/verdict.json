@@ -49,9 +49,9 @@
       "grpo_beats_random_gate": false
     }
   ],
-  "grpo_reward_trajectory": "flat ~0 over 300 steps (health_grpo_seed0.jsonl) \u2014 no gradient signal",
-  "rft_arm": "degenerate control: ~0 verifier-correct completions/step across 300 steps -> masked-SFT ~no-op; scored for cohort completeness, expected == SFT floor (see rft_pass1/rft_pass8)",
+  "grpo_reward_trajectory": "flat at ~0.9% correct over 300 steps (health_grpo_seed0.jsonl: overall 0.0092, first-50 0.0091 vs last-50 0.0080 \u2014 no learning trend). Gradient DID flow (13.5/16 groups kept by DAPO, mostly format-reward variance); correctness never moved.",
+  "rft_arm": "iso-generation control: 352 verifier-correct completions collected (~0.9% of 38,400 rollouts; train_rft_seed0.log 14:52) -> masked-SFT pass over them. Scores nominally above the floor (gsm8k pass@8 0.11 vs sft 0.07) but CIs overlap \u2014 n.s. NOTE: an earlier draft misread the July-2 SMOKE log line ('0 collected') as the real run; corrected 2026-07-06.",
   "random_reward_gate": "scored",
   "proceed_to_phase3": false,
-  "conclusion": "PREDICTED NULL CONFIRMED: GRPO does not beat the SFT floor; GRPO does not beat the random-reward gate. At ~1% base pass@1 there is nothing for RL to sharpen (GRPO reward stayed ~0; RFT collected 0 verifier-correct completions). Do NOT spend the multi-seed cohort; the reasoning gain lives in SFT/distillation, not RL at this scale."
+  "conclusion": "PREDICTED NULL CONFIRMED: GRPO does not beat the SFT floor; GRPO does not beat the random-reward gate. At ~1% base pass@1 there is nothing for RL to sharpen (GRPO training reward flat at ~0.9% correct with no trend [first-50 0.0091 vs last-50 0.0080]; RFT's 352 collected completions, ~0.9% of 38,400 rollouts, were too few to separate from the floor). Do NOT spend the multi-seed cohort; the reasoning gain lives in SFT/distillation, not RL at this scale."
 }

@@ -1,0 +1,20 @@
+\section{Limitations}\label{sec:limitations}
+
+The gates of Section~\ref{sec:method} bound what this study can claim; this section states the limits that remain, each with its consequence.
+
+\paragraph{Scale and regime.}
+Every controlled effect was measured on a single 596{,}049{,}920-parameter architecture with a single tokenizer (151{,}936-entry vocabulary), at budgets between $\approx$42M and $\approx$1.19B tokens (Table~\ref{tab:arms}) -- all far below the compute-optimal regime for this size \citep{hoffmann2022training}. The attribution cells are early-training proxies (2{,}000 steps, $\approx$131M tokens per cell), and effects measured there may grow, shrink, or invert over longer horizons: every result is a fixed-budget attribution, never a scaling claim. The descriptive gap-to-original numbers -- a $2.14\times$ perplexity gap at $\approx$30{,}000$\times$ less data (1.19B tokens) and $3.5\times$ at $\approx$275{,}000$\times$ less data (131M tokens; Figure~\ref{fig:repro-gap}) -- are in-loop validation perplexities, single run each, not suite-stamped, and carry no interval.
+
+\paragraph{Evaluation.}
+``Bit-exact'' rests on a deterministic single-prompt fp32 forward comparison (Table~\ref{tab:repro}); it verifies the forward computation exactly under that protocol and nothing broader. The same SmolLM2 weights run on GPU show logit deltas of $4.72\times10^{-5}$ from kernel reduction-order differences (Table~\ref{tab:repro}), so exactness is a CPU-fp32 statement. The code corpus noise floor is $\approx$68\% of the measured value at the faithful baseline and reaches $\approx$92\% across the three build checkpoints (text-lm-v2; Table~\ref{tab:arms}), so code perplexity orderings are weakly powered and only the paired across-seed BPB intervals are relied on. BPB is measured on exactly two corpora -- wikitext-2 and Python code, both English-adjacent -- with no multilingual or broader-domain coverage. The SFT retention check on the standard suite used one representative seed per arm (Table~\ref{tab:sft}); its 3-seed intervals apply only to the in-domain reasoning set.
+
+\paragraph{Statistics.}
+Across all cohorts, seeds vary initialization and shuffle order over a fixed data split, so the reported intervals likely understate full-randomization variance. The off-anchor AdamW learning-rate points are single-seed, weight decay was held at 0.1 for both optimizer arms rather than tuned per arm, and the sweep bounds AdamW only within 1.7e-3 to 4.8e-3 (Table~\ref{tab:attrib}). The GRPO cohort has $n{=}1$ seed and is capped at directional by design (math-acc-v1; Table~\ref{tab:rlvr}). The passkey ladder uses $n{=}40$ probes per rung per cell, so individual rungs carry wide Wilson intervals (ecl-ladder-v1; Figure~\ref{fig:ecl-ladder}).
+
+\paragraph{Unexplained observations.}
+The base model's accuracy dip to 0.025 at its own 4{,}096-token trained window, repaired to 0.400 by both anneal arms (ecl-ladder-v1; Figure~\ref{fig:ecl-ladder}), has no defensible mechanism yet. The anneal's English improvement of $+0.0157$ BPB (95\% CI $[+0.0140, +0.0174]$, 3 seeds, paired, text-lm-v2; Table~\ref{tab:midtrain}) violated its pre-registered expected null and is reported as an exploratory observation, not a claim.
+
+\paragraph{Hardware.}
+All training ran on one GB10 workstation with $\approx$119 GB of unified memory. The device's peak throughput is an estimate, so any MFU figure is approximate and never quoted as exact, and no result has been replicated on other hardware or in a distributed setting.
+
+These limitations are precisely why several repository-level verdicts remain directional rather than win: the data-composition records are capped by conservative bookkeeping (Table~\ref{tab:data}), the SFT record by a disagreeing full-sequence cross-check (Table~\ref{tab:sft}), and the RLVR record by its single seed (Table~\ref{tab:rlvr}). Under this protocol, a limitation that cannot be ruled out becomes a cap on the verdict -- which is the intended behavior.

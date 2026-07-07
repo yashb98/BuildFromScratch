@@ -1,0 +1,27 @@
+% tab_data.tex -- data-composition head-to-head: dclm-edu and 50/50 mix vs FineWeb-Edu control.
+% Sources: verdict.json + cohort_bpb.json in
+%   Qwen3-0.6B/experiments/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb/ (dclm arm)
+%   Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/ (mix arm; reuses the dclm arm and the FineWeb controls)
+\begin{table}[t]
+\centering
+\caption{Pretraining data composition at 596M: \textbf{dclm-edu} and a \textbf{50/50 dclm-edu\,+\,FineWeb-Edu mix} vs.\ a FineWeb-Edu control.
+Every cell trains the identical model for 2{,}000 steps $\times$ 65{,}536 tokens $=$ 131{,}072{,}000 ($\approx$131M) tokens ($n{=}3$ seeds per arm); only the data differs, so the arms are iso-FLOP by construction (train-FLOP ratio 1.000).
+$\Delta$BPB $=$ control BPB $-$ arm BPB (positive $=$ arm better); 95\% CIs are paired across-seed; ``sig.''\ means the CI excludes zero.
+FineWeb-Edu control checkpoints are reused baselines (control-reuse policy); the mix experiment reuses the dclm arm.
+On code, the mix retains $0.5904/0.7034 = 83.9\%$ of the pure-dclm improvement while directionally \emph{improving} English (dclm alone directionally hurts it, n.s.).
+Eval suite: \texttt{text-lm-v2} (BPB with the model's own tokenizer; wikitext-2 val 869{,}710 bytes, Python code 843{,}643 bytes, 204{,}600 tokens per corpus per cell).
+Source files: \texttt{verdict.json}, \texttt{cohort\_bpb.json}, \texttt{c5\_evidence.json}, \texttt{run\_arms.sh} (experiments 2026-06-24 dclm-vs-fineweb and 2026-06-26 data-mix-composition).}
+\label{tab:data}
+\footnotesize
+\begin{tabular}{llccccc}
+\toprule
+Arm & Corpus & Control BPB & Arm BPB & $\Delta$BPB & 95\% CI & sig.\ \\
+\midrule
+dclm-edu      & code (Python)  & 2.6385 & 1.9351 & $+0.7034$ & $[+0.6639,\,+0.7430]$ & yes \\
+dclm-edu      & wikitext-2     & 1.5157 & 1.5254 & $-0.0097$ & $[-0.0255,\,+0.0061]$ & no  \\
+\addlinespace
+50/50 mix     & code (Python)  & 2.6385 & 2.0481 & $+0.5904$ & $[+0.5532,\,+0.6277]$ & yes \\
+50/50 mix     & wikitext-2     & 1.5157 & 1.4996 & $+0.0161$ & $[-0.0005,\,+0.0327]$ & no  \\
+\bottomrule
+\end{tabular}
+\end{table}

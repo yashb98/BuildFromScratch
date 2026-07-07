@@ -1,0 +1,25 @@
+Published improvements to language-model training rarely arrive with
+attribution: gains are reported for bundles of changes, at loosely matched
+compute, often from single runs, so a reader learns that a recipe won without
+learning why. Small-scale reproductions, where controlled re-testing is
+affordable, are rarely held to a controlled standard. This paper carries a
+bit-exact reproduction of Qwen3-0.6B (fp32 max
+$|\Delta\mathrm{logits}| = 0.0$ against the reference on the recorded probe)
+through the full training lifecycle -- pre-training, data composition,
+mid-training, supervised fine-tuning, and reinforcement learning with
+verifiable rewards -- on a single GB10 machine, admitting a comparison only
+when exactly one variable differs, training FLOPs match within 5\%, and the
+effect is a paired three-seed bits-per-byte (BPB) delta with a 95\% confidence
+interval on two corpora. Under these gates, a modernization bundle's
+single-run, in-loop $-17.9\%$ validation-perplexity headline decomposes into
+three individually significant architecture effects plus an early-training
+optimizer effect, while its schedule and z-loss axes contribute nothing
+measurable; and a premium-data anneal improves code BPB by $+0.2716$ (95\% CI
+$[+0.2641, +0.2792]$, 3 seeds, paired) over an iso-token control that absorbs
+the learning-rate confound. Three nulls are reported at the same standard: SFT
+response-masking does not separate from its iso-FLOP control; GRPO at 0.6B
+confirms a pre-registered null against a random-reward gate (single seed,
+directional by design); and context extension is gated off by a step-0
+diagnostic. The same gates caught the project's own errors, including an
+in-loop 0.68-perplexity ``win'' that collapsed to $+0.009$ on a fixed held-out
+set.

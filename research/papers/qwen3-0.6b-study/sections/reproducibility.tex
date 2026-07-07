@@ -1,0 +1,38 @@
+\section{Reproducibility Statement}\label{sec:repro-statement}
+
+All code, configurations, training and evaluation logs, decontamination
+reports, and figure-generation scripts are public at
+\url{https://github.com/yashb98/BuildFromScratch}. The entry point for any
+replication is the verification gate: \texttt{cd Qwen3-0.6B \&\& python
+verify.py} builds the model from the single-file implementation, loads the
+published weights, and compares fp32 logits against the HuggingFace reference,
+passing only if the maximum absolute logit difference is below the $10^{-3}$
+tolerance with next-token argmax agreement; the recorded result is exactly
+$0.0$ (Table~\ref{tab:repro}). The gate runs on CPU and needs no GPU.
+
+Each experiment is isolated under
+\texttt{Qwen3-0.6B/experiments/<RUN\_ID>/} and carries two machine-readable
+artifacts: \texttt{c5\_evidence.json}, written before launch with the arm
+plan, seeds, token budgets, and the iso-FLOP confound check, and
+\texttt{verdict.json}, the scored outcome with per-seed values and confidence
+intervals; runs are also recorded in a project ledger written only through
+its programmatic interface (\texttt{research/ledger/ledger.py}). Every
+quantitative value in this paper traces to a named on-disk file: the evidence
+manifest that performs this mapping (\texttt{evidence\_manifest.json}) ships
+with the paper source and lists, for each number, its source file and key or
+line, including the mandatory caveats attached to each value.
+
+All training ran on a single NVIDIA GB10 (Grace Blackwell) workstation with
+$\approx$119~GB of unified CPU+GPU memory, using PyTorch with bfloat16 and
+\texttt{torch.compile}; the 151,936-way cross-entropy is computed in chunks,
+and every process caps its share of the unified pool before touching the
+accelerator. Multi-seed comparisons use seeds 0/1/2
+(Table~\ref{tab:hparams}). Cross-run comparable numbers come only from
+versioned evaluation suites: text-lm-v2 (bits-per-byte and perplexity on
+pinned corpus revisions, wikitext-2-raw-v1 at commit \texttt{b08601e0} and
+codeparrot-clean-valid at commit \texttt{4db92d2e}), math-acc-v1 (a pinned
+answer extractor and verifier), and ecl-ladder-v1 (the passkey context
+ladder). In-loop trainer perplexities are labeled as such throughout and are
+never compared against suite-stamped numbers. Thirteen-gram overlap
+decontamination reports for the evaluation sets and prepared training sets
+are stored on disk beside the corresponding datasets and results.

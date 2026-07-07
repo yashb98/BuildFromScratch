@@ -1,0 +1,30 @@
+\section{Broader Impacts}\label{sec:impacts}
+
+This is a small-scale measurement study conducted entirely on public
+datasets: FineWeb-Edu \citep{penedo2024fineweb}, a DCLM-derived educational
+subset \citep{li2024datacomp}, OpenR1-Math, GSM8K \citep{cobbe2021training},
+and MATH \citep{hendrycks2021measuring}. It releases no new model capability:
+the artifact is a 0.6B-scale reproduction of a published architecture
+\citep{yang2025qwen3} trained on 1.19B tokens against the original's 36T
+(Figure~\ref{fig:repro-gap}), and every recipe component studied is already
+public.
+
+The intended impact is methodological. Evidence-gated claims -- multi-seed
+confidence intervals, iso-FLOP controls, versioned evaluation suites, and
+pre-registered gates -- make small-model results cheaper to trust, and
+publishing controlled negative results reduces wasted replication compute for
+other resource-constrained groups. The SFT response-masking null
+(Table~\ref{tab:sft}), the GRPO null at 0.6B (Table~\ref{tab:rlvr};
+pre-registered, and reported as directional under the study's own single-seed
+cap), and the context-extension stage gated off by a step-0 diagnostic are
+reported in full rather than left in the file drawer; the RLVR arms carry a
+content-blind random-reward control \citep{shao2025spurious} so that the null
+is a measurement, not an absence of one.
+
+The energy footprint is that of one desk-side workstation rather than a
+cluster: a single machine ran every experiment, wall-clock time is recorded
+per run in the shipped logs, and the largest single run -- the 1.19B-token
+pretrain -- completed in 2663.1 minutes (per-stage budgets in
+Table~\ref{tab:hparams}). Honest nulls at this scale are cheap to produce but
+rarely published; reporting them alongside the study's two attributed wins is
+the contribution this paper aims to make a norm.

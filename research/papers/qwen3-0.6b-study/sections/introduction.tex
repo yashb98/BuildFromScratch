@@ -1,0 +1,133 @@
+\section{Introduction}\label{sec:intro}
+
+Training reports for open language models have become admirably detailed, yet
+their evidentiary unit remains the bundle: a recipe of architecture,
+optimizer, schedule, and data changes is evaluated as a whole, at whatever
+compute each configuration happened to consume, often from a single run. When
+the bundle wins, the reader learns that it won -- not which component carried
+the effect, whether the gain clears seed noise, or whether it would survive a
+compute-matched control \citep{hoffmann2022training}. Adopters then inherit
+every cost of the recipe -- an optimizer's throughput overhead, a data
+pipeline's engineering -- without knowing which of those costs buys anything.
+The gap is widest exactly where closing it would be cheapest: reproductions of
+small models are common, but they typically stop at matching weights or loss
+curves, and controlled re-tests of published components -- one variable,
+matched FLOPs, multiple seeds -- remain rare.
+
+This paper works in that gap by doing both halves in sequence: reproduce
+first, attribute second. The substrate is a single-file reproduction of
+Qwen3-0.6B-Base \citep{yang2025qwen3}, verified against the released weights
+at fp32 max $|\Delta\mathrm{logits}| = 0.0$ with argmax agreement on the
+recorded probe (Table~\ref{tab:repro}), so that every subsequent effect is
+measured on an implementation whose fidelity is a checked gate rather than an
+assumption. From that substrate the study walks the training lifecycle in
+order -- pre-training attribution, data composition, mid-training, supervised
+fine-tuning (SFT), and reinforcement learning with verifiable rewards (RLVR)
+-- and holds every stage to one standard of evidence: a single-variable diff
+at iso-FLOP (matched within 5\%), three paired seeds per arm, bits-per-byte
+(BPB) deltas with 95\% confidence intervals on two corpora, and versioned
+evaluation suites (Section~\ref{sec:method}).
+
+The entire study ran on one NVIDIA GB10 with a unified CPU--GPU memory pool of
+$\approx$119~GB. That constraint sets the scale honestly: the faithful base
+consumed 1.19B FineWeb-Edu tokens \citep{penedo2024fineweb} -- roughly 2
+tokens per parameter, far below compute-optimal
+\citep{hoffmann2022training} -- and the ablation cells range from 42M to 151M
+tokens per seed (Table~\ref{tab:arms}). The consequence is stated once here
+and repeated wherever it matters: every effect in this paper is a fixed-budget
+attribution at 596M parameters, and none is a scaling claim. What the small
+scale buys in exchange is the ability to afford real controls -- re-running an
+entire comparison across three seeds costs hours, not weeks -- and an
+autonomous, contract-governed research loop executed the experiments
+unattended, with human gates on irreversible actions
+(Section~\ref{sec:method}).
+
+The outcome is two attributed wins, three honest nulls, and a catalogue of the
+project's own caught errors. The specific contributions are:
+
+\begin{itemize}
+\item \textbf{Bit-exact reproduction as a verification gate
+(Section~\ref{sec:repro}).} The Qwen3-0.6B-Base reproduction (596,049,920
+parameters) matches the HuggingFace reference implementation at fp32 max
+$|\Delta\mathrm{logits}| = 0.0$; a second reproduction, SmolLM2-135M
+(134,515,008 parameters), passes the same gate and calibrates how much logit
+noise device kernels alone introduce (Table~\ref{tab:repro}). A faithful
+baseline trained on the 1.19B-token budget lands at 2.14$\times$ the original
+model's perplexity at $\approx$30,000$\times$ less data -- reported
+descriptively only, as a single-run, in-loop measurement
+(Figure~\ref{fig:repro-gap}).
+
+\item \textbf{An evidence-gating methodology that decides what a number may be
+called (Section~\ref{sec:method}).} Comparisons are admitted only under a
+single-variable diff at iso-FLOP; effects are paired three-seed BPB deltas
+with 95\% confidence intervals on two corpora, scored by version-stamped
+suites; a missing required evaluation or a single-seed design caps a verdict
+at directional; and pre-registered expectations bind in both directions --
+including against the authors, as when a pre-registered English null was
+violated and reported as such (Table~\ref{tab:midtrain}).
+
+\item \textbf{A de-confounded modernization bundle
+(Section~\ref{sec:pretrain}).} The motivating result -- an IMU-1-derived
+bundle \citep{grigorev2026imu} beating the faithful baseline by 17.9\% in-loop
+validation perplexity at matched 1.19B-token budgets, a single run, not
+suite-stamped (Figure~\ref{fig:ppl-curves}) -- is decomposed by re-testing its
+axes one variable at a time. Only the architecture axis is significant
+($+0.1179$ BPB on WikiText-2, 95\% CI $[+0.1005, +0.1354]$, 3 seeds, paired,
+text-lm-v2), and it splits into three individually significant components:
+value residuals $+0.0355$ $[+0.0116, +0.0594]$, LayerNorm scaling $+0.0337$
+$[+0.0175, +0.0498]$, and head gating $+0.0256$ $[+0.0125, +0.0386]$
+(Table~\ref{tab:attrib}, Figure~\ref{fig:deconfound}). The WSD schedule and
+z-loss axes contribute nothing measurable. The NorMuon optimizer
+\citep{li2025normuon} is isolated separately as a large early-training
+optimization-speed effect ($+0.4743$ BPB at 42M tokens per arm, 95\% CI
+$[+0.4435, +0.5052]$), defended by a matched-config AdamW learning-rate sweep
+and explicitly scoped to its budget, not to scale (Table~\ref{tab:attrib}).
+
+\item \textbf{Single-variable data and mid-training effects
+(Sections~\ref{sec:data} and~\ref{sec:midtrain}).} At matched tokens, a
+dclm-edu corpus \citep{li2024datacomp} improves code BPB over FineWeb-Edu by
+$+0.7034$ (95\% CI $[+0.6639, +0.7430]$, 3 seeds, paired, text-lm-v2) -- the
+largest single effect in the study -- and a sequence-preserving 50/50 mix
+retains 83.9\% of that code win while preserving English
+(Table~\ref{tab:data}). A premium-mix anneal then beats an iso-token
+continued-pretraining control on code by $+0.2716$ BPB (95\% CI
+$[+0.2641, +0.2792]$, 3 seeds, paired) while the control barely moves off the
+base, so the learning-rate-decay-plus-extra-tokens confound is absorbed by
+construction (Table~\ref{tab:midtrain}).
+
+\item \textbf{Negative results at the same standard as the wins
+(Sections~\ref{sec:sft} and~\ref{sec:rlvr}).} Response-masked SFT does not
+separate from an iso-FLOP continued-pretraining control on a fixed held-out
+set: the masked comparison and a tokenizer-free full-sequence cross-check
+disagree in sign, so the verdict of record is directional
+(Table~\ref{tab:sft}). GRPO at 0.6B confirms a pre-registered null
+\citep{yue2025does}: it beats neither its SFT floor nor a mandatory
+random-reward gate \citep{shao2025spurious}, with training reward flat at
+$\approx$0.9\% throughout (Table~\ref{tab:rlvr}, Figure~\ref{fig:rlvr};
+math-acc-v1, single seed, directional by design). Context extension was gated
+off at step 0 by a pre-registered passkey threshold the base failed at its own
+trained window (Section~\ref{sec:midtrain}).
+
+\item \textbf{A failure catalogue (Section~\ref{sec:failures}).} Seven
+file-backed failures are reported as symptom, detection, root cause, fix, and
+guard -- including an in-loop 0.68-perplexity SFT ``win'' that collapsed to
+$+0.009$ once re-scored on one fixed held-out token set
+(Figure~\ref{fig:sft-confound}), and a token-level shuffle bug flagged because
+its result was physically implausible. None of the seven was caught by
+re-reading prose; all were caught by the same mechanical gates that validate
+the positive results.
+\end{itemize}
+
+The remainder of the paper is organized as follows.
+Section~\ref{sec:related} situates the study among open small-model reports,
+matched-compute practice, and the RLVR debate. Section~\ref{sec:method}
+defines the evidence gates and verdict semantics; Section~\ref{sec:setup}
+specifies the model, data, hardware, and evaluation protocol.
+Section~\ref{sec:repro} establishes the verification gate and the faithful
+baseline. Sections~\ref{sec:pretrain} through~\ref{sec:rlvr} then present the
+lifecycle results in training order -- pre-training attribution, data
+composition, mid-training, SFT, and RLVR -- and
+Section~\ref{sec:failures} collects what the gates caught. The paper closes
+with discussion and limitations, a reproducibility statement
+(Section~\ref{sec:repro-statement}), and broader impacts
+(Section~\ref{sec:impacts}).

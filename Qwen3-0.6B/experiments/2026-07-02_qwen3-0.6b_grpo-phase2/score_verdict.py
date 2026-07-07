@@ -71,8 +71,10 @@ def main():
         if rnd is not None and not any(r["grpo_beats_random_gate"] for r in rows):
             why.append("GRPO does not beat the random-reward gate")
         conclusion = ("PREDICTED NULL CONFIRMED: " + "; ".join(why) +
-                      ". At ~1% base pass@1 there is nothing for RL to sharpen (GRPO reward stayed ~0; "
-                      "RFT collected 0 verifier-correct completions). Do NOT spend the multi-seed cohort; "
+                      ". At ~1% base pass@1 there is nothing for RL to sharpen (GRPO training reward flat at ~0.9% "
+                      "correct with no trend [first-50 0.0091 vs last-50 0.0080]; RFT's 352 collected "
+                      "completions, ~0.9% of 38,400 rollouts, were too few to separate from the floor). "
+                      "Do NOT spend the multi-seed cohort; "
                       "the reasoning gain lives in SFT/distillation, not RL at this scale.")
 
     verdict = {
@@ -81,10 +83,14 @@ def main():
         "verdict_capped_reason": "n=1 seed; §C25 rlvr requires seed_ci (>=3 paired seeds) for a non-directional call",
         "extractor": "math-acc-v1",
         "comparison": rows,
-        "grpo_reward_trajectory": "flat ~0 over 300 steps (health_grpo_seed0.jsonl) — no gradient signal",
-        "rft_arm": ("degenerate control: ~0 verifier-correct completions/step across 300 steps -> masked-SFT ~no-op; "
-                    "scored for cohort completeness, expected == SFT floor (see rft_pass1/rft_pass8)") if rft
-                   else "degenerate: ~0 verifier-correct completions -> masked-SFT no-op (checkpoint == SFT init); not scored",
+        "grpo_reward_trajectory": ("flat at ~0.9% correct over 300 steps (health_grpo_seed0.jsonl: overall 0.0092, "
+                                   "first-50 0.0091 vs last-50 0.0080 — no learning trend). Gradient DID flow "
+                                   "(13.5/16 groups kept by DAPO, mostly format-reward variance); correctness never moved."),
+        "rft_arm": ("iso-generation control: 352 verifier-correct completions collected (~0.9% of 38,400 rollouts; "
+                    "train_rft_seed0.log 14:52) -> masked-SFT pass over them. Scores nominally above the floor "
+                    "(gsm8k pass@8 0.11 vs sft 0.07) but CIs overlap — n.s. NOTE: an earlier draft misread the "
+                    "July-2 SMOKE log line ('0 collected') as the real run; corrected 2026-07-06.") if rft
+                   else "not scored",
         "random_reward_gate": "scored" if rnd else "not scored",
         "proceed_to_phase3": proceed,
         "conclusion": conclusion,

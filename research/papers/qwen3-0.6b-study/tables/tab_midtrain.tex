@@ -1,0 +1,33 @@
+% tab_midtrain.tex -- mid-training anneal (premium mix) vs iso-token FineWeb control vs un-annealed base.
+% Sources: verdict.json (corpora, short_ctx_non_regression, ecl_ladder), c5_evidence.json in
+%   Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/
+%   step0 gate: Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_midtraining/step0_diagnostic.json
+\begin{table}[t]
+\centering
+\caption{Mid-training anneal at 596M: premium-mix anneal vs.\ an iso-token FineWeb-Edu control vs.\ the un-annealed base.
+Both arms run the identical 1-sqrt cooldown (peak LR $2.5\times10^{-4} \rightarrow 2.5\times10^{-5}$, 10\% floor) for 2{,}300 steps $\times$ 65{,}536 tokens $=$ 150.7M tokens per cell ($\approx$13\% of the 1.19B-token pretrain), $n{=}3$ seeds per arm; only the data differs (iso-FLOP by construction).
+Top block: BPB per corpus, with the anneal$-$control improvement and its paired across-seed 95\% CI (suite \texttt{text-lm-v2}).
+The control barely moves off the base ($+0.0050$ code, $+0.0036$ wikitext-2 BPB), i.e.\ LR decay plus 150M extra FineWeb tokens alone do approximately nothing --- the data, not the schedule, carries the effect.
+The wikitext-2 gain is small but significant, violating the pre-registered expected null on English; it is reported as-is.
+Bottom block: effective-context-length passkey ladder (suite \texttt{ecl-ladder-v1}, $n{=}40$ probes per rung per cell, arms pooled over 3 seeds, Wilson 95\% CIs); the base's anomalous 4096-rung accuracy (exactly 0.025) is repaired to 0.400 by both arms, and no cell regresses vs.\ base at any rung.
+A separate step-0 diagnostic (\texttt{step0\_diagnostic.json}) had gated context \emph{extension} to propose-only: the base scores 0.083 at its own 4096-token trained window (threshold 0.5, gate FAIL).
+Source files: \texttt{verdict.json}, \texttt{c5\_evidence.json} (2026-06-30 midtrain-anneal), \texttt{step0\_diagnostic.json} (2026-06-27 midtraining).}
+\label{tab:midtrain}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lcccc}
+\toprule
+ & Base & Control (FineWeb) & Anneal (mix) & Anneal $-$ Control (95\% CI) \\
+\midrule
+\multicolumn{5}{l}{\emph{BPB (lower is better; improvements are positive), suite \texttt{text-lm-v2}}} \\
+Code (Python) BPB        & 2.1286 & 2.1236 & 1.8520 & $+0.2716$ $[+0.2641,\,+0.2792]$ sig.\ \\
+wikitext-2 BPB           & 1.2256 & 1.2220 & 1.2062 & $+0.0157$ $[+0.0140,\,+0.0174]$ sig.\ \\
+$\Delta$ vs.\ base, code       & --- & $+0.0050$ & $+0.2766$ & \\
+$\Delta$ vs.\ base, wikitext-2 & --- & $+0.0036$ & $+0.0194$ & \\
+\midrule
+\multicolumn{5}{l}{\emph{Passkey accuracy by context rung (suite \texttt{ecl-ladder-v1}; Wilson 95\% CI; arms pooled, $3{\times}40$ probes)}} \\
+512-token rung  & 0.200 $[0.105,\,0.348]$ & 0.308 $[0.233,\,0.396]$ & 0.817 $[0.738,\,0.876]$ & \\
+4096-token rung & 0.025 $[0.004,\,0.129]$ & 0.400 $[0.317,\,0.489]$ & 0.400 $[0.317,\,0.489]$ & \\
+\bottomrule
+\end{tabular}
+\end{table}

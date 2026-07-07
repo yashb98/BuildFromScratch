@@ -1,0 +1,24 @@
+\section{Conclusion}\label{sec:conclusion}
+
+This paper reproduced Qwen3-0.6B to bit-exactness
+($\max|\Delta\text{logits}| = 0.0$ under the recorded single-prompt fp32
+protocol; Table~\ref{tab:repro}) and carried the reproduction through
+pre-training, data composition, mid-training, supervised fine-tuning, and
+RLVR under one evidence standard: single-variable diffs at matched train
+FLOPs, three paired seeds, bits-per-byte confidence intervals on two
+corpora, versioned eval suites, and pre-registration. Under that standard,
+an $n{=}1$ bundle headline decomposed into three small attributed
+architecture effects, an early-training optimizer-speed effect, and two
+null components (Table~\ref{tab:attrib}); data interventions produced the
+largest attributed effects (Tables~\ref{tab:data} and~\ref{tab:midtrain});
+and three negative results -- response masking failing to separate from
+its iso-FLOP control (Table~\ref{tab:sft}), a pre-registered GRPO null
+reported as directional under the single-seed cap (Table~\ref{tab:rlvr}),
+and context extension gated off at step 0 -- are reported to the same
+standard as the wins, alongside a catalogue of the study's own corrected
+errors (Section~\ref{sec:failures}). Two directions follow, stated as
+directions only: measuring whether these fixed-budget effects persist as
+the token budget grows toward compute-optimal, by re-running the same
+single-variable ladders at increasing budgets; and a multi-seed RLVR
+cohort, warranted only if a future base clears the Phase-1 solvability
+floor decisively. Neither direction contributes any result to this paper.

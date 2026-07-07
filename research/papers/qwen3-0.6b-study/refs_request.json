@@ -1,0 +1,108 @@
+{
+ "refs": [
+  {
+   "title": "Qwen3 Technical Report",
+   "arxiv_id": "2505.09388"
+  },
+  {
+   "title": "IMU-1 Sample-Efficient Pre-training of Small Language Models",
+   "arxiv_id": "2602.02522"
+  },
+  {
+   "title": "NorMuon optimizer",
+   "arxiv_id": "2510.05491"
+  },
+  {
+   "title": "Decoupled Weight Decay Regularization (AdamW)",
+   "arxiv_id": "1711.05101"
+  },
+  {
+   "title": "Training Compute-Optimal Large Language Models (Chinchilla)",
+   "arxiv_id": "2203.15556"
+  },
+  {
+   "title": "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+   "arxiv_id": "2104.09864"
+  },
+  {
+   "title": "GLU Variants Improve Transformer",
+   "arxiv_id": "2002.05202"
+  },
+  {
+   "title": "Root Mean Square Layer Normalization",
+   "arxiv_id": "1910.07467"
+  },
+  {
+   "title": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+   "arxiv_id": "2305.13245"
+  },
+  {
+   "title": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
+   "arxiv_id": "2406.17557"
+  },
+  {
+   "title": "PaLM: Scaling Language Modeling with Pathways",
+   "arxiv_id": "2204.02311"
+  },
+  {
+   "title": "Attention Is All You Need",
+   "arxiv_id": "1706.03762"
+  },
+  {
+   "title": "MiniCPM: Unveiling the Potential of Small Language Models with Scalable Training Strategies",
+   "arxiv_id": "2404.06395"
+  },
+  {
+   "title": "VibeThinker",
+   "arxiv_id": "2606.16140"
+  },
+  {
+   "title": "SmolLM2: When Smol Goes Big -- Data-Centric Training of a Small Language Model",
+   "arxiv_id": "2502.02737"
+  },
+  {
+   "title": "DataComp-LM: In search of the next generation of training sets for language models",
+   "arxiv_id": "2406.11794"
+  },
+  {
+   "title": "Understanding R1-Zero-Like Training: A Critical Perspective",
+   "arxiv_id": "2503.20783"
+  },
+  {
+   "title": "DAPO: An Open-Source LLM Reinforcement Learning System at Scale",
+   "arxiv_id": "2503.14476"
+  },
+  {
+   "title": "Spurious Rewards: Rethinking Training Signals in RLVR",
+   "arxiv_id": "2506.10947"
+  },
+  {
+   "title": "Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?",
+   "arxiv_id": "2504.13837"
+  },
+  {
+   "title": "RULER: What's the Real Context Size of Your Long-Context Language Models?",
+   "arxiv_id": "2404.06654"
+  },
+  {
+   "title": "Training Verifiers to Solve Math Word Problems",
+   "arxiv_id": "2110.14168"
+  },
+  {
+   "title": "Measuring Mathematical Problem Solving With the MATH Dataset",
+   "arxiv_id": "2103.03874"
+  },
+  {
+   "title": "Evaluating Large Language Models Trained on Code",
+   "arxiv_id": "2107.03374"
+  },
+  {
+   "title": "Landmark Attention: Random-Access Infinite Context Length for Transformers",
+   "arxiv_id": "2305.16300"
+  },
+  {
+   "title": "OLMo 2 Furious",
+   "arxiv_id": "2501.00656"
+  }
+ ]
+}
