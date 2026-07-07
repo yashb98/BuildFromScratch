@@ -1,0 +1,22 @@
+{
+ "id": "qwen3.anneal",
+ "kind": "scalar",
+ "unit": "ΔBPB, premium-mix anneal vs iso-token control (code_py)",
+ "value": 0.27160749360360237,
+ "ci": [
+  0.2640563484201071,
+  0.2791586387870976
+ ],
+ "seeds": [
+  0.2715918845525307,
+  0.26899657994289927,
+  0.2742340163153767
+ ],
+ "generated_by": "scripts/export_site_results.py",
+ "generated_at": "2026-07-07T15:27:50Z",
+ "notes": "Mid-training anneal (1-sqrt cooldown 2.5e-4 -> 2.5e-5, 2300 steps x 65,536 tok) on the 50/50 premium mix vs an iso-token fineweb-only control that absorbs the LR-decay confound: the data, not the schedule, carries the win. wikitext-2 also significant: +0.0157 [0.0140, 0.0174]. 3 seeds, Welch-t 95% CI. final_verdict: win.",
+ "derived_from": [
+  "Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/verdict.json",
+  "Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/cohort_bpb.json"
+ ]
+}

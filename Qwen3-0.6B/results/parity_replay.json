@@ -1,0 +1,55 @@
+{
+ "id": "qwen3.parity_replay",
+ "kind": "table",
+ "rows": [
+  {
+   "line": "$ python verify_run.py"
+  },
+  {
+   "line": "Loading Qwen/Qwen3-0.6B-Base in fp32 (this downloads ~1.2GB on first run) ..."
+  },
+  {
+   "line": "Building ours and copying weights ..."
+  },
+  {
+   "line": ""
+  },
+  {
+   "line": "=== Verify gate ==="
+  },
+  {
+   "line": "max |Δlogits| = 0.000e+00  (tolerance 0.001)"
+  },
+  {
+   "line": "relative      = 0.000e+00"
+  },
+  {
+   "line": "HF next token : ' Paris'  (id 12095)"
+  },
+  {
+   "line": "Ours next     : ' Paris'  (id 12095)"
+  },
+  {
+   "line": "argmax match  : True"
+  },
+  {
+   "line": ""
+  },
+  {
+   "line": "Wrote results/verify.json"
+  },
+  {
+   "line": ""
+  },
+  {
+   "line": "✓ Verify gate PASSED."
+  }
+ ],
+ "generated_by": "scripts/export_site_results.py",
+ "generated_at": "2026-07-07T15:27:50Z",
+ "notes": "Replay lines reconstructed deterministically from verify_run.py print statements + the committed results/verify.json values; per-stage timings omitted (never recorded; total wall time 30.0s). Every number is the recorded one.",
+ "derived_from": [
+  "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/verify.json",
+  "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/verify_run.py"
+ ]
+}

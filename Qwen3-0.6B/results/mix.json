@@ -1,0 +1,42 @@
+{
+ "id": "qwen3.mix",
+ "kind": "comparison",
+ "unit": "ΔBPB vs FineWeb-Edu baseline (code_py)",
+ "entries": [
+  {
+   "name": "dclm-edu (100%)",
+   "value": 0.7034377813053776,
+   "ci": [
+    0.6639233630446848,
+    0.7429521995660704
+   ],
+   "seeds": [
+    0.7124500661615261,
+    0.6984721465231007,
+    0.6993911312315064
+   ],
+   "significant": true
+  },
+  {
+   "name": "50/50 mix",
+   "value": 0.5904307914737172,
+   "ci": [
+    0.5531974784151051,
+    0.6276641045323293
+   ],
+   "seeds": [
+    0.5896871828270531,
+    0.5733911502259641,
+    0.6082140413681341
+   ],
+   "significant": true
+  }
+ ],
+ "generated_by": "scripts/export_site_results.py",
+ "generated_at": "2026-07-07T15:27:50Z",
+ "notes": "Data-composition curve: the 50/50 dclm+FineWeb mix keeps 84% of the pure-dclm code win while holding English (mix wikitext-2 +0.0161 [-0.0005, 0.0327] n.s. vs dclm -0.0097 n.s./worse). Best-of-both; this mix is the data carried into mid-training. 3 seeds, Welch-t 95% CI, seeds[] are paired per-seed deltas.",
+ "derived_from": [
+  "Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/verdict.json",
+  "Qwen3-0.6B/experiments/2026-06-26_qwen3-0.6b_data-mix-composition/cohort_bpb.json"
+ ]
+}

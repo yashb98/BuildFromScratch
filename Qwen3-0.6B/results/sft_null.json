@@ -1,0 +1,56 @@
+{
+ "id": "qwen3.sft_null",
+ "kind": "comparison",
+ "unit": "ΔPPL, SFT vs control (positive = SFT better)",
+ "entries": [
+  {
+   "name": "in-loop 'win' (confounded)",
+   "value": 0.6786666666666665,
+   "ci": [
+    0.6760494287672351,
+    0.681283904566098
+   ],
+   "seeds": [
+    0.677999999999999,
+    0.6799999999999997,
+    0.6780000000000008
+   ],
+   "significant": true
+  },
+  {
+   "name": "held-out, response-masked (corrected)",
+   "value": 0.009199999999999875,
+   "ci": [
+    0.004514755051701214,
+    0.013885244948298535
+   ],
+   "seeds": [
+    0.010300000000000864,
+    0.00969999999999871,
+    0.007600000000000051
+   ],
+   "significant": true
+  },
+  {
+   "name": "held-out, full-sequence (cross-check)",
+   "value": -0.006366666666670184,
+   "ci": [
+    -0.011243400000003543,
+    -0.0014899333333368266
+   ],
+   "seeds": [
+    -0.0051000000000005485,
+    -0.00590000000000046,
+    -0.008100000000000662
+   ],
+   "significant": false
+  }
+ ],
+ "generated_by": "scripts/export_site_results.py",
+ "generated_at": "2026-07-07T15:27:50Z",
+ "notes": "The Win That Was Not: the in-loop +0.68 PPL 'win' scores SFT on RESPONSE tokens but the control on ALL tokens (verdict.json flags the CONFOUND itself). One fixed held-out set collapses it to +0.009, and the exact full-sequence cross-check flips sign (n.s.). overall_verdict: 'directional — masked and full-sequence comparisons disagree on significance; treat as not-yet-separable'. 3 seeds per arm, ~125M math-reasoning tokens each; seeds[] are paired per-seed deltas.",
+ "derived_from": [
+  "Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/verdict.json",
+  "Qwen3-0.6B/experiments/2026-06-27_qwen3-0.6b_sft-3seed/reasoning_verdict.json"
+ ]
+}

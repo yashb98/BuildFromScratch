@@ -1,0 +1,28 @@
+{
+ "id": "qwen3.three_build",
+ "kind": "comparison",
+ "unit": "in-loop val PPL (n=1, not suite-stamped)",
+ "entries": [
+  {
+   "name": "Faithful baseline (AdamW)",
+   "value": 28.65
+  },
+  {
+   "name": "Modernized (IMU-1 bundle)",
+   "value": 23.52
+  },
+  {
+   "name": "Exploratory (partial-RoPE 0.25)",
+   "value": 29.54
+  }
+ ],
+ "direction": "lower_is_better",
+ "generated_by": "scripts/export_site_results.py",
+ "generated_at": "2026-07-07T15:27:50Z",
+ "notes": "Three builds at 1,189,478,400 tokens (18,150 steps x 65,536), single seed each, trainer-internal eval on held-out FineWeb-Edu. The -17.9% IMU-1 margin is motivation, not a result: the bundle changes 6 things at once (incl. NorMuon + cautious-WD); attribution lives in the de-confound experiments. IMU-1 final = eval@18000 (run DONE at 18,150; no after.txt). Fourth arm (partial-RoPE 0.10) died at step 5,450/18,150.",
+ "derived_from": [
+  "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_after.txt",
+  "Qwen3-0.6B/builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/qwen3_imu1_2tpp_train.log",
+  "Qwen3-0.6B/builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/qwen3_prope25_2tpp_train.log"
+ ]
+}

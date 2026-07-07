@@ -1,0 +1,43 @@
+{
+ "id": "qwen3.gap_to_original",
+ "kind": "table",
+ "unit": "val PPL (held-out FineWeb-Edu, 204,800 tok, 50x4096 windows)",
+ "rows": [
+  {
+   "label": "Original Qwen3-0.6B-Base",
+   "tokens": 36000000000000,
+   "ppl": 13.4,
+   "role": "original"
+  },
+  {
+   "label": "Smoke probe",
+   "tokens": 65536000,
+   "ppl": 95.87,
+   "role": "repro"
+  },
+  {
+   "label": "Phase-A best (lr 2.4e-3)",
+   "tokens": 131072000,
+   "ppl": 46.31,
+   "gap_label": "3.5x",
+   "data_label": "~275,000x less data",
+   "role": "repro"
+  },
+  {
+   "label": "Phase-B faithful (2TPP)",
+   "tokens": 1189478400,
+   "ppl": 28.65,
+   "gap_label": "2.14x",
+   "data_label": "~30,000x less data",
+   "role": "repro"
+  }
+ ],
+ "generated_by": "scripts/export_site_results.py",
+ "generated_at": "2026-07-07T15:27:50Z",
+ "notes": "Single-run, in-loop comparison (n=1, descriptive). The ratio pairs are load-bearing and must never be conflated: 2.14x at ~30,000x less data (1.19B vs 36T tokens) and 3.5x at ~275,000x less data (131M vs 36T). Computed: 28.65/13.4 = 2.1381; 46.31/13.4 = 3.4560.",
+ "derived_from": [
+  "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/original_vs_repro.txt",
+  "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_after.txt",
+  "Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_after.txt"
+ ]
+}

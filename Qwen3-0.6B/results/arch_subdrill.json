@@ -1,0 +1,56 @@
+{
+ "id": "qwen3.arch_subdrill",
+ "kind": "comparison",
+ "unit": "ΔBPB vs faithful baseline (wikitext-2)",
+ "entries": [
+  {
+   "name": "value-residual",
+   "value": 0.035502910568182555,
+   "ci": [
+    0.011595720478729928,
+    0.05941010065763518
+   ],
+   "seeds": [
+    0.028645030365959334,
+    0.04051657690626498,
+    0.03734712443232269
+   ],
+   "significant": true
+  },
+  {
+   "name": "LN-scaling",
+   "value": 0.03367590105393914,
+   "ci": [
+    0.017509206440970627,
+    0.04984259566690765
+   ],
+   "seeds": [
+    0.038010842802026046,
+    0.02439791026062199,
+    0.038618950099168714
+   ],
+   "significant": true
+  },
+  {
+   "name": "head-gating",
+   "value": 0.025562479271331817,
+   "ci": [
+    0.01251982603769344,
+    0.03860513250497019
+   ],
+   "seeds": [
+    0.026466300675588972,
+    0.02212991353207827,
+    0.028091223606327986
+   ],
+   "significant": true
+  }
+ ],
+ "generated_by": "scripts/export_site_results.py",
+ "generated_at": "2026-07-07T15:27:50Z",
+ "notes": "Phase-2 sub-drill of the Phase-1 arch bundle; same budget, baseline checkpoints reused and re-scored in-cohort. All three flags individually significant on both corpora. Additivity: sum vr+ln+hg = 0.0947 vs measured bundle 0.1179 (residual +0.0232 = interactions + seed noise); code_py sum 0.2099 vs bundle 0.3049 (residual +0.0951). seeds[] are paired per-seed deltas.",
+ "derived_from": [
+  "Qwen3-0.6B/experiments/2026-06-21_qwen3-0.6b_arch-subdrill-p2/verdict.json",
+  "Qwen3-0.6B/experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/verdict.json"
+ ]
+}

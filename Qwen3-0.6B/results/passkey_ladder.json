@@ -1,0 +1,158 @@
+{
+ "id": "qwen3.passkey_ladder",
+ "kind": "table",
+ "unit": "passkey retrieval accuracy",
+ "rows": [
+  {
+   "arm": "base",
+   "rung": 512,
+   "acc": 0.2,
+   "wilson_lo": 0.10499989725437703,
+   "wilson_hi": 0.347573063463995,
+   "n": 40
+  },
+  {
+   "arm": "base",
+   "rung": 1024,
+   "acc": 0.2,
+   "wilson_lo": 0.10499989725437703,
+   "wilson_hi": 0.347573063463995,
+   "n": 40
+  },
+  {
+   "arm": "base",
+   "rung": 2048,
+   "acc": 0.2,
+   "wilson_lo": 0.10499989725437703,
+   "wilson_hi": 0.347573063463995,
+   "n": 40
+  },
+  {
+   "arm": "base",
+   "rung": 4096,
+   "acc": 0.025,
+   "wilson_lo": 0.0044268315026814095,
+   "wilson_hi": 0.1288136896347409,
+   "n": 40
+  },
+  {
+   "arm": "base",
+   "rung": 6144,
+   "acc": 0.7,
+   "wilson_lo": 0.5456998118185507,
+   "wilson_hi": 0.8192515477025347,
+   "n": 40
+  },
+  {
+   "arm": "base",
+   "rung": 8192,
+   "acc": 0.35,
+   "wilson_lo": 0.2213452887317629,
+   "wilson_hi": 0.5049411916274231,
+   "n": 40
+  },
+  {
+   "arm": "fineweb",
+   "rung": 512,
+   "acc": 0.30833333333333335,
+   "wilson_lo": 0.232727369889163,
+   "wilson_hi": 0.39582997723800684,
+   "n": 120
+  },
+  {
+   "arm": "fineweb",
+   "rung": 1024,
+   "acc": 0.2,
+   "wilson_lo": 0.13824476478840259,
+   "wilson_hi": 0.28036673506281956,
+   "n": 120
+  },
+  {
+   "arm": "fineweb",
+   "rung": 2048,
+   "acc": 0.2,
+   "wilson_lo": 0.13824476478840259,
+   "wilson_hi": 0.28036673506281956,
+   "n": 120
+  },
+  {
+   "arm": "fineweb",
+   "rung": 4096,
+   "acc": 0.4,
+   "wilson_lo": 0.31676408120837146,
+   "wilson_hi": 0.4894397520753693,
+   "n": 120
+  },
+  {
+   "arm": "fineweb",
+   "rung": 6144,
+   "acc": 0.7,
+   "wilson_lo": 0.6128485756752643,
+   "wilson_hi": 0.7747437577572543,
+   "n": 120
+  },
+  {
+   "arm": "fineweb",
+   "rung": 8192,
+   "acc": 0.4083333333333333,
+   "wilson_lo": 0.3245613454748446,
+   "wilson_hi": 0.4977921683685844,
+   "n": 120
+  },
+  {
+   "arm": "mix",
+   "rung": 512,
+   "acc": 0.8166666666666667,
+   "wilson_lo": 0.7379908648282967,
+   "wilson_hi": 0.8756969964398578,
+   "n": 120
+  },
+  {
+   "arm": "mix",
+   "rung": 1024,
+   "acc": 0.4,
+   "wilson_lo": 0.31676408120837146,
+   "wilson_hi": 0.4894397520753693,
+   "n": 120
+  },
+  {
+   "arm": "mix",
+   "rung": 2048,
+   "acc": 0.225,
+   "wilson_lo": 0.15949154668383533,
+   "wilson_hi": 0.3075689948464516,
+   "n": 120
+  },
+  {
+   "arm": "mix",
+   "rung": 4096,
+   "acc": 0.4,
+   "wilson_lo": 0.31676408120837146,
+   "wilson_hi": 0.4894397520753693,
+   "n": 120
+  },
+  {
+   "arm": "mix",
+   "rung": 6144,
+   "acc": 0.7083333333333334,
+   "wilson_lo": 0.6215576502025923,
+   "wilson_hi": 0.7821843637896146,
+   "n": 120
+  },
+  {
+   "arm": "mix",
+   "rung": 8192,
+   "acc": 0.45,
+   "wilson_lo": 0.3639173508387461,
+   "wilson_hi": 0.5391845658031243,
+   "n": 120
+  }
+ ],
+ "generated_by": "scripts/export_site_results.py",
+ "generated_at": "2026-07-07T15:27:50Z",
+ "notes": "Long-context passkey ladder (ecl-ladder-v1), rungs 512-8192, 5 depths x 8 keys = 40 probes per rung per cell; anneal arms pooled over 3 seeds (n=120/rung), base is a single checkpoint (n=40/rung). Wilson 95% CIs. The 4096 dip is BASE-ONLY (0.025 at its own trained length; both annealed arms hold 0.400 there) and unexplained — see paper §13. All three lines bump at 6144. Per-seed detail in ecl_ladder.json.",
+ "derived_from": [
+  "Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/verdict.json",
+  "Qwen3-0.6B/experiments/2026-06-30_qwen3-0.6b_midtrain-anneal/ecl_ladder.json"
+ ]
+}
