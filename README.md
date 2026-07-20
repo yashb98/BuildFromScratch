@@ -101,13 +101,29 @@ with the Chen-2021 estimator, on decontaminated GSM8K + MATH-500) and tested it.
   The reasoning capability lives in SFT/distillation, not RL at this scale — the gate
   saved a multi-seed cohort before it was spent.
 
-**7 · Scaling persistence of the NorMuon win (in progress).** Study #2 attributed
+**7 · Scaling persistence of the NorMuon win (done, 2026-07-12).** Study #2 attributed
 the IMU-1 win largely to **NorMuon**; this ladder asks whether its **+0.474
 wikitext BPB** edge over AdamW **persists or converges with budget**. At fixed
 N=596M it sweeps the token budget — 42M (reused) + **168M ×{NorMuon,AdamW}×3 seeds**
-+ **420M ×2 seeds** — varying only `--steps`. The six 168M rungs are **done**; the
-four 420M rungs (~16–18 h each) are **running**. Honest ceiling: **directional** —
-the 420M top rung is n=2 (< 3 seeds); a headline needs a 3rd seed and/or an 840M rung.
++ **420M ×2 seeds**, ten cells — varying only `--steps`. All ten completed.
+
+- **The gap shrinks with budget, and both corpora agree.** wikitext-2
+  (AdamW − NorMuon, BPB): **+0.474** [+0.443, +0.505] at 42M → **+0.126**
+  [+0.089, +0.163] at 168M → **+0.073** [−0.038, +0.184] at 420M — significant at
+  the two smaller budgets, **not significant** at the top. code_py: +0.502 → +0.176
+  → +0.192. OLS over log10(tokens) gives slope **−0.416** (r² 0.92) on wikitext and
+  **−0.328** (r² 0.81) on code → **CONVERGES** on both.
+- **Verdict: directional, not a headline** — the 420M rung is n=2 (< 3 seeds, §C17).
+- **What is resolved, and what isn't.** The *slope* is resolved; the *edge at the top
+  rung* is not. At n=2 the 420M CI is wide enough to hold both "converged" and "still
+  ahead", and the code_py gap does not even shrink monotonically (+0.176 → +0.192 —
+  only the fitted slope is negative). A disclosed **inherited confound** cuts the same
+  way: both learning rates were tuned at the 42M horizon and never re-tuned per budget,
+  so part of the fade may be a mis-tuned-LR artifact rather than true convergence.
+  Earning more needs a 3rd 420M seed, an 840M rung, and a per-horizon LR check.
+- Read it as: NorMuon looks like an **early-training speedup that converges away** —
+  exactly what IMU-1's own Limitation #3 warned it might be. Numbers:
+  `experiments/2026-07-05_qwen3-0.6b_scaling-persistence/verdict.json`.
 
 > **GB10 thermal-survival note (2026-07-08→10).** The 420M rungs surfaced a hardware
 > reality: under sustained load in warm ambient the unified Grace-Blackwell package
@@ -121,7 +137,9 @@ the 420M top rung is n=2 (< 3 seeds); a headline needs a 3rd seed and/or an 840M
 > records the full temperature envelope; and `run_ladder.sh` loops-until-done behind a
 > cool-down gate, backed by an `@reboot` auto-resume (`boot_resume.sh`). Net: the
 > multi-day ladder now survives each thermal event by losing ≤~15 min (one checkpoint
-> interval) instead of a whole rung. Cooling the box's ambient is the high-leverage
+> interval) instead of a whole rung. **It worked:** a 2026-07-09 hot spell had left the
+> ladder stuck at 4/10 cells missing with no net progress, and the four 420M rungs then
+> finished 2026-07-10→12 *through* repeated thermal kills. Cooling the box's ambient is the high-leverage
 > throughput fix — cooling *time* after a kill is only ~10–30 s; it's the ~3 min reheat
 > to 90 °C under warm ambient that throttles daytime throughput.
 
