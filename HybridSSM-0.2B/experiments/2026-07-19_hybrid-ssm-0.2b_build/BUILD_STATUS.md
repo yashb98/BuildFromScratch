@@ -1,0 +1,78 @@
+# HybridSSM-0.2B — build status (updated 2026-07-20 04:15 UTC)
+
+**Novel from-scratch hybrid attention-SSM LM in JAX/Flax is BUILT, VERIFIED, SMOKE-PASSED — and the
+first pretrain arm (`ssm_base_s0`) is IN FLIGHT on real data.**
+
+## Build phase — done ✓ (2026-07-19, all correctness-gated)
+
+- **Architecture** (`ARCHITECTURE.md`): d=768, 24 layers (1:1 full-attn:efficient interleave), GQA 12/4,
+  SwiGLU, RMSNorm, RoPE↔NoPE toggle, Qwen3 152k tokenizer, chunked CE. Design doc estimated ~146M
+  non-embed; the built model reports **189.1M non-embed / 305.8M total** (`[build]` line of every run
+  log) — tied embedding = 151,936 × 768 = 116.7M counted once.
+- **Implementation** (`ssm.py`, `model.py`): SelectiveSSM (Mamba-2-style diagonal scan via
+  `associative_scan`) + SlidingWindowAttention + GQA attention + the full hybrid decoder. Written from blank.
+- **Verify gate** (`verify.py` → **PASS**): SSM parallel-scan == sequential reference (max|Δ|=2.4e-7);
+  chunked CE == naive CE (|Δ|=4.8e-5, never materializes the 152k logits); param count sane; all 8
+  ablation toggles forward-finite; forward deterministic. ⚠️ **See "Open gate gap" below — this PASS
+  predates the `nn.remat` memory fix and has not been re-run since.**
+- **Smoke** (`train.py --smoke` → **PASS**, all variants): SSM / SWA-128+NoPE / 1:3-attention each overfit
+  a fixed batch 8.8 → ~0.003 loss (forward+backward+AdamW+chunked-CE all learn), grad norms healthy
+  (33 → 0.03), checkpoint save→reload exact (max|Δ|=0.0 — recovery-chain ready). Smoke used synthetic data.
+- **Fit probes on real data** (`probe.log` / `probe2.log` / `probe3.log`, 15 / 12 / 30 steps):
+  step-0 loss 12.4317 / 12.4312 / 12.4312 ≈ ln(151936)=11.93 + init noise, and 30 steps moves 12.43 → 8.42.
+
+## Pretrain arm `ssm_base_s0` — IN FLIGHT
+
+Ledger run `2026-07-19_hybrid-ssm-0.2b_pretrain-ssm-base-s0` (type=ablation, status=running,
+lifecycle_stage=architecture, framework=jax, technique `hybrid-attention-rethink`).
+
+| field | value | source |
+|---|---|---|
+| data | FineWeb-Edu sample-10BT, Qwen3-0.6B-Base tokenizer, **170,034,304 train + 300,000 val** tokens, seed 0 | `tokcache_170034304_300000_seed0_Qwen3-0.6B-Base.pt`, built by `Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/train_qwen3.py:151` |
+| config as launched | seq **2048**, batch **4**, 20,756 steps × 8,192 tok/step, AdamW lr 3e-3, warmup 200 | live cmdline of PID 3164922 |
+| trainer / watchdog | PID 3164922 (`train_hybrid.py`) · sentinel PID 3167084 | `pgrep`, `sentinel.log` |
+| progress @ 04:15Z | **step 7,480 / 20,756 (36.0%)** — 61.3M of 170.0M tokens | `run_ssm_base_s0.log` |
+| loss | step-0 12.4317 → train ~4.88; val 6.6844@400 → 6.2845@1200 → **4.9020@7200** (best) | `run_ssm_base_s0.log` |
+| grad norm | 0.28–0.31, stable | `run_ssm_base_s0.log` |
+| throughput | ~1,247 steps/h ≈ **2,837 tok/s** (measured over 7,080 steps / 5.68 h since resume) | derived from log + process start |
+| ETA | ≈ **2026-07-20 14:54 UTC** (13,276 steps remaining) | same |
+| memory | pool 37–41%, rss 11.6 GiB, GPU 66–69 °C / SoC 72–74 °C | `sentinel.log` heartbeats |
+
+**Deviations from `ARCHITECTURE.md`, recorded honestly:** the design doc specifies seq_len 4096 and
+Muon(2D)+AdamW(1D); this arm runs **seq 2048 with plain AdamW**. The JAX Muon port (`muon_jax.py`) is not
+written yet — AdamW-vs-Muon is itself a planned arm, and every arm in the ladder must use the same
+optimizer for the comparison to hold, so the ladder's baseline optimizer is now AdamW unless re-based.
+
+### Incident + recovery (the run survived a real kill)
+
+First launch was killed by the sentinel at **step 580, 2026-07-19T16:58:48Z** — pool usage 81.3% ≥ the
+0.80 kill line (MemAvailable 22.4 GiB / 119.7 GiB; SSM scan + chunked CE under autodiff held ~61 GB);
+GPU 58 °C, no thermal component (`sentinel_kill_step580_2026-07-19.json`). Fix: **`nn.remat` on the
+decoder block** (`model.py:129`, `BlockR = nn.remat(Block)`) + batch 8 → 4 → allocation 61.5 GB → 16.6 GB,
+pool 81% → ~40%. Resumed from the step-400 checkpoint at 22:34:29 and has run clean since.
+This was a *manual* recovery behind a config change, i.e. the §C5/S1-4a "not safe to auto-resume at the
+same config" path — `loop_state.auto_resumes` correctly stayed at 0.
+
+## ⚠️ Open gate gap (must close before this arm is scored)
+
+`verify.py` last ran **2026-07-19 12:52** (per this file's previous revision — no verify log was captured
+to disk). `model.py` was last modified **2026-07-19 22:27** to add `nn.remat`. **The verify gate has not
+been re-run against the model that is actually training.** `nn.remat` is semantically identity
+(rematerialization trades recompute for memory and must not change values), but "must not" is not
+"verified on this box". Re-run `verify.py` and capture its output to `verify.log` **after** this arm
+finishes — it is GPU work, and §C4.5 forbids co-running it beside the live trainer.
+
+## Next
+
+1. **Close the verify gap** (above) + write `verify.log`, so the artifact set is self-evidencing.
+2. **Score the finished arm** via `/eval-harness` (BPB on wikitext-2 + code, text-lm-v2, `suite_version`
+   stamped) → write `verdict.json`. A single arm is a *baseline datum*, not a win: no cross-arm claim
+   exists until the ladder has ≥3 seeds and iso-FLOP-matched comparands (§C17/§C18), so the terminal
+   verdict for this arm caps at `directional` at best (§C25).
+3. **The emergence-speed ladder** (the study): mixer type × attention fraction × NoPE, each scored at
+   increasing token budgets → does the efficient-mixer choice affect emergence SPEED but converge? Plus
+   the NoPE-on-full-attn validation. Multi-day; drive arms as they complete.
+4. **Recovery chain**: the user still pastes the `@reboot bash research/boot_resume.sh` cron line
+   (§C4.2 — the agent never auto-installs cron).
+5. **Downstream lifecycle** (long-context retrieval probe → data / mid-training / SFT), each to a §C25
+   terminal verdict — the whole-lifecycle finish line for the new model.

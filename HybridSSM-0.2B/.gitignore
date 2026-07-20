@@ -1,0 +1,10 @@
+# HybridSSM-0.2B: commit code + docs only; exclude training artifacts
+*.pkl
+*.pkl.tmp
+*.log
+*.stdout
+__pycache__/
+*.pyc
+*.thermal.log
+probe*.log
+sentinel_kill_*.json

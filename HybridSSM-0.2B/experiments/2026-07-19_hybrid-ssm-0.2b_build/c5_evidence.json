@@ -1,0 +1,117 @@
+{
+  "run_id": "2026-07-19_hybrid-ssm-0.2b_pretrain-ssm-base-s0",
+  "model_dir": "HybridSSM-0.2B", "lifecycle_stage": "architecture", "objective": "pretrain-ablation", "framework": "jax",
+  "technique_slug": "hybrid-attention-rethink",
+
+  "provenance": {
+    "written": "2026-07-20, AFTER launch — this is a RECONSTRUCTION, not a pre-launch record",
+    "why": "The 2026-07-19 launch created the ledger run entry but never wrote c5_evidence.json, so the §C5 requirement that the evidence be accumulated in this file and landed in ONE add-run BEFORE the spawn was NOT met for this run. That is a real contract miss and is recorded here rather than papered over.",
+    "rule": "Every item below is tagged `src`: `log` = a contemporaneous artifact on disk that anyone can re-read; `derived` = computed here from such an artifact; `attestation` = prose recorded in BUILD_STATUS.md at build time with no captured log; `not-captured` = the check was required and no evidence of it survives.",
+    "reconstructed_by": "progress-check session 2026-07-20 04:15Z; nothing in this file is asserted from memory."
+  },
+
+  "purpose": "First pretrain arm (base cell) of HybridSSM-0.2B, the repo's first novel from-scratch model and first JAX/Flax build. Establishes the ladder's baseline recipe; it is a single datum, not a contrast.",
+
+  "budget": {
+    "tokens": 170034304,
+    "val_tokens": 300000,
+    "source": "brief research/briefs/hybrid-attention-rethink.md:55 — 'a token-budget ladder (e.g. 42M/168M/420M-analog)'. This arm is the ~168M RUNG of that ladder (170,034,304 tok).",
+    "deviation": "The brief's per-arm TARGET (line 59) is ~2-4 tok/param, i.e. ~0.5-1.5B tokens for a 200-370M hybrid. This arm runs 170.0M tok = 0.90 tok/param of non-embed (189.1M) — roughly 3-9x UNDER the briefed per-arm target. Justification: it reuses the already-tokenized Qwen3 tokcache (zero data-prep cost, and BPB-comparable to the 596M study), and one ladder rung is a legitimate first point. It is NOT a converged-budget arm and must not be read as one.",
+    "src": "log"
+  },
+
+  "arm_plan": {
+    "arms": ["ssm_base_s0 (mixer=ssm Mamba-2 selective scan, attn_every=2 i.e. 1:1 interleave, RoPE, seed 0)"],
+    "seeds": [0],
+    "new_cells": 1,
+    "planned_siblings_not_yet_run": ["mixer=swa128", "mixer=full (all-attention control)", "mixer=none (all-SSM)", "attn_every=4 (1:3)", "NoPE-on-full-attn", "seeds 1,2"],
+    "src": "log (ARCHITECTURE.md 'toggles' section) + live cmdline"
+  },
+
+  "single_variable": "NONE YET — n=1 arm, no comparand. No §C18 iso-FLOP contrast and no §C17 across-seed CI is satisfiable from this run alone, so no `confound_check` is claimed and the verdict is capped at `directional` at absolute best (§C25). The single-variable contrasts arrive with the sibling arms listed above.",
+
+  "recipe": "d_model 768, 24 layers 1:1 [full-attn, ssm] interleave, GQA n_heads=12 n_kv=4 head_dim=64 RoPE(1e4), SwiGLU inter 2048, RMSNorm eps 1e-6 pre-norm, tied embedding, vocab 151,936 (Qwen3-0.6B-Base). 189.1M non-embed / 305.8M total. seq 2048, batch 4, 20,756 steps x 8,192 tok/step, AdamW lr 3e-3 warmup 200, chunked CE (chunk=8192), nn.remat on the decoder block, ckpt_every 200, eval_every 400.",
+
+  "deviations_from_architecture_md": "ARCHITECTURE.md specifies seq_len 4096 and Muon(2D)+AdamW(1D); this arm runs seq 2048 with plain AdamW because muon_jax.py is not written yet. It also estimated ~146M non-embed vs the built 189.1M. Consequence: unless the ladder is re-based on Muon, AdamW @ seq 2048 IS the ladder's baseline recipe and this arm defines it.",
+
+  "c5_0_smoke": {
+    "result": "pass",
+    "detail": "train.py --smoke on all variants (SSM / SWA-128+NoPE / 1:3-attention): fixed-batch overfit 8.8 -> ~0.003, grad norms 33 -> 0.03, checkpoint save->reload exact (max|delta|=0.0), exit 0. Synthetic data.",
+    "log_path": null,
+    "src": "attestation (BUILD_STATUS.md revision of 2026-07-19 12:52) — NO smoke log was captured to disk. This is the weakest link in the chain: the §C5.0 numbers cannot be re-read from an artifact."
+  },
+
+  "fit_probes_on_real_data": {
+    "result": "pass",
+    "detail": "3 probes at the real config on the real tokcache: probe.log 15 steps (12.4317 -> 11.5645), probe2.log 12 steps (12.4312 -> 12.0485), probe3.log 30 steps (12.4312 -> 9.5249@20 -> 8.4195). Step-0 loss vs ln(151936)=11.931 confirms a sane uniform-over-vocab init; loss trends down.",
+    "log_path": ["probe.log", "probe2.log", "probe3.log"],
+    "src": "log"
+  },
+
+  "c5_1_concurrency": {
+    "result": "not-captured",
+    "detail": "No pgrep/nvidia-smi/free output from the 2026-07-19 pre-launch moment survives. Circumstantial only: the sentinel kill record names a single trainer PID, and the box has run one trainer at a time throughout. Verified live at 2026-07-20 04:11Z that PID 3164922 is the ONLY compute app (nvidia-smi: 3164922, python3, 16635 MiB).",
+    "src": "not-captured (pre-launch) / log (current)"
+  },
+
+  "c5_2_budget": "see `budget` above — tokens 170,034,304, sourced to the brief's ladder, with the under-target deviation stated. src: log",
+
+  "c5_3_probe": {
+    "tokens_per_sec": 2837,
+    "steps_per_hour": 1247,
+    "peak_mem_gb": 16.6,
+    "pool_total_gb": 119.7,
+    "peak_frac_of_pool": 0.139,
+    "cap_frac": 0.60,
+    "fits": true,
+    "detail": "tokens_per_sec is NOT a pre-launch probe number — the probe logs record no timing. It is DERIVED from the production run: 7,080 steps x 8,192 tok in 5.68 h (process start 22:34:29, log at 04:15Z), which is a strictly better measurement than a short probe. peak_mem_gb 16.6 is the live nvidia-smi compute-app figure at 04:11Z and matches the ledger `memory_fix` note ('61.5GB->16.6GB alloc'); sentinel heartbeats concur (trainer rss 11.6 GiB, pool 37-41%).",
+    "src": "derived"
+  },
+
+  "c5_4_eta_hours": {
+    "total_projected": 16.6,
+    "detail": "20,756 steps / 1,247 steps-per-hour = 16.65 h of clean wall-clock (excludes the killed first attempt). ETA 2026-07-20 ~14:54 UTC from the 04:15Z position of step 7,480.",
+    "src": "derived"
+  },
+
+  "c5_5_resume": {
+    "result": "pass",
+    "detail": "Proven in PRODUCTION, not merely in smoke: after the step-580 kill the run restarted from the step-400 checkpoint ('[resume] from checkpoint_ssm_base_s0.pkl at step 400', run_ssm_base_s0.log:36) and has run 7,080 clean steps since with a continuous loss curve. Script supports --ckpt/--resume/--ckpt_every. Smoke additionally reported save->reload max|delta|=0.0 (attestation).",
+    "resume_cmd": "cd HybridSSM-0.2B/experiments/2026-07-19_hybrid-ssm-0.2b_build && python3 train_hybrid.py --data /home/yashb98/Downloads/BuildFromScratch/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/tokcache_170034304_300000_seed0_Qwen3-0.6B-Base.pt --seq 2048 --batch 4 --tokens 170034304 --lr 3e-3 --warmup 200 --ckpt checkpoint_ssm_base_s0.pkl --resume checkpoint_ssm_base_s0.pkl --ckpt_every 200 --eval_every 400 --done_marker arm_ssm_base_s0.done",
+    "src": "log"
+  },
+
+  "c5_6_sentinel": {
+    "result": "armed",
+    "detail": "sentinel.py watch --pid 3164922 --log HybridSSM-0.2B/experiments/2026-07-19_hybrid-ssm-0.2b_build/sentinel.log, PID 3167084, alive, heartbeating every ~10 min. No --kill-at override, so it takes the module default 0.80 (< the 0.85 safe_cuda guard < the kernel OOM cliff), per §C6. It has PROVEN itself on this run — it fired correctly at step 580.",
+    "preflight_at_launch": "not-captured (no preflight output from 2026-07-19 survives)",
+    "src": "log / not-captured"
+  },
+
+  "c5_7_guards": {
+    "result": "verified",
+    "detail": "JAX script, so the §C1 guard is jax_safe_env, not safe_cuda: train_hybrid.py:10 `import jax_safe_env` precedes train_hybrid.py:15 `import jax` — correct order, enforcing PREALLOCATE=false + MEM_FRACTION=0.5. Chunked CE present and used: model.py:136 chunked_cross_entropy() does a streaming max + sumexp over vocab chunks (model.py:149-150) and never materializes the (N, 151936) logit matrix; train_hybrid.py:49 calls it with chunk=8192 (train_hybrid.py:81). Re-grepped 2026-07-20.",
+    "src": "log"
+  },
+
+  "sentinel_kill_incident": {
+    "when": "2026-07-19T16:58:48Z, step 580",
+    "trigger": "memory — pool 81.3% >= kill-at 0.80 (MemAvailable 22.4 of 119.7 GiB, trainer rss 17.2 GiB). GPU 58C / SoC 71.5C, gpu_throttling false: no thermal component.",
+    "root_cause": "SSM associative_scan + chunked CE UNDER AUTODIFF held ~61 GB of activations at batch 8.",
+    "fix": "nn.remat on the decoder block (model.py:129 `BlockR = nn.remat(Block)`) + batch 8 -> 4. Allocation 61.5 GB -> 16.6 GB, pool 81% -> ~40%. Token budget unchanged (steps 10,378 -> 20,756 at constant tokens).",
+    "resume_policy": "MANUAL recovery behind a CONFIG CHANGE = the §C5 / research-loop S1-4a 'sentinel kill -> not safe to auto-resume at the same config' path. loop_state.auto_resumes correctly stayed 0; no automatic resume budget consumed.",
+    "src": "log (sentinel_kill_step580_2026-07-19.json, run_ssm_base_s0.log:36, ledger memory_fix)"
+  },
+
+  "open_gate_gap": {
+    "item": "verify.py is STALE relative to the model that is training",
+    "detail": "verify.py last ran 2026-07-19 12:52 (BUILD_STATUS.md attestation: scan-vs-sequential max|delta|=2.4e-7, chunked-vs-naive CE |delta|=4.8e-5, 8 toggles forward-finite, forward deterministic — no verify log was captured to disk). model.py was then modified at 22:27 to add nn.remat. The gate has NOT been re-run against the training model. nn.remat is semantically identity and the loss curve is continuous across the resume, but that is corroboration, not verification.",
+    "required_action": "Re-run verify.py and capture verify.log BEFORE this arm is scored. It is GPU work; §C4.5 forbids co-running it beside the live trainer, so it waits for the arm to finish.",
+    "src": "derived (file mtimes + BUILD_STATUS.md)"
+  },
+
+  "verdict_metric": "On completion: /eval-harness text-lm-v2 with suite_version stamped — BPB on wikitext-2 + a code corpus using the model's OWN tokenizer (Qwen3-0.6B-Base), which makes this arm BPB-comparable to the 596M study. NO win is claimable from this run: n=1 seed, no comparand, no iso-FLOP match -> §C17/§C18/§C25 cap the verdict at `directional` at best. The study's headline object (the emergence-speed curve + NoPE-on-full-attn validation) needs the sibling arms and >=3 seeds.",
+
+  "evidence_path": "HybridSSM-0.2B/experiments/2026-07-19_hybrid-ssm-0.2b_build/c5_evidence.json",
+  "detail_md": "research/ledger/runs/2026-07-19_hybrid-ssm-0.2b_pretrain-ssm-base-s0.md"
+}
