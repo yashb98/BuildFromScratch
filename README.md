@@ -101,6 +101,30 @@ with the Chen-2021 estimator, on decontaminated GSM8K + MATH-500) and tested it.
   The reasoning capability lives in SFT/distillation, not RL at this scale — the gate
   saved a multi-seed cohort before it was spent.
 
+**7 · Scaling persistence of the NorMuon win (in progress).** Study #2 attributed
+the IMU-1 win largely to **NorMuon**; this ladder asks whether its **+0.474
+wikitext BPB** edge over AdamW **persists or converges with budget**. At fixed
+N=596M it sweeps the token budget — 42M (reused) + **168M ×{NorMuon,AdamW}×3 seeds**
++ **420M ×2 seeds** — varying only `--steps`. The six 168M rungs are **done**; the
+four 420M rungs (~16–18 h each) are **running**. Honest ceiling: **directional** —
+the 420M top rung is n=2 (< 3 seeds); a headline needs a 3rd seed and/or an 840M rung.
+
+> **GB10 thermal-survival note (2026-07-08→10).** The 420M rungs surfaced a hardware
+> reality: under sustained load in warm ambient the unified Grace-Blackwell package
+> **overheats to 92–94 °C with the GPU thermal-throttling**, which had been silently
+> hard-locking the whole box mid-run (a ~16–18 h rung could never finish, restarting
+> from step 0 each crash). The run is now **crash-survivable**: `train_ablation.py`
+> checkpoints full training state (model + both optimizers + step + RNG, atomic+fsync)
+> every 100 steps and **auto-resumes** from it; `sentinel.py watch` gained a **thermal
+> kill-switch** (SIGTERM at ≥90 °C or a hardware throttle flag — which also *prevents*
+> the hard-locks by shedding load before the box wedges); a dense `thermal_log.py`
+> records the full temperature envelope; and `run_ladder.sh` loops-until-done behind a
+> cool-down gate, backed by an `@reboot` auto-resume (`boot_resume.sh`). Net: the
+> multi-day ladder now survives each thermal event by losing ≤~15 min (one checkpoint
+> interval) instead of a whole rung. Cooling the box's ambient is the high-leverage
+> throughput fix — cooling *time* after a kill is only ~10–30 s; it's the ~3 min reheat
+> to 90 °C under warm ambient that throttles daytime throughput.
+
 Each study lives under `Qwen3-0.6B/experiments/<YYYY-MM-DD>_<model>_<slug>/` with
 its methodology (`c5_evidence.json`), results (`verdict.json` /
 `reasoning_verdict.json`), and a per-run record in `research/ledger/runs/`.
@@ -165,6 +189,7 @@ BuildFromScratch/
 │   ├── experiments/              # single-variable studies (arch / optimizer / data / post-training)
 │   └── README.md                 # the long-form study writeup
 ├── safe_cuda.py                   # GB10 unified-memory guard (caps the CUDA process)
+├── sentinel.py                    # resource watchdog — preflight / watch (memory + thermal kill-switch) / liveness
 ├── jax_safe_env.py                # JAX preallocation guard for the shared-memory box
 ├── mfu_meter.py                   # MFU / HFU + achieved-TFLOPS (honest, GB10 peak flagged estimated)
 └── flop_accounting.py             # FLOP-per-token (6N + 12·L·H·Q·T) — feeds the iso-FLOP gate

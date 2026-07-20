@@ -86,6 +86,15 @@ DEFAULT_KILL_AT = 0.80   # watch: must stay < safe_cuda's 0.85 (see docstring)
 DEFAULT_INTERVAL = 30.0  # watch: sample period, seconds
 DEFAULT_GRACE = 60.0     # watch: SIGTERM -> SIGKILL grace, seconds
 TRAINER_PATTERN = "train"  # §C5.1: pgrep -af train
+# Thermal guard (added 2026-07-08: box may be hard-locking under sustained load from
+# heat). Primary signal is the GPU's OWN hw/sw thermal-slowdown flag (self-calibrating:
+# it fires at the real ~95C hardware ceiling), backstopped by a conservative absolute
+# ceiling. Set HIGH on purpose — load temps were never instrumented, so a low ceiling
+# would false-kill healthy runs. Tune down only after the dense thermal log shows the
+# actual load envelope. Both are debounced to avoid killing on a single nvidia-smi blip.
+TEMP_KILL_C = 90.0            # watch: kill if GPU die or hottest SoC zone >= this
+TEMP_WARN_C = 82.0           # watch: log a WARN above this (still training)
+TEMP_KILL_CONSECUTIVE = 3    # debounce: N consecutive over-limit samples before a kill
 
 
 def utcnow() -> str:
@@ -333,6 +342,44 @@ def pid_rss_gib(pid: int):
     return None  # gone, or a zombie (zombies have no VmRSS line)
 
 
+def gpu_thermal():
+    """(gpu_die_temp_C, throttling_bool) from nvidia-smi, or (None, False) if unreadable.
+    throttling = GPU firmware reports hw or sw thermal slowdown ACTIVE (the definitive,
+    self-calibrating 'too hot' signal). Stdlib-only; fail-open (never fabricates heat)."""
+    try:
+        out = subprocess.run(
+            ["nvidia-smi",
+             "--query-gpu=temperature.gpu,clocks_throttle_reasons.hw_thermal_slowdown,"
+             "clocks_throttle_reasons.sw_thermal_slowdown",
+             "--format=csv,noheader"],
+            capture_output=True, text=True, timeout=10,
+        ).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return None, False
+    for line in out.splitlines():
+        parts = [p.strip() for p in line.split(",")]
+        if len(parts) >= 3 and parts[0].isdigit():
+            throttling = (parts[1] == "Active") or (parts[2] == "Active")  # "Not Active" != "Active"
+            return float(parts[0]), throttling
+    return None, False
+
+
+def hottest_soc_c():
+    """Hottest SoC/board ACPI thermal-zone temp (C), or None. On the GB10 superchip the
+    Grace CPU + Blackwell GPU share one package, so these track SoC heat next to the
+    GPU-die sensor. Fail-open (unreadable -> None, never a fake high reading)."""
+    import glob
+    hottest = None
+    for p in glob.glob("/sys/class/thermal/thermal_zone*/temp"):
+        try:
+            with open(p) as f:
+                v = int(f.read().strip()) / 1000.0
+        except (OSError, ValueError):
+            continue
+        hottest = v if hottest is None else max(hottest, v)
+    return hottest
+
+
 def watch(pid, kill_at, log_path, interval, grace, marker_path=None) -> int:
     marker = Path(marker_path) if marker_path else MARKER
     logf = open(log_path, "a", buffering=1) if log_path else None
@@ -349,6 +396,7 @@ def watch(pid, kill_at, log_path, interval, grace, marker_path=None) -> int:
         f"grace={grace:g}s start_ticks={start_ticks} marker={marker}"
     )
     samples = 0
+    hot_streak = 0
     while True:
         if not watched_alive(pid, start_ticks):
             log(f"watched pid {pid} exited on its own; disarming (no kill)")
@@ -362,12 +410,32 @@ def watch(pid, kill_at, log_path, interval, grace, marker_path=None) -> int:
         usage = (total_kib - avail_kib) / total_kib
         rss_gib = pid_rss_gib(pid)  # §C6: free + process RSS every sample
         rss_s = f"{rss_gib:.1f} GiB" if rss_gib is not None else "n/a"
-        if usage >= kill_at:
-            reason = (
-                f"pool usage {usage:.1%} >= kill-at {kill_at:.0%} "
-                f"(MemAvailable {avail_kib / 2**20:.1f} GiB of "
-                f"{total_kib / 2**20:.1f} GiB; trainer rss {rss_s})"
-            )
+        gpu_t, throttling = gpu_thermal()  # thermal guard (fail-open: None => no kill)
+        soc_t = hottest_soc_c()
+        hot = max([t for t in (gpu_t, soc_t) if t is not None], default=None)
+        temp_s = ((f"gpu {gpu_t:.0f}C" if gpu_t is not None else "gpu n/a")
+                  + (f" soc {soc_t:.0f}C" if soc_t is not None else " soc n/a")
+                  + (" THROTTLING" if throttling else ""))
+        danger = throttling or (hot is not None and hot >= TEMP_KILL_C)
+        hot_streak = hot_streak + 1 if danger else 0
+        thermal_kill = hot_streak >= TEMP_KILL_CONSECUTIVE
+        if hot is not None and hot >= TEMP_WARN_C and not thermal_kill:
+            log(f"WARN: {temp_s} (hot={hot:.0f}C >= warn {TEMP_WARN_C:.0f}C) "
+                f"[danger streak {hot_streak}/{TEMP_KILL_CONSECUTIVE}]")
+        if usage >= kill_at or thermal_kill:
+            if thermal_kill:
+                trigger = "thermal"
+                reason = (
+                    f"{temp_s} at/over thermal limit for {hot_streak} consecutive samples "
+                    f"(>= {TEMP_KILL_C:.0f}C or hw/sw throttle; pool {usage:.1%}, rss {rss_s})"
+                )
+            else:
+                trigger = "memory"
+                reason = (
+                    f"pool usage {usage:.1%} >= kill-at {kill_at:.0%} "
+                    f"(MemAvailable {avail_kib / 2**20:.1f} GiB of "
+                    f"{total_kib / 2**20:.1f} GiB; trainer rss {rss_s}; {temp_s})"
+                )
             if not watched_alive(pid, start_ticks):  # re-verify identity
                 log(f"watched pid {pid} exited on its own; disarming (no kill)")
                 return 0
@@ -397,7 +465,11 @@ def watch(pid, kill_at, log_path, interval, grace, marker_path=None) -> int:
             payload = {
                 "time": utcnow(),
                 "killed_pid": pid,
+                "trigger": trigger,
                 "reason": reason,
+                "gpu_temp_c": gpu_t,
+                "soc_temp_c": soc_t,
+                "gpu_throttling": throttling,
                 "pool_usage": round(usage, 4),
                 "pool_total_gb": round(total_kib / 2**20, 1),
                 "trainer_rss_gb": (
@@ -415,7 +487,7 @@ def watch(pid, kill_at, log_path, interval, grace, marker_path=None) -> int:
             return 3
         samples += 1
         if samples % 20 == 0:  # heartbeat every ~10 min at default interval
-            log(f"heartbeat: pool usage {usage:.1%}, pid {pid} alive, rss {rss_s}")
+            log(f"heartbeat: pool usage {usage:.1%}, pid {pid} alive, rss {rss_s}, {temp_s}")
         time.sleep(interval)
 
 

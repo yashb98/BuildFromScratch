@@ -22,7 +22,9 @@ from __future__ import annotations
 
 import argparse
 import math
+import os
 import pathlib
+import random
 import sys
 import time
 
@@ -33,6 +35,7 @@ sys.path.insert(0, str(FAITHFUL))
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))   # local normuon.py
 
 import safe_cuda  # noqa: E402
+import numpy as np  # noqa: E402
 import torch  # noqa: E402
 from torch.optim import AdamW  # noqa: E402
 from torch.utils.data import DataLoader  # noqa: E402
@@ -85,6 +88,9 @@ def main():
     ap.add_argument("--grad_clip", type=float, default=1.0)
     ap.add_argument("--mem_fraction", type=float, default=0.85)
     ap.add_argument("--log_every", type=int, default=20)
+    ap.add_argument("--resume_every", type=int, default=200,
+                    help="save a full-state resume checkpoint every N optimizer steps "
+                         "(crash-survival: the box hard-locks under load every ~5-10h)")
     ap.add_argument("--no_compile", action="store_true")
     ap.add_argument("--tag", default=None, help="override the output tag (default: <optimizer>_seed<seed>)")
     a = ap.parse_args()
@@ -93,6 +99,7 @@ def main():
     tag = a.tag if a.tag else f"{arm}_seed{a.seed}"
     log_path = RESULTS / f"{tag}.log"
     ckpt_path = RESULTS / f"checkpoint_{tag}.pt"
+    resume_path = RESULTS / f"resume_{tag}.pt"
     token_budget = a.steps * TOK_PER_STEP
 
     if not torch.cuda.is_available():
@@ -121,14 +128,64 @@ def main():
     optims, n_2d, n_rest = build_optims(model, arm, a.peak_lr, a.normuon_lr, a.weight_decay)
     tq.log(f"[{tag}] param split: {n_2d} 2D->{arm} | {n_rest} rest->AdamW", log_path)
 
-    train_model = model if a.no_compile else torch.compile(model)
-    base_ppl, _ = tq.evaluate(model, val_tokens, device, SEQ_LEN)
-    tq.log(f"[{tag}] baseline (random-init) val PPL={base_ppl:.2f}", log_path)
+    # ---- crash-survival resume (model + optim state + step + RNG). The box hard-locks
+    # under sustained load every ~5-10h but a 420M rung needs ~16-18h, so progress MUST
+    # survive a reboot. Saved every --resume_every steps (atomic + fsync). A fresh run
+    # with no resume_<tag>.pt behaves EXACTLY as before (identical numerics). ----
+    def save_resume(cur_step, cur_base_ppl, cur_t0):
+        payload = {
+            "step": cur_step,
+            "model": model.state_dict(),
+            "optims": [o.state_dict() for o, _ in optims],
+            "baseline_ppl": cur_base_ppl,
+            "elapsed": time.time() - cur_t0,
+            "rng": {"python": random.getstate(), "numpy": np.random.get_state(),
+                    "torch": torch.get_rng_state(), "cuda": torch.cuda.get_rng_state_all()},
+            "meta": {"tag": tag, "arm": arm, "seed": a.seed, "total_steps": a.steps},
+        }
+        tmp = resume_path.with_suffix(".pt.tmp")
+        with open(tmp, "wb") as f:
+            torch.save(payload, f)
+            f.flush(); os.fsync(f.fileno())      # durable BEFORE rename (box hard-locks)
+        os.replace(tmp, resume_path)             # atomic swap: old ckpt intact until this
 
-    step, accum, t0 = 0, 0, time.time()
+    resume_step, resume_elapsed, resumed = 0, 0.0, False
+    if resume_path.exists():
+        try:
+            # load to CPU: RNG-state must stay a CPU ByteTensor for set_rng_state; model
+            # load_state_dict / optim load_state_dict move their tensors to the param
+            # device themselves. weights_only=False: our own ckpt holds RNG/optim objects.
+            ck = torch.load(resume_path, map_location="cpu", weights_only=False)
+            model.load_state_dict(ck["model"])
+            for o, s in zip((o for o, _ in optims), ck["optims"]):
+                o.load_state_dict(s)
+            random.setstate(ck["rng"]["python"]); np.random.set_state(ck["rng"]["numpy"])
+            torch.set_rng_state(ck["rng"]["torch"]); torch.cuda.set_rng_state_all(ck["rng"]["cuda"])
+            resume_step = int(ck["step"]); base_ppl = ck["baseline_ppl"]
+            resume_elapsed = float(ck.get("elapsed", 0.0)); resumed = True
+            tq.log(f"[{tag}] RESUMED from step {resume_step}/{a.steps} "
+                   f"(baseline PPL={base_ppl:.2f}, {resume_elapsed/3600:.2f}h prior compute)", log_path)
+        except Exception as e:                   # corrupt/incompatible -> fail closed to fresh
+            tq.log(f"[{tag}] resume ckpt unreadable ({e!r}); starting fresh", log_path)
+            resume_step, resume_elapsed, resumed = 0, 0.0, False
+
+    train_model = model if a.no_compile else torch.compile(model)
+    if not resumed:
+        base_ppl, _ = tq.evaluate(model, val_tokens, device, SEQ_LEN)
+        tq.log(f"[{tag}] baseline (random-init) val PPL={base_ppl:.2f}", log_path)
+
+    # Return the baseline-eval's reserved allocator blocks to the unified pool BEFORE the
+    # first training step. Fresh runs otherwise stack ~40GB of step-1 logits on top of the
+    # ~48GB still-reserved eval pool (different shapes → not reused), a transient that hit
+    # ~88% of the shared pool and tripped sentinel's 0.80 kill (and neared the box's crash
+    # cliff). Resumed runs skip the eval, so this only helps fresh runs / the smoke; it is
+    # numerically inert (frees cached-but-unused memory only). (2026-07-11)
+    torch.cuda.empty_cache()
+
+    step, accum, t0 = resume_step, 0, time.time() - resume_elapsed
     for o, _ in optims:
         o.zero_grad(set_to_none=True)
-    done = False
+    done = step >= a.steps
     while not done:
         for inp, lbl in loader:
             inp, lbl = inp.to(device, non_blocking=True), lbl.to(device, non_blocking=True)
@@ -155,6 +212,8 @@ def main():
                 tq.log(f"[{tag}] step {step}/{a.steps} loss {loss.item():.4f} "
                        f"lr {a.peak_lr*factor:.2e} |grad| {float(grad_norm):.2f} "
                        f"tok/s {tps:,.0f} mem {torch.cuda.max_memory_allocated()/1e9:.1f}GB", log_path)
+            if step % a.resume_every == 0:
+                save_resume(step, base_ppl, t0)  # crash-survival; a kill just dies fast (frees pool)
             if step >= a.steps:
                 done = True
                 break
@@ -173,6 +232,8 @@ def main():
                    "total_steps": a.steps},
     }, ckpt_path)
     tq.log(f"[{tag}] saved {ckpt_path}", log_path)
+    if resume_path.exists():
+        os.remove(resume_path)                   # rung complete: resume ckpt no longer needed
     return 0
 
 

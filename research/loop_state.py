@@ -36,10 +36,26 @@ STAGES = tuple(f"S{i}" for i in range(10))  # S0..S9
 MAX_AUTO_RESUMES = 2
 
 
+# Recovery-critical flat in-flight fields (§C5) — the ones /ablation-runner writes
+# and the recovery chain reads to re-adopt a killed trainer. A fresh/recovered
+# default carries them as None (= "no in-flight run"), so a fail-open read is
+# schema-shaped like a live file instead of silently dropping these keys.
+IN_FLIGHT_FIELDS = ("in_flight_run", "train_pid", "ckpt_path", "resume_cmd")
+
+
 def default_state() -> dict:
-    return {"schema_version": SCHEMA_VERSION, "stage": "S0",
-            "in_flight_run": None, "auto_resumes": 0, "iteration": 0,
-            "updated": None, "last_marker": None}
+    """The §C5 pinned bootstrap schema, verbatim from research-loop/SKILL.md
+    (+ `updated`, which the writer sets on the first advance). Emitting the FULL
+    live 12-key shape here is what closes the schema fork: a fail-open recovery
+    (missing/corrupt file) now yields the same keys a live file has — in
+    particular the recovery-critical `train_pid`/`ckpt_path`/`resume_cmd` are
+    present as None rather than absent, so downstream recovery reads a clean
+    "nothing to resume" instead of KeyError-ing on a divergent 7-key default."""
+    return {"schema_version": SCHEMA_VERSION, "iteration_date": None,
+            "stage": "S0", "in_flight_run": None, "train_pid": None,
+            "ckpt_path": None, "resume_cmd": None, "auto_resumes": 0,
+            "last_radar": None, "objective": "any", "notes": "",
+            "updated": None}
 
 
 def load(path) -> dict:
@@ -83,9 +99,11 @@ def save(path, state: dict) -> None:
         raise
 
 
-def advance(path, stage: str, ts: str | None = None, in_flight=..., marker=...) -> dict:
-    """Move to `stage` and persist. `in_flight`/`marker` updated only if passed
-    (sentinel `...` means leave unchanged)."""
+def advance(path, stage: str, ts: str | None = None, in_flight=...) -> dict:
+    """Move to `stage` and persist. `in_flight` updated only if passed
+    (sentinel `...` means leave unchanged). All other live keys — including the
+    recovery-critical `train_pid`/`ckpt_path`/`resume_cmd` — are preserved
+    verbatim across the transition (load returns a valid file as-is)."""
     if stage not in STAGES:
         raise ValueError(f"unknown stage {stage!r}")
     st = load(path)
@@ -94,8 +112,6 @@ def advance(path, stage: str, ts: str | None = None, in_flight=..., marker=...) 
         st["updated"] = ts
     if in_flight is not ...:
         st["in_flight_run"] = in_flight
-    if marker is not ...:
-        st["last_marker"] = marker
     save(path, st)
     return st
 
