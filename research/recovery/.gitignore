@@ -1,0 +1,3 @@
+# Recovery-run logs are runtime forensics, not source. Keep the dir, ignore contents.
+*
+!.gitignore
