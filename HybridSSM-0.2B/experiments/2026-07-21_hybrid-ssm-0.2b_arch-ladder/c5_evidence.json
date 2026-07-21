@@ -1,0 +1,91 @@
+{
+  "run_id": "2026-07-21_hybrid-ssm-0.2b_arch-ladder",
+  "model_dir": "HybridSSM-0.2B", "lifecycle_stage": "architecture", "objective": "pretrain-ablation", "framework": "jax",
+  "technique_slug": "hybrid-attention-rethink",
+
+  "purpose": "The architecture study ARCHITECTURE.md is designed around: does the efficient-mixer choice change WHAT the model reaches, or only HOW FAST it gets there? 5 single-variable arms x 3 iso-FLOP budget rungs, scored as an emergence-speed curve. Phase 1 is a scout at n=1 seed; seeds 1-2 are appended later ONLY for arms that separate (§C17).",
+
+  "arm_plan": {
+    "base": "mixer=ssm, attn_every=2 (1:1 interleave), RoPE, seed 0",
+    "arms": [
+      "ssm_base    — the base cell",
+      "swa128      — mixer: ssm -> sliding-window attention (w=128)",
+      "swa128_nope — NoPE on the full-attn layers of the SWA hybrid (comparand: swa128, NOT base — the paper's headline knob)",
+      "attn1to3    — attention fraction 1:1 -> 1:3 (attn_every 2 -> 4)",
+      "fullattn    — attention fraction 1:1 -> all-attention (attn_every=1), the dense control"
+    ],
+    "rungs_base_equivalent_tokens": [42000000, 85000000, 150000000],
+    "seeds": [0],
+    "new_cells": 15,
+    "order": "cheap rung first — the 42M rung completes in ~21.7 h and already yields a full 5-arm comparison; partial completion is still a result",
+    "not_expressible": "An all-SSM arm (zero full-attention layers) is NOT reachable: is_full(i) = (i % attn_every == 0), so layer 0 is a full-attention layer for every attn_every >= 1, and attn_every=0 divides by zero. It would need a model.py change, which would invalidate the current verify.log — deliberately not done.",
+    "dropped": "mixer='full' and mixer='none' were in the first draft of this queue and were REMOVED: model.py:105-111 dispatches `if is_full(i) -> attention; elif mixer=='swa128' -> SWA; else -> SSM`, so both values fall into the else branch and are SILENTLY IDENTICAL to the base arm. They would have burned ~33 GPU-h producing duplicates of ssm_base. The all-attention control is expressed as attn_every=1 instead."
+  },
+
+  "iso_flop": {
+    "problem": "The arms differ by 10-20% in non-embed params (ssm_base 189.1M, swa128 160.5M, attn1to3 208.2M, fullattn 151.0M), so an iso-TOKEN comparison would violate §C18's 5% tolerance and could not be called a result.",
+    "method": "Per-arm token budgets set so TOTAL train FLOPs match the base arm. FLOP/token measured from the real built configs as 6N + 12*L_full*H*Dh*T + 12*L_swa*H*Dh*w (PaLM App B shape, quadratic term applied only to full-attn layers, windowed term to SWA layers).",
+    "result": "attn1to3 (+0.1%) and fullattn (-0.2%) are already iso-FLOP at the SAME budget — the quadratic-attention term cancels their param difference. Only swa128/swa128_nope need more tokens (1.129x).",
+    "worst_total_flop_mismatch_pct": 0.17,
+    "tolerance_pct": 5.0,
+    "verdict": "PASS",
+    "epoch_guard": "Rungs were chosen so that even the 1.129x arm fits inside the 170,034,304-token cache (top rung: base 150M -> swa 170M). No arm wraps into a second epoch, so data-repetition never differs between arms.",
+    "approximation_disclosed": "The FLOP model is an approximation (it does not separately count the SSM scan's linear term beyond its parameters). It is applied identically to every arm, so it biases the comparison only to the extent the arms' non-matmul work differs."
+  },
+
+  "c5_0_smoke": {
+    "result": "pass",
+    "detail": "All 5 arm configs smoked through the EXACT training script (train_hybrid.py --smoke): exit 0, fixed-batch overfit 8.79-8.94 -> 0.0016-0.0054 (trending_down=True), grad norms healthy, checkpoint save->reload max|Δ|=0.00e+00 for every arm. This is the only evidence that attn_every=1 works at all — verify.py's 8-combo toggle sweep covered attn_every in {2,4} only.",
+    "log_path": "smoke_arms.log",
+    "src": "log"
+  },
+
+  "c5_1_concurrency": {
+    "result": "pass",
+    "detail": "sentinel preflight exit 0 at queue time: mem_available=82%, disk_free=3034GB, load1=1.09, trainers=none. The prior arm (PID 3164922) exited 2026-07-20 15:04Z. The driver ALSO re-checks `pgrep -f train_*.py` before every single cell and defers the pass if any trainer is alive.",
+    "src": "log"
+  },
+
+  "c5_2_budget": {
+    "tokens_total": 1191000000,
+    "source": "brief research/briefs/hybrid-attention-rethink.md:55 token-budget ladder; per-arm budgets derived by the iso-FLOP matching above",
+    "gpu_hours_est": 141.7,
+    "gpu_days_est": 5.9,
+    "src": "derived"
+  },
+
+  "c5_3_probe": {
+    "tokens_per_sec": 2863,
+    "peak_mem_gb": 16.6,
+    "fits": true,
+    "detail": "Measured from the completed pilot arm (20,756 steps in 16.50 h at this exact seq/batch/remat config), which is a far stronger probe than a few steps. Per-cell est_hours scale that rate by token budget. The all-attention arm (attn_every=1) has 24 quadratic-attention layers vs the base's 12, so its memory and step time may exceed this estimate — its 42M cell runs early and will correct the estimate before the expensive rungs.",
+    "src": "derived"
+  },
+
+  "c5_4_eta_hours": 141.7,
+
+  "c5_5_resume": {
+    "result": "pass",
+    "detail": "Each cell passes --ckpt/--resume checkpoint_<cell>.pkl with --ckpt_every 200, and the driver re-attempts failed cells on the next pass so they resume from checkpoint. Resume was proven in production on the pilot arm (recovered from a step-400 checkpoint after a sentinel kill and ran 20,756 clean steps). Smoke re-confirmed the save->reload round-trip is exact for all 5 arms.",
+    "resume_bug_fixed": "train_hybrid.py:136 was `range(start_step, start_step + steps)`, which made a RESUMED cell repeat the entire budget from its resume point (the pilot ran 21,156 steps = +1.93% tokens). Fixed to `range(start_step, steps)` on 2026-07-21 BEFORE queuing this ladder — unfixed it would have silently broken iso-FLOP across exactly the arms that happen to crash.",
+    "src": "log"
+  },
+
+  "c5_6_sentinel": {
+    "result": "armed per cell",
+    "detail": "The driver arms `sentinel.py watch` on the PYTHON trainer pid (pgrep -n -f 'python train_hybrid.py .*<cell>', not the wrapper subshell) for every cell, with no --kill-at so it takes the §C6 module default 0.80 < safe_cuda 0.85 < the OOM cliff, plus the thermal kill-switch. Preflight gates the driver before the first launch.",
+    "src": "log"
+  },
+
+  "c5_7_guards": {
+    "result": "verified",
+    "detail": "JAX script: train_hybrid.py:10 `import jax_safe_env` precedes :15 `import jax`. Chunked CE (model.py:136) streams max+sumexp over vocab chunks and never materializes (N, 151936). nn.remat on the decoder block. Re-verified 2026-07-21; verify.log (2026-07-20) is 6/6 PASS against this model.py.",
+    "src": "log"
+  },
+
+  "verdict_metric": "Per cell: eval-harness text-lm-v2 BPB on wikitext-2 + code with the model's own Qwen3 tokenizer, suite_version stamped. Per arm: the quality-vs-FLOPs curve across the 3 rungs, then scaling_ladder.fit_gap_trend() on the arm-minus-base gap to ask whether the mixer choice changes the DESTINATION or only the SPEED. Honest ceiling for phase 1: DIRECTIONAL — every cell is n=1, and §C17 requires >=3 seeds for a win. Phase 2 appends seeds 1-2 only for arms that separate.",
+
+  "not_claimed": "No result of any kind is claimed at queue time. The pilot arm's numbers (PPL wikitext2 133.46 / code_py 5142.64, self_floor) are a single undertrained n=1 point with no comparand and are NOT a baseline for these arms — the pilot ran 173.3M tokens under the pre-fix resume bug and is not FLOP-matched to any rung here.",
+
+  "evidence_path": "HybridSSM-0.2B/experiments/2026-07-21_hybrid-ssm-0.2b_arch-ladder/c5_evidence.json"
+}

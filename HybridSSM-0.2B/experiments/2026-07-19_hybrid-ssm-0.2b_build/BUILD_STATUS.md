@@ -21,7 +21,39 @@ first pretrain arm (`ssm_base_s0`) is IN FLIGHT on real data.**
 - **Fit probes on real data** (`probe.log` / `probe2.log` / `probe3.log`, 15 / 12 / 30 steps):
   step-0 loss 12.4317 / 12.4312 / 12.4312 ≈ ln(151936)=11.93 + init noise, and 30 steps moves 12.43 → 8.42.
 
-## Pretrain arm `ssm_base_s0` — IN FLIGHT
+## Pretrain arm `ssm_base_s0` — COMPLETE (2026-07-20 15:04 UTC)
+
+Exited cleanly on its own: `[done] 21156 steps · final loss=3.8149`, `arm_ssm_base_s0.done`
+written, final checkpoint saved, and the sentinel disarmed itself (`watched pid 3164922
+exited on its own; disarming (no kill)`). Wall clock **990 min / 16.5 h** for the final
+process — this excludes the killed first attempt, whose start time is not on disk, so
+total GPU time is a lower bound.
+
+| result | value |
+|---|---|
+| final train loss | **3.8149** |
+| best val loss | **3.7839** @ step 19,200 (final eval 3.9245 @ 20,800 — noisy tail) |
+| eval-harness `text-lm-v2` | PPL wikitext2_val **133.4628**, code_py **5142.6426** (`self_floor=true`; corpora pinned `wikitext-2-raw-v1:validation@b08601e`, `codeparrot-clean-valid@4db92d2`) |
+| verdict | **directional** — n=1 seed, no comparand, no iso-FLOP match (§C17/§C18/§C25) |
+
+**Verify gate CLOSED.** `verify.py` was re-run 2026-07-20 17:46 against the post-`nn.remat`
+`model.py` (last modified 07-19 22:27) — `verify.log`, 6/6 PASS, exit 0: scan-vs-reference
+max|Δ|=2.38e-07, chunked-vs-naive CE |Δ|=4.77e-05, param count, forward finite/deterministic,
+all 8 toggle combos finite.
+
+### ⚠️ Budget overshoot — a resume bug, and it matters for the ladder
+
+`train_hybrid.py:129` is `for s in range(start_step, start_step + steps)`. A **resumed** run
+therefore repeats the FULL step budget from the resume point instead of finishing the
+original one. This arm resumed at step 400, so it ran **21,156 steps = 173,309,952 tokens
+against a declared budget of 170,034,304 (+1.93%)**, wrapping ~1.9% into a second epoch.
+
+Harmless at n=1, but it silently breaks **§C18 iso-FLOP** across arms: any arm that crashes
+and resumes gets *more* compute than one that doesn't, scaling with the resume point — a
+resume at step 5,000 would be **+24%**, far past the 5% tolerance, and nothing in the logs
+would flag it. **Fix to `range(start_step, steps)` before running the ladder.**
+
+## Pretrain arm `ssm_base_s0` — configuration as launched
 
 Ledger run `2026-07-19_hybrid-ssm-0.2b_pretrain-ssm-base-s0` (type=ablation, status=running,
 lifecycle_stage=architecture, framework=jax, technique `hybrid-attention-rethink`).
@@ -53,14 +85,13 @@ pool 81% → ~40%. Resumed from the step-400 checkpoint at 22:34:29 and has run 
 This was a *manual* recovery behind a config change, i.e. the §C5/S1-4a "not safe to auto-resume at the
 same config" path — `loop_state.auto_resumes` correctly stayed at 0.
 
-## ⚠️ Open gate gap (must close before this arm is scored)
+## Gate gap — CLOSED 2026-07-20
 
-`verify.py` last ran **2026-07-19 12:52** (per this file's previous revision — no verify log was captured
-to disk). `model.py` was last modified **2026-07-19 22:27** to add `nn.remat`. **The verify gate has not
-been re-run against the model that is actually training.** `nn.remat` is semantically identity
-(rematerialization trades recompute for memory and must not change values), but "must not" is not
-"verified on this box". Re-run `verify.py` and capture its output to `verify.log` **after** this arm
-finishes — it is GPU work, and §C4.5 forbids co-running it beside the live trainer.
+For the record, since it was flagged as blocking while the arm ran: `verify.py`'s original PASS
+(2026-07-19 12:52) predated the 22:27 `nn.remat` change, so for the whole run the gate was stale
+against the model actually training. It was re-run **2026-07-20 17:46**, after the arm finished
+(GPU work — §C4.5 forbids co-running it beside a live trainer), and captured to `verify.log`:
+**6/6 PASS, exit 0**. `nn.remat` is confirmed value-preserving here, as expected.
 
 ## Next
 

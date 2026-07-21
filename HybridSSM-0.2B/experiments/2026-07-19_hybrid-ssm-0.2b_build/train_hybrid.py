@@ -126,7 +126,14 @@ def main():
 
     fixed = make_batch(jax.random.PRNGKey(1234), B, T, cfg.vocab_size) if a.smoke else None
     losses = []
-    for s in range(start_step, start_step + steps):
+    # NOTE (2026-07-21 fix): the bound is `steps`, NOT `start_step + steps`. The old form
+    # made a RESUMED run repeat the whole budget from the resume point — arm ssm_base_s0
+    # resumed at 400 and ran 21,156 steps (173.3M tok) against a declared 170.0M (+1.93%).
+    # Harmless at n=1, fatal for §C18 iso-FLOP across a ladder: an arm that crashes and
+    # resumes would silently receive more compute than one that doesn't, in proportion to
+    # its resume point, and nothing in the logs would say so. It also ran the optax cosine
+    # schedule (decay_steps=steps) past its end for those extra steps.
+    for s in range(start_step, steps):
         rng, sk = jax.random.split(rng)
         if a.smoke:
             ids, tgt = fixed                                 # overfit one fixed batch
@@ -149,14 +156,17 @@ def main():
             save(s + 1)
 
     if not a.smoke:
-        save(start_step + steps)
+        save(steps)
         if a.done_marker:
             pathlib.Path(a.done_marker).touch()
-        print(f"[done] {start_step + steps} steps · final loss={losses[-1]:.4f}", flush=True)
+        # `losses` is empty when a resume finds the cell already complete (start_step >= steps),
+        # which is the idempotent no-op the ladder driver relies on — don't IndexError on it.
+        final = f"{losses[-1]:.4f}" if losses else "n/a (already complete at resume)"
+        print(f"[done] {steps} steps · final loss={final}", flush=True)
 
     if a.smoke:
         # ckpt round-trip: save, reload into a fresh param tree, assert identical
-        save(start_step + steps)
+        save(steps)
         with open(a.ckpt, "rb") as f:
             blob = pickle.load(f)
         fresh = net.init(jax.random.PRNGKey(99), jnp.asarray(ids0))["params"]
