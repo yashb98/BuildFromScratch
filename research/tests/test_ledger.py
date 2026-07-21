@@ -8,6 +8,7 @@ the real ledger is never read or written.
 """
 import hashlib
 import json
+import pathlib
 import re
 
 import ledger
@@ -303,3 +304,82 @@ def test_save_preserves_file_mode(ledger_path):
     ledger_path.chmod(0o640)
     run(ledger_path, "add-technique", "--slug", "t", "--title", "X")
     assert (ledger_path.stat().st_mode & 0o777) == 0o640
+
+
+# ------------------------------------------------- caller contract (repo-wide lint)
+# 2026-07-20: score_ladder.py shipped `--type pretrain-ablation` — that is an OBJECTIVE,
+# not a run type. argparse rejected every invocation (exit 2), and the caller passed
+# `check=False`, so the ledger write failed SILENTLY on every scoring pass of a multi-day
+# ladder while the script still returned 0. The scaling-persistence result was scored and
+# never landed. A wrong --type must break a test, not a production run.
+
+REPO = pathlib.Path(ledger.__file__).resolve().parents[2]
+_PY_TYPE = re.compile(r"""['"]--type['"]\s*,\s*['"]([^'"]+)['"]""")
+_SH_TYPE = re.compile(r"--type[ \t]+['\"]?([A-Za-z][\w-]*)")
+
+
+def _ledger_type_literals(root=None):
+    """Every literal `--type` value handed to ledger.py by a caller under `root`
+    (default: this repo). Skips ledger.py itself (it DEFINES the choices) and the test
+    tree (which passes invalid values on purpose to assert they are rejected).
+
+    Known limitation, stated rather than hidden: a file only qualifies if the literal
+    text "ledger.py" appears in it, so a caller that assembles the path piecewise
+    (`ROOT / "research" / "ledger" / "ledger.py"`) is invisible to this scan. Every
+    current caller names it literally, and test_the_run_type_lint_is_not_vacuous fails
+    loudly if that ever stops being true for all of them at once."""
+    root = REPO if root is None else pathlib.Path(root)
+    for path in sorted(root.rglob("*.py")) + sorted(root.rglob("*.sh")):
+        parts = set(path.parts)
+        if parts & {".git", "__pycache__", "tests"} or path.name == "ledger.py":
+            continue
+        try:
+            text = path.read_text(errors="replace")
+        except OSError:
+            continue
+        if "ledger.py" not in text or "add-run" not in text:
+            continue
+        rx = _PY_TYPE if path.suffix == ".py" else _SH_TYPE
+        for m in rx.finditer(text):
+            yield path.relative_to(root), m.group(1)
+
+
+def test_every_caller_passes_a_valid_run_type():
+    bad = [(p, t) for p, t in _ledger_type_literals() if t not in ledger.RUN_TYPES]
+    assert not bad, ("caller(s) passing an invalid ledger --type: "
+                     + "; ".join(f"{p} -> {t!r}" for p, t in bad)
+                     + f"  (valid: {sorted(ledger.RUN_TYPES)})")
+
+
+def test_the_run_type_lint_is_not_vacuous():
+    """Guard the guard: if the scan ever matches nothing, the test above passes for the
+    wrong reason and this whole check silently stops protecting anything."""
+    assert list(_ledger_type_literals()), "repo-wide --type scan matched no caller at all"
+
+
+def test_the_run_type_lint_catches_the_original_bug(tmp_path):
+    """Prove the lint DETECTS the real defect, on a synthetic caller rather than by
+    reverting the fixed one. Reproduces score_ladder.py's exact broken argv shape."""
+    (tmp_path / "caller.py").write_text(
+        'subprocess.run(["python3", str(ROOT / "research/ledger/ledger.py"), "add-run",\n'
+        '                "--run-id", rid, "--type", "pretrain-ablation",\n'
+        '                "--model-dir", "Qwen3-0.6B"], check=False)\n')
+    (tmp_path / "caller.sh").write_text(
+        'python3 research/ledger/ledger.py add-run --run-id "$RID" --type pretrain-ablation\n')
+    found = dict(_ledger_type_literals(tmp_path))
+    assert {p.name for p in found} == {"caller.py", "caller.sh"}, found
+    assert set(found.values()) == {"pretrain-ablation"}
+    assert all(t not in ledger.RUN_TYPES for t in found.values())   # ...and flagged invalid
+
+
+def test_the_run_type_lint_accepts_a_valid_caller(tmp_path):
+    """No false positives: the FIXED argv shape must not be flagged. Mirrors the real
+    score_ladder.py, which reaches the CLI through a `LEDGER = ROOT / ".../ledger.py"`
+    constant — the literal still appears in the file, which is what the scan keys on."""
+    (tmp_path / "ok.py").write_text(
+        'LEDGER = ROOT / "research/ledger/ledger.py"\n'
+        'subprocess.run([str(LEDGER), "add-run", "--run-id", rid,\n'
+        '                "--type", "scaling-fit", "--objective", "pretrain-ablation"])\n')
+    found = dict(_ledger_type_literals(tmp_path))
+    assert list(found.values()) == ["scaling-fit"]
+    assert all(t in ledger.RUN_TYPES for t in found.values())
