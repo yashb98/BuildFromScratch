@@ -44,3 +44,29 @@ Derived from the 28-decision audit (`LOOP_AUDIT_2026-07-22.md`). One-line identi
 
 ## The one sequencing question for you
 Item 9: insert NorMuon-at-scale after the current 85M rung (pausing the hybrid ladder ~34h), or let the whole hybrid ladder finish first? Your batch-1 answer said "NorMuon next GPU-week," which implies the former — confirm when you want it.
+
+## Execution log — 2026-07-22 (this session)
+
+DONE (committed + pushed):
+- Tier 0 #2 track the record (0409620) · #3 arXiv package rebuild (66f2953).
+- Tier 1 #8 verdict vocabulary split + relabel 4 clear runs (79a514f).
+- Tier 1 #4 score_arch_ladder.py + loud driver hook (e389793).
+- Tier 1 #7 fixed-reference noise floor + stale-v3-status correction (b9ce4e3).
+- Tier 0 #1 recovery cron lines PRINTED for the user to paste (cron_logs/ created) — awaiting paste.
+
+CORRECTED FRAMING:
+- #6 "one real eval-harness": the canonical PRIMITIVES already exist + are tested
+  (eval_metrics.bits_per_byte, eval_stats.subsample_noise_floor / seed_delta_significant /
+  noise_floor). The 6 score_cohort copies differ only in the thin per-model windowed-CE
+  score LOOP (legitimate experiment-isolation glue). So #6 is smaller than the audit framed;
+  the real integrity gaps were the noise-floor basis (#7, DONE) and the suite stamp (DONE).
+  Remaining #6 work (optional): extract the shared score-loop into one importable helper.
+
+BLOCKED (GPU + human trigger, per propose-only):
+- #5 per-arm LR probe (de-confounds the 42M mixer finding) — run at a rung gap.
+- #9 NorMuon-at-scale — run at a rung gap; sequencing still to confirm.
+- score_arch_ladder.py GPU end-to-end validation — first rung gap.
+
+GOVERNANCE TODO flagged, not decided unilaterally:
+- Flip the v3 core PPL/BPB section ACTIVE vs keep v3 downstream-only (suite.md).
+- Relabel the 5 still-'directional' runs after resolving the data-run verdict.json vs README contradiction.
