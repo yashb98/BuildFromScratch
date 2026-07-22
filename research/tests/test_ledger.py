@@ -372,6 +372,24 @@ def test_the_run_type_lint_catches_the_original_bug(tmp_path):
     assert all(t not in ledger.RUN_TYPES for t in found.values())   # ...and flagged invalid
 
 
+def test_split_verdict_vocabulary(ledger_path):
+    """2026-07-22: 'directional' was split into null / promising so a genuine negative
+    result and a big-but-capped effect stop sharing one word. Both must be accepted, and
+    neither may auto-append to never_repeat (only 'loss' does)."""
+    run(ledger_path, "add-technique", "--slug", "t", "--title", "X")
+    for i, verdict in enumerate(("null", "promising", "inconclusive", "directional")):
+        rid = f"2026-07-22_m_v{i}"
+        assert run(ledger_path, "add-run", "--run-id", rid, "--type", "eval") == 0
+        assert run(ledger_path, "update-run", rid, "--set", f'verdict="{verdict}"') == 0, verdict
+        assert reload(ledger_path)["runs"][-1]["verdict"] == verdict
+    assert reload(ledger_path)["never_repeat"] == [], "neutral verdicts must not never_repeat"
+    # a 'loss' still does
+    rid = "2026-07-22_m_loss"
+    run(ledger_path, "add-run", "--run-id", rid, "--type", "ablation", "--technique-slug", "t")
+    run(ledger_path, "update-run", rid, "--set", 'verdict="loss"')
+    assert "t" in reload(ledger_path)["never_repeat"]
+
+
 def test_the_run_type_lint_accepts_a_valid_caller(tmp_path):
     """No false positives: the FIXED argv shape must not be flagged. Mirrors the real
     score_ladder.py, which reaches the CLI through a `LEDGER = ROOT / ".../ledger.py"`

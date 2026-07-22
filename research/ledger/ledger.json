@@ -1178,7 +1178,7 @@
       "started": "2026-06-27",
       "ended": null,
       "status": "done",
-      "verdict": "directional",
+      "verdict": "null",
       "metrics": {
         "suite_version": "text-lm-v2",
         "eval_harness_note": "1 representative seed/arm scored on the standard suite (held-out \u03c3\u22480.001 across seeds; full 3-seed CI is the in-domain reasoning_verdict.json)",
@@ -1475,7 +1475,7 @@
       "started": "2026-07-02",
       "ended": null,
       "status": "done",
-      "verdict": "directional",
+      "verdict": "null",
       "metrics": {
         "proceed_to_phase3": false,
         "conclusion": "PREDICTED NULL CONFIRMED: GRPO does not beat the SFT floor; GRPO does not beat the random-reward gate. At ~1% base pass@1 there is nothing for RL to sharpen (GRPO training reward flat at ~0.9% correct with no trend [first-50 0.0091 vs last-50 0.0080]; RFT's 352 collected completions, ~0.9% of 38,400 rollouts, were too few to separate from the floor). Do NOT spend the multi-seed cohort; the reasoning gain lives in SFT/distillation, not RL at this scale.",
@@ -1555,7 +1555,7 @@
       "started": "2026-07-05",
       "ended": "2026-07-12",
       "status": "done",
-      "verdict": "directional",
+      "verdict": "promising",
       "metrics": {
         "trend_verdict_wikitext": "CONVERGES",
         "trend_code_py": "CONVERGES",
@@ -1695,7 +1695,7 @@
       "started": "2026-07-19",
       "ended": "2026-07-20",
       "status": "done",
-      "verdict": "directional",
+      "verdict": "inconclusive",
       "metrics": {
         "ppl_wikitext2_val": 133.4628,
         "ppl_code_py": 5142.6426,

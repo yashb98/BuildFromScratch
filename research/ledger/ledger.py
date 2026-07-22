@@ -68,7 +68,19 @@ RUN_TYPES = {"ablation", "finetune", "eval", "dataset-prep",
              # serving/RAG/safeguards benches, and the sweep parent group.
              "scaling-fit", "replication", "serving-bench", "rag-eval",
              "safeguards-round", "sweep", "serve"}
-VERDICTS = {"win", "loss", "inconclusive", "directional", None}  # "directional" = §C25 eval-completeness cap (battery incomplete; not a never_repeat loss)
+# Verdict vocabulary (2026-07-22: split "directional", which compressed opposite
+# realities — a genuine null and a big significant-but-capped effect wore the same word).
+#   win         — HARD-complete, significant, single-variable + iso-FLOP (§C18 gate below).
+#   promising   — a REAL, measured (usually significant) effect, capped BELOW win by a
+#                 missing §C25 HARD item, n<3 seeds, or an unresolved confound.
+#                 "found something, one gate short." NOT a never_repeat loss.
+#   null        — measured; the contrast shows NO effect beyond the noise floor.
+#                 A first-class negative result ("found nothing"), NOT a never_repeat loss.
+#   loss        — worse than baseline; auto-appends to never_repeat.
+#   inconclusive— could not be measured/interpreted (crash, undecidable confound, no comparand).
+#   directional — DEPRECATED alias, kept valid for old entries; new runs use null|promising.
+VERDICTS = {"win", "promising", "null", "loss", "inconclusive", "directional", None}
+NEUTRAL_VERDICTS = {"promising", "null", "directional", "inconclusive"}  # measured, not a never_repeat loss
 PROP_KINDS = {"new-build", "big-run", "needs-approval"}
 PROP_STATUS = {"open", "accepted", "declined"}
 PAPER_STATUS = {"drafting", "packaged", "submitted", "published", "abandoned"}  # §C16
