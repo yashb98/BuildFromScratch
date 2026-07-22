@@ -114,3 +114,18 @@ def test_asymmetric_single_seed_not_significant():
     # One good arm, one single-seed arm -> still not significance-testable.
     r = es.seed_delta_significant([28.6, 28.7, 28.5], [23.5])
     assert r["significant"] is False and r["n_treatment"] == 1
+
+
+def test_noise_floor_prefers_reference_and_records_basis():
+    """upgrade-plan item 7: prefer a stable reference checkpoint's subsamples over an
+    undertrained target's wide self-floor, and always report which basis was used."""
+    wobbly_target = [130.0, 150.0, 138.0]      # undertrained: ~20 spread (huge)
+    tight_reference = [12.0, 12.3, 12.1]       # well-trained: ~0.3 spread
+    floor, basis = es.noise_floor(wobbly_target, tight_reference)
+    assert basis == "reference"
+    assert abs(floor - 0.3) < 1e-9             # max-min of the reference, not the target
+    # no reference -> falls back to self, flagged as such
+    floor2, basis2 = es.noise_floor(wobbly_target)
+    assert basis2 == "self" and abs(floor2 - 20.0) < 1e-9
+    # empty reference is treated as absent (fallback to self), not a crash
+    assert es.noise_floor(wobbly_target, [])[1] == "self"

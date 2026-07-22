@@ -77,6 +77,25 @@ def subsample_noise_floor(values):
     return max(vals) - min(vals)
 
 
+def noise_floor(target_subsamples, reference_subsamples=None):
+    """Canonical noise-floor selector (2026-07-22 decision, upgrade-plan item 7).
+
+    The SELF-floor (subsamples of the target itself) is unusably wide on an
+    UNDERTRAINED checkpoint — measured 15-26% of PPL on the HybridSSM pilot, which
+    makes the standing baseline useless for future significance calls. When a stable
+    REFERENCE checkpoint's subsamples are available, compute the floor on THOSE
+    instead; a well-trained reference has a tight, stable subsample spread that is a
+    meaningful significance yardstick across runs.
+
+    Returns (floor_abs, basis) where basis is "reference" (preferred) or
+    "self" (fallback) — the caller MUST record `basis` so a wide self-floor is never
+    silently read as a real significance bar. Uses the same max-min primitive as the
+    legacy self-floor, so numbers stay comparable to prior self-floored results."""
+    if reference_subsamples:
+        return subsample_noise_floor(reference_subsamples), "reference"
+    return subsample_noise_floor(target_subsamples), "self"
+
+
 def _welch_df(sem_b, n_b, sem_t, n_t):
     """Welch–Satterthwaite degrees of freedom from the per-arm SEMs and n's.
     Requires n_b, n_t >= 2 (callers guarantee this before calling)."""
