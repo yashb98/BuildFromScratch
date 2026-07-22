@@ -149,7 +149,19 @@ while read -r id _; do [ -f "$LDIR/${id}.done" ] || { missing=$((missing+1)); ec
 if [ "$missing" -eq 0 ]; then
   touch "$LDIR/ladder.done"
   echo "===== $(date '+%F %T') ARCH LADDER COMPLETE — $LDIR/ladder.done ====="
-  [ -f "$LDIR/score_arch_ladder.py" ] && $PY "$LDIR/score_arch_ladder.py"
+  # Score at ladder end. LOUD on absence/failure — the audit found this hook was a
+  # silent no-op (the scorer did not exist), so a completed ladder produced NO numbers
+  # and nothing said so. No trainer is live here (all cells done), so §C4.5 permits it.
+  if [ -f "$LDIR/score_arch_ladder.py" ]; then
+    echo "[$(date '+%T')] scoring ladder..."
+    if $PY "$LDIR/score_arch_ladder.py"; then
+      echo "[$(date '+%T')] scoring done -> arch_ladder_scores.json"
+    else
+      echo "[$(date '+%T')] !! SCORING FAILED (rc=$?) — cells are trained but UNSCORED; run score_arch_ladder.py by hand"
+    fi
+  else
+    echo "[$(date '+%T')] !! NO SCORER (score_arch_ladder.py absent) — ladder COMPLETE but UNSCORED"
+  fi
 else
   echo "===== $(date '+%F %T') LADDER INCOMPLETE — $missing cells missing .done ====="
 fi
