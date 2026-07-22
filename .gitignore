@@ -53,16 +53,30 @@ SmolLM2-134(base)/results/lm_eval/
 # record tracked; exclude only transient/runtime files". Source now follows that
 # policy again; state does not.
 #
-# Deliberately still local-only: ledger.json / loop_state.json (churning state —
-# a stale tracked copy is worse than none; durable backup = research/backup_ledger.sh),
-# generated artifacts (digests/, pulse/, radar/, provenance/), prepared datasets,
-# manuscript build output, and harness-search's machine-GENERATED candidates
-# (search output, not authored source).
+# The DURABLE RECORD is now tracked too (2026-07-22 decision): ledger.json is the
+# truth store and the runs/*.md + briefs/ + digests/ are the human-readable record —
+# a one-disk truth store was the audit's #3 risk, and a branch switch already
+# destroyed a ledger.json once (recovered from a git blob). Git history IS the
+# off-box backup; commit the record before any branch switch. The single-generation
+# .bak and the dated backups/ snapshots stay local (git history is the real trail).
+#
+# Deliberately still local-only: loop_state.json (churns every loop wake — a stale
+# tracked copy is worse than none), generated non-record artifacts (pulse/, radar/,
+# provenance/), prepared datasets, manuscript build output, checkpoints/logs, and
+# harness-search's machine-GENERATED candidates (search output, not authored source).
 research/**
 # re-include directories so git descends and the rules below can match
 !research/**/
 !research/**/*.py
 !research/**/*.sh
+# the durable record (small text; the truth store + its human-readable trail)
+!research/ledger/ledger.json
+!research/ledger/runs/**/*.md
+!research/briefs/**/*.md
+!research/digests/**/*.md
+# ...but never the churn/backup copies of the ledger
+research/ledger/ledger.json.bak
+research/ledger/backups/
 research/harness_search/archive/
 research/harness_search/targets/*/candidates/
 
