@@ -1,10 +1,15 @@
 {
  "schema": 1,
  "slug": "qwen3-0.6b-study",
- "phase": 3,
+ "phase": 6,
+ "phase_name": "packaged — awaiting human arXiv submission",
  "started": "2026-06-19",
- "updated": "2026-07-07",
+ "updated": "2026-07-22",
  "scope": "full-lifecycle refresh",
  "title": "Reproduce, Then Attribute: A Controlled Study of the LLM Training Lifecycle on a Bit-Exact Qwen3-0.6B Reproduction",
- "pdf": "qwen3-0.6b-study.pdf"
+ "pdf": "qwen3-0.6b-study.pdf",
+ "package": "arxiv_package.tar.gz",
+ "package_rebuilt": "2026-07-22",
+ "package_note": "tarball + .bbl regenerated to match the 2026-07-20 section rebuild (previously stale at 2026-07-07). Clean-room compile from the tarball: 34 pages, 26 refs, 0 unresolved citations. Ledger papers[] status=packaged.",
+ "remaining": "HUMAN-only: arXiv upload (metadata block in SUBMISSION.md). Nothing here auto-submits (§C16)."
 }
