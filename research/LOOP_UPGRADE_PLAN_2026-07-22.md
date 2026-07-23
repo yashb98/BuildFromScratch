@@ -79,3 +79,9 @@ GOVERNANCE TODO flagged, not decided unilaterally:
 Remaining Tier 2/3 (each needs a bit of your steer): #10 adopted-run protocol, #11 c5 schema+lint /
   CLAUDE.md verdict-timing, #13 dedup, #14 calibration wiring, #15 doc reframe + meta-scrub,
   #17 shared-box lock, #18 loop_state fsync, #19 kdump [HUMAN]. GPU items #5/#9 still await a rung gap + go.
+
+## Execution log — 2026-07-23 (Tier 2 pass)
+- #13 dedup hardened: arXiv-id + fuzzy-title (dcf01e0). Verified vs live ledger; 36 tests.
+- #11a c5_validate.py: machine-checkable §C5 pre-launch lint (dd9661a). Both live HybridSSM c5 files PASS 7/7.
+- #11b CLAUDE.md verdict-timing contradiction corrected (entry-at-launch; verdict written at finish). [local file]
+Remaining Tier 2: #10 adopted-run protocol [.claude/, bigger], #14 calibration wiring [bigger], #15 doc reframe + meta-scrub [local docs].
