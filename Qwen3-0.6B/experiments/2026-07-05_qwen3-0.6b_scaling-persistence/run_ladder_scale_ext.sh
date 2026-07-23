@@ -83,13 +83,26 @@ CELLS=(
  # "12818 adamw 0" "12818 normuon 0"   # 840M — DEFERRED (enable after enable_kdump_gb10.sh + OTA 7.5.0 + reboot)
 )
 
+# Is a REAL foreign python trainer alive? Require argv[0] to be a python interpreter (a bare
+# `pgrep -f train_*.py` self-matches greps/monitors/this driver). Never count ourselves. Returns
+# 0 (true) only if some OTHER process is a genuine python trainer.
+trainer_alive () {
+  local p exe
+  for p in $(pgrep -f 'train_[A-Za-z0-9_]*\.py' 2>/dev/null); do
+    [ "$p" = "$$" ] && continue
+    exe=$(tr '\0' '\n' < "/proc/$p/cmdline" 2>/dev/null | head -1)
+    case "$(basename "${exe:-none}")" in python*) return 0 ;; esac
+  done
+  return 1
+}
+
 run_cell () {
   local steps=$1 arm=$2 seed=$3
   local budgetM=$(( steps * 65536 / 1000000 ))
   local tag=persist_${budgetM}M_${arm}_s${seed}
   [ -f "$LDIR/${tag}.done" ] && { echo "[$(date '+%T')] [skip] $tag"; return 0; }
   # §C4.5: never two trainers — a foreign trainer means someone else owns the GPU, wait it out.
-  if pgrep -f 'train_[A-Za-z0-9_]*\.py' | while read -r p; do exe=$(tr '\0' '\n' < "/proc/$p/cmdline" 2>/dev/null | head -1); case "$(basename "${exe:-none}")" in python*) [ "$p" != "$$" ] && exit 0;; esac; done; [ $? -eq 0 ]; then
+  if trainer_alive; then
     echo "[$(date '+%T')] [wait] $tag: another python trainer is alive, deferring this pass"; return 1
   fi
   if ! cool_down "$tag"; then echo "[$(date '+%T')] [defer] $tag: box too hot"; return 1; fi
