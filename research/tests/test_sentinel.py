@@ -381,3 +381,61 @@ def test_preflight_fails_closed_on_bad_meminfo(monkeypatch, capsys):
     monkeypatch.setattr(sentinel, "meminfo", boom)
     assert sentinel.preflight() == 1
     assert "failing closed" in capsys.readouterr().out
+
+
+# ------------------------------------------- thermal-kill path (upgrade-plan item 16)
+# The thermal guard is the NEWEST, least-mature safety layer, added because the GB10
+# hard-locks from heat — and it had ZERO tests. Both readers MUST fail OPEN (an
+# unreadable sensor returns None/False, never a fabricated high temp that would kill a
+# healthy trainer), and the throttle parse must not confuse "Not Active" with "Active".
+
+class _FakeProc:
+    def __init__(self, stdout): self.stdout = stdout
+
+def test_gpu_thermal_parses_temp_and_throttle(monkeypatch):
+    monkeypatch.setattr(sentinel.subprocess, "run",
+                        lambda *a, **k: _FakeProc("72, Not Active, Not Active\n"))
+    assert sentinel.gpu_thermal() == (72.0, False)
+    # hw slowdown active -> throttling True
+    monkeypatch.setattr(sentinel.subprocess, "run",
+                        lambda *a, **k: _FakeProc("91, Active, Not Active\n"))
+    assert sentinel.gpu_thermal() == (91.0, True)
+    # sw slowdown active -> throttling True
+    monkeypatch.setattr(sentinel.subprocess, "run",
+                        lambda *a, **k: _FakeProc("88, Not Active, Active\n"))
+    assert sentinel.gpu_thermal() == (88.0, True)
+
+def test_gpu_thermal_not_active_is_not_active(monkeypatch):
+    """The exact substring trap: 'Not Active' must NOT read as throttling."""
+    monkeypatch.setattr(sentinel.subprocess, "run",
+                        lambda *a, **k: _FakeProc("60, Not Active, Not Active\n"))
+    _, throttling = sentinel.gpu_thermal()
+    assert throttling is False
+
+def test_gpu_thermal_fails_open(monkeypatch):
+    """A dead/absent nvidia-smi must never fabricate heat (else it kills a healthy run)."""
+    def boom(*a, **k): raise OSError("no nvidia-smi")
+    monkeypatch.setattr(sentinel.subprocess, "run", boom)
+    assert sentinel.gpu_thermal() == (None, False)
+    monkeypatch.setattr(sentinel.subprocess, "run",
+                        lambda *a, **k: _FakeProc("garbage no digits\n"))
+    assert sentinel.gpu_thermal() == (None, False)
+
+def test_hottest_soc_c_picks_max(monkeypatch, tmp_path):
+    zones = []
+    for milli in (45000, 78000, 60000):        # 45C, 78C, 60C
+        z = tmp_path / f"zone{milli}"; z.write_text(str(milli))
+        zones.append(str(z))
+    monkeypatch.setattr("glob.glob", lambda pat: zones)   # hottest_soc_c imports glob locally
+    assert sentinel.hottest_soc_c() == 78.0
+
+def test_hottest_soc_c_fails_open(monkeypatch):
+    """No readable zones -> None, never a fabricated temperature."""
+    monkeypatch.setattr("glob.glob", lambda pat: [])
+    assert sentinel.hottest_soc_c() is None
+
+def test_thermal_constants_debounced_and_ordered():
+    """A single nvidia-smi blip must not trigger a kill (>=2 consecutive), and WARN < KILL."""
+    assert sentinel.TEMP_KILL_CONSECUTIVE >= 2, "single-sample kill would false-fire on a blip"
+    assert sentinel.TEMP_WARN_C < sentinel.TEMP_KILL_C
+    assert sentinel.TEMP_KILL_C >= 85, "thermal ceiling set high on purpose (load temps uninstrumented)"
