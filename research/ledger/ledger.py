@@ -597,14 +597,67 @@ def cmd_update_paper(led, a):                                  # §C16
 
 # ---------------------------------------------------------------- readers
 
+_ARXIV_RE = re.compile(r"arxiv\.org/(?:abs|pdf)/(\d{4}\.\d{4,5})", re.I)
+
+
+def arxiv_id(url):
+    """The bare arXiv id (e.g. '2606.14187') from a source URL, else None. Strips any
+    version suffix so v1/v2 of the same paper dedup together."""
+    if not url:
+        return None
+    m = _ARXIV_RE.search(url)
+    return m.group(1) if m else None
+
+
+def norm_title_tokens(title):
+    """Lowercase alphanumeric token set of a title — the fuzzy-match key. Punctuation,
+    case, and spacing differences collapse away so 'Zeta: Dual Whitening' and
+    'zeta dual whitening' match."""
+    if not title:
+        return frozenset()
+    return frozenset(re.sub(r"[^a-z0-9]+", " ", title.lower()).split())
+
+
+def title_jaccard(a_title, b_title):
+    """Token Jaccard overlap of two titles in [0,1]; 0 if either is empty."""
+    A, B = norm_title_tokens(a_title), norm_title_tokens(b_title)
+    if not A or not B:
+        return 0.0
+    return len(A & B) / len(A | B)
+
+
+TITLE_DUP_THRESHOLD = 0.85   # >= this token-Jaccard flags a probable duplicate title
+
+
 def cmd_check_dup(led, a) -> int:
+    """Dedup a candidate against the ledger. Beyond the exact-slug + never_repeat check
+    (which depended on three separate LLM calls minting IDENTICAL slugs — the audit's
+    gap), it now ALSO catches the SAME paper entering under a different slug via its
+    arXiv id (from --source-url) and a fuzzy title match (--title). Cheap and
+    deterministic — no external fuzzy lib."""
     hits = []
     t = find(led["techniques"], "slug", a.slug)
     if t is not None:
-        hits.append({"where": "techniques", "status": t.get("status"),
-                     "first_seen": t.get("first_seen")})
+        hits.append({"where": "techniques", "match": "slug", "slug": a.slug,
+                     "status": t.get("status"), "first_seen": t.get("first_seen")})
     if a.slug in led["never_repeat"]:
-        hits.append({"where": "never_repeat"})
+        hits.append({"where": "never_repeat", "match": "slug", "slug": a.slug})
+
+    cand_arxiv = arxiv_id(getattr(a, "source_url", None))
+    cand_title = getattr(a, "title", None)
+    if cand_arxiv or cand_title:
+        for other in led["techniques"]:
+            if other.get("slug") == a.slug:
+                continue                                  # already reported above
+            if cand_arxiv and arxiv_id(other.get("source_url")) == cand_arxiv:
+                hits.append({"where": "techniques", "match": "arxiv_id",
+                             "arxiv_id": cand_arxiv, "slug": other.get("slug")})
+            elif cand_title:
+                j = title_jaccard(cand_title, other.get("title"))
+                if j >= TITLE_DUP_THRESHOLD:
+                    hits.append({"where": "techniques", "match": "fuzzy_title",
+                                 "jaccard": round(j, 3), "slug": other.get("slug"),
+                                 "title": other.get("title")})
     emit({"slug": a.slug, "verdict": "DUPLICATE" if hits else "NEW", "hits": hits})
     return 1 if hits else 0
 
@@ -795,6 +848,10 @@ def main(argv=None) -> int:
 
     p = sub.add_parser("check-dup", parents=[common])
     p.add_argument("slug")
+    p.add_argument("--source-url", default=None,
+                   help="also dedup by arXiv id extracted from this URL")
+    p.add_argument("--title", default=None,
+                   help="also dedup by fuzzy title match against existing techniques")
 
     p = sub.add_parser("query", parents=[common])
     p.add_argument("--status", default=None)

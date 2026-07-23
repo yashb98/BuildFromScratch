@@ -372,6 +372,38 @@ def test_the_run_type_lint_catches_the_original_bug(tmp_path):
     assert all(t not in ledger.RUN_TYPES for t in found.values())   # ...and flagged invalid
 
 
+def test_arxiv_id_extraction():
+    assert ledger.arxiv_id("http://arxiv.org/abs/2606.14187") == "2606.14187"
+    assert ledger.arxiv_id("https://arxiv.org/pdf/2606.14187v2") == "2606.14187"
+    assert ledger.arxiv_id("https://blog.google/some-post") is None
+    assert ledger.arxiv_id(None) is None
+
+
+def test_title_jaccard_fuzzy():
+    assert ledger.title_jaccard("Zeta: Dual Whitening!", "zeta dual whitening") == 1.0
+    assert ledger.title_jaccard("A method for X", "A totally different thing") < 0.85
+    assert ledger.title_jaccard("anything", "") == 0.0
+
+
+def test_check_dup_catches_arxiv_and_fuzzy_title(ledger_path):
+    """The audit gap: exact-slug dedup let the SAME paper re-enter under a different slug.
+    check-dup now also catches it by arXiv id and by fuzzy title."""
+    ledger.main(["add-technique", "--slug", "zeta", "--title", "Zeta: Dual Whitening for Matrix Opt",
+                 "--source-url", "http://arxiv.org/abs/2606.14187", "--ledger", str(ledger_path)])
+    # same paper, DIFFERENT slug, via arxiv id -> DUPLICATE
+    assert run(ledger_path, "check-dup", "zeta-rebrand",
+               "--source-url", "https://arxiv.org/pdf/2606.14187v3") == 1
+    # same paper, different slug, via fuzzy title -> DUPLICATE
+    assert run(ledger_path, "check-dup", "zeta-reworded",
+               "--title", "zeta dual whitening for matrix opt") == 1
+    # genuinely new -> NEW (no false positive)
+    assert run(ledger_path, "check-dup", "new-thing",
+               "--source-url", "http://arxiv.org/abs/2607.00001",
+               "--title", "An unrelated widget method") == 0
+    # exact-slug path still works with no url/title
+    assert run(ledger_path, "check-dup", "zeta") == 1
+
+
 def test_split_verdict_vocabulary(ledger_path):
     """2026-07-22: 'directional' was split into null / promising so a genuine negative
     result and a big-but-capped effect stop sharing one word. Both must be accepted, and
