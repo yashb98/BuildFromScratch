@@ -113,7 +113,10 @@ run_cell () {
   # pool headroom (unified memory shared; wait for >=60 GB free — a 596M cell runs at ~51.5 GB)
   for _ in $(seq 1 90); do a=$(free -g | awk '/Mem:/{print $7}'); [ "${a:-0}" -ge 60 ] && break; sleep 10; done
   echo "[$(date '+%F %T')] START $tag steps=$steps (~${budgetM}M tok)"
-  $PY "$TRAIN" --optimizer "$arm" --seed "$seed" --steps "$steps" --tag "$tag" --resume_every 200 \
+  # --resume_every 100 (not 200): the 596M load hits sentinel's 90C thermal kill in ~28 min on this box
+  # (2026-07-23), close to the step-200 checkpoint interval — so checkpoint every 100 steps (~17 min) to
+  # guarantee forward progress survives each thermal kill, even if the box still runs warm post-firmware-fix.
+  $PY "$TRAIN" --optimizer "$arm" --seed "$seed" --steps "$steps" --tag "$tag" --resume_every 100 \
       >> "$RESULTS/${tag}.out" 2>&1 &
   local tpid=$!
   $PY "$ROOT/sentinel.py" watch --pid "$tpid" --kill-at 0.80 --log "$LDIR/sentinel_${tag}.log" \
