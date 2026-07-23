@@ -70,3 +70,12 @@ BLOCKED (GPU + human trigger, per propose-only):
 GOVERNANCE TODO flagged, not decided unilaterally:
 - Flip the v3 core PPL/BPB section ACTIVE vs keep v3 downstream-only (suite.md).
 - Relabel the 5 still-'directional' runs after resolving the data-run verdict.json vs README contradiction.
+
+## Execution log — 2026-07-23 (continued)
+- Tier 2 #12 (partial): un-stranded 4 finished techniques so next-best is correct again (7852728).
+- Tier 3 #16 (safety-killers first): thermal-kill path + safe_cuda + jax_safe_env now tested
+  (test_guards.py new; test_sentinel.py +6 thermal tests). Full gate 433 passed (8ab1d2b).
+- All pushed to origin/harden-research-loop.
+Remaining Tier 2/3 (each needs a bit of your steer): #10 adopted-run protocol, #11 c5 schema+lint /
+  CLAUDE.md verdict-timing, #13 dedup, #14 calibration wiring, #15 doc reframe + meta-scrub,
+  #17 shared-box lock, #18 loop_state fsync, #19 kdump [HUMAN]. GPU items #5/#9 still await a rung gap + go.
