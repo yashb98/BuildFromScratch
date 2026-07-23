@@ -84,9 +84,14 @@ cool_down () {
 # every GOV_PAUSE_INTERVAL (3 min, per the user) and SIGCONTs once the box drops below RESUME_C. This keeps
 # the box out of the 90C zone that preceded the 2026-07-23 hard-lock while making continuous forward
 # progress. Checkpoints (--resume_every 100) stay as the backstop for an actual hard-lock.
-PAUSE_C="${LADDER_PAUSE_C:-85}"                 # SIGSTOP the trainer at/above this hottest_c
-RESUME_C="${LADDER_RESUME_C:-75}"               # SIGCONT once it cools below this (10C hysteresis, no flapping)
-GOV_RUN_INTERVAL="${LADDER_GOV_RUN:-30}"        # sample this often while running (catch PAUSE_C promptly)
+# PAUSE_C=80 (not the user's literal 85): live 2026-07-23 test showed the 596M load + concurrent GPU work
+# heats the box ~21C/min, so with a 30s sample an 85C threshold OVERSHOT to 90-91C — right at sentinel's
+# 90C hard-kill / the hard-lock line. 80C + a 10s sample catches it at ~82-83C, keeping a real ~7C margin
+# below 90. RESUME_C=75 with the 3-min cool check (user spec) still deep-cools to ~58C each pause, so the
+# run window stays ~60s (measured ~25% duty). Raise LADDER_PAUSE_C back to 85 only if the box runs cooler.
+PAUSE_C="${LADDER_PAUSE_C:-80}"                 # SIGSTOP the trainer at/above this hottest_c
+RESUME_C="${LADDER_RESUME_C:-75}"               # SIGCONT once it cools below this
+GOV_RUN_INTERVAL="${LADDER_GOV_RUN:-10}"        # sample every 10s while running (heating is ~21C/min — catch it fast)
 GOV_PAUSE_INTERVAL="${LADDER_GOV_PAUSE:-180}"   # check every 3 min while paused/cooling (user spec)
 
 thermal_governor () {
