@@ -74,10 +74,13 @@ cool_down () {
 }
 
 # EXTENSION cells: "<steps> <arm> <seed>". 6409 steps = 420M tok (~17.5 h/cell measured), 12818 = 840M (~35 h).
-# 420M-s2 pair first (completes the n=3 CI at the current top rung), then the 840M s0 pair (n=1 trend point).
+# 2026-07-23 LAUNCH SCOPE = the 420M-s2 pair ONLY (user-authorized): completes the n=3 across-seed CI at
+# the current top rung (~35 h), then STOPS. The 840M s0 pair is DEFERRED behind the firmware/kdump fix —
+# the box hard-locked today under a lighter load, so the heaviest rung waits for the durable fix + a reboot.
+# To run the 840M rung later, uncomment its line below and re-launch (done cells are skipped).
 CELLS=(
  "6409 adamw 2" "6409 normuon 2"
- "12818 adamw 0" "12818 normuon 0"
+ # "12818 adamw 0" "12818 normuon 0"   # 840M — DEFERRED (enable after enable_kdump_gb10.sh + OTA 7.5.0 + reboot)
 )
 
 run_cell () {
