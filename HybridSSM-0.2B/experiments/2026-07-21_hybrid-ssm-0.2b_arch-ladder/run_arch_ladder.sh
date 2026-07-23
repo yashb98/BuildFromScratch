@@ -19,14 +19,15 @@ DATA="$ROOT/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/t
 LOG="$LDIR/run_arch_ladder.log"
 PY=python3
 # Cool-down gate (see cool_down() for the 2026-07-23 post-mortem that set these).
-# COOL_C=58 is derived from sentinel.py's own constants, not guessed: TEMP_KILL_C=90 minus
-# the +31C idle->load transient measured on 2026-07-23 (66C at the 15:17:47 BST launch ->
-# soc 97C 50s later, sentinel_attn1to3_85M_s0.log 14:18:37Z), minus 1C. Launching at <=58C
-# is therefore the hottest start that keeps the first-minute transient under the kill line;
-# the old 70C sat ABOVE the box's own recently-loaded idle floor (64-69C), so it gated
-# nothing. A cold box reads 43-44C here, so 58C is attainable — just not one minute after
-# a thermal kill, which is exactly the launch this blocks.
-COOL_C="${LADDER_COOL_C:-58}"     # don't launch onto a box hotter than this
+# COOL_C=72 (CORRECTED 2026-07-23 evening): cool_down compares to hottest_c = max(GPU die, ALL ACPI
+# SoC zones), and the SoC zones idle at ~64-68C on this box — so an earlier 58C try was BELOW the idle
+# floor and deadlocked every launch (the dwell could never be satisfied). sentinel WARNs at 82C, KILLs
+# at 90C (3 consecutive). 72C is just above the idle floor (dwell reachable), 10C under WARN, 18C under
+# KILL; the proven CORE run_ladder.sh ran the 420M ladder at 70C. The +31C "transient" that argued for
+# 58C was measured on a HEAT-SOAKED box mid-cooldown after a kill (66C dipping from 90C), not a cool
+# one — which is exactly what the DWELL (6 sustained samples) rejects. The dwell + DEFER is the real
+# fix for the thrash; the threshold just has to be reachable AND under WARN.
+COOL_C="${LADDER_COOL_C:-72}"     # don't launch onto a box hotter than this (sustained, via dwell)
 COOL_DWELL="${LADDER_COOL_DWELL:-6}"    # consecutive cool samples required (6 x 30s = 3 min)
 COOL_MAX="${LADDER_COOL_MAX:-30}"       # bound: 30 x 30s = 15 min, then DEFER (never launch)
 MAXPASS="${LADDER_MAXPASS:-100}"

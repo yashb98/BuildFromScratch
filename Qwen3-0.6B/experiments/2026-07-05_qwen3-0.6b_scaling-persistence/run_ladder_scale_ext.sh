@@ -30,11 +30,15 @@ RESULTS=$IMU1/results
 LOG=$LDIR/run_ladder_scale_ext.log
 PY=python3
 
-# COOL_C derivation (2026-07-23): sentinel kills at TEMP_KILL_C=90C on the hottest of GPU die + SoC
-# zones; the measured idle->load transient is ~+31C. Starting below 90-31-1 = 58C keeps even the
-# first-minute transient under the kill line. 70C (the CORE default) sat AT the box's own loaded idle
-# floor (64-69C), so it gated nothing. Overridable, but do not raise it toward the kill line.
-COOL_C="${LADDER_COOL_C:-58}"
+# COOL_C (2026-07-23, corrected): cool_down compares COOL_C to hottest_c = max(GPU die, ALL ACPI SoC
+# zones). The SoC zones idle at ~64-68C on this box, so a threshold BELOW that floor (an earlier 58C
+# try) can never be satisfied and defers every cell forever. sentinel WARNs at 82C and KILLs at 90C
+# (3 consecutive). 72C sits just above the ~64-68C idle floor (so a sustained-cool dwell is reachable),
+# 10C under WARN and 18C under KILL. The proven CORE run_ladder.sh ran the whole 420M ladder at 70C;
+# 72C matches that with dwell headroom. The REAL fix for the 2026-07-23 thrash is the sustained dwell +
+# DEFER below (a heat-soaked box dipping through 72C mid-cooldown can't satisfy 6 consecutive samples),
+# NOT a low threshold. Overridable, but keep it above the idle floor and well under WARN.
+COOL_C="${LADDER_COOL_C:-72}"
 COOL_DWELL="${LADDER_COOL_DWELL:-6}"   # consecutive sub-COOL_C samples required (6 x 30s = 3 min sustained)
 COOL_MAX="${LADDER_COOL_MAX:-30}"      # bounded wait: 30 samples = 15 min, then DEFER (never "launch anyway")
 

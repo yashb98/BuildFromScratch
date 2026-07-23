@@ -61,7 +61,7 @@
 
   "c5_6_sentinel": {
     "result": "armed per cell",
-    "detail": "run_ladder_scale_ext.sh arms `sentinel.py watch --kill-at 0.80` on each cell's trainer pid (0.80 < safe_cuda 0.85 < OOM cliff) plus the thermal kill-switch, and preflights before the first launch. The cool-down gate is the FIXED 2026-07-23 version: requires 6 sustained sub-58C samples (3 min dwell), DEFERS on the bounded fall-through (never 'launch anyway'), and honours its return value so the hot-spell backoff engages — the CORE run_ladder.sh gate did none of these and let a cell relaunch onto a heat-soaked box 60s after a kill.",
+    "detail": "run_ladder_scale_ext.sh arms `sentinel.py watch --kill-at 0.80` on each cell's trainer pid (0.80 < safe_cuda 0.85 < OOM cliff) plus the thermal kill-switch, and preflights before the first launch. The cool-down gate is the FIXED 2026-07-23 version: requires 6 sustained sub-COOL_C samples (3 min dwell), DEFERS on the bounded fall-through (never 'launch anyway'), and honours its return value so the hot-spell backoff engages — the CORE run_ladder.sh gate did none of these and let a cell relaunch onto a heat-soaked box 60s after a kill. COOL_C=72C: hottest_c = max(GPU die, ALL SoC zones) idles at ~64-68C, so the threshold sits just above the reachable idle floor, 10C under WARN(82) and 18C under KILL(90); the proven CORE ran the 420M ladder at 70C. The dwell (not a low threshold) is what rejects a heat-soaked box dipping through the threshold mid-cooldown.",
     "src": "log"
   },
 
@@ -75,7 +75,7 @@
 
   "not_claimed": "No result is claimed at queue time. The 840M point is n=1 and LR-confounded (fixed AdamW LR across horizons) -> directional at best. Achieved tok/s is reported, never %-of-peak MFU (GB10 peak estimated, §C24).",
 
-  "thermal_precondition": "The box hard-locked 2026-07-23 15:24 BST under an 85M thermal load; NorMuon-at-scale is a heavier 596M/51.5 GB sustained load. The durable firmware fix (DGX OS OTA 7.5.0 + BIOS/BSP + crashkernel, human/sudo) is STILL pending. Recommendation: run the 420M-s2 pair first; land the firmware fix before the 840M rung.",
+  "thermal_precondition": "The box hard-locked 2026-07-23 15:24 BST under an 85M thermal load; NorMuon-at-scale is a heavier 596M/51.5 GB sustained load. The durable firmware fix (DGX OS OTA 7.5.0 + BIOS/BSP + crashkernel, human/sudo) is STILL pending. Recommendation: run the 420M-s2 pair first; land the firmware fix before the 840M rung. NOTE: this launch scope is the 420M-s2 pair only; the 840M pair is commented out in the driver, deferred behind the firmware fix.",
 
   "evidence_path": "Qwen3-0.6B/experiments/2026-07-05_qwen3-0.6b_scaling-persistence/c5_evidence_scale_ext.json"
 }
