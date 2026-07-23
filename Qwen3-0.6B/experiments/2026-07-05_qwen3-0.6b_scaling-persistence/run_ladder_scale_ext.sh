@@ -77,6 +77,42 @@ cool_down () {
   return 1
 }
 
+# ---- Proactive thermal GOVERNOR (2026-07-23, user-requested) -----------------------------------------
+# A SOFT layer BELOW sentinel's 90C hard kill. While a cell trains, this watches hottest_c (GPU die + all
+# SoC zones). At/above PAUSE_C it SIGSTOPs the trainer — the process freezes, the GPU goes idle and the box
+# cools, with ZERO lost progress (in-memory state is preserved; no checkpoint/restart). It then rechecks
+# every GOV_PAUSE_INTERVAL (3 min, per the user) and SIGCONTs once the box drops below RESUME_C. This keeps
+# the box out of the 90C zone that preceded the 2026-07-23 hard-lock while making continuous forward
+# progress. Checkpoints (--resume_every 100) stay as the backstop for an actual hard-lock.
+PAUSE_C="${LADDER_PAUSE_C:-85}"                 # SIGSTOP the trainer at/above this hottest_c
+RESUME_C="${LADDER_RESUME_C:-75}"               # SIGCONT once it cools below this (10C hysteresis, no flapping)
+GOV_RUN_INTERVAL="${LADDER_GOV_RUN:-30}"        # sample this often while running (catch PAUSE_C promptly)
+GOV_PAUSE_INTERVAL="${LADDER_GOV_PAUSE:-180}"   # check every 3 min while paused/cooling (user spec)
+
+thermal_governor () {
+  local pid=$1 tag=$2 paused=0 h
+  while kill -0 "$pid" 2>/dev/null; do
+    h=$(hottest_c)
+    if [ -n "$h" ]; then
+      if [ "$paused" -eq 0 ]; then
+        if [ "$h" -ge "$PAUSE_C" ] && kill -STOP "$pid" 2>/dev/null; then
+          paused=1
+          echo "[$(date '+%T')] [gov] $tag: ${h}C >= ${PAUSE_C}C -> PAUSED (SIGSTOP) to cool"
+        fi
+      else
+        if [ "$h" -lt "$RESUME_C" ] && kill -CONT "$pid" 2>/dev/null; then
+          paused=0
+          echo "[$(date '+%T')] [gov] $tag: ${h}C < ${RESUME_C}C -> RESUMED (SIGCONT)"
+        else
+          echo "[$(date '+%T')] [gov] $tag: ${h}C >= ${RESUME_C}C, still cooling (recheck in $((GOV_PAUSE_INTERVAL/60))min)"
+        fi
+      fi
+    fi
+    if [ "$paused" -eq 1 ]; then sleep "$GOV_PAUSE_INTERVAL"; else sleep "$GOV_RUN_INTERVAL"; fi
+  done
+  kill -CONT "$pid" 2>/dev/null   # never leave a now-exited trainer in a stopped state
+}
+
 # EXTENSION cells: "<steps> <arm> <seed>". 6409 steps = 420M tok (~17.5 h/cell measured), 12818 = 840M (~35 h).
 # 2026-07-23 LAUNCH SCOPE = the 420M-s2 pair ONLY (user-authorized): completes the n=3 across-seed CI at
 # the current top rung (~35 h), then STOPS. The 840M s0 pair is DEFERRED behind the firmware/kdump fix —
@@ -122,9 +158,14 @@ run_cell () {
   $PY "$ROOT/sentinel.py" watch --pid "$tpid" --kill-at 0.80 --log "$LDIR/sentinel_${tag}.log" \
       >/dev/null 2>&1 &
   local spid=$!
+  # Proactive thermal governor: SIGSTOP/SIGCONT the trainer to hold it under PAUSE_C (soft, below the
+  # sentinel 90C hard kill). Runs beside sentinel; sentinel remains the memory + last-resort thermal guard.
+  thermal_governor "$tpid" "$tag" >> "$LDIR/gov_${tag}.log" 2>&1 &
+  local gpid=$!
   wait "$tpid"; local rc=$?
-  # Give sentinel a beat to write its kill marker before we reap it (marker-before-grace fix, but be safe).
-  kill "$spid" 2>/dev/null
+  kill -CONT "$tpid" 2>/dev/null    # if the trainer exited while SIGSTOP'd, don't leave it stopped
+  kill "$gpid" 2>/dev/null          # stop the governor
+  kill "$spid" 2>/dev/null          # stop the sentinel watcher
   if [ $rc -eq 0 ] && [ -f "$RESULTS/checkpoint_${tag}.pt" ]; then
     touch "$LDIR/${tag}.done"; echo "[$(date '+%T')] [done] $tag"; return 0
   else
