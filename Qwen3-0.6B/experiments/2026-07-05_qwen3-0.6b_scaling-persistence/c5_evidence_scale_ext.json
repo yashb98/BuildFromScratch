@@ -1,0 +1,81 @@
+{
+  "run_id": "2026-07-23_qwen3-0.6b_normuon-at-scale",
+  "model_dir": "Qwen3-0.6B",
+  "lifecycle_stage": "scaling",
+  "objective": "pretrain-ablation",
+  "framework": "pytorch",
+  "technique_slug": "normuon-optimizer",
+  "parent_run_id": "2026-07-05_qwen3-0.6b_scaling-persistence",
+
+  "purpose": "Upgrade-plan #9. Extend the CORE scaling-persistence ladder (42M+168M+420M, COMPLETE) to resolve the flagship open question: does NorMuon's +0.474 BPB win over AdamW (2D weights, fixed N=596M) PERSIST or converge as the token budget grows? The 420M rung is currently n=2 paired seeds, which the memory + IMU-1 RESULT.md flag caps the verdict at directional (§C17 wants >=3). This adds the 3rd 420M seed to earn a real across-seed CI at the top rung, plus a 840M point (n=1) to extend the gap-vs-budget trend.",
+
+  "arm_plan": {
+    "trainer": "train_ablation.py (the exact IMU-1 single-variable trainer, fixed N=596M): only the 196 2D-weight updates differ between arms; embeddings/1D are AdamW wd=0 in BOTH; data split seed 0 fixed. Vary ONLY --steps and --seed.",
+    "arms": ["adamw @ peak_lr 2.4e-3", "normuon @ 0.011"],
+    "new_cells": [
+      "6409 adamw 2   (420M, 3rd seed)",
+      "6409 normuon 2 (420M, 3rd seed)",
+      "12818 adamw 0   (840M, 1st seed)",
+      "12818 normuon 0 (840M, 1st seed)"
+    ],
+    "order": "420M-s2 pair FIRST (completes the n=3 CI at the current top rung, ~35 h), then the 840M s0 pair (~70 h). The CI-completing half is a natural stop point if the box needs the firmware fix before the longer rung.",
+    "reused": "42M/168M/420M(s0,s1) cells are already .done and are skipped instantly — this run adds only the 4 genuinely new cells (§C13 control-reuse)."
+  },
+
+  "iso_flop": {
+    "note": "This is a deliberate BUDGET SWEEP at fixed N=596M, not an iso-FLOP pair. Within a budget rung the two arms are iso-config/iso-token (only the optimizer on 2D weights differs), so the per-rung gap is a clean single-variable comparison. Across rungs the token budget is the independent variable by design.",
+    "open_caveat_carried": "AdamW peak_lr is held fixed across budgets (IMU-1 RESULT.md Limitation #1). A per-horizon LR check at the 840M rung would de-confound the largest point; until then the 840M gap is directional and LR-confounded."
+  },
+
+  "c5_0_smoke": {
+    "result": "pass",
+    "detail": "train_ablation.py --optimizer adamw --seed 0 --steps 1 --no_compile --tag smoke_scale_ext, run 2026-07-23 20:22-20:23 under sentinel watch on the cold idle box. safe_cuda capped CUDA at 85% (109 GB); model built; param split 196 2D->adamw | 114 rest->AdamW; 1 step moved val PPL 184184.11 -> 121008.11 (finite, trending); DONE in 0.5 min; checkpoint saved (1.19 GB) then removed; exit 0.",
+    "log_path": "smoke_scale_ext.log",
+    "src": "log"
+  },
+
+  "c5_2_budget": {
+    "tokens_total": 2519040000,
+    "breakdown": "420M-s2 pair = 2 x 420M = 840M tok; 840M-s0 pair = 2 x 840M = 1680M tok.",
+    "gpu_hours_est": 105.0,
+    "gpu_days_est": 4.4,
+    "source": "measured per-cell wall-time (420M normuon_s0 completed in 1047.5 min = 17.46 h at 6,685 tok/s); 840M ~= 2x.",
+    "src": "derived"
+  },
+
+  "c5_3_probe": {
+    "tokens_per_sec": 6685,
+    "peak_mem_gb": 51.5,
+    "fits": true,
+    "detail": "Measured from the completed 420M normuon_s0 CORE cell (6409 steps, 51.5 GB peak, 6,685 tok/s, DONE in 1047.5 min) — a far stronger probe than a few steps. Peak mem 51.5 GB is well under the 109 GB safe_cuda cap; a 840M cell is the same model at 2x steps, so memory is unchanged.",
+    "src": "derived"
+  },
+
+  "c5_4_eta_hours": 105.0,
+
+  "c5_5_resume": {
+    "result": "pass",
+    "detail": "train_ablation.py checkpoints every --resume_every 200 steps (atomic + fsync) and a fresh run resumes from the checkpoint (crash-survivable upgrade, 2026-07-08; kill-9 verified). The driver re-attempts failed cells on the next pass so a thermally-killed cell resumes rather than restarting. .done markers give cell-level idempotence across reboots.",
+    "src": "log"
+  },
+
+  "c5_6_sentinel": {
+    "result": "armed per cell",
+    "detail": "run_ladder_scale_ext.sh arms `sentinel.py watch --kill-at 0.80` on each cell's trainer pid (0.80 < safe_cuda 0.85 < OOM cliff) plus the thermal kill-switch, and preflights before the first launch. The cool-down gate is the FIXED 2026-07-23 version: requires 6 sustained sub-58C samples (3 min dwell), DEFERS on the bounded fall-through (never 'launch anyway'), and honours its return value so the hot-spell backoff engages — the CORE run_ladder.sh gate did none of these and let a cell relaunch onto a heat-soaked box 60s after a kill.",
+    "src": "log"
+  },
+
+  "c5_7_guards": {
+    "result": "verified",
+    "detail": "PyTorch script: train_ablation.py imports safe_cuda before torch and calls guard(0.85) — confirmed live in the 2026-07-23 smoke (capped CUDA at 109 GB). Chunked cross-entropy for the 151,936 vocab (never materializes the (N, vocab) fp32 logits that crashed the box 2026-06-08). One GPU job at a time (§C4.5): the driver defers a pass if any python trainer is alive.",
+    "src": "log"
+  },
+
+  "verdict_metric": "Per cell: eval-harness text-lm-v2 BPB on wikitext-2 + a code corpus with the model's own Qwen3 tokenizer, suite_version stamped. Per rung: the AdamW-minus-NorMuon BPB gap with an across-seed CI (420M now n=3 paired seeds -> a real CI; 840M n=1 -> directional), then scaling_ladder.fit_gap_trend() over 168M/420M/840M to ask whether the gap trends to 0. A measured CONVERGENCE (the win compressing with budget) is a PASSING result, not a failure.",
+
+  "not_claimed": "No result is claimed at queue time. The 840M point is n=1 and LR-confounded (fixed AdamW LR across horizons) -> directional at best. Achieved tok/s is reported, never %-of-peak MFU (GB10 peak estimated, §C24).",
+
+  "thermal_precondition": "The box hard-locked 2026-07-23 15:24 BST under an 85M thermal load; NorMuon-at-scale is a heavier 596M/51.5 GB sustained load. The durable firmware fix (DGX OS OTA 7.5.0 + BIOS/BSP + crashkernel, human/sudo) is STILL pending. Recommendation: run the 420M-s2 pair first; land the firmware fix before the 840M rung.",
+
+  "evidence_path": "Qwen3-0.6B/experiments/2026-07-05_qwen3-0.6b_scaling-persistence/c5_evidence_scale_ext.json"
+}
