@@ -215,6 +215,61 @@ def test_watch_escalates_to_sigkill_after_grace(tmp_path, monkeypatch):
     assert "survived" in log and "SIGKILL" in log     # escalation path taken
 
 
+def test_watch_writes_marker_before_grace_elapses(tmp_path, monkeypatch):
+    # Regression for the lost-marker race (2026-07-23): the kill marker MUST be written the moment
+    # the kill decision is final — right after SIGTERM, BEFORE the SIGTERM->SIGKILL grace loop runs.
+    # If it is written only AFTER the grace loop, a SIGTERM-ignoring trainer holds the marker hostage
+    # for the whole grace window, and a caller that reaps the sentinel right after the trainer exits
+    # (run_arch_ladder.sh does: `wait "$tpid"; kill "$spid"`) loses it. That is exactly why only 1 of
+    # that day's 2 thermal kills left a marker, and why any recovery logic counting the marker undercounts.
+    import threading
+    monkeypatch.setattr(sentinel, "meminfo", lambda: (1000, 50))   # 95% pressure -> kill on sample 1
+    ready = tmp_path / "ready"
+    code = ("import signal,time,sys,pathlib;"
+            "signal.signal(signal.SIGTERM, signal.SIG_IGN);"
+            "pathlib.Path(sys.argv[1]).write_text('1');"
+            "time.sleep(60)")
+    child = subprocess.Popen(["python3", "-c", code, str(ready)])
+    for _ in range(100):
+        if ready.exists():
+            break
+        time.sleep(0.05)
+    assert ready.exists(), "child never installed its SIGTERM handler"
+
+    marker = tmp_path / "kill.json"
+    grace = 4.0
+    result = {}
+
+    def _run():
+        result["rc"] = sentinel.watch(child.pid, kill_at=0.80, log_path=str(tmp_path / "w.log"),
+                                      interval=0.05, grace=grace, marker_path=str(marker))
+
+    t = threading.Thread(target=_run, daemon=True)
+    start = time.monotonic()
+    t.start()
+    appeared_at = None
+    while time.monotonic() - start < grace + 3:
+        if marker.exists():
+            appeared_at = time.monotonic() - start
+            break
+        time.sleep(0.02)
+    try:
+        assert appeared_at is not None, "marker never appeared"
+        # The SIGTERM-ignoring child forces the FULL grace; a correctly-ordered marker predates it
+        # clearly. If the write had moved back after the grace loop, appeared_at would be ~grace.
+        assert appeared_at < grace * 0.5, (
+            f"marker appeared at {appeared_at:.2f}s, not clearly before the {grace:.0f}s grace "
+            f"— ordering regression: the marker is being written AFTER the grace loop")
+    finally:
+        t.join(timeout=grace + 5)
+        try:
+            child.kill()
+        except ProcessLookupError:
+            pass
+        child.wait()
+    assert result.get("rc") == 3
+
+
 # ------------------------------------------- pgrep self-match regression (#1 MLOps blocker)
 # 2026-06-17 digest, Health: the GPU-free watcher's `pgrep -f 'train.*\.py'`
 # self-matched its OWN command line (the pattern appears in pgrep's argv and in

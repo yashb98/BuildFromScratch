@@ -17,18 +17,31 @@ item 6), not a hand-rolled copy here. So this scorer reports PPL cross-arm + the
 emergence-speed curve, and defers a BPB number to eval-harness.
 
 Modes:
-  --smoke : CPU-only structural self-test of the pure aggregation/curve math (no GPU,
-            no model load) — safe to run beside a live trainer.
+  --smoke : CPU-only structural self-test — the pure aggregation/curve math PLUS a pure
+            path check that every .done cell resolves to a checkpoint that exists (no
+            GPU, no model load, nothing unpickled) — safe to run beside a live trainer.
   (default): GPU — score every .done cell in cells.json. §C4.5: run ONLY when no
             trainer is live (the driver calls this at a rung gap / at ladder end).
 
+2026-07-23 fix — the scorer was a SILENT NO-OP, the exact failure mode this file was
+written to eliminate. It looked for checkpoint_<cell>.pkl under LDIR, but the driver
+trains with `cd "$BUILD"` (run_arch_ladder.sh) so train_hybrid.py writes every checkpoint
+into BUILD. Every cell therefore failed the `ckpt.exists()` test, was skipped, and the
+script wrote "cells_scored: 0" and exited 0 — a green ladder with no numbers. Three
+changes: resolve checkpoints under BUILD; chdir to BUILD so the suite's cwd-relative
+paths resolve (load_corpora's fallback reads "model.py", which exists only there); and
+FAIL LOUD (non-zero) when .done cells exist but nothing was scored, or when a .done cell
+has no checkpoint on disk.
+
 GPU-VALIDATION-PENDING: the per-cell scoring path (load_model+ppl) is proven (it scored
 the pilot), but this orchestrator's end-to-end run has not yet executed on GPU — it will
-at the first rung gap. Until then treat the emitted numbers as unproduced.
+at the first rung gap. Until then treat the emitted numbers as unproduced. The path fix
+above is verified by the --smoke path check, not by a GPU run.
 """
 from __future__ import annotations
 import json
 import math
+import os
 import pathlib
 import sys
 
@@ -40,6 +53,22 @@ sys.path.insert(0, str(ROOT / "research"))
 
 def load_cells():
     return json.loads((LDIR / "cells.json").read_text())
+
+
+def cell_ckpt(cell_id: str) -> pathlib.Path:
+    """Checkpoint path for one cell — under BUILD, not LDIR.
+
+    run_arch_ladder.sh launches with `cd "$BUILD" && $PY train_hybrid.py ... --ckpt
+    "checkpoint_${id}.pkl"`, i.e. a BUILD-RELATIVE name, so that is where the trainer
+    writes it (verified: BUILD holds checkpoint_ssm_base_42M_s0.pkl et al, LDIR holds
+    none). Resolving under LDIR made every cell fail its exists() test and be skipped.
+    """
+    return BUILD / f"checkpoint_{cell_id}.pkl"
+
+
+def done_cells(cells: dict) -> list:
+    """Cells carrying the driver's .done marker (written in LDIR by train_hybrid.py)."""
+    return [c for c in cells["cells"] if (LDIR / f"{c['id']}.done").exists()]
 
 
 def emergence_curve(per_arm_rung_ppl: dict) -> dict:
@@ -67,7 +96,7 @@ def emergence_curve(per_arm_rung_ppl: dict) -> dict:
     return curves
 
 
-def _smoke() -> int:
+def _smoke_curve() -> int:
     # synthetic: ssm improves fastest, swa lags — assert the curve math is sane.
     fake = {"ssm_base": {42_000_000: 4.7, 85_000_000: 4.2, 150_000_000: 3.9},
             "swa128":   {48_000_000: 5.7, 96_000_000: 5.3, 170_000_000: 5.0}}
@@ -81,21 +110,65 @@ def _smoke() -> int:
     return 0
 
 
+def _smoke_paths() -> int:
+    """PURE PATH CHECK — no model load, no unpickle, no GPU, no import of the JAX suite.
+
+    Every cell the driver marked .done MUST resolve to a checkpoint that exists; that is
+    precisely the precondition the GPU path skipped in silence until 2026-07-23, turning
+    a whole ladder into "cells_scored: 0, exit 0". Also checks the file the suite's
+    load_corpora() code-corpus FALLBACK opens by a cwd-relative name ("model.py"), since
+    _score_all now chdirs to BUILD to make that resolve.
+    """
+    cells = load_cells()
+    done = done_cells(cells)
+    fails = []
+    for c in done:
+        p = cell_ckpt(c["id"])
+        if not p.exists():
+            fails.append(f"{c['id']}.done exists but {p} does not")
+    fallback = BUILD / "model.py"          # load_corpora() cwd-relative fallback source
+    if not fallback.exists():
+        fails.append(f"corpus fallback source {fallback} missing (scorer chdirs to BUILD)")
+    for msg in fails:
+        print(f"SMOKE FAIL: {msg}")
+    if fails:
+        return 1
+    print(f"SMOKE PASS: {len(done)}/{len(cells['cells'])} cells .done, every checkpoint "
+          f"resolves under {BUILD.name}/ (+ corpus fallback present)")
+    return 0
+
+
+def _smoke() -> int:
+    """Both CPU self-tests, both always run so both report; non-zero if EITHER fails."""
+    rc_math = _smoke_curve()
+    rc_paths = _smoke_paths()
+    return 1 if (rc_math or rc_paths) else 0
+
+
 def _score_all() -> int:
     """GPU path — score every .done cell. §C4.5: caller guarantees no live trainer."""
     sys.path.insert(0, str(BUILD))
+    # Score FROM the build dir. eval_suite_jax resolves some paths against the cwd — its
+    # load_corpora() code-corpus fallback does pathlib.Path("model.py").read_text(), and
+    # model.py exists only under BUILD — and the driver itself trains with `cd "$BUILD"`,
+    # so matching that cwd is the honest resolution. (2026-07-23: the driver invokes this
+    # script by absolute path from wherever it was started, so the cwd was arbitrary.)
+    os.chdir(BUILD)
     import importlib
     esj = importlib.import_module("eval_suite_jax")
     from transformers import AutoTokenizer
     tok = AutoTokenizer.from_pretrained(esj.TOKENIZER_REPO)
 
     cells = load_cells()
+    done = done_cells(cells)
     per_arm_rung = {}          # arm -> {tokens: {corpus: ppl}}
     scored = []
-    for cell in cells["cells"]:
-        done = LDIR / f"{cell['id']}.done"
-        ckpt = LDIR / f"checkpoint_{cell['id']}.pkl"
-        if not done.exists() or not ckpt.exists():
+    unresolved = []            # .done but no checkpoint on disk -> loud, never silent
+    for cell in done:
+        ckpt = cell_ckpt(cell["id"])
+        if not ckpt.exists():
+            unresolved.append({"cell": cell["id"], "expected_ckpt": str(ckpt)})
+            print(f"[MISSING] {cell['id']}: .done but no checkpoint at {ckpt}", flush=True)
             continue
         # patch the suite module's per-arm config, then reuse its proven loader/scorer
         esj.MIXER, esj.ATTN_EVERY, esj.NOPE = cell["mixer"], cell["attn_every"], cell["nope"]
@@ -118,13 +191,28 @@ def _score_all() -> int:
     out = {"suite_version": "text-lm-v2", "metric": f"val PPL ({corpus}), own tokenizer, n=1/cell",
            "comparability": "cross-arm PPL only (same tokenizer/corpora/windows); "
                             "cross-study BPB deferred to the consolidated eval-harness",
-           "cells_scored": len(scored), "rows": scored,
+           "cells_done": len(done), "cells_scored": len(scored), "rows": scored,
+           "unresolved_cells": unresolved,
            "emergence_curve": emergence_curve(per_arm_ppl),
            "caveat": "n=1 per cell -> DIRECTIONAL (§C17); mixer-type gaps carry the "
                      "LR-not-retuned-per-arm confound (see rung_42M_comparison.md)."}
     (LDIR / "arch_ladder_scores.json").write_text(json.dumps(out, indent=2) + "\n")
-    print(f"[done] wrote arch_ladder_scores.json ({len(scored)} cells)")
-    return 0
+    print(f"[done] wrote arch_ladder_scores.json ({len(scored)} of {len(done)} .done cells)")
+
+    # FAIL LOUD. Scoring nothing while trained cells exist is the silent no-op this file
+    # was written to eliminate; exiting 0 on it let run_arch_ladder.sh print "scoring done"
+    # over an empty result. The driver's `if $PY ...score_arch_ladder.py` branch turns a
+    # non-zero return into its "!! SCORING FAILED" line.
+    rc = 0
+    if done and not scored:
+        print(f"[FAIL] {len(done)} cell(s) carry a .done marker but ZERO were scored — "
+              f"checkpoint resolution is broken, not the ladder", flush=True)
+        rc = 1
+    if unresolved:
+        print(f"[FAIL] {len(unresolved)} .done cell(s) have no checkpoint on disk: "
+              f"{[u['cell'] for u in unresolved]}", flush=True)
+        rc = 1
+    return rc
 
 
 def main() -> int:

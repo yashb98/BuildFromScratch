@@ -29,11 +29,14 @@ watch --pid P [--kill-at 0.80] [--log FILE] [--interval 30] [--grace 60]
       * P dead (or zombie, or PID recycled) -> log it, exit 0 — the normal
         end of a run.
       * pool usage (MemTotal-MemAvailable)/MemTotal >= --kill-at ->
-        re-verify P's identity, SIGTERM P, wait up to --grace s (default 60),
-        SIGKILL if still alive, write the reason + trainer RSS to the log AND
-        (atomically, tmp+rename) to the marker file
-        research/loop_state.json.sentinel_kill, exit 3. --marker overrides
-        the marker path for SELF-TESTS ONLY; production arms never pass it.
+        re-verify P's identity, SIGTERM P, write the reason + trainer RSS to
+        the log AND (atomically, tmp+rename) to the marker file
+        research/loop_state.json.sentinel_kill, THEN wait up to --grace s
+        (default 60) and SIGKILL if still alive, exit 3. The marker is written
+        BEFORE the grace loop on purpose (2026-07-23, see write_kill_marker)
+        and re-written after it only if the escalation learned something new;
+        the schema is identical either way. --marker overrides the marker path
+        for SELF-TESTS ONLY; production arms never pass it.
 
 Why --kill-at defaults to 0.80
 ------------------------------
@@ -380,6 +383,25 @@ def hottest_soc_c():
     return hottest
 
 
+def write_kill_marker(marker: Path, payload: dict) -> None:
+    """Atomically (tmp+rename) write the §C6 kill marker. Phase 3 never sees torn JSON.
+
+    Called BEFORE the SIGTERM->SIGKILL grace loop, and again after it only if the
+    escalation changed anything. 2026-07-23: the marker used to be written only after
+    the grace loop, and the arch-ladder driver kills its sentinel ~1 s after the trainer
+    exits (run_arch_ladder.sh: `wait "$tpid"; ... kill "$spid"`). That afternoon's two
+    thermal kills therefore left ONE marker: the 14:16:46Z kill recorded, the 14:21:37Z
+    kill lost (its log ends at the KILL line with no "marker written"), so anything
+    counting thermal events from the marker undercounts them. The kill decision is
+    already final when SIGTERM goes out, so the record belongs there — a sentinel that
+    is itself killed mid-grace has still told the truth about what it did.
+    """
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    tmp = marker.with_name(marker.name + ".tmp")
+    tmp.write_text(json.dumps(payload, indent=2) + "\n")
+    os.replace(tmp, marker)
+
+
 def watch(pid, kill_at, log_path, interval, grace, marker_path=None) -> int:
     marker = Path(marker_path) if marker_path else MARKER
     logf = open(log_path, "a", buffering=1) if log_path else None
@@ -448,6 +470,33 @@ def watch(pid, kill_at, log_path, interval, grace, marker_path=None) -> int:
             except PermissionError as e:
                 kill_failed = f"SIGTERM denied: {e}"
                 log(f"ERROR: {kill_failed}")
+            kill_time = utcnow()  # pinned once: a re-write must not move the timestamp
+
+            def payload():
+                return {
+                    "time": kill_time,
+                    "killed_pid": pid,
+                    "trigger": trigger,
+                    "reason": reason,
+                    "gpu_temp_c": gpu_t,
+                    "soc_temp_c": soc_t,
+                    "gpu_throttling": throttling,
+                    "pool_usage": round(usage, 4),
+                    "pool_total_gb": round(total_kib / 2**20, 1),
+                    "trainer_rss_gb": (
+                        round(rss_gib, 2) if rss_gib is not None else None
+                    ),
+                    "kill_at": kill_at,
+                    "kill_failed": kill_failed,  # null on the normal path
+                    "log": str(log_path) if log_path else None,
+                }
+
+            # Record the kill NOW, before the grace loop — a caller that reaps us the
+            # moment the trainer dies must not be able to erase the event (see
+            # write_kill_marker).
+            write_kill_marker(marker, payload())
+            log(f"marker written: {marker}")
+            marker_kill_failed = kill_failed
             deadline = time.monotonic() + grace
             while time.monotonic() < deadline and watched_alive(pid, start_ticks):
                 time.sleep(1)
@@ -462,28 +511,9 @@ def watch(pid, kill_at, log_path, interval, grace, marker_path=None) -> int:
                     log(f"ERROR: {kill_failed}")
             else:
                 log(f"pid {pid} exited within grace period")
-            payload = {
-                "time": utcnow(),
-                "killed_pid": pid,
-                "trigger": trigger,
-                "reason": reason,
-                "gpu_temp_c": gpu_t,
-                "soc_temp_c": soc_t,
-                "gpu_throttling": throttling,
-                "pool_usage": round(usage, 4),
-                "pool_total_gb": round(total_kib / 2**20, 1),
-                "trainer_rss_gb": (
-                    round(rss_gib, 2) if rss_gib is not None else None
-                ),
-                "kill_at": kill_at,
-                "kill_failed": kill_failed,  # null on the normal path
-                "log": str(log_path) if log_path else None,
-            }
-            marker.parent.mkdir(parents=True, exist_ok=True)
-            tmp = marker.with_name(marker.name + ".tmp")
-            tmp.write_text(json.dumps(payload, indent=2) + "\n")
-            os.replace(tmp, marker)  # atomic: Phase 3 never sees torn JSON
-            log(f"marker written: {marker}")
+            if kill_failed != marker_kill_failed:  # escalation learned something new
+                write_kill_marker(marker, payload())
+                log(f"marker re-written ({kill_failed}): {marker}")
             return 3
         samples += 1
         if samples % 20 == 0:  # heartbeat every ~10 min at default interval

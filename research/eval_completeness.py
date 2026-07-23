@@ -4,11 +4,18 @@ The durable fix for the founding mistake (the pretraining three-build headline
 28.65/23.52/29.54 shipped on n=1 FineWeb val PPL with no downstream / no seed CI).
 Given a run's `lifecycle_stage` and the set of eval items it actually recorded, this
 decides whether the STAGE-DONE *required* battery ran. A run missing any HARD item is
-capped at verdict `directional` (never `win`), stamped `incomplete-eval: <missing>`.
+capped BELOW `win` and stamped `incomplete-eval: <missing>`.
 
 Layered ON TOP of the significance gates (§C10/§C13/§C17/§C18/§C21): completeness asks
 "did the right battery run?", significance asks "is the number real?". A run is `win`
 only if HARD-complete AND significant.
+
+Verdict vocabulary (split 2026-07-22, authority = ledger.py §C8): the cap is no longer
+the single word `directional`, which compressed two OPPOSITE realities — "found nothing"
+and "found something big, one gate short" — into one token. The cap now preserves that
+distinction: a real measured effect held back by a missing HARD item is `promising`, a
+measured no-effect is `null`, an uninterpretable contrast is `inconclusive`. `directional`
+remains a legal ledger value for historical entries but is NEVER emitted here.
 
 Source of truth for the human matrix: research/eval/per_stage_eval_batteries.md.
 Stdlib-only, pure CPU, no network — headless-safe for the loop (research-loop S8 /
@@ -16,6 +23,45 @@ ablation-runner Phase 6). Recency per §C25.7: re-research a stage if RESEARCHED
 older than RECENCY_WINDOW_DAYS.
 """
 from __future__ import annotations
+
+import importlib.util
+from pathlib import Path
+
+# ── Verdict vocabulary ──────────────────────────────────────────────────────────────
+# The ledger is the single source of truth (§C8/§C11); this gate must never invent a word
+# `ledger.py` would reject. research/ledger/ is not a package, so load it by absolute path
+# (cwd-independent for the headless loop) and deliberately do NOT register it in sys.modules,
+# so it cannot shadow the plain `import ledger` used elsewhere (research/tests/test_ledger.py).
+_LEDGER_PY = Path(__file__).resolve().parent / "ledger" / "ledger.py"
+
+
+def _load_ledger_vocabulary():
+    spec = importlib.util.spec_from_file_location("_c25_ledger_vocab", _LEDGER_PY)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)   # no import-time side effects: ledger.py's CLI is under __main__
+    return frozenset(mod.VERDICTS), frozenset(mod.NEUTRAL_VERDICTS)
+
+
+VERDICTS, NEUTRAL_VERDICTS = _load_ledger_vocabulary()
+DEPRECATED_VERDICTS = frozenset({"directional"})  # legal in old entries; never emitted by this gate
+VERDICT_VOCAB = "split-2026-07-22"                # stamped into every result so a v1-era
+                                                  # `directional` is never confused with a new call
+
+# Significance verdicts this gate accepts from the §C13/§C17 gate. Anything else (None, a typo,
+# the deprecated `directional`) is read as `inconclusive` — fail closed, per §C6: an unreadable
+# signal never buys a win.
+ACCEPTED_SIGNIFICANCE = frozenset({"win", "promising", "null", "loss", "inconclusive"})
+
+# §C25.3 — what a HARD-incomplete battery downgrades each significance verdict TO. Every value
+# is in NEUTRAL_VERDICTS: an incomplete battery can never yield `win`, and can never burn a
+# `loss` into never_repeat (ledger.py auto-appends never_repeat[] on verdict=loss).
+CAP_WHEN_INCOMPLETE = {
+    "win":          "promising",     # real, measured effect — short exactly the missing HARD item(s)
+    "promising":    "promising",
+    "null":         "null",          # measured no-effect; a missing item cannot manufacture one
+    "loss":         "inconclusive",  # measured worse, but an incomplete battery may not condemn it
+    "inconclusive": "inconclusive",
+}
 
 REGISTRY_VERSION = "v1"
 RESEARCHED_ON = "2026-06-22"
@@ -25,7 +71,7 @@ STAGES = ("data", "architecture", "scaling", "pretrain-run", "mid-training", "ba
           "sft", "preference", "rlvr", "safety", "interpretability", "systems", "serving")
 
 # Per stage: `required` = always-HARD items (must be in the run's recorded items, or the
-# run is capped to `directional`). `conditional` = HARD only when the named condition is
+# run is capped below `win`). `conditional` = HARD only when the named condition is
 # active (e.g. an architecture change that touches attention requires the KV/latency Pareto).
 # Item keys are abstract identifiers the supplying skill stamps into the run's metrics.
 REGISTRY: dict[str, dict] = {
@@ -93,7 +139,7 @@ REGISTRY: dict[str, dict] = {
 # §C26 — every step ships a FIGURE. Global report-only item checked for ALL stages: a run
 # without a `figure` artifact is flagged `report_missing: [figure]` and may not be rendered to a
 # README/digest until `research/eval_plots.figure_for_run(run_dir)` has produced one. Tracked, not
-# a HARD significance cap (a missing plot doesn't make a real result `directional`).
+# a HARD significance cap (a missing plot doesn't downgrade a real result's verdict).
 GLOBAL_REPORT_ONLY = ("figure",)
 
 # §C25.7.3 — items that may NEVER be a stage's SOLE headline signal (auto-flagged).
@@ -111,6 +157,11 @@ def check_completeness(lifecycle_stage: str, present_items, conditions=None) -> 
 
     present_items: iterable of recorded eval-item keys the run actually produced.
     conditions:    iterable of active condition flags (e.g. {"quantization"}).
+
+    `verdict_cap` is the CEILING — the strongest verdict this run may carry — not the final
+    call: `None` when the HARD battery is complete (a `win` is permitted), `promising` when a
+    HARD item is missing, `inconclusive` when the stage is unknown (§C25.1). gate_verdict()
+    picks the actual word inside that ceiling from the significance signal.
     """
     present = set(present_items or ())
     conds = set(conditions or ())
@@ -118,6 +169,7 @@ def check_completeness(lifecycle_stage: str, present_items, conditions=None) -> 
     if lifecycle_stage not in REGISTRY:
         return {"stage": lifecycle_stage, "known": False, "complete": False,
                 "missing_hard": [], "verdict_cap": "inconclusive", "report_missing": report_missing,
+                "verdict_vocab": VERDICT_VOCAB,
                 "reason": f"unknown lifecycle_stage '{lifecycle_stage}' — cannot be win (§C25.1)"}
     spec = REGISTRY[lifecycle_stage]
     required = list(spec["required"])
@@ -125,44 +177,76 @@ def check_completeness(lifecycle_stage: str, present_items, conditions=None) -> 
         if cond in conds:
             required += items
     missing = [k for k in required if k not in present]
-    bad_sole = sorted(present & DISALLOWED_SOLE_SIGNAL) if len(present) == 1 else []
+    # §C25.7.3: a disallowed item is the SOLE headline whenever it is present AND — after setting
+    # aside report-only artifacts (§C26 `figure`) and the disallowed items themselves — NO admissible
+    # effect-measurement signal remains. The old `len(present) == 1` test let a founding-mistake
+    # headline (e.g. `valppl_n1_stage_headline`) escape the floor the instant ANY second item was
+    # recorded, even a report-only figure — so a confounded n=1 val-PPL run flanked by a plot could
+    # still reach `promising`/`win`. Judge sole-ness by what's left after the report-only set, not by count.
+    disallowed_present = present & DISALLOWED_SOLE_SIGNAL
+    admissible = present - DISALLOWED_SOLE_SIGNAL - set(GLOBAL_REPORT_ONLY)
+    bad_sole = sorted(disallowed_present) if (disallowed_present and not admissible) else []
     complete = not missing and not bad_sole
     return {
         "stage": lifecycle_stage, "known": True, "complete": complete,
         "required": required, "present": sorted(present), "missing_hard": missing,
         "disallowed_sole_signal": bad_sole, "report_missing": report_missing,  # §C26: [figure] if no plot
-        "verdict_cap": None if complete else "directional",
+        # ceiling, not the call: a disallowed-sole-signal run has no admissible effect measurement,
+        # so its ceiling is `inconclusive` (matching gate_verdict), not `promising` (see docstring).
+        "verdict_cap": None if complete else ("inconclusive" if bad_sole else "promising"),
         "registry_version": REGISTRY_VERSION, "researched_on": RESEARCHED_ON,
+        "verdict_vocab": VERDICT_VOCAB,
     }
 
 
 def gate_verdict(lifecycle_stage: str, present_items, significance_verdict: str,
                  conditions=None) -> dict:
     """Compose §C25.3: completeness caps significance.
-    significance_verdict ∈ {win, loss, inconclusive} from the existing §C13/§C17 gate."""
+
+    significance_verdict: the §C13/§C17 call, one of ACCEPTED_SIGNIFICANCE. Anything else is
+    read as `inconclusive` (fail closed). Returns the verdict to record in the ledger — never
+    `win` unless the HARD battery is complete, and never the deprecated `directional`.
+    """
+    sig = significance_verdict if significance_verdict in ACCEPTED_SIGNIFICANCE else "inconclusive"
     c = check_completeness(lifecycle_stage, present_items, conditions)
-    if not c["complete"]:
-        verdict = c["verdict_cap"]   # "directional" (known but missing HARD) | "inconclusive" (unknown stage, §C25.1)
-        why = ("incomplete-eval: " + ", ".join(c["missing_hard"] + c.get("disallowed_sole_signal", []))
-               if c["known"] else c["reason"])
-    elif significance_verdict == "win":
+    if not c["known"]:
+        verdict, why = c["verdict_cap"], c["reason"]          # unknown stage → inconclusive (§C25.1)
+    elif not c["complete"]:
+        why = "incomplete-eval: " + ", ".join(c["missing_hard"] + c["disallowed_sole_signal"])
+        if c["disallowed_sole_signal"]:
+            # the run's ONLY signal is disallowed as a headline (§C25.7.3) → there is no
+            # admissible effect measurement at all, so this cannot even be `promising`.
+            verdict = "inconclusive"
+        else:
+            verdict = CAP_WHEN_INCOMPLETE[sig]
+            if sig == "loss":
+                why += " — measured worse, but an incomplete battery may not burn a never_repeat loss (§C25.3)"
+    elif sig == "win":
         verdict, why = "win", "HARD-complete and significant (§C25.3.5)"
     else:
-        verdict, why = significance_verdict, "HARD-complete; significance gate decides"
-    return {"verdict": verdict, "completeness": c, "significance_verdict": significance_verdict, "why": why}
+        verdict, why = sig, "HARD-complete; significance gate decides"
+    # Postcondition — the reader that keeps this gate and ledger.VERDICTS in lockstep (§C8/§C11):
+    # every emitted word is a current ledger verdict, and an incomplete battery emits only a
+    # NEUTRAL one — never `win`, never a `loss` (which auto-appends to never_repeat[]).
+    if verdict not in VERDICTS or verdict in DEPRECATED_VERDICTS:
+        raise ValueError(f"§C25 gate emitted '{verdict}', not a current ledger verdict")
+    if not c["complete"] and verdict not in NEUTRAL_VERDICTS:
+        raise ValueError(f"§C25 cap violated: incomplete battery emitted '{verdict}'")
+    return {"verdict": verdict, "completeness": c, "significance_verdict": significance_verdict,
+            "significance_read_as": sig, "why": why}
 
 
 def _self_test():
     # data stage: all required present + no active condition -> complete
     full = REGISTRY["data"]["required"]
     assert check_completeness("data", full)["complete"], "full data battery should be complete"
-    # drop one required -> directional, names the missing item
+    # drop one required -> capped below win, names the missing item
     part = check_completeness("data", full[:-1])
-    assert not part["complete"] and part["verdict_cap"] == "directional"
+    assert not part["complete"] and part["verdict_cap"] == "promising"
     assert "second_lr_recheck" in part["missing_hard"], part
     # the founding mistake: a pretrain/base-eval headline on ONLY n=1 val PPL
     bad = check_completeness("base-eval", ["valppl_n1_stage_headline"])
-    assert not bad["complete"] and bad["verdict_cap"] == "directional"
+    assert not bad["complete"] and bad["disallowed_sole_signal"] == ["valppl_n1_stage_headline"]
     # conditional fires only when active: architecture touching attention needs the Pareto
     arch_req = REGISTRY["architecture"]["required"]
     assert check_completeness("architecture", arch_req)["complete"]                      # no condition
@@ -170,16 +254,30 @@ def _self_test():
     assert "kv_ttft_itl_pareto" in c_attn["missing_hard"]                                # condition makes it HARD
     # unknown stage cannot win
     assert check_completeness("frobnicate", ["x"])["verdict_cap"] == "inconclusive"
-    # gate_verdict composition: complete+significant=win; incomplete caps to directional
+    # gate_verdict composition: complete+significant=win; incomplete caps below win, and the
+    # 2026-07-22 split keeps "found something, one gate short" apart from "found nothing"
     assert gate_verdict("data", full, "win")["verdict"] == "win"
-    assert gate_verdict("data", full[:-1], "win")["verdict"] == "directional"
+    assert gate_verdict("data", full[:-1], "win")["verdict"] == "promising"
+    assert gate_verdict("data", full[:-1], "null")["verdict"] == "null"
     assert gate_verdict("data", full, "loss")["verdict"] == "loss"
+    # an incomplete battery may not condemn an arm to never_repeat (§C25.3)
+    assert gate_verdict("data", full[:-1], "loss")["verdict"] == "inconclusive"
+    # the only signal is §C25.7.3-disallowed -> no admissible effect, so not even `promising`
+    assert gate_verdict("base-eval", ["valppl_n1_stage_headline"], "win")["verdict"] == "inconclusive"
+    # unreadable significance fails closed
+    assert gate_verdict("data", full, "banana")["verdict"] == "inconclusive"
+    # the deprecated word is never emitted, from any stage/battery/significance combination
+    for st, spec in REGISTRY.items():
+        for items in (spec["required"], spec["required"][1:], []):
+            for s in sorted(ACCEPTED_SIGNIFICANCE):
+                assert gate_verdict(st, items, s)["verdict"] not in DEPRECATED_VERDICTS
     # every stage is well-formed (no key collisions between required and conditional)
     for st, spec in REGISTRY.items():
         req = set(spec["required"])
         for items in spec.get("conditional", {}).values():
             assert not (set(items) & req), f"{st}: conditional overlaps required"
-    print(f"eval_completeness self-test PASS — {len(STAGES)} stages, registry {REGISTRY_VERSION} ({RESEARCHED_ON})")
+    print(f"eval_completeness self-test PASS — {len(STAGES)} stages, registry {REGISTRY_VERSION} "
+          f"({RESEARCHED_ON}), verdict vocab {VERDICT_VOCAB}")
 
 
 if __name__ == "__main__":

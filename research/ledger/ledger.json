@@ -549,7 +549,15 @@
       "ended": null,
       "status": "done",
       "verdict": null,
-      "metrics": {},
+      "metrics": {
+        "code_corpus_id": "codeparrot_clean_valid",
+        "code_floor_abs": 280.56,
+        "code_ppl": 438.67,
+        "self_floor": true,
+        "suite_version": "text-lm-v2",
+        "wikitext2_floor_abs": 1.3,
+        "wikitext2_ppl": 37.01
+      },
       "artifacts_dir": null,
       "lineage": {
         "git_commit": "41824a5",
@@ -563,15 +571,8 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-06-16_qwen3-0.6b_eval-faithful.md",
-      "objective": "pretrain-ablation",
-      "suite_version": "text-lm-v2",
-      "self_floor": true,
-      "wikitext2_ppl": 37.01,
-      "wikitext2_floor_abs": 1.3,
-      "code_ppl": 438.67,
-      "code_corpus_id": "codeparrot_clean_valid",
-      "code_floor_abs": 280.56
+      "detail_md": null,
+      "objective": "pretrain-ablation"
     },
     {
       "run_id": "2026-06-16_qwen3-0.6b_eval-modernized",
@@ -587,7 +588,15 @@
       "ended": null,
       "status": "done",
       "verdict": null,
-      "metrics": {},
+      "metrics": {
+        "code_corpus_id": "codeparrot_clean_valid",
+        "code_floor_abs": 111.92,
+        "code_ppl": 129.42,
+        "self_floor": true,
+        "suite_version": "text-lm-v2",
+        "wikitext2_floor_abs": 1.07,
+        "wikitext2_ppl": 27.8
+      },
       "artifacts_dir": null,
       "lineage": {
         "git_commit": "41824a5",
@@ -601,15 +610,8 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-06-16_qwen3-0.6b_eval-modernized.md",
-      "objective": "pretrain-ablation",
-      "suite_version": "text-lm-v2",
-      "self_floor": true,
-      "wikitext2_ppl": 27.8,
-      "wikitext2_floor_abs": 1.07,
-      "code_ppl": 129.42,
-      "code_corpus_id": "codeparrot_clean_valid",
-      "code_floor_abs": 111.92
+      "detail_md": null,
+      "objective": "pretrain-ablation"
     },
     {
       "run_id": "2026-06-16_qwen3-0.6b_eval-prope25",
@@ -625,7 +627,15 @@
       "ended": null,
       "status": "done",
       "verdict": null,
-      "metrics": {},
+      "metrics": {
+        "code_corpus_id": "codeparrot_clean_valid",
+        "code_floor_abs": 298.9,
+        "code_ppl": 447.3,
+        "self_floor": true,
+        "suite_version": "text-lm-v2",
+        "wikitext2_floor_abs": 1.7,
+        "wikitext2_ppl": 38.08
+      },
       "artifacts_dir": null,
       "lineage": {
         "git_commit": "41824a5",
@@ -639,15 +649,8 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-06-16_qwen3-0.6b_eval-prope25.md",
-      "objective": "pretrain-ablation",
-      "suite_version": "text-lm-v2",
-      "self_floor": true,
-      "wikitext2_ppl": 38.08,
-      "wikitext2_floor_abs": 1.7,
-      "code_ppl": 447.3,
-      "code_corpus_id": "codeparrot_clean_valid",
-      "code_floor_abs": 298.9
+      "detail_md": null,
+      "objective": "pretrain-ablation"
     },
     {
       "run_id": "2026-06-16_qwen3-0.6b_eval-prope10",
@@ -663,7 +666,15 @@
       "ended": null,
       "status": "done",
       "verdict": null,
-      "metrics": {},
+      "metrics": {
+        "code_corpus_id": "codeparrot_clean_valid",
+        "code_floor_abs": 690.96,
+        "code_ppl": 1356.31,
+        "self_floor": true,
+        "suite_version": "text-lm-v2",
+        "wikitext2_floor_abs": 3.67,
+        "wikitext2_ppl": 69.63
+      },
       "artifacts_dir": null,
       "lineage": {
         "git_commit": "41824a5",
@@ -677,15 +688,8 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-06-16_qwen3-0.6b_eval-prope10.md",
+      "detail_md": null,
       "objective": "pretrain-ablation",
-      "suite_version": "text-lm-v2",
-      "self_floor": true,
-      "wikitext2_ppl": 69.63,
-      "wikitext2_floor_abs": 3.67,
-      "code_ppl": 1356.31,
-      "code_corpus_id": "codeparrot_clean_valid",
-      "code_floor_abs": 690.96,
       "note": "step-4000 checkpoint; run stopped early at ~step 5400 (undertrained vs 18150-step peers)"
     },
     {
@@ -859,7 +863,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-06-18_qwen3-0.6b_imu1-deconfound-p1.md",
+      "detail_md": null,
       "objective": "pretrain-ablation",
       "arm_plan": {
         "arms": [
@@ -930,7 +934,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-06-21_qwen3-0.6b_arch-subdrill-p2.md",
+      "detail_md": null,
       "objective": "pretrain-ablation",
       "arm_plan": {
         "arms": [
@@ -1014,7 +1018,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-06-24_qwen3-06b_dclm-edu-dataprep.md",
+      "detail_md": null,
       "objective": "pretrain-ablation",
       "dataset": {
         "id": "HuggingFaceTB/dclm-edu",
@@ -1075,7 +1079,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-06-24_qwen3-0.6b_data-dclm-vs-fineweb.md",
+      "detail_md": null,
       "objective": "pretrain-ablation",
       "lifecycle_stage": "data",
       "confound_check": {
@@ -1140,7 +1144,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-06-26_qwen3-0.6b_data-mix-composition.md",
+      "detail_md": null,
       "objective": "pretrain-ablation",
       "lifecycle_stage": "data",
       "confound_check": {
@@ -1418,7 +1422,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-07-01_qwen3-0.6b_rlvr-phase1-passk.md",
+      "detail_md": null,
       "objective": "finetune",
       "lifecycle_stage": "rlvr",
       "note": "rlvr Phase-1 pass@k go/no-go (plan.md Phase 1, pre-registered rule in run_phase1_passk.py). DECISION: GO -> P1 prompt-set prep unlocked; Phase-2 GRPO training remains behind the needs-approval rlvr-method-plan proposal."
@@ -1457,7 +1461,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-07-02_qwen3-0.6b_grpo-prompts-dataprep.md",
+      "detail_md": null,
       "objective": "finetune",
       "lifecycle_stage": "rlvr",
       "note": "P1 of rlvr plan (unlocked by Phase-1 GO): GRPO training prompts, eval-decontaminated (drops) + SFT-flagged (kept). Phase-2 GRPO training still needs-approval."
@@ -1537,7 +1541,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-07-02_qwen3-0.6b_grpo-phase2.md",
+      "detail_md": null,
       "objective": "finetune",
       "lifecycle_stage": "rlvr",
       "note": "measured pace 362s/step (no-KV-cache decode dominates) -> revised ETA ~88h total (grpo ~30h + random ~30h + rft ~26h + evals); launched 2026-07-02 07:39"
@@ -1570,7 +1574,8 @@
         ],
         "headline_capped": true,
         "corpora_agree": true,
-        "conclusion": "DIRECTIONAL (CONVERGES shape on wikitext-2): the top budget (420M) rung is n=2 seeds (<3, \u00a7C17), so this is a directional trend, NOT a headline win \u2014 add a 3rd 420M seed (and the 840M rung) to earn more. Shape: The NorMuon advantage CONVERGES toward 0 with budget \u2014 an early-training speedup, as the IMU-1 RESULT.md Limitation #3 predicted it might."
+        "conclusion": "DIRECTIONAL (CONVERGES shape on wikitext-2): the top budget (420M) rung is n=2 seeds (<3, \u00a7C17), so this is a directional trend, NOT a headline win \u2014 add a 3rd 420M seed (and the 840M rung) to earn more. Shape: The NorMuon advantage CONVERGES toward 0 with budget \u2014 an early-training speedup, as the IMU-1 RESULT.md Limitation #3 predicted it might.",
+        "suite_version": "text-lm-v2"
       },
       "artifacts_dir": "Qwen3-0.6B/experiments/2026-07-05_qwen3-0.6b_scaling-persistence",
       "lineage": {
@@ -1585,10 +1590,9 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-07-05_qwen3-0.6b_scaling-persistence.md",
+      "detail_md": null,
       "objective": "pretrain-ablation",
-      "lifecycle_stage": "scaling",
-      "suite_version": "text-lm-v2"
+      "lifecycle_stage": "scaling"
     },
     {
       "run_id": "2026-07-19_qwen3-0.6b_interp-cka-repconvergence",
@@ -1618,7 +1622,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-07-19_qwen3-0.6b_interp-cka-repconvergence.md",
+      "detail_md": null,
       "lifecycle_stage": "interpretability",
       "metric": "linear_cka",
       "headline": "Pre-registered CKA null: NorMuon does NOT reach AdamW@420M representation earlier by more than the across-seed band; directional-but-sub-noise at 42M, reverses by 168M. A caught fp16-overflow confound faked an earlier null.",
@@ -1663,7 +1667,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-07-19_qwen3-0.6b_cce-fused-ce.md",
+      "detail_md": null,
       "lifecycle_stage": "systems",
       "headline": "CCE fused linear CE: correctness PASS (torch+Triton vs naive fp32 oracle, re-verified GB10 2026-07-19, |Dloss|<1e-6); MEMORY win validated on GB10 (naive 61.4GB->CCE 2.04GB at 32768 tok, naive OOMs at 65536); throughput wall-clock CCE fastest (298ms vs 1038 torch.compile). Roofline off-box (propose-only). Convergence@pretrain UNVALIDATED (needs iso-FLOP A/B).",
       "spec": "research/kernel/SPEC_cce_fused_linear_ce.md",
@@ -1704,7 +1708,11 @@
         "suite_version": "text-lm-v2",
         "self_floor": true,
         "corpus_wikitext": "Salesforce/wikitext:wikitext-2-raw-v1:validation@b08601e",
-        "corpus_code": "codeparrot/codeparrot-clean-valid:train@4db92d2 (streaming first-N)"
+        "corpus_code": "codeparrot/codeparrot-clean-valid:train@4db92d2 (streaming first-N)",
+        "best_val_loss": 3.7839,
+        "final_train_loss": 3.8149,
+        "final_val_loss": 3.9245,
+        "step0_loss": 12.4317
       },
       "artifacts_dir": "HybridSSM-0.2B/experiments/2026-07-19_hybrid-ssm-0.2b_build",
       "lineage": {
@@ -1735,7 +1743,6 @@
         "tok_per_step": 8192,
         "note": "batch reduced 8->4 after OOM; CE-under-autodiff memory follow-up recorded"
       },
-      "step0_loss": 12.4317,
       "kill_reason": "sentinel memory kill at step 580 (pool 81.3% >= 0.80); reached loss 12.4->6.6 on real FineWeb-Edu; ckpt@step400 resumable but needs a memory fix before resume (SSM-scan + chunked-CE hold ~61GB)",
       "resume_needs": "remat/reduce-batch/reduce-SSM-state, then clear marker",
       "memory_fix": "nn.remat blocks: 61.5GB->16.6GB alloc, pool 81%->~42%; resumed from step-400 ckpt",
@@ -1745,9 +1752,6 @@
       "c5_evidence_provenance": "RECONSTRUCTED 2026-07-20 AFTER launch - the 2026-07-19 launch created this ledger entry but never wrote c5_evidence.json, so the SS-C5 \"evidence recorded BEFORE launch\" requirement was NOT met for this run. Per-item src tags (log/derived/attestation/not-captured) are in the evidence file.",
       "open_gate_gap": "verify.py last ran 2026-07-19 12:52, model.py modified 22:27 to add nn.remat -> the verify gate has NOT been re-run against the training model. Re-run + capture verify.log before scoring (GPU work; waits for the arm to finish per SS-C4.5).",
       "completed": "2026-07-20",
-      "final_train_loss": 3.8149,
-      "final_val_loss": 3.9245,
-      "best_val_loss": 3.7839,
       "steps": 21156,
       "incomplete_eval": [
         "iso-flop sibling arms (none yet)",
@@ -1785,7 +1789,7 @@
       "eta_hours": 16.6,
       "started": "2026-07-21",
       "ended": null,
-      "status": "launched",
+      "status": "crashed",
       "verdict": null,
       "metrics": {},
       "artifacts_dir": null,
@@ -1801,7 +1805,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-07-20_hybrid-ssm-0.2b_pretrain-ssm-base-s1.md",
+      "detail_md": null,
       "objective": "pretrain-ablation",
       "lifecycle_stage": "architecture",
       "arm": "ssm_base_s1",
@@ -1811,7 +1815,8 @@
       "design": "seed ladder base cell (mixer=ssm, attn_every=2, nope off): identical to s0, only --seed 0->1. C17 paired-seed; same tokcache.",
       "resume_roundtrip": "pass (proven on s0: step-400 ckpt resume after sentinel kill)",
       "guards": "jax_safe_env before jax (train_hybrid.py:10); chunked CE (model.py:136); verified 2026-07-20",
-      "planned_launch": "after s0 eval-suite completes (C4.5); fresh smoke + sentinel watch at launch; status set to launched then"
+      "planned_launch": "after s0 eval-suite completes (C4.5); fresh smoke + sentinel watch at launch; status set to launched then",
+      "note": "launched 2026-07-21; no _s1 checkpoint/log/done on disk, superseded same day by the arch-ladder \u2014 abandoned launch, no result"
     },
     {
       "run_id": "2026-07-21_hybrid-ssm-0.2b_arch-ladder",
@@ -1840,7 +1845,7 @@
       "eta_hours": 141.7,
       "started": "2026-07-21",
       "ended": null,
-      "status": "launched",
+      "status": "crashed",
       "verdict": null,
       "metrics": {},
       "artifacts_dir": "HybridSSM-0.2B/experiments/2026-07-21_hybrid-ssm-0.2b_arch-ladder",
@@ -1856,7 +1861,7 @@
         "wall_clock_min": null,
         "gpu_hours": null
       },
-      "detail_md": "research/ledger/runs/2026-07-21_hybrid-ssm-0.2b_arch-ladder.md",
+      "detail_md": null,
       "objective": "pretrain-ablation",
       "lifecycle_stage": "architecture",
       "confound_check": {
@@ -1933,7 +1938,8 @@
         "finding": "SSM mixer >> SWA/full-attn (but LR-not-retuned-per-arm confound); attention fraction 1:1~1:3 negligible; NoPE worse not better",
         "artifact": "rung_42M_comparison.md",
         "bpb": "deferred \u00a7C4.5"
-      }
+      },
+      "note": "driver died in the 2026-07-23 15:24 BST hard-lock after 2 thermal SIGTERM kills (14:16Z, 14:21Z); 7/15 cells complete with on-disk .done markers, resumable via run_arch_ladder.sh (cooldown gate fixed this session)"
     }
   ],
   "proposals": [

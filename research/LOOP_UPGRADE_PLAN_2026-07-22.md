@@ -85,3 +85,58 @@ Remaining Tier 2/3 (each needs a bit of your steer): #10 adopted-run protocol, #
 - #11a c5_validate.py: machine-checkable §C5 pre-launch lint (dd9661a). Both live HybridSSM c5 files PASS 7/7.
 - #11b CLAUDE.md verdict-timing contradiction corrected (entry-at-launch; verdict written at finish). [local file]
 Remaining Tier 2: #10 adopted-run protocol [.claude/, bigger], #14 calibration wiring [bigger], #15 doc reframe + meta-scrub [local docs].
+
+## Execution log — 2026-07-23 (incident recovery + Tier 1/2/3 sweep)
+
+INCIDENT: the hand-launched arch ladder (driver pid 1808201) is DEAD. Timeline reconstructed from
+logs + `last -x`: sentinel's thermal killer fired twice (14:16:46Z gpu85/soc92, 14:21:37Z gpu86/soc91),
+then the **box hard-locked at 15:24:38 BST** (boot -1 ends there, no panic/OOM trace — the documented
+kdump-less lockup). 7/15 cells done (42M rung complete + ssm_base_85M + swa128_85M). Safety system worked;
+the ladder DRIVER's gate did not. Root cause was NOT a metric mismatch (driver + sentinel agree ~69C) —
+it was a structural cool-down gate: 1-sample accept, 30-min fall-through that LAUNCHED anyway, discarded
+return value, and COOL_C=70 sitting at the box's own idle floor. Verified via a 2-workflow recon (5 read-only
+audits + adversarial cross-check) then an 8-lane fix workflow (each diff adversarially reviewed).
+
+DONE (committed):
+- **Tier 3 cooldown fix** (#16-adjacent): run_arch_ladder.sh cool_down now requires 6 sustained sub-COOL_C
+  samples (3 min dwell), DEFERS on the bounded fall-through (return 1 → engages the hot-spell backoff), and
+  honours its return value at the call site. COOL_C 70→58 (= sentinel KILL 90 − measured +31C idle→load
+  transient − 1). Kept the reviewer's 63–65 suggestion OUT: 65+31=96 > 90 would re-cross the kill line.
+- **Tier 1 #4 scorer FIX**: score_arch_ladder.py resolved checkpoints under LDIR but the trainer writes them
+  under BUILD → it scored 0/7 cells and exited 0 (the exact silent no-op it was meant to kill). Fixed the
+  path, made it fail-loud on 0-scored-with-.done, added a pure-path --smoke check. (GPU end-to-end still pending.)
+- **sentinel marker race**: kill marker now written BEFORE the SIGTERM→SIGKILL grace loop (only 1 of 2 kills
+  left a marker before). + regression test pinning the ordering.
+- **Tier 1 #8 verdict vocab**: eval_completeness.gate_verdict emits null/promising, never `directional`.
+  Fixed a floor BYPASS (disallowed-sole-signal only fired at len(present)==1, so valppl-n1 + any 2nd item —
+  even a figure — reached promising/win); now floors to inconclusive whenever no admissible signal remains.
+- **Tier 1 #18 loop_state durability**: parent-dir fsync + advisory lock + mode preservation to match ledger.py;
+  new register() setter for the flat in-flight fields.
+- **Tier 2 #12 ledger integrity**: 17 dangling detail_md nulled, 33 stray eval keys migrated into metrics{},
+  unknown-run-key hygiene warning added; cross-lane provenance keys (c5_lint, adopted, evidence_path,
+  reconciled) added to RUN_ADDITIVE_KEYS.
+- **Tier 2 #10 adopted-run protocol**: research/adopt_run.py (adopt + reconcile, dry-run by default) + tests.
+  Standalone tool for now — wiring into ablation-runner/liveness-cron is the follow-up.
+- **Tier 2 #14 capture half**: research/calibration_pairs.py (read-only join, honestly prints n=0 today). No
+  ECE computed — 0 realised pairs.
+- **Tier 3 #16 safety tests**: trainer_alive() argv[0] guard + recovery-chain (exit-4 routing, flock) tested.
+- **Tier 1 #15 doc reframe**: "autonomous nightly loop" → "rigor factory / propose-only GPU" across CLAUDE.md,
+  AGENTS.md, README.md + strategy-doc meta-commentary scrub. (Most are gitignored; on-disk only.)
+- **RNG-checkpoint fix** (user decision): train_hybrid.py now saves/restores the PRNG key so a resumed cell
+  continues its exact data-window stream (round-trip verified bit-exact). Discarded the swa128_nope_85M ckpt
+  (renamed .discarded_rng_confound_20260723) so it reruns clean — per the user's "fix RNG then rerun" choice.
+- **RECONCILED the dead run** (sanctioned CLI only): arch-ladder + orphan s1-pretrain runs → `crashed`;
+  technique hybrid-attention-rethink queued→`running` (E-lane wrongly made it a fresh next-best launch);
+  loop_state in-flight pointer cleared via register(); stale sentinel_kill marker archived. `sentinel liveness`
+  now exits 0; next-best no longer surfaces an in-flight technique. Full suite 537 passed / 1 skipped; fsck clean.
+
+USER DECISIONS (GPU work — propose-only, human-triggered; NOT launched this session):
+- Ladder: restart as soon as fixes land (rely on the dwell gate, no overnight window).
+- Resume: fix RNG checkpointing then RERUN swa128_nope_85M clean (done: code + ckpt discarded).
+- NorMuon-at-scale (#9): INSERT NOW, before the 85M rung resumes (the ladder is stopped, cheapest switch point).
+  → SEQUENCING TENSION between "restart ladder ASAP" and "NorMuon first": resolved as NorMuon-at-scale is next
+    in the GPU queue, ladder stays live/restart-ready and resumes right after. Both await the human GPU trigger.
+
+STILL OPEN: #5 per-arm LR probe [GPU], #9 NorMuon-at-scale launch prep [GPU/human], #17 shared-box lock,
+#19 kdump/panic GRUB fix [HUMAN sudo — the box hard-locked AGAIN today, still undiagnosable], recovery-cron
+paste [HUMAN], wiring adopt_run/calibration_pairs into their callers.

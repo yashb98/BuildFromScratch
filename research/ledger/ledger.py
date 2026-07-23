@@ -28,6 +28,7 @@ Commands (stdout is JSON, except `status` which is a human summary):
   query             [--status S] [--type T] [--since YYYY-MM-DD] [--collection C]
   next-best         --cutoff YYYY-MM-DD [--limit N] [--include-candidates]
                     [--objective any|pretrain-ablation|finetune (§C13 filter)]
+  fsck              [--fix] [--repo-root DIR]  # integrity report; exit 1 if repairable
   status                                      # human summary
 
 --set VALUES are JSON-parsed when possible ( --set score=8.5
@@ -38,8 +39,9 @@ Auto-sync per §C8: a technique updated to status=rejected, or a run whose
 verdict becomes loss, appends its slug to never_repeat[].
 
 Exit codes:
-  0  success (check-dup: slug is NEW / not blocked)
-  1  check-dup only: DUPLICATE (slug in techniques[] or never_repeat[])
+  0  success (check-dup: slug is NEW / not blocked; fsck: clean or repaired)
+  1  check-dup: DUPLICATE (slug in techniques[] or never_repeat[]).
+     fsck without --fix: repairable integrity issues remain
   2  validation / usage / schema error
   3  target entry not found (update-* on a missing slug or run_id)
 """
@@ -59,6 +61,7 @@ from pathlib import Path
 
 SCHEMA_VERSION = 1
 DEFAULT_LEDGER = Path(__file__).resolve().parent / "ledger.json"
+REPO_ROOT = Path(__file__).resolve().parents[2]   # detail_md paths are repo-relative
 TOP_KEYS = ("techniques", "runs", "proposals", "never_repeat")
 
 TECH_STATUS = {"candidate", "briefed", "queued", "running", "done", "rejected", "proposal"}
@@ -93,6 +96,61 @@ SMOKE_VALUES = {"pass", None}            # §C5.0 smoke gate; null until proven
 FRAMEWORKS = {"pytorch", "jax", "cuda", "triton", None}  # §C14 (+ triton kernels, §C-systems)
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RUN_ID_RE = re.compile(r"^\d{4}-\d{2}-\d{2}_.+_.+$")  # YYYY-MM-DD_<model>_<slug>
+
+# ------------------------------------------------- run-key hygiene (§C8/§C10)
+# `--set k=v` accepts ANY key, which is what makes the CLI usable for the additive
+# keys the contracts keep introducing — and also how 24 live runs accumulated 60+
+# ad-hoc top-level keys, several of them measured EVAL numbers stranded outside an
+# empty metrics{} (the four 2026-06-16 eval runs). Everything a consumer compares
+# across runs reads metrics{}; a number at top level is invisible to it.
+# So: recognize the schema keys, WARN on the rest, and never hard-fail — a
+# hard-fail would make the already-written ledger unloadable, i.e. unwritable.
+RUN_CORE_KEYS = frozenset({
+    "run_id", "type", "model_dir", "technique_slug", "budget", "probe", "smoke",
+    "framework", "eta_hours", "started", "ended", "status", "verdict", "metrics",
+    "artifacts_dir", "lineage", "cost", "detail_md", "objective"})
+# Additive keys the contracts name explicitly (§C8 "additive key, ledger.py only").
+RUN_ADDITIVE_KEYS = frozenset({
+    "confound_check",     # §C18 single-variable / iso-FLOP gate (validated above)
+    "lifecycle_stage",    # §C25.1
+    "launched_by",        # §C11 launch provenance
+    "c5_lint",            # §C5 pre-launch lint result stamped by /ablation-runner (pass)
+    "adopted", "evidence_path", "reconciled",  # §C10 adopted-run protocol (research/adopt_run.py)
+    "is_remote", "cluster_shape",   # §C20 off-box runs
+    "brief_path", "prior_run_id", "note"})  # §C5.2 brief inheritance (+its one-line note)
+RUN_KEYS = RUN_CORE_KEYS | RUN_ADDITIVE_KEYS
+
+# Eval-shaped names get their own, louder advisory: those are the ones that
+# silently break cross-run comparison. Canonical target shape = the metrics{} of
+# run 2026-06-27_qwen3-0.6b_sft-3seed.
+EVAL_KEY_EXACT = frozenset({"suite_version", "self_floor"})
+EVAL_KEY_SUFFIXES = ("_ppl", "_bpb", "_loss", "_acc", "_floor_abs",
+                     "_corpus_id", "_ci95")
+
+
+def is_eval_key(key: str) -> bool:
+    """True for a top-level run key that names a measured eval quantity (or the
+    §C10 suite stamp) and therefore belongs INSIDE metrics{}. Deliberately narrow:
+    it must never sweep up prose/bookkeeping keys (`note`, `train_pid`, `arm_plan`),
+    because fsck --fix MOVES what this matches."""
+    return key in EVAL_KEY_EXACT or key.endswith(EVAL_KEY_SUFFIXES)
+
+
+def unknown_run_keys(r: dict):
+    return sorted(k for k in r if k not in RUN_KEYS)
+
+
+def warn_unknown_run_keys(run_id, keys):
+    """Advisory (never fatal) for top-level run keys outside the §C8 schema."""
+    evalish = [k for k in keys if is_eval_key(k)]
+    other = [k for k in keys if not is_eval_key(k)]
+    if evalish:
+        warn(f"run[{run_id}]: EVAL-SHAPED top-level keys {evalish} — comparable "
+             "numbers must live INSIDE metrics{} (§C8/§C10); nothing that reads "
+             "metrics{} will ever see them. Fix: ledger.py fsck --fix")
+    if other:
+        warn(f"run[{run_id}]: unrecognized top-level keys {other} — not in the §C8 "
+             "run schema. Numbers belong in metrics{}, prose in detail_md")
 
 
 def fail(msg: str, code: int = 2):
@@ -466,6 +524,9 @@ def cmd_add_run(led, a):
          "status": "launched", "verdict": None, "metrics": {},
          "artifacts_dir": a.artifacts_dir,
          "lineage": _new_lineage(), "cost": _new_cost(),  # §C8
+         # The PLANNED path of the detail doc — the owning skill writes it later.
+         # If it is never written, `fsck --fix` nulls the pointer rather than
+         # leaving the entry claiming a document that does not exist.
          "detail_md": f"research/ledger/runs/{a.run_id}.md"}
     r["lineage"]["git_commit"] = git_head_commit()  # auto-capture repo HEAD
     # §C13: a run's objective is one of the two concrete values — never `any`,
@@ -477,6 +538,9 @@ def cmd_add_run(led, a):
     patch = parse_sets(a.set)
     merge_subdicts(r, patch)  # §C8: a partial lineage/cost --set merges, not replaces
     r.update(patch)
+    # Only the --set keys can be off-schema here (every other key above is the
+    # factory shape), so the advisory names exactly what THIS call invented.
+    warn_unknown_run_keys(r["run_id"], [k for k in patch if k not in RUN_KEYS])
     # §C5 evidence must be recorded for ablation|finetune regardless of the
     # initial status — a --set status=... override must not mute the warning.
     if r["type"] in ("ablation", "finetune"):
@@ -519,6 +583,10 @@ def cmd_update_run(led, a):
         r["framework"] = a.framework
     merge_subdicts(r, patch)  # §C8: incremental lineage/cost updates merge, not replace
     r.update(patch)
+    # Warn on EVERY off-schema --set, not just the first one to introduce a key:
+    # the point is that the ad-hoc surface stops growing silently, and re-setting
+    # an ad-hoc key is exactly how it keeps growing. Stateless, so no false quiet.
+    warn_unknown_run_keys(r["run_id"], [k for k in patch if k not in RUN_KEYS])
     if r.get("verdict") == "loss":
         block_never_repeat(led, r.get("technique_slug"))
     return r
@@ -721,6 +789,84 @@ def cmd_next_best(led, a):
     emit(elig[: a.limit] if a.limit else elig)
 
 
+# ------------------------------------------------------------- integrity (fsck)
+
+def dangling_detail_md(led, repo_root=REPO_ROOT):
+    """Run entries whose `detail_md` names a document that is not on disk.
+    A pointer to a file that does not exist is a claim the ledger cannot back."""
+    return [{"run_id": r.get("run_id"), "detail_md": r["detail_md"]}
+            for r in led.get("runs", [])
+            if isinstance(r.get("detail_md"), str) and r["detail_md"]
+            and not (Path(repo_root) / r["detail_md"]).exists()]
+
+
+def stray_eval_keys(led):
+    """Eval-shaped top-level run keys that belong inside metrics{} (§C8/§C10).
+    `collides` = metrics{} already holds that key with a DIFFERENT value — two
+    values under one name, which a machine must not silently pick between."""
+    out = []
+    for r in led.get("runs", []):
+        m = r.get("metrics") or {}
+        for k in unknown_run_keys(r):
+            if is_eval_key(k):
+                out.append({"run_id": r.get("run_id"), "key": k,
+                            "collides": k in m and m[k] != r[k]})
+    return out
+
+
+def other_unknown_keys(led):
+    """Non-eval off-schema top-level run keys. REPORTED ONLY — never auto-moved:
+    `arm_plan`/`train_pid`/`headline` are bookkeeping or prose, and guessing a
+    destination for them would invent structure the ledger never recorded."""
+    out = []
+    for r in led.get("runs", []):
+        ks = [k for k in unknown_run_keys(r) if not is_eval_key(k)]
+        if ks:
+            out.append({"run_id": r.get("run_id"), "keys": ks})
+    return out
+
+
+def cmd_fsck(led, a) -> int:
+    """Integrity report over runs[], with two SAFE repairs behind --fix.
+
+    Repair 1 — a dangling `detail_md` is NULLED, not back-filled. A run .md is a
+    narrative artifact (hypothesis, config, caveats) written by the owning skill;
+    generating one from the entry would produce a document containing nothing the
+    entry does not already say, indistinguishable later from a real write-up. The
+    honest record of "no detail doc was ever written" is `null`, and it is
+    machine-checkable. `add-run` re-plans the path for each new run, so the
+    repair is re-runnable rather than one-shot.
+
+    Repair 2 — an eval-shaped top-level key is MOVED into metrics{} with its value
+    byte-identical (`metrics[k] = r.pop(k)`); a value collision is skipped and
+    reported. Both repairs are idempotent: a second --fix finds nothing to do."""
+    repo_root = a.repo_root or REPO_ROOT
+    dangling = dangling_detail_md(led, repo_root)
+    stray = stray_eval_keys(led)
+    fixed = {"detail_md_nulled": [], "eval_keys_moved": [], "skipped_collision": []}
+    if a.fix:
+        for d in dangling:
+            find(led["runs"], "run_id", d["run_id"])["detail_md"] = None
+            fixed["detail_md_nulled"].append(d["run_id"])
+        for s in stray:
+            r = find(led["runs"], "run_id", s["run_id"])
+            if s["collides"]:
+                fixed["skipped_collision"].append(f"{s['run_id']}.{s['key']}")
+                continue
+            r.setdefault("metrics", {})[s["key"]] = r.pop(s["key"])
+            fixed["eval_keys_moved"].append(f"{s['run_id']}.{s['key']}")
+        if dangling or stray:
+            save(a.ledger, led)
+    emit({"dangling_detail_md": dangling, "eval_keys_at_top_level": stray,
+          "other_unknown_run_keys": other_unknown_keys(led),
+          "fixed": fixed if a.fix else None})
+    # Exit 1 = repairable issues are still there (CI-gateable): unfixed, or a
+    # collision --fix deliberately refused to resolve. Off-schema non-eval keys
+    # are advisory and never move the exit code.
+    remaining = fixed["skipped_collision"] if a.fix else (dangling or stray)
+    return 1 if remaining else 0
+
+
 def cmd_status(led, a):
     def counts(items):
         c = {}
@@ -742,6 +888,10 @@ def cmd_status(led, a):
             print(f"  open: {p['slug']}  kind={p.get('kind')}  md={p.get('md_path')}")
     print(f"never_repeat ({len(led['never_repeat'])}): "
           + (", ".join(led["never_repeat"]) or "none"))
+    dangling, stray = dangling_detail_md(led), stray_eval_keys(led)
+    if dangling or stray:   # silent once clean, so the line means "act on this"
+        print(f"integrity: {len(dangling)} dangling detail_md, {len(stray)} eval "
+              "key(s) outside metrics{} — run `ledger.py fsck --fix`")
     papers = led.get("papers", [])                             # §C16
     print(f"papers ({len(papers)}): {counts(papers)}")
     for p in papers:
@@ -871,6 +1021,14 @@ def main(argv=None) -> int:
                    help="§C13 filter: keep techniques of this objective (an "
                         "`any` technique fits either); skipped when val is `any`")
 
+    p = sub.add_parser("fsck", parents=[common])
+    p.add_argument("--fix", action="store_true",
+                   help="apply the safe repairs (null dangling detail_md; move "
+                        "eval-shaped top-level keys into metrics{}); idempotent")
+    p.add_argument("--repo-root", type=Path, default=None,
+                   help="root that detail_md paths resolve against "
+                        "(default: this checkout)")
+
     sub.add_parser("status", parents=[common])
 
     a = ap.parse_args(argv)
@@ -894,6 +1052,8 @@ def main(argv=None) -> int:
             return 0
         if a.cmd == "check-dup":
             return cmd_check_dup(led, a)
+        if a.cmd == "fsck":       # writes only under --fix, and only if dirty
+            return cmd_fsck(led, a)
         if a.cmd == "query":
             cmd_query(led, a)
         elif a.cmd == "next-best":

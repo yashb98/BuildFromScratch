@@ -18,7 +18,17 @@ BUILD="$ROOT/HybridSSM-0.2B/experiments/2026-07-19_hybrid-ssm-0.2b_build"
 DATA="$ROOT/Qwen3-0.6B/builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/tokcache_170034304_300000_seed0_Qwen3-0.6B-Base.pt"
 LOG="$LDIR/run_arch_ladder.log"
 PY=python3
-COOL_C="${LADDER_COOL_C:-70}"     # don't launch onto a box hotter than this
+# Cool-down gate (see cool_down() for the 2026-07-23 post-mortem that set these).
+# COOL_C=58 is derived from sentinel.py's own constants, not guessed: TEMP_KILL_C=90 minus
+# the +31C idle->load transient measured on 2026-07-23 (66C at the 15:17:47 BST launch ->
+# soc 97C 50s later, sentinel_attn1to3_85M_s0.log 14:18:37Z), minus 1C. Launching at <=58C
+# is therefore the hottest start that keeps the first-minute transient under the kill line;
+# the old 70C sat ABOVE the box's own recently-loaded idle floor (64-69C), so it gated
+# nothing. A cold box reads 43-44C here, so 58C is attainable — just not one minute after
+# a thermal kill, which is exactly the launch this blocks.
+COOL_C="${LADDER_COOL_C:-58}"     # don't launch onto a box hotter than this
+COOL_DWELL="${LADDER_COOL_DWELL:-6}"    # consecutive cool samples required (6 x 30s = 3 min)
+COOL_MAX="${LADDER_COOL_MAX:-30}"       # bound: 30 x 30s = 15 min, then DEFER (never launch)
 MAXPASS="${LADDER_MAXPASS:-100}"
 SEQ=2048; BATCH=4; LR=3e-3; WARMUP=200
 
@@ -38,17 +48,52 @@ hottest_c () {
   echo "$max"
 }
 
-# Bounded, fail-open cool-down: wait up to ~30 min to drop below COOL_C. Unreadable => proceed.
+# Cool-down gate. Returns 0 = safe to launch, 1 = still hot -> DEFER this cell.
+#
+# 2026-07-23 post-mortem (the 15:16-15:24 BST thrash that ended in a hard lock). The old
+# gate accepted a SINGLE sample below 70C, and when its 30-min bound expired it LAUNCHED
+# ANYWAY; its return value was discarded at the call site, so nothing could have stopped
+# it either way. What that produced, from run_arch_ladder.log + the sentinel logs (sentinel
+# stamps UTC, the driver stamps BST = UTC+1):
+#   14:16:46Z  sentinel thermal-kills swa128_nope_85M_s0 at gpu 85C / soc 92C
+#   15:17:47   driver relaunches attn1to3_85M_s0 on ONE 66C sample, 60s after that kill
+#   14:18:37Z  that arm is already at soc 97C (a +31C idle->load rise in 50s)
+#   14:21:37Z  sentinel thermal-kills it too
+#   15:22:38   driver relaunches fullattn_85M_s0 on ONE 69C sample, 61s after THAT kill
+#   15:24:38   box hard-locks (no trace: crashkernel=0M, see the GB10 lockup memory note)
+# Three launches, two thermal kills and one hard lock inside eight minutes.
+#
+# Two structural fixes:
+#  (a) DWELL — require COOL_DWELL consecutive samples strictly under COOL_C. One cool
+#      sample a minute after a 92C kill is a sensor dip, not a cool box: this box sheds to
+#      ~66C in ~60s and then PLATEAUS there, so a single-sample 70C gate had ~1C of
+#      headroom and waved through a box still full of heat.
+#  (b) DEFER, never launch-anyway — the bound now returns 1 so the caller drops the cell to
+#      the next pass and the hot-spell backoff at the end of the pass loop engages, instead
+#      of the driver walking down the cell list igniting one arm after another.
+# Unreadable temp still fails OPEN (proceed): fabricating heat is worse than not measuring
+# it, and sentinel.py takes the same stance (gpu_thermal/hottest_soc_c return None rather
+# than a fake high reading).
 cool_down () {
-  local tag=$1 h
-  for _ in $(seq 1 60); do
+  local tag=$1 h streak=0
+  for _ in $(seq 1 "$COOL_MAX"); do
     h=$(hottest_c)
     [ -z "$h" ] && { echo "[$(date '+%T')] [cooldown] $tag: temp unreadable, proceeding"; return 0; }
-    [ "$h" -lt "$COOL_C" ] && { echo "[$(date '+%T')] [cooldown] $tag: ${h}C < ${COOL_C}C, launching"; return 0; }
-    echo "[$(date '+%T')] [cooldown] $tag: ${h}C >= ${COOL_C}C, waiting 30s"
+    if [ "$h" -lt "$COOL_C" ]; then
+      streak=$((streak+1))
+      if [ "$streak" -ge "$COOL_DWELL" ]; then
+        echo "[$(date '+%T')] [cooldown] $tag: ${h}C < ${COOL_C}C for $streak consecutive samples, launching"
+        return 0
+      fi
+      echo "[$(date '+%T')] [cooldown] $tag: ${h}C < ${COOL_C}C, dwell $streak/${COOL_DWELL}"
+    else
+      echo "[$(date '+%T')] [cooldown] $tag: ${h}C >= ${COOL_C}C, waiting 30s (dwell reset from $streak)"
+      streak=0
+    fi
     sleep 30
   done
-  echo "[$(date '+%T')] [cooldown] $tag: still hot after 30min — launching anyway (bounded)"
+  echo "[$(date '+%T')] [cooldown] $tag: no ${COOL_DWELL}-sample cool spell in $((COOL_MAX * 30 / 60))min (last ${h}C) — DEFERRING"
+  return 1
 }
 
 # Is a REAL trainer alive? A bare `pgrep -f 'train_*.py'` is not good enough: it matches any
@@ -83,7 +128,12 @@ run_cell () {
   if trainer_alive; then
     echo "[$(date '+%T')] [wait] $id: another trainer is alive, deferring this pass"; return 1
   fi
-  cool_down "$id"
+  # HONOUR the gate. Until 2026-07-23 this call discarded cool_down's return value, so even
+  # a gate that wanted to refuse could not: the driver launched regardless. A deferral must
+  # cost this cell the pass, so the hot-spell backoff below sees "failed, no progress".
+  if ! cool_down "$id"; then
+    echo "[$(date '+%T')] [defer] $id: no sustained cool window — deferring this pass"; return 1
+  fi
   # unified pool headroom (shared CPU+GPU memory): wait for >= 60 GB available
   for _ in $(seq 1 90); do a=$(free -g | awk '/Mem:/{print $7}'); [ "${a:-0}" -ge 60 ] && break; sleep 10; done
 

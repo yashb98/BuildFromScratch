@@ -11,10 +11,11 @@ is held to multi-seed CIs, iso-FLOP matching, and a held-out noise floor.
 | [`SmolLM2-134(base)/`](SmolLM2-134(base)/) | Single-file PyTorch reproduction of [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) (134,515,008 params), verified **bit-exact** vs the official weights (`max \|Δlogits\| = 0.0`). Includes from-scratch training, continued pretraining on TinyStories, multi-axis parity diagnostics, in-domain vs OOD eval, and an `lm-evaluation-harness` wrapper. |
 | [`Qwen3-0.6B/`](Qwen3-0.6B/) | Single-file PyTorch reproduction of [Qwen3-0.6B-Base](https://huggingface.co/Qwen/Qwen3-0.6B-Base), verified **bit-exact** (`max \|Δlogits\| = 0.0`), then a **full research lifecycle** on top (architecture / optimizer / data / post-training, below). See [its README](Qwen3-0.6B/README.md). |
 
-> The repo is driven by a set of **local-only** Claude Code skills (an autonomous
-> ML-research loop) and a FastAPI agent-harness showcase; those are kept local
-> and are **not** committed. What is committed is the model code, the verify
-> gates, and the experiment results below.
+> The repo is driven by a set of **local-only** Claude Code skills (an ML-research
+> loop whose scanning, briefing, data-prep and scoring stages run autonomously,
+> while a human triggers every GPU run) and a FastAPI agent-harness showcase;
+> those are kept local and are **not** committed. What is committed is the model
+> code, the verify gates, and the experiment results below.
 
 ## Research lifecycle — Qwen3-0.6B
 

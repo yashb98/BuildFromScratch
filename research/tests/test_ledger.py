@@ -422,6 +422,170 @@ def test_split_verdict_vocabulary(ledger_path):
     assert "t" in reload(ledger_path)["never_repeat"]
 
 
+# ------------------------------------------- run-key hygiene + fsck (§C8/§C10)
+# 2026-07-23: an audit of the live ledger found 24 runs carrying 60+ ad-hoc
+# top-level keys — among them the PPLs of four 2026-06-16 eval runs sitting
+# beside an EMPTY metrics{}, invisible to everything that compares runs. `--set`
+# accepts any key by design (that is how additive contract keys land), so the
+# fix is an advisory, not a rejection: the existing ledger must stay writable.
+
+
+def stderr_of(capsys):
+    return capsys.readouterr().err
+
+
+def warnings_of(capsys):
+    """The warn() lines as text — one JSON object per line on stderr."""
+    return [json.loads(ln)["warning"] for ln in stderr_of(capsys).splitlines() if ln]
+
+
+def test_unknown_top_level_run_key_warns_but_succeeds(ledger_path, capsys):
+    assert run(ledger_path, "add-run", "--run-id", "2026-07-23_m_t", "--type", "eval",
+               "--set", "train_pid=1234") == 0
+    err = stderr_of(capsys)
+    assert "unrecognized top-level keys" in err and "train_pid" in err
+    assert reload(ledger_path)["runs"][0]["train_pid"] == 1234   # stored, not dropped
+
+
+def test_eval_shaped_key_gets_its_own_louder_warning(ledger_path, capsys):
+    assert run(ledger_path, "add-run", "--run-id", "2026-07-23_m_t", "--type", "eval",
+               "--set", "wikitext2_ppl=37.01", "--set", "train_pid=1") == 0
+    # two SEPARATE advisories, each naming only its own keys — the eval one must
+    # not be diluted into the generic "we don't know this key" line.
+    ws = warnings_of(capsys)
+    evalish = [w for w in ws if "EVAL-SHAPED top-level keys" in w]
+    other = [w for w in ws if "unrecognized top-level keys" in w]
+    assert len(evalish) == 1 and len(other) == 1, ws
+    assert "wikitext2_ppl" in evalish[0] and "train_pid" not in evalish[0]
+    assert "train_pid" in other[0] and "wikitext2_ppl" not in other[0]
+    assert "metrics{}" in evalish[0] and "fsck --fix" in evalish[0]
+
+
+def test_schema_and_contract_keys_do_not_warn(ledger_path, capsys):
+    """No crying wolf: the §C8 core + the additive keys the contracts name
+    (§C18 confound_check, §C25.1 lifecycle_stage, §C11 launched_by, §C20
+    is_remote, §C5.2 prior_run_id/note) must pass silently."""
+    assert run(ledger_path, "add-run", "--run-id", "2026-07-23_m_t", "--type", "eval",
+               "--set", "lifecycle_stage=base-eval", "--set", 'launched_by="manual"',
+               "--set", "is_remote=false", "--set", 'note="one line"',
+               "--set", 'prior_run_id="2026-07-22_m_t"',
+               "--set", 'metrics={"ppl":1.0}') == 0
+    assert stderr_of(capsys) == ""
+
+
+def test_update_run_warns_on_each_ad_hoc_set(ledger_path, capsys):
+    run(ledger_path, "add-run", "--run-id", "2026-07-23_m_t", "--type", "eval")
+    capsys.readouterr()
+    assert run(ledger_path, "update-run", "2026-07-23_m_t", "--set", "arm=x") == 0
+    assert "arm" in stderr_of(capsys)
+    # re-setting the SAME ad-hoc key warns again — the surface is still growing
+    assert run(ledger_path, "update-run", "2026-07-23_m_t", "--set", "arm=y") == 0
+    assert "arm" in stderr_of(capsys)
+
+
+def test_is_eval_key_is_narrow_enough_to_move_on():
+    # fsck --fix MOVES what this matches, so a false positive would relocate prose.
+    for k in ("wikitext2_ppl", "code_floor_abs", "final_val_loss", "suite_version",
+              "self_floor", "headline_bpb", "task_acc", "delta_ci95", "code_corpus_id"):
+        assert ledger.is_eval_key(k), k
+    for k in ("note", "train_pid", "arm_plan", "headline", "guards", "purpose",
+              "evidence_path", "resume_cmd", "steps", "design"):
+        assert not ledger.is_eval_key(k), k
+
+
+def _dirty_ledger(ledger_path, repo_root):
+    """One run with a WRITTEN detail doc, one with a dangling pointer, and stray
+    eval keys beside an empty metrics{} — the live ledger's three defects."""
+    run(ledger_path, "add-run", "--run-id", "2026-07-23_m_kept", "--type", "eval")
+    run(ledger_path, "add-run", "--run-id", "2026-07-23_m_gone", "--type", "eval",
+        "--set", "wikitext2_ppl=37.01", "--set", 'suite_version="text-lm-v2"',
+        "--set", "train_pid=99")
+    doc = repo_root / "research" / "ledger" / "runs"
+    doc.mkdir(parents=True, exist_ok=True)
+    (doc / "2026-07-23_m_kept.md").write_text("# real detail doc\n")
+
+
+def test_fsck_reports_without_fixing(ledger_path, tmp_path, capsys):
+    _dirty_ledger(ledger_path, tmp_path)
+    before = hashlib.md5(ledger_path.read_bytes()).hexdigest()
+    capsys.readouterr()
+    assert run(ledger_path, "fsck", "--repo-root", str(tmp_path)) == 1  # repairable
+    out = json.loads(capsys.readouterr().out)
+    assert [d["run_id"] for d in out["dangling_detail_md"]] == ["2026-07-23_m_gone"]
+    assert {s["key"] for s in out["eval_keys_at_top_level"]} == {"wikitext2_ppl",
+                                                                 "suite_version"}
+    assert out["other_unknown_run_keys"] == [{"run_id": "2026-07-23_m_gone",
+                                              "keys": ["train_pid"]}]
+    assert out["fixed"] is None
+    assert hashlib.md5(ledger_path.read_bytes()).hexdigest() == before  # read-only
+
+
+def test_fsck_fix_nulls_only_the_dangling_pointer(ledger_path, tmp_path, capsys):
+    """The honest repair: a pointer to a document that was never written becomes
+    null. It is NOT back-filled from the entry — a generated stub would carry
+    nothing the entry does not already say while looking like a real write-up."""
+    _dirty_ledger(ledger_path, tmp_path)
+    capsys.readouterr()
+    assert run(ledger_path, "fsck", "--fix", "--repo-root", str(tmp_path)) == 0
+    runs = {r["run_id"]: r for r in reload(ledger_path)["runs"]}
+    assert runs["2026-07-23_m_gone"]["detail_md"] is None
+    assert runs["2026-07-23_m_kept"]["detail_md"] == \
+        "research/ledger/runs/2026-07-23_m_kept.md"
+    assert not (tmp_path / "research/ledger/runs/2026-07-23_m_gone.md").exists()
+
+
+def test_fsck_fix_moves_eval_keys_into_metrics_preserving_values(ledger_path,
+                                                                 tmp_path):
+    _dirty_ledger(ledger_path, tmp_path)
+    assert run(ledger_path, "fsck", "--fix", "--repo-root", str(tmp_path)) == 0
+    r = {x["run_id"]: x for x in reload(ledger_path)["runs"]}["2026-07-23_m_gone"]
+    assert r["metrics"] == {"wikitext2_ppl": 37.01, "suite_version": "text-lm-v2"}
+    assert "wikitext2_ppl" not in r and "suite_version" not in r
+    assert r["train_pid"] == 99      # non-eval ad-hoc key is reported, never moved
+
+
+def test_fsck_fix_is_idempotent(ledger_path, tmp_path, capsys):
+    _dirty_ledger(ledger_path, tmp_path)
+    run(ledger_path, "fsck", "--fix", "--repo-root", str(tmp_path))
+    after_first = ledger_path.read_bytes()
+    capsys.readouterr()
+    assert run(ledger_path, "fsck", "--fix", "--repo-root", str(tmp_path)) == 0
+    out = json.loads(capsys.readouterr().out)
+    assert out["fixed"] == {"detail_md_nulled": [], "eval_keys_moved": [],
+                            "skipped_collision": []}
+    assert ledger_path.read_bytes() == after_first     # byte-identical re-run
+
+
+def test_fsck_refuses_to_clobber_a_metrics_collision(ledger_path, tmp_path, capsys):
+    """Same name, two DIFFERENT values: a machine must not pick. Report and skip."""
+    run(ledger_path, "add-run", "--run-id", "2026-07-23_m_c", "--type", "eval",
+        "--set", 'metrics={"wikitext2_ppl":37.01}', "--set", "wikitext2_ppl=99.9")
+    capsys.readouterr()
+    assert run(ledger_path, "fsck", "--fix", "--repo-root", str(tmp_path)) == 1
+    out = json.loads(capsys.readouterr().out)
+    assert out["fixed"]["skipped_collision"] == ["2026-07-23_m_c.wikitext2_ppl"]
+    r = reload(ledger_path)["runs"][0]
+    assert r["metrics"]["wikitext2_ppl"] == 37.01 and r["wikitext2_ppl"] == 99.9
+
+
+def test_fsck_moves_an_identical_duplicate(ledger_path, tmp_path):
+    """Same name, SAME value = no information at stake; the top-level copy goes."""
+    run(ledger_path, "add-run", "--run-id", "2026-07-23_m_d", "--type", "eval",
+        "--set", 'metrics={"self_floor":true}', "--set", "self_floor=true")
+    assert run(ledger_path, "fsck", "--fix", "--repo-root", str(tmp_path)) == 0
+    r = reload(ledger_path)["runs"][0]
+    assert r["metrics"]["self_floor"] is True and "self_floor" not in r
+
+
+def test_fsck_clean_ledger_exits_zero(ledger_path, tmp_path, capsys):
+    run(ledger_path, "add-run", "--run-id", "2026-07-23_m_t", "--type", "eval",
+        "--set", "detail_md=null")
+    capsys.readouterr()
+    assert run(ledger_path, "fsck", "--repo-root", str(tmp_path)) == 0
+    out = json.loads(capsys.readouterr().out)
+    assert out["dangling_detail_md"] == [] and out["eval_keys_at_top_level"] == []
+
+
 def test_the_run_type_lint_accepts_a_valid_caller(tmp_path):
     """No false positives: the FIXED argv shape must not be flagged. Mirrors the real
     score_ladder.py, which reaches the CLI through a `LEDGER = ROOT / ".../ledger.py"`

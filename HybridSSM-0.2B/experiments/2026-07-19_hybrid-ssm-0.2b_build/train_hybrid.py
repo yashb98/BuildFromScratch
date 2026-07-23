@@ -107,7 +107,19 @@ def main():
         params = serialization.from_bytes(params, blob["params"])
         opt_state = serialization.from_bytes(opt_state, blob["opt_state"])
         start_step = blob["step"]
-        print(f"[resume] from {a.resume} at step {start_step}", flush=True)
+        # Restore the PRNG stream so a resumed run continues the SAME data-window sequence it
+        # would have had uninterrupted. Without this, `rng` stays PRNGKey(seed) from above and the
+        # loop's first split at step=start_step reproduces step 0's subkey — the resumed run then
+        # REPLAYS its own steps 0..start_step-1 data windows across its remaining budget. That is a
+        # per-arm data-repetition confound the uninterrupted arms don't carry; it bit the 85M rung
+        # after the 2026-07-23 thermal kills (swa128_nope_85M_s0 was killed at step ~7800/11718).
+        if "rng" in blob:
+            rng = jnp.asarray(blob["rng"])
+            print(f"[resume] from {a.resume} at step {start_step} (rng stream restored — exact continuation)", flush=True)
+        else:
+            print(f"[resume] from {a.resume} at step {start_step} — WARNING: checkpoint predates "
+                  f"rng-checkpointing; data windows for steps 0..{start_step-1} will REPLAY across the "
+                  f"remaining budget (data-repetition confound). Discard and rerun clean to avoid it.", flush=True)
 
     @jax.jit
     def step(params, opt_state, ids, tgt):
@@ -118,7 +130,10 @@ def main():
         return params, opt_state, loss, gnorm
 
     def save(step_i):
-        blob = {"params": serialization.to_bytes(params), "opt_state": serialization.to_bytes(opt_state), "step": step_i}
+        # `rng` is captured at call time (late binding): it holds the post-split stream position at
+        # the end of step step_i-1, which is exactly what a resume at step_i must restore to be exact.
+        blob = {"params": serialization.to_bytes(params), "opt_state": serialization.to_bytes(opt_state),
+                "step": step_i, "rng": np.asarray(rng)}
         tmp = a.ckpt + ".tmp"
         with open(tmp, "wb") as f:
             pickle.dump(blob, f)
