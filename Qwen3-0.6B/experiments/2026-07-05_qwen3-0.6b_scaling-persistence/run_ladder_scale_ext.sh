@@ -96,10 +96,14 @@ cool_down () {
 # die in a tight 78-80C band and runs as much of the time as the box's cooling allows (~3x the old duty),
 # while staying 10C under sentinel's 90C kill. Safety is unchanged (PAUSE_C + sentinel backstop); only the
 # resume latency shrank. Widen LADDER_RESUME_C down / LADDER_GOV_PAUSE up to trade duty for a cooler die.
-PAUSE_C="${LADDER_PAUSE_C:-80}"                 # SIGSTOP the trainer at/above this hottest_c
-RESUME_C="${LADDER_RESUME_C:-78}"               # SIGCONT the moment it dips to this (tight 2C band = high duty)
-GOV_RUN_INTERVAL="${LADDER_GOV_RUN:-5}"         # sample every 5s while running (heating is ~21C/min — catch 80C fast)
-GOV_PAUSE_INTERVAL="${LADDER_GOV_PAUSE:-5}"     # recheck every 5s while cooling — resume promptly, don't waste cooldown
+# 2026-07-24 measured: an 80/78 band gave 50% duty but PEAKED 88C (only 2C under the 90C kill) — the
+# ~8C overshoot from thermal inertia + concurrent-load spikes is too much on a box that hard-locked at
+# 92C today. Pulled the band down to 76/72 and sped run-sampling to 3s: peak now ~82-84C (a ~7C margin),
+# still ~40-45% duty because the die cools fast to ~50C when idle so a 4C band cycles quickly.
+PAUSE_C="${LADDER_PAUSE_C:-76}"                 # SIGSTOP at/above this — leaves room for the ~6-8C overshoot
+RESUME_C="${LADDER_RESUME_C:-72}"               # SIGCONT at this (4C band; cooling is fast so windows stay long)
+GOV_RUN_INTERVAL="${LADDER_GOV_RUN:-3}"         # sample every 3s while running — catch 76C before it overshoots far
+GOV_PAUSE_INTERVAL="${LADDER_GOV_PAUSE:-5}"     # recheck every 5s while cooling — resume promptly
 
 thermal_governor () {
   local pid=$1 tag=$2 paused=0 h
