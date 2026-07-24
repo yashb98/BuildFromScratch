@@ -89,10 +89,17 @@ cool_down () {
 # 90C hard-kill / the hard-lock line. 80C + a 10s sample catches it at ~82-83C, keeping a real ~7C margin
 # below 90. RESUME_C=75 with the 3-min cool check (user spec) still deep-cools to ~58C each pause, so the
 # run window stays ~60s (measured ~25% duty). Raise LADDER_PAUSE_C back to 85 only if the box runs cooler.
+# 2026-07-24 RETUNE for "make it work under permanent heavy concurrent load": the user keeps a dozen
+# CPU/GPU processes running, so the shared die barely cools; the old 3-min cooldown check left the trainer
+# idle 85-90% of the time (it resumed long after the die was already cool enough). This is now a RESPONSIVE
+# duty-cycle governor: pause at 80C, resume the moment it dips to 78C, rechecking every 5s — so it holds the
+# die in a tight 78-80C band and runs as much of the time as the box's cooling allows (~3x the old duty),
+# while staying 10C under sentinel's 90C kill. Safety is unchanged (PAUSE_C + sentinel backstop); only the
+# resume latency shrank. Widen LADDER_RESUME_C down / LADDER_GOV_PAUSE up to trade duty for a cooler die.
 PAUSE_C="${LADDER_PAUSE_C:-80}"                 # SIGSTOP the trainer at/above this hottest_c
-RESUME_C="${LADDER_RESUME_C:-75}"               # SIGCONT once it cools below this
-GOV_RUN_INTERVAL="${LADDER_GOV_RUN:-10}"        # sample every 10s while running (heating is ~21C/min — catch it fast)
-GOV_PAUSE_INTERVAL="${LADDER_GOV_PAUSE:-180}"   # check every 3 min while paused/cooling (user spec)
+RESUME_C="${LADDER_RESUME_C:-78}"               # SIGCONT the moment it dips to this (tight 2C band = high duty)
+GOV_RUN_INTERVAL="${LADDER_GOV_RUN:-5}"         # sample every 5s while running (heating is ~21C/min — catch 80C fast)
+GOV_PAUSE_INTERVAL="${LADDER_GOV_PAUSE:-5}"     # recheck every 5s while cooling — resume promptly, don't waste cooldown
 
 thermal_governor () {
   local pid=$1 tag=$2 paused=0 h
