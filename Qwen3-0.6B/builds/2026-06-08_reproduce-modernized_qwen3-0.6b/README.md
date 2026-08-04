@@ -165,15 +165,19 @@ Phase B run 2, completed 2026-06-14 (reached step 18,150, LR→0).
 Source: [`results/qwen3_imu1_2tpp_train.log`](results/qwen3_imu1_2tpp_train.log) (this trainer
 writes **no** `after.txt`; the final number is the `@18000` eval + the step-18,150 line).
 
-- Config: `steps=18150`, **1,191,478,400 train tokens** (≈2 TPP), 65,536 tok/step, 224/198 split, NorMuon ~5,170 tok/s.
+- Config: `steps=18150`, **1,189,478,400 train tokens** (≈2 TPP; 18,150 × 65,536, drawn from the 1,191,478,400-token cache), 65,536 tok/step, 224/198 split, NorMuon ~5,170 tok/s.
 - Eval descent: `@2000 44.38 → 35.62 → 32.54 → 30.41 → 29.14 → 28.43 → 27.40 → @16000 24.86 → @18000 **23.52**`.
-- **Result: 23.52 vs the faithful baseline's 28.65 at matched 2 TPP → −17.9%.** Gap to the
-  original (13.40) is **1.76×** (vs the faithful 2.14×). The first *proven* matched-compute
-  win in this repo.
+- **Result: 23.52 vs the faithful baseline's 28.65 at matched 2 TPP → −17.9%.** Those two
+  numbers share a val cache, so the −17.9% is a like-for-like delta — but it is **n=1,
+  single-seed, in-distribution val PPL with no CI: directional, not a proven win.** The gap to
+  our own eval of the released model (13.40) is 1.76× vs the faithful 2.14×, and those ratios
+  are **cross-cache** (13.40 sits on `tokcache_133072000`, these on `tokcache_1191478400`) —
+  indicative only. The defended attribution is the per-component 3-seed BPB result, not this
+  bundle delta.
 
 ![IMU-1 (NorMuon bundle) training dashboard — val PPL vs baseline, CE loss, the WSD-to-zero LR schedule, grad-norm, z-loss, throughput](results/plots/qwen3_imu1_2tpp_dashboard.png)
 
-![Phase B final val PPL — IMU-1 wins at matched compute](../comparison/phaseB_final_ppl.png)
+![Phase B final val PPL — IMU-1 lower than baseline at matched compute (n=1)](../comparison/phaseB_final_ppl.png)
 - ⚠️ **Confound:** this is the full bundle (NorMuon + value-residuals + LN-scaling +
   head-gating + **WSD-to-zero**) vs the baseline's cosine-to-3.2e-4 — a recipe-level win,
   **not** attributable to any single component (a NorMuon-only ablation would be needed).
@@ -186,14 +190,16 @@ meaningless. Same-budget comparison only:
 | Token budget | Faithful (Build 1) | IMU-1 bundle (this build) |
 |---|---|---|
 | 65.5M (smoke) | 95.87 (`../2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_after.txt`) | **39.83** |
-| **1.19B (2 TPP)** | **28.65** (faithful Phase B) | **🥇 23.52** (this build, done) |
+| **1.19B (2 TPP)** | **28.65** (faithful Phase B) | **23.52** (this build, done — n=1) |
 
-- **Matched-compute verdict (the 1.19B row): IMU-1 wins, 23.52 < 28.65 (−17.9%).** Both
-  used the same 2 TPP / 1.19B tokens and the same eval; this is the apples-to-apples result.
+- **Matched-compute comparison (the 1.19B row): IMU-1 is lower, 23.52 vs 28.65 (−17.9%).** Both
+  used the same 2 TPP / 1.19B tokens, the same eval and the **same val cache**, so it is
+  apples-to-apples — but it is **n=1 per arm with no CI: directional, not a verdict.** The
+  defended attribution is the separate 3-seed per-component BPB result.
 - Compare **only within a row** — the smoke `39.83` (65.5M) must NOT be read against the
   `28.65`/`23.52` numbers (1.19B = 18× more data); that's why `39.83` looks "worse" than
   the 2-TPP numbers even though IMU-1 is the stronger recipe at equal data.
-- Caveat (again): the win is the **full bundle** (incl. WSD-to-zero), not any single
+- Caveat (again): the delta is the **full bundle** (incl. WSD-to-zero), not any single
   component — see the confound note above.
 
 ---

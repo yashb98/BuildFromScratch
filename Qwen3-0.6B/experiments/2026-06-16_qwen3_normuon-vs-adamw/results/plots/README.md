@@ -7,7 +7,14 @@ and the fineweb PPLs were re-verified against the logs. Each figure is saved as 
 Scope reminder (from RESULT.md): this is an **early-training convergence-speed signal at one
 architecture and one 42M-token budget**, single-variable optimizer swap on the 196 2D weights,
 n=3 seeds on a FIXED data split (seed 0). It is NOT a steady-state quality claim and there is
-NO scaling curve — do not extrapolate. The off-baseline LR-sweep points are single-seed (labeled).
+no scaling curve *at the time it was written*. One exists now: the budget ladder
+`experiments/2026-07-05_qwen3-0.6b_scaling-persistence/` extended it to 168M and 420M at n=3 per
+rung. On **wikitext-2** the gap converges — +0.474 → +0.126 → +0.072 bpb, with the OLS-fitted
+edge at the top rung (0.0297) inside the 0.0368 noise floor. On **code_py** it erodes but
+plateaus — +0.502 → +0.176 → +0.177 — and remains significant *and* above its noise floor at
+420M (`edge_resolved: true`). `trend_verdict: CONVERGES` on both; run-level ledger verdict
+`null`. **Do not read these bars as a demonstrated advantage at scale.** The off-baseline
+LR-sweep points are single-seed (labeled).
 
 | # | File | Caption | Source file(s) |
 |---|------|---------|----------------|

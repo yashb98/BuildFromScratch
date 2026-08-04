@@ -52,7 +52,7 @@ This is a **NVIDIA GB10 unified-memory box**: CPU and GPU share one ~119 GB pool
 | `verify_run.py` | The Phase-5 bit-exact gate. Loads official Qwen3-0.6B-Base safetensors into our model (via `load_official_weights_into_ours` from `../../verify.py`), runs one prompt through both, computes `max\|Δlogits\|`, writes `results/verify.json`, asserts `< 1e-3` + argmax match. | `python verify_run.py` |
 | `throughput_probe.py` | Measures steady-state tok/s + peak mem at the training shape, compile OFF then ON, backing off `micro_batch` on OOM. Drives the cost gate. Writes `results/throughput_probe.json`. | `python throughput_probe.py` |
 | `run_lr_sweep.sh` | Phase-A matched-compute LR sweep: three 2000-step (~131M-token) runs, identical except peak LR — `lr17`=1.7e-3, `lr24`=2.4e-3, `lr30`=3.0e-3. | `./run_lr_sweep.sh` |
-| `eval_original_vs_repro.py` | Evaluates the **published** Qwen3-0.6B-Base and our sweep checkpoints (`lr17/lr24/lr30`) with **identical eval code on the identical val slice** (from the shared tokcache) → the true reproduction gap. Writes `results/original_vs_repro.txt`. | `python eval_original_vs_repro.py` |
+| `eval_original_vs_repro.py` | Evaluates the **released** Qwen3-0.6B-Base (our own eval of it) and our sweep checkpoints (`lr17/lr24/lr30`) with **identical eval code on the identical val slice** (from the shared tokcache) → the true reproduction gap. Writes `results/original_vs_repro.txt`. | `python eval_original_vs_repro.py` |
 | `wait_then_eval_original.sh` | Polls until the sweep's `train_qwen3.py` processes exit, then launches the original-vs-repro eval — keeps the GB10 at one GPU job at a time. | `./wait_then_eval_original.sh` |
 | `make_plots.py` | Reads a run's CSV+log → PNGs (loss/LR, LR schedule, grad-norm, peak-mem-vs-cap, val-PPL, combined dashboard) under `results/plots[_<run_name>]/`. | `python make_plots.py [--run_name <tag>]` |
 | `_build_results_notebook.py` | Regenerates `results.ipynb` (live-computed from `results/`). Re-run after training to refresh. | `python _build_results_notebook.py` |
@@ -162,9 +162,9 @@ The faithful baseline re-trained at the Phase-A-winning LR (`2.4e-3`) on a **1,1
 | Token budget | 1,189,478,400 (~1.19B) |
 | Baseline (random-init) PPL | 185,810.49 |
 | **Final val PPL** | **28.65** |
-| Gap vs original (13.40) | **2.14×** |
+| Gap vs original (13.40) — **CROSS-CACHE** | 2.14× (indicative only) |
 
-This is the headline Build-1 number. Scaling 131M → 1.19B tokens at the same recipe **narrowed the gap to the original from 3.5× to 2.14×**. Mid-training eval (from `qwen3_baseline2tpp_train.log`) shows the monotone descent: PPL `60.10 (@2k) → 45.06 (@4k) → 39.44 (@6k) → 35.71 (@8k) → 33.04 (@10k) → 30.93 (@12k) → 29.59 (@14k) → 28.93 (@16k) → 28.66 (@18k) → 28.65 (final)`. Training ran ~2663 min (~44 hr) at ~7,480 tok/s; peak mem held flat at **52.4 GB** (well under the 109 GB cap). At 1.19B tokens the model reliably completes `"The capital of France is" → "Paris…"` (vs the lr24 @131M checkpoint, which did not).
+This is the headline Build-1 number. Scaling 131M → 1.19B tokens at the same recipe **cut val PPL from 46.31 to 28.65**. The implied gap-to-original moves 3.5× → 2.14×, but those two ratios use **different val tails** (13.40 and 46.31 sit on `tokcache_133072000`; 28.65 on `tokcache_1191478400`), so the narrowing is indicative, not a strictly comparable trend. Mid-training eval (from `qwen3_baseline2tpp_train.log`) shows the monotone descent: PPL `60.10 (@2k) → 45.06 (@4k) → 39.44 (@6k) → 35.71 (@8k) → 33.04 (@10k) → 30.93 (@12k) → 29.59 (@14k) → 28.93 (@16k) → 28.66 (@18k) → 28.65 (final)`. Training ran 2,663.1 min (44.4 hr) at a final cumulative **7,444 tok/s** (7,480 was the step-100 reading); peak mem held flat at **52.4 GB** (well under the 109 GB cap). At 1.19B tokens the model reliably completes `"The capital of France is" → "Paris…"` (vs the lr24 @131M checkpoint, which did not).
 
 ![Faithful baseline — training dashboard (loss, val PPL, LR, grad-norm, peak mem)](results/plots/dashboard.png)
 
@@ -186,5 +186,5 @@ This is the headline Build-1 number. Scaling 131M → 1.19B tokens at the same r
 - **Never raise `--micro_batch` above 4** at seq_len=4096 — it OOMs (probe-verified). Use `--grad_accum` for effective batch.
 - **`safe_cuda` must import before torch** — it sets the memory cap and `expandable_segments` before CUDA is initialized. The entrypoints already do this; preserve the import order if you edit them.
 - **Token cache files are huge** (`tokcache_1191478400_300000.pt` ≈ 9.5 GB; checkpoints ≈ 3.6 GB each) — they live in `results/` / this dir but are training scratch, not deliverables.
-- **"Faithful" ≠ matching released Qwen3 quality.** It means faithful to the *architecture* (bit-exact) and to the paper's *LR shape*. The token budget is ~30,000× smaller than the real run; a 2.14× PPL gap at 1.19B tokens is the expected, honest outcome.
+- **"Faithful" ≠ matching released Qwen3 quality.** It means faithful to the *architecture* (bit-exact) and to the paper's *LR shape*. The token budget is ~30,000× smaller than the real run; a ~2.1× PPL gap at 1.19B tokens is the expected, honest outcome (cross-cache, so treat the multiple as indicative).
 - The smoke `after.txt` says `smoke=True` whenever `--steps == 1000`; longer runs (including `baseline2tpp`) correctly report `smoke=False`.

@@ -1,24 +1,31 @@
 # Qwen3-0.6B — from-scratch reproduction + research experiment
 
 A single-file PyTorch reproduction of [`Qwen/Qwen3-0.6B-Base`][hfbase] (596M-param
-decoder-only transformer), **verified bit-exact** against the official HuggingFace
-weights (`max |Δlogits| = 0.0`), used as the base for a **three-build experiment**:
+decoder-only transformer), **verified bit-exact in fp32 on CPU** against the official
+HuggingFace weights (`max |Δlogits| = 0.0` on a single 5-token prompt; there is no GPU
+parity check — see [Results](#results-so-far)), used as the base for a **three-build experiment**:
 reproduce it faithfully, then apply recent (2026) research methods and measure — at
 matched compute — whether they beat the faithful baseline.
 
-> **Status: IMU-1 win de-confounded → architecture is the driver; Phase 2 now drilling *which* arch tweak.**
-> Architecture VERIFIED bit-exact; Phase A LR (`lr24 = 2.4e-3`); Phase B @ 2 TPP: faithful **28.65** ·
-> **IMU-1 bundle 23.52 — a proven 17.9% win** (gap 2.14× → **1.76×**) · partial-RoPE 0.25 **29.54 (loses)**.
+> **Status: IMU-1 win de-confounded → all three arch modules attributed; data arm, mid-training and 3-seed SFT DONE; NorMuon's edge converges away with budget.**
+> Architecture VERIFIED bit-exact (fp32/CPU); Phase A LR (`lr24 = 2.4e-3`); Phase B @ 2 TPP: faithful **28.65** ·
+> **IMU-1 bundle 23.52 — a directional −17.9% delta** (n=1, single seed, same val cache as the faithful
+> baseline) · partial-RoPE 0.25 **29.54 (loses)**.
 > The IMU-1 win was a confounded bundle (NorMuon + WSD + z-loss + 3 arch tweaks). **Phase 1 de-confound is
 > DONE** (run `2026-06-18_…imu1-deconfound-p1`, 12/12 cells, canonical eval-harness **BPB** verdict
 > `overall_verdict: attributed`): on the canonical metric **+arch is the SOLE driver** (wikitext **−0.118 bpb**,
 > 95% CI [0.100, 0.135]; code **−0.305 bpb**, CI [0.259, 0.351] — both significant), while **+WSD is NOT
 > significant** (CI crosses 0 — the −6.9% *in-loop proxy* gain did **not** survive the canonical metric) and
-> **+z-loss is null**. So the −17.9% bundle = **NorMuon (optimizer, proven) + the IMU-1 architecture modules.**
+> **+z-loss is null**. So the −17.9% bundle = **NorMuon (optimizer, isolated separately at 42M tokens —
+> and it converges away with budget) + the IMU-1 architecture modules (the only significant axis at 131M/cell).**
 > **Phase 2 DONE** (`2026-06-21_…arch-subdrill-p2`): the arch win splits into **all three flags as significant
 > drivers** — value-residual (largest), layernorm-scaling (parameter-free), head-gating — `attributed`, and the
-> text-lm-v3 downstream battery confirms it. **Now running: the data arm** (`2026-06-24_…data-dclm-vs-fineweb`) —
-> a fixed-token **dclm-edu vs FineWeb-Edu** A/B (the bitter-lesson lever toward 13.40), then mid-training auto-follows.
+> text-lm-v3 downstream battery confirms it. **Data arm DONE** (`2026-06-24_…data-dclm-vs-fineweb`, 2026-06-26):
+> the fixed-token **dclm-edu vs FineWeb-Edu** A/B came back **null on English** (CI crosses 0) but a
+> **large significant code win: −0.70 bpb, 95% CI [0.664, 0.743], 3 seeds**; it is logged `directional`
+> because it is a single 131M budget, not because the code effect is inside the noise floor.
+> **Mid-training DONE** too
+> (`2026-06-30_…midtrain-anneal`).
 > — see [End-to-end lifecycle](#end-to-end-lifecycle--what-weve-done--whats-next).
 
 > **This is an index.** Each build has its own detailed README — see
@@ -32,12 +39,30 @@ matched compute — whether they beat the faithful baseline.
 
 ## Results so far
 
-All perplexities use **identical eval code on the identical 300k-token FineWeb-Edu
-val slice** ([`eval_original_vs_repro.py`](builds/2026-06-08_reproduce-faithful_qwen3-0.6b/eval_original_vs_repro.py)),
-so every row is directly comparable.
+**The perplexities on this page are NOT all mutually comparable.** They use the same
+eval code, but two *different* 300k-token FineWeb-Edu val tails — one per token budget.
+Only same-cache rows may be compared:
 
-**Bit-exact reproduction** — `verify.json`: `max_abs_error = 0.0`, argmax `" Paris"`,
-params **596,049,920**. Our `model.py` *is* Qwen3-0.6B.
+| Numbers | Val cache | How it was built |
+|---|---|---|
+| **13.40** (released Base) · **46.89 / 46.31 / 49.28** (Phase-A LR sweep) | `tokcache_133072000_300000.pt` | hardcoded at [`eval_original_vs_repro.py:22`](builds/2026-06-08_reproduce-faithful_qwen3-0.6b/eval_original_vs_repro.py) |
+| **28.65** (faithful) · **23.52** (IMU-1) · **29.54** (pRoPE-25) | `tokcache_1191478400_300000.pt` | streamed by the faithful Phase-B run; the other arms load it |
+
+So **46.31 / 13.40 = 3.46× is like-for-like**, but **28.65 / 13.40 and 23.52 / 13.40 are
+cross-cache** and must not be read as clean gaps to the released model — no same-cache
+score for the released model on the Phase-B tail exists on disk. Both tails were cut by
+the pre-decontamination splitter that `train_qwen3.py:130-136` itself calls "leak-suspect".
+The fix landed in `86e79f3` (2026-06-16 21:57 UTC) — by which point all four Phase-B arms had
+already loaded that pre-fix cache: three had finished, and the fourth (partial-RoPE 0.10) was
+still running and never completed (it died at step 5450/18150).
+
+**Bit-exact reproduction — fp32, on CPU** — `verify.json`: `max_abs_error = 0.0`,
+`dtype float32`, argmax `" Paris"` (params **596,049,920** is *not* in `verify.json` — it comes
+from `model.py`'s param-count check and the trainer load logs), measured on the single 5-token prompt
+`"The capital of France is"` (`input_shape [1, 5]`). That is the entire scope of the claim:
+there is **no GPU parity check** for Qwen3, no per-layer or long-context check, and no
+determinism flags are set anywhere in the repo. Within that scope our `model.py` *is*
+Qwen3-0.6B.
 
 **Two tiers of evidence — read them differently.** The repo's *defensible* results are the
 single-variable, **3-seed, iso-FLOP** ablations scored on the canonical **BPB** metric (bits-per-byte
@@ -49,19 +74,22 @@ no seed CI, no downstream evals — a scaling/sanity reading, not a defended cla
 
 | Result | Metric (vs faithful baseline) | Verdict |
 |---|---|---|
-| **NorMuon > AdamW** | wikitext −0.474 bpb [0.444, 0.505] · code −0.502 [0.456, 0.547] | **significant win** |
+| **NorMuon > AdamW** *at a 42M-token budget only* | wikitext −0.474 bpb [0.443, 0.505] · code −0.502 [0.456, 0.547] | **significant at 42M (this run's own ledger verdict is `win`) — but it [converges away with budget](#scaling-persistence-the-normuon-edge-converges-away): the ladder run `2026-07-05_…scaling-persistence` is ledger verdict `null`** |
 | **arch modules drive the IMU-1 win** | wikitext −0.118 bpb [0.100, 0.135] · code −0.305 [0.259, 0.351] | **significant — sole driver** |
 | WSD schedule · z-loss | CI crosses 0 (both corpora) | **not significant** |
 
 **Directional (n=1 · FineWeb-Edu val PPL · single seed — NOT a defended claim):**
 
-| Model | Training tokens | val PPL (n=1) | Gap vs original |
-|---|---|---|---|
-| **Original** `Qwen3-0.6B-Base` | 36T | **13.40** | 1.0× |
-| IMU-1 bundle (Build 2) | 1.19B | 23.52 | 1.76× |
-| Faithful baseline (Build 1) | 1.19B | 28.65 | 2.14× |
-| partial-RoPE 0.25 (Build 3) | 1.19B | 29.54 | 2.20× |
-| Our best (Phase A, `lr24`) | 131M | 46.31 | 3.5× |
+| Model | Training tokens | val PPL (n=1) | Val cache | Gap vs original |
+|---|---|---|---|---|
+| **Original** `Qwen3-0.6B-Base` (our eval) | 36T | **13.40** | `…133072000…` | 1.0× |
+| Our best (Phase A, `lr24`) | 131M | 46.31 | `…133072000…` | **3.46×** (same-cache) |
+| IMU-1 bundle (Build 2) | 1.19B | 23.52 | `…1191478400…` | *cross-cache — not comparable to 13.40* |
+| Faithful baseline (Build 1) | 1.19B | 28.65 | `…1191478400…` | *cross-cache — not comparable to 13.40* |
+| partial-RoPE 0.25 (Build 3) | 1.19B | 29.54 | `…1191478400…` | *cross-cache — not comparable to 13.40* |
+
+The three 1.19B rows **are** mutually comparable (same cache): IMU-1 23.52 vs faithful
+28.65 is a **−17.9% n=1 delta**, and partial-RoPE 29.54 loses to the baseline.
 
 ![Phase B — final val PPL: IMU-1 wins, partial-RoPE loses to the baseline](builds/comparison/phaseB_final_ppl.png)
 
@@ -69,23 +97,30 @@ no seed CI, no downstream evals — a scaling/sanity reading, not a defended cla
 
 **What the evidence supports (and what it doesn't):**
 
-1. **Reproduction (directional):** the faithful baseline reaches **2.14× the original's PPL** with
-   **~30,000× less data** (1.19B vs 36T tokens); the earlier 131M-token probe sat at **3.5× with
-   ~275,000× less data** — each ~10× data roughly halves the gap (n=1, but the trend is robust).
+1. **Reproduction (directional):** the faithful baseline reaches **28.65** at 1.19B tokens against
+   the released model's **13.40**, with **~30,000× less data** (1.19B vs 36T tokens) — but those two
+   numbers sit on different val caches, so the implied 2.14× is *cross-cache*. The earlier
+   131M-token probe **is** same-cache: **46.31 vs 13.40 = 3.46×** with ~275,000× less data. Taking
+   the two ratios together suggests each ~10× of data roughly halves the gap, but that trend mixes
+   caches and is n=1 — indicative, not measured.
 2. **The de-confounded win (defensible):** the IMU-1 bundle's improvement over our own faithful
    baseline is **attributable to NorMuon (optimizer) + the architecture modules** — both proven at
    3 seeds, iso-FLOP, on BPB with CIs excluding 0; **WSD and z-loss are NOT significant**. The
    bundle's *−17.9% PPL* number itself is **n=1 and directional** — the defended claim is the
    per-component BPB attribution, not the single-seed bundle delta. *Caveat:* "matched compute" =
-   matched **tokens** (1.19B); IMU-1 also ran NorMuon (~30% more wall-clock, uncounted by the 6ND
-   FLOP model, though params are iso-FLOP at 1.00043).
+   matched **tokens** (1.19B); IMU-1 also ran NorMuon at **−30.5% throughput** (5,172 vs 7,444 tok/s
+   final), which is **+43.9% wall-clock** (63.9 h vs 44.4 h) — uncounted by the 6ND FLOP model,
+   though params are iso-FLOP at 1.00043. No `train_flops` artifact exists for any Phase-B run, so
+   the §C18 ≤5% iso-FLOP gate was never actually evaluated for the three-build comparison.
 
 > **Rigor status (`text-lm-v3` downstream battery — RUN 2026-06-24):** the §C25 downstream battery
 > (LAMBADA + per-task **BPB-on-gold** + ARC-e/HellaSwag/WinoGrande) has now been executed on **all 25
 > checkpoints** (4 builds + Phase-1 + Phase-2) — full table:
 > [`research/eval/downstream_v3/RESULTS.md`](../research/eval/downstream_v3/RESULTS.md). As §C25.6
-> predicted, MC accuracy is near-chance (no-signal); **LAMBADA + BPB-on-gold discriminate** — and they
-> **independently confirm every attribution**.
+> predicted, MC accuracy does not discriminate between arms — but only **WinoGrande** is literally at
+> chance (0.52 vs 0.50, `signal: false`); **ARC-easy** (acc_norm 0.45, CI [0.403, 0.490]) and
+> **HellaSwag** (0.36, CI [0.321, 0.405]) sit well above their 0.25 chance floor with `signal: true`.
+> **LAMBADA + BPB-on-gold are the discriminators** — and they **independently confirm every attribution**.
 
 ### Downstream confirmation — the builds (1.19B tok), independent of PPL
 
@@ -172,13 +207,45 @@ whole way; partial-RoPE stays above it.
 ### Controlled attribution — NorMuon vs AdamW (single-variable, 3 seeds, iso-FLOP, verifier-PASS)
 
 The clean optimizer isolation that de-confounds one strand of the IMU-1 bundle: NorMuon beats
-AdamW by **+0.474 bpb on wikitext-2 (95% CI [0.444, 0.505])** and +0.502 on code — significant.
+AdamW by **+0.474 bpb on wikitext-2 (95% CI [0.443, 0.505])** and +0.502 on code — significant
+**at this 42M-token budget**. It does not survive more budget — see
+[the scaling ladder below](#scaling-persistence-the-normuon-edge-converges-away).
 
 ![NorMuon vs AdamW - wikitext-2 BPB with 95% CI](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig1_headline_wikitext2_bpb.png)
 ![NorMuon vs AdamW - code BPB](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig2_code_bpb.png)
 ![NorMuon vs AdamW - FineWeb-Edu val PPL](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig3_fineweb_val_ppl.png)
 ![NorMuon vs AdamW - per-seed training curves](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig4_train_loss_curves.png)
 ![AdamW LR-sweep robustness control](experiments/2026-06-16_qwen3_normuon-vs-adamw/results/plots/fig5_adamw_lr_sweep.png)
+
+### Scaling persistence: the NorMuon edge converges away
+
+**The +0.474 bpb win above is a 42M-token result and does not survive more budget.** A
+budget ladder at fixed N=596M (`experiments/2026-07-05_qwen3-0.6b_scaling-persistence/`,
+re-scored 2026-07-28, **n=3 seeds/arm at every rung**) sweeps only `--steps`:
+
+| Budget | wikitext-2 gap (bpb) | 95% CI | code_py gap | 95% CI |
+|---|---|---|---|---|
+| 42M | **+0.474** | [0.443, 0.505] | **+0.502** | [0.456, 0.547] |
+| 168M | **+0.126** | [0.089, 0.163] | **+0.176** | [0.137, 0.215] |
+| 420M | **+0.072** | [0.055, 0.088] | **+0.177** | [0.131, 0.223] |
+
+OLS over log10(tokens): wikitext slope **−0.417** (r² 0.923), code **−0.342** (r² 0.841).
+`trend_verdict: CONVERGES` on both corpora; **`ledger_verdict: null`**.
+
+**Read it as: an early-training speedup that converges away, not an advantage at scale.**
+Three honest qualifications:
+
+1. The gap at 420M is **still nominally significant** (CI excludes 0). "Falls within the
+   noise floor" refers to the *OLS-fitted* edge at the top rung (0.0297) vs the noise
+   floor (0.0368) — `edge_resolved: false` on wikitext, `true` on code.
+2. **On code the label "converges" is generous**: 0.176 → 0.177 between the last two rungs
+   is a *plateau*, not convergence, and the negative slope is carried by the 42M point.
+   `verdict.json` itself hedges: *"still above noise at the largest measured budget but
+   trending out — the edge is eroding, extend the ladder before claiming it."*
+3. **Inherited confound:** both LRs were tuned at 42M and never re-tuned per horizon, so
+   part of the fade may be a mis-tuned-LR artifact. Nothing on disk separates the two.
+
+This is a **budget** null at fixed N=596M. Nothing here says anything about larger N.
 
 ### Deconfounding the IMU-1 win — 12-cell single-variable ladder (DONE — arch is the driver)
 
@@ -196,7 +263,7 @@ vs +arch, all AdamW). **Complete (12/12 cells); canonical eval-harness BPB verdi
 **The proxy flipped on the canonical metric.** The *in-loop val-PPL* proxy had ranked +arch −22%
 **and** +WSD −6.9% (significant) — but on the canonical BPB, **only arch survives**; +WSD's CI
 straddles 0. **+arch is the sole attributed driver** (baseline bpb 1.516/2.639 → arch 1.398/2.334),
-so the −17.9% bundle decomposes into **NorMuon (optimizer, proven separately) + the IMU-1
+so the −17.9% bundle decomposes into **NorMuon (isolated separately at a 42M budget; it converges away at larger budgets) + the IMU-1
 architecture modules** — not schedule, not z-loss. This is exactly why the loop trusts eval-harness
 BPB, not in-loop PPL, as the verdict (the in-loop plots below are the proxy; the table above is the verdict).
 The honest same-step caveat is built in: the deconfound arms are *complete* 2000-step runs
@@ -219,9 +286,19 @@ canonical BPB above does not), *not* the verdict:
 
 ![Per-component attribution - single-variable, 3 seeds per arm (in-loop proxy PPL)](experiments/2026-06-18_qwen3-0.6b_imu1-deconfound-p1/deconfound_attribution.png)
 
-### Post-training — SFT (VibeThinker reasoning, n=1 preliminary)
+### Post-training — SFT (VibeThinker reasoning, n=1 preliminary — SUPERSEDED)
 
-Held-out reasoning PPL 14.26 -> 11.60; no catastrophic forgetting (FineWeb-Edu retained).
+In-loop reasoning PPL 14.26 -> 11.60 (n=1, response-only scoring — see the correction below);
+no catastrophic forgetting (FineWeb-Edu retained).
+
+> **This n=1 number is an in-loop metric with a known confound** (response-only vs all-token
+> scoring) and has been superseded by the 3-seed run `2026-06-27_qwen3-0.6b_sft-3seed`
+> (2026-06-30), which re-scored on a fixed held-out set: masked reasoning PPL
+> **14.127 → 11.573 (−18.1%)** vs base, but response-masking does **not** separate from its
+> iso-FLOP `--no_mask` control (+0.009 PPL masked *significant* / −0.006 full-sequence *not*
+> significant) → `overall_verdict: directional — masked and full-sequence comparisons disagree on
+> significance; treat as not-yet-separable`. No catastrophic
+> forgetting (held-out FineWeb-Edu 21.495 base → 21.652 SFT / 21.660 control).
 
 ![SFT training loss](experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/plots/vibethinker_sft_loss.png)
 ![SFT reasoning PPL vs step](experiments/2026-06-17_qwen3-0.6b_vibethinker-small-reasoning/results/plots/vibethinker_sft_reasoning_ppl.png)
@@ -238,11 +315,11 @@ This model is the spine of a full **small-scale LLM lifecycle** run on one GB10 
 
 | Stage | Result | Evidence |
 |---|---|---|
-| **Architecture** | bit-exact vs HF (`max\|Δlogits\| = 0.0`), 596,049,920 params | `verify.json` |
-| **Pretrain — 3 builds @ 2 TPP** | faithful 28.65 · **IMU-1 23.52 (win, −17.9%)** · partial-RoPE 0.25 29.54 (loss); 0.10 died incomplete @ step 5450/18150 (~30%) | build logs (above) |
-| **Optimizer ablation (clean, single-variable)** | NorMuon **beats** AdamW: wikitext **−0.474 bpb** (95% CI [0.444, 0.505]), code −0.502 bpb ([0.456, 0.547]) — **significant win** | ledger `2026-06-16_qwen3_normuon-vs-adamw` |
+| **Architecture** | bit-exact vs HF **in fp32 on CPU, 5-token prompt** (`max\|Δlogits\| = 0.0`), 596,049,920 params. No GPU parity check exists. | `verify.json` |
+| **Pretrain — 3 builds @ 2 TPP** | faithful 28.65 · **IMU-1 23.52 (−17.9%)** · partial-RoPE 0.25 29.54 (loss); 0.10 died incomplete @ step 5450/18150 (~30%). All n=1, single-seed, in-distribution val PPL on a leak-suspect tail — **directional, not a defended claim** | build logs (above) |
+| **Optimizer ablation (clean, single-variable)** | NorMuon beats AdamW at **42M tokens**: wikitext **−0.474 bpb** (95% CI [0.443, 0.505]), code −0.502 bpb ([0.456, 0.547]) — significant *at that budget*. **The scaling ladder nulls its persistence: wikitext gap 0.474 → 0.126 → 0.072 (`CONVERGES`); code plateaus 0.176 → 0.177 and stays significant. Ladder ledger verdict `null`.** | ledger `2026-06-16_qwen3_normuon-vs-adamw`, `2026-07-05_…scaling-persistence` |
 | **De-confound attribution (Phase 1, single-variable, 3-seed, iso-FLOP)** | the IMU-1 win is **architecture**: **+arch −0.118/−0.305 bpb** (95% CI excludes 0, both corpora) is the **sole driver**; +WSD not significant on canonical BPB, +z-loss null → bundle = **NorMuon + arch modules** | ledger `2026-06-18_…imu1-deconfound-p1`, `verdict.json` |
-| **Post-train — SFT** | reasoning OpenR1-Math PPL **14.26 → 11.60 (−18.7%)**; catastrophic forgetting **retained** (wikitext +0.2%, code −3.0%, fineweb-edu +0.74% — none significant). **n=1 → verdict inconclusive** | ledger `…vibethinker-small-reasoning` |
+| **Post-train — SFT (3 seeds + iso-FLOP `--no_mask` control, 2026-06-30)** | held-out masked reasoning PPL **14.127 → 11.573 (−18.1%)** vs base; response-masking does **not** separate from the control (+0.009 masked *sig* / −0.006 full-seq *n.s.*) → **`directional` — not a win**. No catastrophic forgetting (FineWeb-Edu 21.495 → 21.652). Supersedes the n=1 VibeThinker probe. | `2026-06-27_qwen3-0.6b_sft-3seed/reasoning_verdict.json` |
 | **Paper** | consolidated single-model study **`qwen3-0.6b-study`** — status **drafting** (arXiv/HF source tree, PDF built via Tectonic, 14 API-verified refs); the earlier per-result *"Reproduce, Then Modernize…"* paper is **abandoned/superseded** by it | ledger `papers[]` (2 entries) |
 | **Harness-search side-quest** | Meta-Harness replication: on the bin-packing target, gated search **beat** the hand-designed baseline by **+5.3 pts** (95% CI [+4.5, +6.2], held-out) — but selecting by raw search-score crowned a brittle overfit (0.0 on an unseen seed). The transferable contribution is the **promotion gate** (held-out + brittle-exclusion + significance), which recovers the real win and refuses the brittle one; oracle-integrity fixes (codeharness reward-hack + seqpack module-shadowing) committed (`bdc5ec6`, tests 309→317). | `research/harness_search/` |
 
@@ -416,9 +493,9 @@ proxy→canonical flip is exactly why we don't pre-commit the technique list.
 | 1 | **Phase 2 arch sub-drill** (Ch.3) | which of value-residual / LN-scaling / head-gating carries the win | **✅ DONE** — all 3 significant drivers (vr largest, ln parameter-free), `attributed`; downstream confirms |
 | 2 | **Data arm** (Ch.2) | fixed-token data-selection A/B — **dclm-edu vs FineWeb-Edu** (control reused), OOD-BPB, strict decontam (the *bitter-lesson* lever: the gap to 13.40 is data-not-skill) | **✅ DONE** — null on English, **large significant code win** (−0.70 bpb, PPL 1890→247); data composition beats method. `directional` (single budget). |
 | 2b | **Data-composition curve** (Ch.2) | add a **50/50 mix** arm (reuse both A/B arms, §C13) → does the code gain survive mixing without an English tradeoff? | **✅ DONE** — best-of-both: mix keeps English (on par) AND captures ~84% of the code win. The mix is the data for mid-training. |
-| 3 | **Mid-training** (Ch.7) | anneal a base checkpoint on the **50/50 mix** @ low LR + RoPE context-extension | **🔄 NEXT** (auto) |
+| 3 | **Mid-training** (Ch.7) | anneal a base checkpoint on the **50/50 mix** @ low LR + RoPE context-extension | **✅ DONE** (`2026-06-30_…midtrain-anneal`, `final_verdict: win`) |
 | 4 | **Serving export** (Ch.14) | vLLM registration shim — *pulled forward*, it unblocks GRPO rollouts | planned |
-| 5 | **Post-training** (Ch.9–11) | SFT **≥3-seed** + paired control → DPO → GRPO/RLVR (turn the n=1 SFT into a real verdict) | planned |
+| 5 | **Post-training** (Ch.9–11) | SFT **≥3-seed** + paired control → DPO → GRPO/RLVR | **SFT ✅ DONE** (`2026-06-27_…sft-3seed`, 2026-06-30 — `directional`, masking does not beat its control); DPO / GRPO still planned |
 | 6 | **Serving bench** (Ch.14) | `/serving-bench` continuous-batching + paged-KV + `--quant fp8`; `/observability-slo` SLOs | planned |
 | 7 | **Safety** (Ch.12) | `/safeguards-eval` + red-team passes (methodology demo; 0.6B isn't ASL-relevant) | planned |
 | 8 | **Interpretability** (Ch.13) | SAE / probing demo, control-floor-first | **on-box core BUILT** (`research/interp.py`: BatchTopK SAE + PCA/random floors + the CI-disjoint anti-laundering gate; `roc_auc`/`bootstrap_ci`/`mcnemar` verified vs sklearn/scipy; 342 tests). Honest verdict baked in: a **CI-backed null at the floor is the *passing* result** at 596M/1.19B (arXiv:2602.14111). Skill wrapper + GPU run pending |
@@ -475,7 +552,7 @@ The three things that differ from Llama/SmolLM2: **per-head QK-Norm** (RMSNorm o
 
 ```
 Qwen3-0.6B/
-├── model.py                 # the architecture, one file — verified bit-exact vs HF
+├── model.py                 # the architecture, one file — bit-exact vs HF (fp32/CPU)
 ├── verify.py                # parity gate
 ├── README.md                # this index
 └── builds/
@@ -506,12 +583,14 @@ the machine); the scripts import [`safe_cuda`](../safe_cuda.py) to cap the proce
 
 ## Honest accounting (short)
 
-- ✅ **Architecture** — verified bit-exact vs HF (`max|Δlogits| = 0.0`).
-- ✅ **Reproduction gap is data, not skill** — 2.14× PPL gap against ~275,000× less
-  data, with a clean scaling curve.
+- ✅ **Architecture** — verified bit-exact vs HF in fp32 on CPU (`max|Δlogits| = 0.0`, 5-token prompt; no GPU parity check).
+- 🔶 **Reproduction gap looks like data, not skill** — 3.46× at 131M tokens (same-cache)
+  and ~2.1× at 1.19B (cross-cache, indicative). The trend mixes two val tails and every
+  point is n=1, so it is suggestive, not a clean scaling curve.
 - ✅ **Phase A LR (2.4e-3)** — an original verified finding (Qwen3 never published the
   0.6B LR).
-- 🔶 **Phase B** — baseline (28.65), IMU-1 (**23.52, a proven −18% win**), and
+- 🔶 **Phase B** — baseline (28.65), IMU-1 (**23.52, a directional −17.9% delta — n=1,
+  single seed, no CI**), and
   partial-RoPE 0.25 (**29.54 — loses to baseline**) done; 0.10 **died incomplete** at
   step 5450/18150 (~30%; last eval 50.71). The partial-RoPE *vs* baseline comparison is **decided (it loses)**.
 - ✅ **IMU-1 attribution** — de-confounded across two phases (3-seed iso-FLOP, canonical BPB):

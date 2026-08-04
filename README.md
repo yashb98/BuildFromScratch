@@ -1,15 +1,15 @@
 # BuildFromScratch
 
 From-scratch language-model reproductions — each built single-file from a blank
-editor, verified **bit-exact** against the official HuggingFace weights, then
+editor, verified **bit-exact in fp32 on CPU** against the official HuggingFace weights, then
 carried forward through a multi-stage research lifecycle (pretraining-era
 architecture/optimizer/data studies → post-training) where every cross-run claim
 is held to multi-seed CIs, iso-FLOP matching, and a held-out noise floor.
 
 | Path | What it is |
 |---|---|
-| [`SmolLM2-134(base)/`](SmolLM2-134(base)/) | Single-file PyTorch reproduction of [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) (134,515,008 params), verified **bit-exact** vs the official weights (`max \|Δlogits\| = 0.0`). Includes from-scratch training, continued pretraining on TinyStories, multi-axis parity diagnostics, in-domain vs OOD eval, and an `lm-evaluation-harness` wrapper. |
-| [`Qwen3-0.6B/`](Qwen3-0.6B/) | Single-file PyTorch reproduction of [Qwen3-0.6B-Base](https://huggingface.co/Qwen/Qwen3-0.6B-Base), verified **bit-exact** (`max \|Δlogits\| = 0.0`), then a **full research lifecycle** on top (architecture / optimizer / data / post-training, below). See [its README](Qwen3-0.6B/README.md). |
+| [`SmolLM2-134(base)/`](SmolLM2-134(base)/) | Single-file PyTorch reproduction of [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) (134,515,008 params), verified **bit-exact in fp32 on CPU** vs the official weights (`max \|Δlogits\| = 0.0`; on GPU it is **not** bit-exact — final-logits max 4.72e-05, per-layer hidden-state max 1.95e-03 at layer 14 — see `SmolLM2-134(base)/results/comparison_with_hf.md`). Includes from-scratch training, continued pretraining on TinyStories, multi-axis parity diagnostics, in-domain vs OOD eval, and an `lm-evaluation-harness` wrapper. |
+| [`Qwen3-0.6B/`](Qwen3-0.6B/) | Single-file PyTorch reproduction of [Qwen3-0.6B-Base](https://huggingface.co/Qwen/Qwen3-0.6B-Base), verified **bit-exact in fp32 on CPU** (`max \|Δlogits\| = 0.0`, single 5-token prompt; no GPU parity check exists for this model), then a **full research lifecycle** on top (architecture / optimizer / data / post-training, below). See [its README](Qwen3-0.6B/README.md). |
 
 > The repo is driven by a set of **local-only** Claude Code skills (an ML-research
 > loop whose scanning, briefing, data-prep and scoring stages run autonomously,
@@ -25,10 +25,13 @@ lifecycle. Every headline carries BPB on ≥2 corpora, across-seed CIs, iso-FLOP
 matching, and a held-out noise floor — and is rewritten to exactly what the
 evidence supports.
 
-**1 · Reproduction (done).** Faithful Qwen3-0.6B trained from scratch lands
-within **2.14×** of the original's perplexity using **~30,000× less data**
-(1.19B vs 36T tokens); an earlier 131M-token probe sat at 3.5× with ~275,000×
-less data — each ~10× more data roughly halves the gap.
+**1 · Reproduction (done).** Faithful Qwen3-0.6B trained from scratch reaches val PPL
+**28.65** at 1.19B tokens, against **13.40** for the released Base (our own eval of it)
+using **~30,000× less data** (1.19B vs 36T tokens). The implied **2.14×** ratio is
+**cross-cache** — 28.65 was scored on the 1.19B run's val tail, 13.40 on the 131M run's
+tail, and no same-cache score for the released model exists on disk — so read it as
+indicative, not as a measured gap. The earlier 131M-token probe *is* same-cache: 46.31
+vs 13.40 = **3.46×** with ~275,000× less data.
 
 **2 · Architecture + optimizer — the "IMU-1" study (done).** A three-build
 experiment (faithful baseline / modernized *IMU-1* bundle / exploratory
@@ -39,6 +42,12 @@ incomplete). A two-phase, single-variable, **3-seed, iso-FLOP de-confound** then
 **attributed** the win to **NorMuon** + the IMU-1 architecture modules
 (value-residual / layernorm-scaling / head-gating — each individually significant
 on canonical BPB), with learning-rate schedule and z-loss **not** significant.
+The **NorMuon axis** of that attribution was isolated at a **42M-token** budget (the
+schedule / z-loss / architecture axes ran at **131M tokens per cell**), and that NorMuon
+strand **fades with budget** — the ladder in §7 returns `null`: the wikitext gap falls
+0.474 → 0.072, and while every rung stays individually significant, the OLS-fitted edge at
+the top rung (0.0297) lands inside the 0.0368 noise floor. On code the gap plateaus at
++0.177 and its fitted edge (0.1255 vs a 0.0463 floor) is still resolved.
 
 **3 · Data composition (done).** A pretraining data-mix curve found a **50/50
 mix** to be best-of-both — it keeps English while capturing ~84% of the code win.
@@ -102,26 +111,40 @@ with the Chen-2021 estimator, on decontaminated GSM8K + MATH-500) and tested it.
   The reasoning capability lives in SFT/distillation, not RL at this scale — the gate
   saved a multi-seed cohort before it was spent.
 
-**7 · Scaling persistence of the NorMuon win (done, 2026-07-12).** Study #2 attributed
-the IMU-1 win largely to **NorMuon**; this ladder asks whether its **+0.474
-wikitext BPB** edge over AdamW **persists or converges with budget**. At fixed
-N=596M it sweeps the token budget — 42M (reused) + **168M ×{NorMuon,AdamW}×3 seeds**
-+ **420M ×2 seeds**, ten cells — varying only `--steps`. All ten completed.
+**7 · Scaling persistence of the NorMuon win (first 10 cells done 2026-07-12; the two 420M seed-2 cells 2026-07-25/26; re-scored at n=3 2026-07-28).** Study #2 isolated
+**NorMuon** (at 42M tokens) as one strand of the IMU-1 win — note its de-confound arms were
+all AdamW, so no iso-budget NorMuon-vs-architecture comparison exists. This ladder asks
+whether NorMuon's **+0.474 wikitext BPB** edge over AdamW **persists or converges with budget**. At fixed
+N=596M it sweeps the token budget — 42M (reused) + **168M** + **420M**, each
+×{NorMuon,AdamW}×**3 seeds** — varying only `--steps`. All **12 newly-trained** cells
+completed (the six 42M cells are reused from `2026-06-16_qwen3_normuon-vs-adamw`, so 18 are
+scored in total); re-scored at n=3 on 2026-07-28 after the third 420M seed (one cell per
+arm) landed.
 
 - **The gap shrinks with budget, and both corpora agree.** wikitext-2
   (AdamW − NorMuon, BPB): **+0.474** [+0.443, +0.505] at 42M → **+0.126**
-  [+0.089, +0.163] at 168M → **+0.073** [−0.038, +0.184] at 420M — significant at
-  the two smaller budgets, **not significant** at the top. code_py: +0.502 → +0.176
-  → +0.192. OLS over log10(tokens) gives slope **−0.416** (r² 0.92) on wikitext and
-  **−0.328** (r² 0.81) on code → **CONVERGES** on both.
-- **Verdict: directional, not a headline** — the 420M rung is n=2 (< 3 seeds, §C17).
-- **What is resolved, and what isn't.** The *slope* is resolved; the *edge at the top
-  rung* is not. At n=2 the 420M CI is wide enough to hold both "converged" and "still
-  ahead", and the code_py gap does not even shrink monotonically (+0.176 → +0.192 —
-  only the fitted slope is negative). A disclosed **inherited confound** cuts the same
-  way: both learning rates were tuned at the 42M horizon and never re-tuned per budget,
-  so part of the fade may be a mis-tuned-LR artifact rather than true convergence.
-  Earning more needs a 3rd 420M seed, an 840M rung, and a per-horizon LR check.
+  [+0.089, +0.163] at 168M → **+0.072** [+0.055, +0.088] at 420M. code_py:
+  **+0.502** [+0.456, +0.547] → **+0.176** [+0.137, +0.215] → **+0.177**
+  [+0.131, +0.223]. OLS over log10(tokens) gives slope **−0.417** (r² 0.92) on
+  wikitext and **−0.342** (r² 0.84) on code → **CONVERGES** on both.
+- **Verdict: `null`** (ledger `2026-07-05_qwen3-0.6b_scaling-persistence`) — an
+  early-training speedup that converges away. Note the verdict was *also* capped by
+  construction: the §C25 `scaling` HARD battery is incomplete (no `log_rmse_r2`,
+  `holdout_extrapolation_pctdev`, `bootstrap_forecast_ci`), so `win` was unreachable
+  regardless — though the CONVERGES trend independently maps to `null` anyway.
+- **What is resolved, and what isn't.** The *slope* is resolved on both corpora; the
+  *edge at the top rung* is resolved on **code** but not on **wikitext**. All six
+  rungs remain **nominally significant** (every CI excludes 0) — "falls within the
+  noise floor" refers to the *OLS-fitted* edge at the top rung, which on wikitext is
+  0.0297 against a 0.0368 floor (`edge_resolved: false`), while on code it is 0.1255
+  against 0.0463 (`edge_resolved: true`). The code_py gap also does not shrink
+  **monotonically**: it falls 0.502 → 0.176, then ticks up to 0.177 — flat between the
+  top two rungs, a **plateau**, even though the 3-point OLS still scores `CONVERGES`
+  (a negative slope carried largely by the 42M point). A disclosed **inherited confound**
+  cuts the same way: both learning rates were tuned at the 42M horizon and never
+  re-tuned per budget, so part of the fade may be a mis-tuned-LR artifact rather than
+  true convergence. Earning more needs an 840M rung and a per-horizon LR check. This
+  is a **budget** null at fixed N=596M — it says nothing about larger N.
 - Read it as: NorMuon looks like an **early-training speedup that converges away** —
   exactly what IMU-1's own Limitation #3 warned it might be. Numbers:
   `experiments/2026-07-05_qwen3-0.6b_scaling-persistence/verdict.json`.

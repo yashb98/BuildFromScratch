@@ -1,5 +1,19 @@
 # TinyStories continued pretraining — final wrap-up
 
+> **⚠️ This document describes an EARLIER TinyStories run, not the one whose artifacts are
+> committed.** `POST_DATA.md:165` labels it `(prior run)`. Its numbers differ from the
+> committed run and **must not be quoted for it**:
+>
+> | | This doc (prior run) | Committed run (`tinystories_train.log`, `checkpoint_tinystories.pt`) |
+> |---|---|---|
+> | After PPL | 3.7893 | **3.7900** (3.78995) |
+> | Wall clock | 137.3 min | **116.1 min** |
+> | Mean throughput | 12,150 tok/s | **14,356 tok/s** (cumulative) |
+>
+> The recipe table and throughput table below belong to the prior run. For the committed
+> run use `tinystories_train.log`, `tinystories_train.csv`, and
+> `tinystories_{before,after}.txt`.
+
 ## Headline
 
 **SmolLM2-135M, 100M tokens of continued pretraining on roneneldan/TinyStories.**
@@ -91,7 +105,10 @@ The decay phase delivered an additional **−0.03 nats** on top of the stable pl
 
 The drift is not thermal (max temp 72 °C, well below limit). Most likely shared-machine effect (5 users on the box); reproducible benchmarks under load would need exclusive access.
 
-## Files this run produced
+## Files the prior run produced
+
+> Note: the committed files of these names belong to the **116.1-min run**, not to the run
+> this document describes.
 
 ```
 checkpoint_tinystories.pt              269 MB — bf16 state_dict + metadata

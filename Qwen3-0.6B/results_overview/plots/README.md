@@ -15,8 +15,8 @@ each run's own training log header.
 
 | File | Caption | Source file(s) |
 |------|---------|----------------|
-| `fig1_matched_compute_final_ppl_bar.{png,pdf}` | Matched-compute (1.19B-token) final val-PPL bar: Faithful 28.65, IMU-1 (Modernized) 23.52, partial-RoPE-25% (Exploratory) 29.54, with the published Qwen3-0.6B-Base 13.40 as a dashed reference line; each bar annotated with its gap-to-original (2.14x / 1.76x / 2.21x). All COMPLETE runs. | Faithful: `builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_after.txt`; IMU-1: `builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/qwen3_imu1_2tpp_train.log` (eval@18000); pRoPE-25: `builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/qwen3_prope25_2tpp_train.log` (DONE); original: `builds/.../faithful.../results/original_vs_repro.txt` |
-| `fig2_eval_ppl_vs_tokens_faithful_vs_imu1.{png,pdf}` | Eval val-PPL vs tokens-seen (log y), Faithful vs IMU-1 overlaid; both COMPLETE and reach 1.19B tokens. IMU-1 sits below Faithful at every logged eval point and ends 23.52 vs 28.65. Published 13.40 shown as a dashed floor. step->tokens via tok/step=65,536 (verified in both logs); init PPL ~185k omitted (off-scale). | Faithful: `builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_train.log` (eval lines) + `.../qwen3_baseline2tpp_after.txt` (final); IMU-1: `builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/qwen3_imu1_2tpp_train.log` (eval lines) |
+| `fig1_matched_compute_final_ppl_bar.{png,pdf}` | Matched-compute (1.19B-token) final val-PPL bar: Faithful 28.65, IMU-1 (Modernized) 23.52, partial-RoPE-25% (Exploratory) 29.54, with **our own eval** of the released Qwen3-0.6B-Base (13.40) as a dashed reference line; each bar annotated with its gap-to-original (2.14x / 1.76x / 2.21x — the last is a misrounding of 29.54/13.40 = 2.204, i.e. 2.20x). **Those multiples are CROSS-CACHE** — 13.40 was scored on `tokcache_133072000`, the bars on `tokcache_1191478400` — see Notes. All COMPLETE runs. | Faithful: `builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_after.txt`; IMU-1: `builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/qwen3_imu1_2tpp_train.log` (eval@18000); pRoPE-25: `builds/2026-06-08_reproduce-exploratory_qwen3-0.6b/results/qwen3_prope25_2tpp_train.log` (DONE); original: `builds/.../faithful.../results/original_vs_repro.txt` |
+| `fig2_eval_ppl_vs_tokens_faithful_vs_imu1.{png,pdf}` | Eval val-PPL vs tokens-seen (log y), Faithful vs IMU-1 overlaid; both COMPLETE and reach 1.19B tokens. IMU-1 sits below Faithful at every logged eval point and ends 23.52 vs 28.65. Our own eval of the released Base (13.40) shown as a dashed floor — *cross-cache vs these curves, see Notes*. step->tokens via tok/step=65,536 (verified in both logs); init PPL ~185k omitted (off-scale). | Faithful: `builds/2026-06-08_reproduce-faithful_qwen3-0.6b/results/qwen3_baseline2tpp_train.log` (eval lines) + `.../qwen3_baseline2tpp_after.txt` (final); IMU-1: `builds/2026-06-08_reproduce-modernized_qwen3-0.6b/results/qwen3_imu1_2tpp_train.log` (eval lines) |
 
 ## Exact data points plotted (cross-check)
 
@@ -46,7 +46,17 @@ gap-x = final / 13.40: 28.65/13.40=2.138, 23.52/13.40=1.755, 29.54/13.40=2.204.
 
 - All three 2-TPP runs are COMPLETE (each logs `DONE` / an AFTER eval / a final
   checkpoint). No extrapolation, no fabricated points.
-- The published Qwen3-0.6B-Base 13.40 is an EXTERNAL reference (36T-token model
-  evaluated on the same 300k-token val set, per `original_vs_repro.txt`); it is
-  drawn only as a reference line, never as a same-budget competitor.
+- The released Qwen3-0.6B-Base 13.40 is **our own measurement** of that 36T-token
+  checkpoint (`original_vs_repro.txt`, 2026-06-09) — not a figure copied from the
+  Qwen3 tech report. Only the "36T tokens" label is theirs. It is drawn only as a
+  reference line, never as a same-budget competitor.
+- **13.40 was scored on a DIFFERENT val tail than the 1.19B bars.** It uses
+  `tokcache_133072000_300000.pt` (hardcoded at `eval_original_vs_repro.py:22`); the
+  faithful / IMU-1 / pRoPE bars use `tokcache_1191478400_300000.pt`. The annotated
+  gap-to-original multiples are therefore **cross-cache**, not like-for-like.
+- **⚠️ The committed figures carry two stale labels.** Their legend still reads
+  *"Published Qwen3-0.6B-Base = 13.40"* (`make_overview_plots.py:101,140`) although 13.40 is
+  **our own eval**, and fig1 annotates the pRoPE bar **2.21x** where 29.54/13.40 = 2.204
+  (`make_overview_plots.py:56`). Neither the cross-cache caveat nor these fixes are in the
+  rendered images yet — fix those three literals in the generator, then regenerate.
 - Regenerate: `CUDA_VISIBLE_DEVICES="" MPLBACKEND=Agg python3 ../make_overview_plots.py`

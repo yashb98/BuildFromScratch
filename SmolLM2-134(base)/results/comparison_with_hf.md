@@ -88,5 +88,5 @@ Two real corrections in this session (both pre-comparison):
   match by construction.
 - **The model's own training-time loss curve**. HF doesn't publish the per-step
   loss log, so we have no point of comparison for our 150-step demo loss
-  trajectory (11.254 → 6.321) — only the qualitative shape against the WSD
+  trajectory (11.254 → 6.288) — only the qualitative shape against the WSD
   schedule.

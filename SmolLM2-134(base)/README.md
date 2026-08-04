@@ -2,8 +2,13 @@
 
 A from-scratch PyTorch reproduction of [SmolLM2-135M][hfmodel], faithful to the
 shipped `config.json` and the [SmolLM2 paper][paper]. The reproduction is
-verified **bit-exact** against HuggingFace's reference `LlamaForCausalLM` in
-this session (`max |Δlogits| = 0.0`).
+verified **bit-exact in fp32 on CPU** against HuggingFace's reference
+`LlamaForCausalLM` (`max |Δlogits| = 0.0`). On **GPU** it is close but *not*
+bit-exact — final-logits max 4.72e-05, per-layer hidden-state max 1.95e-03 at
+layer 14 (which exceeds the repo's own 1e-3 gate); see
+[`results/comparison_with_hf.md`](results/comparison_with_hf.md) for why
+(SDPA backend dispatch) and note that **no determinism flags are set anywhere
+in this repo**.
 
 This README is the long-form script: read it top to bottom and you should be
 able to narrate every decision on camera without referring back to the paper.
@@ -57,7 +62,7 @@ plots below).
 | wikitext-2 val perplexity — ours | **15.370989** | `results/perplexity.json` |
 | wikitext-2 val perplexity — HF | **15.370990** (Δ ≈ 9 × 10⁻⁷) | `results/perplexity.json` |
 | Argmax for `"The capital of France is"` | `' the'` (logit 14.023) — *Paris is only rank #2* | `results/topk_predictions.json` |
-| Tokenization of that prompt | `[504, 3575, 282, 4649, 314]` | `results/summary.json` |
+| Tokenization of that prompt | `[504, 3575, 282, 4649, 314]` | `results.ipynb` (executed cell output) + `results/POST_DATA.md:37` — *not* in `summary.json` |
 | TinyStories-val PPL, before → after | **6.8945 → 3.7900** (**−45.0%**) | `results/tinystories_{before,after}.txt` |
 | TinyStories run wall-clock (NVIDIA GB10, bf16) | **116.1 min**, 100M tokens, 24,414 steps | `results/tinystories_train.log` |
 | Best single-batch training loss | **0.9088** @ step 22,353 (deep in WSD decay) | `results/tinystories_train.csv` |
@@ -137,7 +142,7 @@ character-driven dialogue) at the expected cost of out-of-domain quality.
 
 A 150-step from-scratch mini-run on a wikitext-2 slice with the nanotron-canonical
 recipe (AdamW(0.9, 0.95), peak LR 3e-3, WSD warmup 20 / decay 20%). Loss drops
-11.254 → 6.321, well below the uniform baseline ln(49152) = 10.803 — proof the
+11.254 → 6.288 (min 6.039 @ step 140), well below the uniform baseline ln(49152) = 10.803 — proof the
 training loop learns.
 
 ### 0.7 Architecture diagnostics
