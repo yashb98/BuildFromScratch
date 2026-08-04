@@ -21,6 +21,12 @@ synthesis pass. 17 agents, 715 tool calls. Facts the adversarial pass overturned
 *what the repo records*, not a re-execution of the experiments. Where a recorded number could not
 be re-derived from disk, §8 says so.
 
+**Underlying data.** This file is the synthesis. The complete raw dataset — all 160 extracted facts
+with their verbatim source quotes, all 166 adversarial verdicts, and all 57 gaps, nothing summarised
+away — is in [`MODEL_CARD_FACTS_RAW.md`](MODEL_CARD_FACTS_RAW.md). The refute pass overturned 9 facts
+outright and attached a qualifier to 38 more, so **47 of 166 checks caught something that would have
+been misleading if published as first extracted** — which is the reason that file is worth keeping.
+
 ---
 
 ## Independent spot-check of the three load-bearing findings
