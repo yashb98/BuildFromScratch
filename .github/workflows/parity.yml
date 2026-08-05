@@ -1,0 +1,75 @@
+name: smollm2-parity
+
+# The architecture-parity claim, re-checked by a machine on every push instead
+# of asserted in a README. Runs the repo's own verify.py unmodified: it pulls
+# the official HuggingFaceTB/SmolLM2-135M weights at run time, loads them into
+# the from-scratch model_full.py, and compares logits on CPU in fp32 -- the
+# exact configuration in which the claim is exact (max|delta| = 0.000e+00).
+#
+# CPU-only by construction: a GitHub runner has no GPU, which is the same
+# reason the claim is stated CPU-only. On CUDA the two implementations reach
+# scaled_dot_product_attention through different backends and the per-layer
+# delta reaches 1.95e-03 -- above the repo's own 1e-3 gate -- for reasons that
+# have nothing to do with architectural correctness.
+
+on:
+  push:
+    paths:
+      - 'SmolLM2-134(base)/model_full.py'
+      - 'SmolLM2-134(base)/verify.py'
+      - '.github/workflows/parity.yml'
+  pull_request:
+    paths:
+      - 'SmolLM2-134(base)/model_full.py'
+      - 'SmolLM2-134(base)/verify.py'
+  schedule:
+    # Weekly, so an upstream transformers release that breaks parity surfaces
+    # here rather than in front of a reader.
+    - cron: '17 5 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cache the official checkpoint
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-smollm2-135m-93efa2f0
+
+      - name: Install CPU-only torch + transformers
+        run: |
+          python -m pip install --upgrade pip
+          pip install --extra-index-url https://download.pytorch.org/whl/cpu \
+            'torch==2.11.0+cpu' 'transformers==5.8.0' 'safetensors==0.7.0' 'accelerate==1.13.0'
+
+      - name: Run the parity gate
+        working-directory: 'SmolLM2-134(base)'
+        run: |
+          # pipefail is essential: without it the pipeline's status is tee's,
+          # so a failing verify.py would still report a green check. verify.py
+          # signals failure by raising AssertionError (lines 76 and 83), so the
+          # exit code is the whole gate. Do not run this step under `python -O`,
+          # which strips asserts and would make it vacuous.
+          set -o pipefail
+          python verify.py | tee parity_ci.log
+          echo
+          echo "### SmolLM2-135M parity (CPU, fp32)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat parity_ci.log >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the parity log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-log
+          path: 'SmolLM2-134(base)/parity_ci.log'

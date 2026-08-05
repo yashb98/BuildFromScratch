@@ -74,6 +74,10 @@ research/**
 !research/ledger/runs/**/*.md
 !research/briefs/**/*.md
 !research/digests/**/*.md
+# the held-out slice's burn record — the corpus and its manifest stay ignored
+# (publishing either voids the unseen-ness argument), but the fact that the
+# burn has already partially fired must travel with the repo.
+!research/eval/private_heldout_v1/BURN_STATUS.md
 # ...but never the churn/backup copies of the ledger
 research/ledger/ledger.json.bak
 research/ledger/backups/

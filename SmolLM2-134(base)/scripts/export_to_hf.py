@@ -34,6 +34,9 @@ def main():
     ap.add_argument("output_dir", help="directory to write the HF-format model into")
     ap.add_argument("--repo", default="HuggingFaceTB/SmolLM2-135M",
                     help="HF repo to pull the matching LlamaConfig + tokenizer from")
+    ap.add_argument("--dtype", default="bf16", choices=["bf16", "fp32"],
+                    help="dtype to save in. bf16 (default) matches the training dtype and "
+                         "the base model's published torch_dtype; fp32 upcasts and doubles the size")
     args = ap.parse_args()
 
     out = pathlib.Path(args.output_dir)
@@ -61,24 +64,28 @@ def main():
     if missing or unexpected:
         raise SystemExit(f"HF load mismatch: missing={missing} unexpected={unexpected}")
 
-    print(f"Saving HF-format model to {out}...")
+    # LlamaForCausalLM is built in fp32, so load_state_dict upcast our bf16
+    # tensors. Cast back before saving unless fp32 was explicitly requested --
+    # otherwise the export is 2x the size for zero extra information.
+    if args.dtype == "bf16":
+        hf = hf.to(torch.bfloat16)
+    print(f"Saving HF-format model to {out} in {next(hf.parameters()).dtype}...")
     hf.save_pretrained(out, safe_serialization=True)
     tok = AutoTokenizer.from_pretrained(args.repo)
     tok.save_pretrained(out)
 
-    # Also save the training recipe alongside so the eval is traceable.
-    if "training_recipe" in ck:
-        import json
+    # Save the provenance metadata alongside so the eval is traceable. Not every
+    # checkpoint carries a training_recipe (train_tinystories.py does not), so
+    # write whichever of these keys the checkpoint actually has.
+    import json
+    meta = {k: ck[k] for k in ("training_recipe", "step", "tok_seen",
+                               "baseline_ppl", "trained_ppl") if k in ck}
+    if meta:
+        meta["source_checkpoint"] = args.checkpoint
+        meta["saved_dtype"] = str(next(hf.parameters()).dtype)
         with open(out / "training_recipe.json", "w") as f:
-            json.dump({
-                "training_recipe": ck["training_recipe"],
-                "step": ck.get("step"),
-                "tok_seen": ck.get("tok_seen"),
-                "baseline_ppl": ck.get("baseline_ppl"),
-                "trained_ppl": ck.get("trained_ppl"),
-                "source_checkpoint": args.checkpoint,
-            }, f, indent=2, default=str)
-        print(f"Wrote {out / 'training_recipe.json'}")
+            json.dump(meta, f, indent=2, default=str)
+        print(f"Wrote {out / 'training_recipe.json'} ({', '.join(meta)})")
 
     print(f"Done. Load with: AutoModelForCausalLM.from_pretrained({str(out)!r})")
 
