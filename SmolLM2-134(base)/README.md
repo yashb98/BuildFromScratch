@@ -132,7 +132,7 @@ character-driven dialogue) at the expected cost of out-of-domain quality.
 ![TinyStories continued-pretraining loss curve](results/plots/tinystories_loss_curve.png)
 
 24,414 steps. Per-step loss (light band) with the 1000-step bucket mean
-(1.586 → 1.316) and the LR schedule overlaid; the dashed line marks where the
+(1.586 → 1.3138) and the LR schedule overlaid; the dashed line marks where the
 20% linear decay begins (step 19,531). The decay phase delivered an extra
 ≈ −0.03 nats on top of the stable plateau.
 
