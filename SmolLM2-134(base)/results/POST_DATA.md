@@ -17,7 +17,6 @@ illustrative values. Source-of-truth pointer next to each one.
 | **116.1 min** | Wall-clock for the 100M-token TinyStories run on NVIDIA GB10 | `results/tinystories_train.log` |
 | **24,414 steps** | Total steps at seq_len 1024, batch 4 | `results/tinystories_train.csv` |
 | **0.9088** | Best single-step training loss (step 22,353, deep in WSD decay) | `results/tinystories_train.csv` |
-| **198 lines** | `model.py` line count for the from-scratch architecture | `wc -l model.py` |
 
 ---
 
@@ -54,7 +53,7 @@ SwiGLU · tied embeddings · no biases anywhere.
   target tokens.
 - Wall-clock: **116.1 minutes** on NVIDIA GB10. Sustained throughput
   ~14,300 tok/s through the second hour.
-- Bucket-mean training loss (1000-step buckets): 1.586 (first) → **1.316** (last).
+- Bucket-mean training loss (1000-step buckets): 1.586 (first) → **1.3138** (last bucket = (24000, 24414], 414 rows).
 - Best single-batch loss: **0.9088** at step 22,353 (deep in the decay phase).
 
 ---
