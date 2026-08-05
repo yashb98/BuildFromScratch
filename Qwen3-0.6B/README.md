@@ -110,7 +110,7 @@ The three 1.19B rows **are** mutually comparable (same cache): IMU-1 23.52 vs fa
    per-component BPB attribution, not the single-seed bundle delta. *Caveat:* "matched compute" =
    matched **tokens** (1.19B); IMU-1 also ran NorMuon at **−30.5% throughput** (5,172 vs 7,444 tok/s
    final), which is **+43.9% wall-clock** (63.9 h vs 44.4 h) — uncounted by the 6ND FLOP model,
-   though params are iso-FLOP at 1.00043. No `train_flops` artifact exists for any Phase-B run, so
+   though the often-quoted 1.00043 is a **parameter-count** ratio, not a measured FLOP ratio. No `train_flops` artifact exists for any Phase-B run, so
    the §C18 ≤5% iso-FLOP gate was never actually evaluated for the three-build comparison.
 
 > **Rigor status (`text-lm-v3` downstream battery — RUN 2026-06-24):** the §C25 downstream battery
@@ -337,8 +337,8 @@ bit-identical to the faithful model, so the baseline is genuinely faithful):
 | +z-loss | cosine | **1e-4** | off | |
 | +arch | cosine | 0 | **on** | model_imu1's 3 tweaks |
 
-3 seeds/arm (paired), **iso-FLOP** (token-matched; +arch adds 0.077% params → FLOP
-ratio 1.00043, within the 5% gate), 2000-step proxy (131M tok/cell, ~5h/cell,
+3 seeds/arm (paired), **iso-token** (token-matched; +arch adds 0.077% params → **parameter-count**
+ratio 1.00043, used as the proxy for the 5% gate — no measured FLOP count exists), 2000-step proxy (131M tok/cell, ~5h/cell,
 **~2.5 days** total). Verdict by the across-seed 95% CI
 (`eval_stats.seed_delta_significant`). NorMuon is already isolated (the win above), so
 it is excluded here. _The proxy-budget caveat played out exactly as designed: small
@@ -360,8 +360,8 @@ run `2026-06-18_qwen3-0.6b_imu1-deconfound-p1`.
 **Pre-launch validation (the "tests" for this build).** Before any GPU budget: CPU
 dry-run of all **4 arms** (single-variable confirmed — baseline/wsd/zloss share an
 identical forward, only +arch changes it); GPU **smoke 4/4 + a resume round-trip**
-(checkpoint → reload → continue); **iso-FLOP** check via `flop_accounting.py` (arch-on
-adds 0.077% params → FLOP ratio **1.00043**, inside the 5% gate). Results→verdict is
+(checkpoint → reload → continue); **iso-token** check via `flop_accounting.py` (arch-on
+adds 0.077% params → **parameter-count** ratio **1.00043**, used as the proxy for the 5% gate; no measured FLOP artifact was written). Results→verdict is
 pre-wired: `score_cohort.py` (scores all 12 checkpoints — uses `model_imu1` with per-arm
 arch flags so the +arch checkpoints load) → `verdict.py` (`seed_delta_significant`, 15
 tests green) → auto-fired by the conditional `post_cohort.sh` watcher on `cohort.done`.
