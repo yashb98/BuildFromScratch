@@ -25,7 +25,7 @@ executed `results.ipynb` rather than `summary.json`.
 
 ### Top-level summaries
 - `summary.json` — single-shot digest of every claim the notebook proves.
-- `param_count.log` — output of `python3 model.py` (param count + random-init forward).
+- `param_count.log` — recorded parameter count + random-init forward. The command it names, `python3 model.py`, is stale: there is no `model.py` in this tree. The architecture lives in `model_full.py`.
 - `parity.log` — output of `python3 verify.py` (architecture parity gate).
 - `training_recipe_resolved.json` — verified training hyperparameters from
   `huggingface/smollm/text/pretraining/smollm2/config_smollm2_135M.yaml`
